@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Currículo - Álvaro Martins</title>
+    <!-- Inclui a biblioteca Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Define a fonte Inter para toda a página -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 p-4 md:p-8 lg:p-12">
+
+    <!-- Container principal do currículo -->
+    <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden transform transition-all hover:scale-105 duration-300">
+        <!-- Cabeçalho com foto e informações de contato -->
+        <div class="bg-gradient-to-r from-blue-500 to-blue-700 text-white p-8 md:p-12 text-center relative">
+            <!-- Imagem de perfil com um círculo de borda animado -->
+            <div class="absolute inset-0 flex items-center justify-center">
+                <div class="relative w-32 h-32 md:w-40 md:h-40 rounded-full bg-white opacity-10 animate-pulse"></div>
+            </div>
+            <div class="relative mb-4">
+                <div class="mx-auto w-32 h-32 md:w-40 md:h-40 bg-gray-300 rounded-full overflow-hidden border-4 border-white shadow-lg">
+                    <!-- Substitua o src abaixo pelo caminho da sua imagem -->
+                    <img src="assets/foto.png" alt="Foto de perfil de Álvaro Martins" class="w-full h-full object-cover">
+                </div>
+            </div>
+            <h1 class="text-3xl md:text-4xl font-bold mb-1">ÁLVARO AMORIM DE OLIVEIRA MARTINS</h1>
+            <p class="text-lg md:text-xl font-light opacity-90">Desenvolvedor Full Stack</p>
+            <div class="flex flex-col md:flex-row justify-center items-center mt-4 space-y-2 md:space-y-0 md:space-x-6 text-sm md:text-base">
+                <div class="flex items-center space-x-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                        <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                    </svg>
+                    <span>alvaroamorimjf@gmail.com</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.774a11.006 11.006 0 006.852 6.852l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
+                    </svg>
+                    <span>(32) 99114-7944</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Conteúdo principal: seções de currículo -->
+        <div class="p-6 md:p-10 lg:p-16">
+            
+            <!-- Seção de Formação Acadêmica -->
+            <section class="mb-8">
+                <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-4 border-b-2 border-blue-500 pb-2">FORMAÇÃO ACADÊMICA</h2>
+                <div class="bg-gray-50 p-4 rounded-lg shadow-inner">
+                    <h3 class="text-lg md:text-xl font-semibold text-gray-700">Desenvolvimento Full Stack, Tecnologia da Informação</h3>
+                    <p class="text-gray-600 mt-1">**Universidade Estácio de Sá**, Juiz de Fora, MG</p>
+                    <p class="text-gray-500 text-sm mt-1">Fevereiro 2023 - Julho 2025</p>
+                    <p class="text-blue-600 font-bold mt-2">Status: Concluído</p>
+                </div>
+            </section>
+
+            <!-- Seção de Histórico Profissional -->
+            <section>
+                <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-4 border-b-2 border-blue-500 pb-2">HISTÓRICO PROFISSIONAL</h2>
+
+                <!-- Item de experiência: Motorista de Aplicativo -->
+                <div class="mb-6 p-4 bg-white rounded-lg border-l-4 border-blue-500 shadow-md transform transition-transform hover:scale-105 duration-200">
+                    <h3 class="text-xl font-semibold text-gray-800">Motorista de Aplicativo</h3>
+                    <p class="text-gray-600">Juiz de Fora, Minas Gerais | Dezembro 2021 - Atual</p>
+                    <ul class="list-disc list-inside mt-3 text-gray-700 space-y-2">
+                        <li>Gerenciamento autônomo de logística e transporte de passageiros e objetos.</li>
+                        <li>Utilização de tecnologia GPS para otimização de rotas e eficiência.</li>
+                        <li>Aplicação de práticas de condução segura, garantindo a integridade e o conforto dos passageiros.</li>
+                        <li>Manutenção de um alto nível de serviço ao cliente, assegurando confiabilidade e pontualidade.</li>
+                    </ul>
+                </div>
+
+                <!-- Item de experiência: Encarregado Operacional -->
+                <div class="mb-6 p-4 bg-white rounded-lg border-l-4 border-blue-500 shadow-md transform transition-transform hover:scale-105 duration-200">
+                    <h3 class="text-xl font-semibold text-gray-800">Encarregado Operacional</h3>
+                    <p class="text-gray-600">Rodoviário Camilo dos Santos, São Paulo, São Paulo | Janeiro 2020 - Novembro 2021</p>
+                    <ul class="list-disc list-inside mt-3 text-gray-700 space-y-2">
+                        <li>Gerenciamento e desenvolvimento de equipe para otimizar a produtividade e a eficiência.</li>
+                        <li>Análise de indicadores de desempenho para identificar oportunidades de melhoria contínua.</li>
+                        <li>Implementação de políticas internas para garantir a padronização e a conformidade.</li>
+                        <li>Elaboração de relatórios financeiros, promovendo transparência e planejamento.</li>
+                        <li>Criação de soluções para problemas administrativos, resultando em redução de gastos.</li>
+                    </ul>
+                </div>
+
+                <!-- Item de experiência: Auxiliar Administrativo 2017-2019 -->
+                <div class="mb-6 p-4 bg-white rounded-lg border-l-4 border-blue-500 shadow-md transform transition-transform hover:scale-105 duration-200">
+                    <h3 class="text-xl font-semibold text-gray-800">Auxiliar Administrativo</h3>
+                    <p class="text-gray-600">Sociedade Eunice Weaver (Educandário Carlos Chagas), Juiz de Fora, MG | Fevereiro 2017 - Dezembro 2019</p>
+                    <ul class="list-disc list-inside mt-3 text-gray-700 space-y-2">
+                        <li>Conferência e organização de documentos financeiros (notas fiscais, faturas, boletos).</li>
+                        <li>Suporte na gestão de contratos e na atualização de planilhas de controle.</li>
+                        <li>Atendimento ao público e telefônico, direcionando as pessoas aos setores adequados.</li>
+                    </ul>
+                </div>
+
+                <!-- Item de experiência: Auxiliar Administrativo 2015-2016 -->
+                <div class="p-4 bg-white rounded-lg border-l-4 border-blue-500 shadow-md transform transition-transform hover:scale-105 duration-200">
+                    <h3 class="text-xl font-semibold text-gray-800">Auxiliar Administrativo (Meio Período)</h3>
+                    <p class="text-gray-600">Sociedade Eunice Weaver (Educandário Carlos Chagas), Juiz de Fora, MG | Setembro 2015 - Julho 2016</p>
+                    <ul class="list-disc list-inside mt-3 text-gray-700 space-y-2">
+                        <li>Realização de serviços externos, como depósitos bancários e entrega/retirada de documentos.</li>
+                        <li>Auxílio no atendimento ao público e telefônico.</li>
+                    </ul>
+                </div>
+
+            </section>
+
+        </div>
+    </div>
+
+</body>
+</html>
