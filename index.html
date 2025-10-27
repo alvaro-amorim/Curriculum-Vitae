@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Álvaro Amorim — Currículo</title>
+  <meta name="description" content="Currículo e portfólio de Álvaro Amorim - Desenvolvedor Full Stack" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    :root { --accent: #2563eb; }
+    body { font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background:#f3f4f6; }
+    /* Ocultar elementos com a classe no-print em impressão */
+    @media print {
+      .no-print { display: none !important; }
+      body { background: white !important; }
+      main { box-shadow: none !important; border-radius: 0 !important; }
+      /* Ajuste para evitar cortes */
+      html, body { margin: 0; padding: 0; }
+    }
+  </style>
+</head>
+<body class="min-h-screen p-4 md:p-8 lg:p-12 text-gray-800">
+  <main id="page-root" class="max-w-5xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6 md:p-12 relative">
+      <div class="relative z-10 flex items-center gap-6">
+        <!-- Foto / iniciais -->
+        <div class="flex-shrink-0">
+          <div id="photoWrap" class="w-24 h-24 md:w-36 md:h-36 rounded-full bg-white/10 border-4 border-white overflow-hidden shadow-lg flex items-center justify-center text-2xl md:text-4xl font-bold text-white">
+            <img id="profileImg" src="./assets/foto.png" alt="Foto de Álvaro Martins" class="w-full h-full object-cover hidden" />
+            <span id="initials">AA</span>
+          </div>
+        </div>
+
+        <div class="flex-1">
+          <div class="flex items-start">
+            <div class="flex-1">
+              <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight">Álvaro Amorim de Oliveira Martins</h1>
+              <p class="mt-1 text-sm md:text-base opacity-95">Desenvolvedor Full Stack | IA, Vídeo & Produção Comercial</p>
+              <div class="mt-3 flex flex-wrap items-center gap-3 text-sm">
+                <a href="mailto:alvaroamorimjf@gmail.com" class="flex items-center gap-2 underline">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 opacity-90" viewBox="0 0 20 20" fill="currentColor"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/></svg>
+                  alvaroamorimjf@gmail.com
+                </a>
+                <div class="flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 opacity-90" viewBox="0 0 20 20" fill="currentColor"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.774a11.006 11.006 0 006.852 6.852l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/></svg>
+                  <span>(32) 99114-7944</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Botões Imprimir / Baixar -->
+            <div class="ml-4 no-print">
+              <div class="flex items-center gap-2">
+                <button id="btnPrint" class="px-3 py-1 rounded-md border border-white/30 bg-white/10 text-white text-sm hover:bg-white/20" title="Imprimir esta página">Imprimir</button>
+                <button id="btnPdf" class="px-3 py-1 rounded-md border border-white bg-white text-blue-700 text-sm font-medium hover:opacity-95" title="Baixar como PDF">Baixar (PDF)</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4 text-xs md:text-sm opacity-90">
+            <span class="inline-block bg-white/20 px-3 py-1 rounded-full">Full Stack — HTML • CSS • JS • React • Node</span>
+            <span class="ml-2 inline-block bg-white/10 px-3 py-1 rounded-full">IA • Edição de vídeo • Produção comercial</span>
+          </div>
+        </div>
+      </div>
+      <div aria-hidden class="absolute inset-0 opacity-10 pointer-events-none"></div>
+    </header>
+
+    <!-- Conteúdo -->
+    <section class="p-6 md:p-10 lg:p-12 space-y-8">
+      <div>
+        <h2 class="text-xl font-bold text-gray-800 mb-3 border-b-2 border-[color:var(--accent)] pb-2">Resumo Profissional</h2>
+        <p class="text-gray-700 leading-relaxed">
+          Desenvolvedor Full Stack em formação, com experiência em gestão operacional, atendimento ao cliente e produção de conteúdo/vídeo comercial com auxílio de IA.
+          Habilidades em <strong>React, Node.js, APIs REST, Git</strong>, além de experiência prática em projetos de automação e criação de sites comerciais.
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="p-4 bg-gray-50 rounded-lg">
+          <h3 class="font-semibold mb-2">Técnicas</h3>
+          <ul class="text-sm space-y-1 list-disc list-inside text-gray-700">
+            <li>HTML, CSS, JavaScript, React, Node.js</li>
+            <li>Git / GitHub, MySQL, APIs REST</li>
+            <li>IA aplicada à geração de imagens e vídeo</li>
+          </ul>
+        </div>
+        <div class="p-4 bg-gray-50 rounded-lg">
+          <h3 class="font-semibold mb-2">Ferramentas</h3>
+          <ul class="text-sm space-y-1 list-disc list-inside text-gray-700">
+            <li>Create React App, Tailwind CSS</li>
+            <li>Adobe Premiere / edição básica de vídeo</li>
+            <li>Prompting para modelos multimodais</li>
+          </ul>
+        </div>
+        <div class="p-4 bg-gray-50 rounded-lg">
+          <h3 class="font-semibold mb-2">Pessoais</h3>
+          <ul class="text-sm space-y-1 list-disc list-inside text-gray-700">
+            <li>Comunicação clara</li>
+            <li>Organização e autonomia</li>
+            <li>Inovação e pensamento criativo</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-6">
+        <div class="bg-white border rounded-lg p-4 shadow-sm">
+          <h3 class="font-semibold text-lg mb-2">Formação</h3>
+          <p class="text-sm text-gray-600">Desenvolvimento Full Stack — Universidade Estácio de Sá, Juiz de Fora, MG</p>
+          <p class="text-xs text-gray-500 mt-2">Fev 2023 — Jul 2025</p>
+        </div>
+
+        <div class="bg-white border rounded-lg p-4 shadow-sm">
+          <h3 class="font-semibold text-lg mb-2">Experiência</h3>
+
+          <div class="mb-3">
+            <div class="font-semibold">Motorista de Aplicativo</div>
+            <div class="text-xs text-gray-500">Juiz de Fora, Dez 2021 — Atual</div>
+            <ul class="text-sm list-disc list-inside mt-2 text-gray-700">
+              <li>Otimização de rotas com GPS e foco em atendimento ao cliente.</li>
+            </ul>
+          </div>
+
+          <div class="mb-3">
+            <div class="font-semibold">Encarregado Operacional — Rodoviário Camilo dos Santos</div>
+            <div class="text-xs text-gray-500">Jan 2020 — Nov 2021</div>
+            <ul class="text-sm list-disc list-inside mt-2 text-gray-700">
+              <li>Liderança de equipe, implementação de processos e relatórios estratégicos.</li>
+            </ul>
+          </div>
+
+          <div>
+            <div class="font-semibold">Auxiliar Administrativo — Sociedade Eunice Weaver</div>
+            <div class="text-xs text-gray-500">2015 — 2019 (vários períodos)</div>
+            <ul class="text-sm list-disc list-inside mt-2 text-gray-700">
+              <li>Organização de documentos, suporte administrativo e atendimento.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h2 class="text-lg font-bold mb-4 border-b-2 border-[color:var(--accent)] pb-2">Projetos & Portfólio</h2>
+        <div class="grid md:grid-cols-2 gap-4">
+          <article class="p-4 bg-gray-50 rounded-lg shadow-sm">
+            <h3 class="font-semibold">Comerc.IAs — Site / Produção Comercial</h3>
+            <p class="text-sm text-gray-600 mt-1">Website de produção comercial com IA (aplicação React). Veja o site e o código no GitHub.</p>
+            <div class="mt-3 flex gap-2">
+              <a href="https://www.comercias.com.br/" target="_blank" rel="noopener" class="text-sm underline">Site</a>
+              <a href="https://github.com/alvaro-amorim/Comerc.IAs" target="_blank" rel="noopener" class="text-sm underline">Código</a>
+            </div>
+          </article>
+
+          <article class="p-4 bg-gray-50 rounded-lg shadow-sm">
+            <h3 class="font-semibold">Curriculum-Vitae — Layout do currículo</h3>
+            <p class="text-sm text-gray-600 mt-1">Versão do currículo em HTML para deploy (esta página).</p>
+            <div class="mt-3 flex gap-2">
+              <a href="https://github.com/alvaro-amorim/Curriculum-Vitae" target="_blank" rel="noopener" class="text-sm underline">Repositório</a>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <div class="bg-white border rounded-lg p-4 shadow-sm">
+        <h3 class="font-semibold mb-2">Fortalezas</h3>
+        <ul class="list-disc list-inside text-gray-700">
+          <li>Adaptabilidade e aprendizagem rápida</li>
+          <li>Foco em resultados e organização</li>
+          <li>Curiosidade em IA e produção multimídia</li>
+        </ul>
+
+        <div class="mt-4 text-sm">
+          <strong>Quer conversar?</strong> <a href="mailto:alvaroamorimjf@gmail.com" class="underline">Envie um e-mail</a>.
+        </div>
+      </div>
+    </section>
+
+    <footer class="p-4 text-center text-xs text-gray-500">
+      Desenvolvido por Álvaro Amorim — &copy; <span id="year"></span>
+    </footer>
+  </main>
+
+  <!-- html2pdf.js (CDN) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+
+  <script>
+    // Year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Image fallback: se assets/foto.png não carregar, mostra iniciais (AA)
+    const img = document.getElementById('profileImg');
+    const initials = document.getElementById('initials');
+
+    img.addEventListener('load', () => {
+      initials.classList.add('hidden');
+      img.classList.remove('hidden');
+    });
+
+    img.addEventListener('error', () => {
+      img.classList.add('hidden');
+      initials.classList.remove('hidden');
+      initials.textContent = 'AA';
+    });
+
+    // Tenta carregar imagem (se não existir, onerror será acionado)
+    img.src = img.src;
+
+    // Imprimir (janela do navegador)
+    document.getElementById('btnPrint').addEventListener('click', function () {
+      window.print();
+    });
+
+    // Gerar PDF (html2pdf)
+    document.getElementById('btnPdf').addEventListener('click', function () {
+      const element = document.getElementById('page-root');
+      if (!element) {
+        alert('Elemento principal não encontrado para gerar PDF.');
+        return;
+      }
+
+      const opt = {
+        margin:       0.35,
+        filename:     'Curriculo-Alvaro-Martins.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2, useCORS: true },
+        jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+      };
+
+      html2pdf().set(opt).from(element).save().catch(err => {
+        console.error('Erro ao gerar PDF:', err);
+        alert('Falha ao gerar PDF. Tente usar a opção Imprimir do navegador.');
+      });
+    });
+  </script>
+</body>
+</html>
