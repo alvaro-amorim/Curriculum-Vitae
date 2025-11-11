@@ -35,17 +35,17 @@
         }
     </style>
 </head>
-<body class="min-h-screen p-4 md:p-8 lg:p-12 text-gray-800">
-    <main id="page-root" class="max-w-5xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
-        <!-- Header (Compactado) -->
-        <header class="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-5 md:p-8 relative">
+<body class="min-h-screen p-2 md:p-6 lg:p-8 text-gray-800">
+    <main id="page-root" class="max-w-5xl mx-auto bg-white rounded-xl shadow-xl overflow-hidden">
+        <!-- Header (Muito Compactado) -->
+        <header class="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 md:p-6 relative">
             <div class="relative z-10 flex items-center gap-4">
-                <!-- Foto / iniciais (Reduzido) -->
+                <!-- Foto / iniciais (Reduzido ao máximo) -->
                 <div class="flex-shrink-0">
-                    <div id="photoWrap" class="w-20 h-20 md:w-28 md:h-28 rounded-full bg-white/10 border-4 border-white overflow-hidden shadow-lg flex items-center justify-center text-xl md:text-3xl font-bold text-white">
+                    <div id="photoWrap" class="w-16 h-16 md:w-24 md:h-24 rounded-full bg-white/10 border-3 border-white overflow-hidden shadow-lg flex items-center justify-center text-lg md:text-2xl font-bold text-white">
                         <img 
                             id="profileImg" 
-                            src="https://placehold.co/150x150/ffffff/000000?text=AA" 
+                            src="assets/foto.png" 
                             alt="Foto de Álvaro Martins" 
                             class="w-full h-full object-cover hidden" 
                             onerror="document.getElementById('profileImg').classList.add('hidden'); document.getElementById('initials').classList.remove('hidden');"
@@ -58,10 +58,10 @@
                 <div class="flex-1">
                     <div class="flex items-start">
                         <div class="flex-1">
-                            <h1 class="text-xl md:text-2xl font-extrabold tracking-tight">Álvaro Amorim de Oliveira Martins</h1>
-                            <p class="mt-1 text-xs md:text-sm opacity-95">Desenvolvedor Full Stack | IA, Vídeo & Produção Comercial</p>
-                            <div class="mt-2 flex flex-wrap items-center gap-2 text-xs">
-                                <a href="mailto:alvaroaom.jf@gmail.com" class="flex items-center gap-1 underline">
+                            <h1 class="text-lg md:text-xl font-extrabold tracking-tight">Álvaro Amorim de Oliveira Martins</h1>
+                            <p class="mt-0.5 text-xs opacity-95">Desenvolvedor Full Stack | IA, Vídeo & Produção Comercial</p>
+                            <div class="mt-1 flex flex-wrap items-center gap-2 text-xs">
+                                <a href="mailto:alvaroaom.jf@gmail.com" class="flex items-center gap-1 underline hover:text-white/80">
                                     <!-- Icone de Email (Lucide Mail) -->
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 opacity-90" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
                                     alvaroaom.jf@gmail.com
@@ -75,14 +75,14 @@
                         </div>
 
                         <!-- Botões Imprimir / Baixar (Ajustados para ter Download de Imagem) -->
-                        <div class="ml-4 no-print flex flex-col md:flex-row items-center gap-2">
-                            <button id="btnPrint" class="px-2 py-1 rounded-md border border-white/30 bg-white/10 text-white text-xs hover:bg-white/20 transition duration-150" title="Imprimir esta página">Imprimir</button>
-                            <button id="btnPng" class="px-2 py-1 rounded-md border border-white/30 bg-white/10 text-white text-xs hover:bg-white/20 transition duration-150" title="Baixar como Imagem PNG">Baixar (PNG)</button>
-                            <button id="btnPdf" class="px-2 py-1 rounded-md border border-white bg-white text-blue-700 text-xs font-medium hover:opacity-95 transition duration-150" title="Baixar como PDF">Baixar (PDF)</button>
+                        <div class="ml-2 no-print flex flex-col md:flex-row items-center gap-1">
+                            <button id="btnPrint" class="px-2 py-0.5 rounded-md border border-white/30 bg-white/10 text-white text-xs hover:bg-white/20 transition duration-150" title="Imprimir esta página">Imprimir</button>
+                            <button id="btnPng" class="px-2 py-0.5 rounded-md border border-white/30 bg-white/10 text-white text-xs hover:bg-white/20 transition duration-150" title="Baixar como Imagem PNG">Baixar (PNG)</button>
+                            <button id="btnPdf" class="px-2 py-0.5 rounded-md border border-white bg-white text-blue-700 text-xs font-medium hover:opacity-95 transition duration-150" title="Baixar como PDF">Baixar (PDF)</button>
                         </div>
                     </div>
 
-                    <div class="mt-3 text-xs opacity-90">
+                    <div class="mt-1.5 text-xs opacity-90">
                         <span class="inline-block bg-white/20 px-2 py-0.5 rounded-full">Full Stack — HTML • CSS • JS • React • Node</span>
                         <span class="ml-2 inline-block bg-white/10 px-2 py-0.5 rounded-full">IA • Edição de vídeo • Produção comercial</span>
                     </div>
@@ -91,35 +91,35 @@
             <div aria-hidden class="absolute inset-0 opacity-10 pointer-events-none"></div>
         </header>
 
-        <!-- Conteúdo (Compactado: p-8 e space-y-6) -->
-        <section class="p-6 md:p-8 lg:p-10 space-y-6">
+        <!-- Conteúdo (Compactado: p-4 e space-y-4) -->
+        <section class="p-4 md:p-6 lg:p-8 space-y-4">
             <div>
-                <h2 class="text-lg font-bold text-gray-800 mb-2 border-b border-[color:var(--accent)] pb-1.5">Resumo Profissional</h2>
-                <p class="text-sm text-gray-700 leading-relaxed">
+                <h2 class="text-base font-bold text-gray-800 mb-1 border-b border-[color:var(--accent)] pb-1">Resumo Profissional</h2>
+                <p class="text-xs text-gray-700 leading-normal">
                     Desenvolvedor Full Stack em formação, com experiência em gestão operacional, atendimento ao cliente e produção de conteúdo/vídeo comercial com auxílio de IA.
                     Habilidades em <strong>React, Node.js, APIs REST, Git</strong>, além de experiência prática em projetos de automação e criação de sites comerciais.
                 </p>
             </div>
 
-            <div class="grid md:grid-cols-3 gap-4">
-                <div class="p-3 bg-gray-50 rounded-lg">
-                    <h3 class="font-semibold mb-1">Técnicas</h3>
+            <div class="grid md:grid-cols-3 gap-3">
+                <div class="p-2 bg-gray-50 rounded-lg">
+                    <h3 class="font-semibold mb-1 text-sm">Técnicas</h3>
                     <ul class="text-xs space-y-0.5 list-disc list-inside text-gray-700">
                         <li>HTML, CSS, JavaScript, React, Node.js</li>
                         <li>Git / GitHub, MySQL, APIs REST</li>
                         <li>IA aplicada à geração de imagens e vídeo</li>
                     </ul>
                 </div>
-                <div class="p-3 bg-gray-50 rounded-lg">
-                    <h3 class="font-semibold mb-1">Ferramentas</h3>
+                <div class="p-2 bg-gray-50 rounded-lg">
+                    <h3 class="font-semibold mb-1 text-sm">Ferramentas</h3>
                     <ul class="text-xs space-y-0.5 list-disc list-inside text-gray-700">
                         <li>Create React App, Tailwind CSS</li>
                         <li>Adobe Premiere / edição básica de vídeo</li>
                         <li>Prompting para modelos multimodais</li>
                     </ul>
                 </div>
-                <div class="p-3 bg-gray-50 rounded-lg">
-                    <h3 class="font-semibold mb-1">Pessoais</h3>
+                <div class="p-2 bg-gray-50 rounded-lg">
+                    <h3 class="font-semibold mb-1 text-sm">Pessoais</h3>
                     <ul class="text-xs space-y-0.5 list-disc list-inside text-gray-700">
                         <li>Comunicação clara</li>
                         <li>Organização e autonomia</li>
@@ -128,28 +128,28 @@
                 </div>
             </div>
 
-            <div class="grid md:grid-cols-2 gap-4">
+            <div class="grid md:grid-cols-2 gap-3">
                 <div class="bg-white border rounded-lg p-3 shadow-sm">
-                    <h3 class="font-semibold text-base mb-1.5">Formação</h3>
+                    <h3 class="font-semibold text-base mb-1">Formação</h3>
                     <p class="text-sm text-gray-600">Desenvolvimento Full Stack — Universidade Estácio de Sá, Juiz de Fora, MG</p>
-                    <p class="text-xs text-gray-500 mt-1">Fev 2023 — Jul 2025</p>
+                    <p class="text-xs text-gray-500 mt-0.5">Fev 2023 — Jul 2025</p>
                 </div>
 
                 <div class="bg-white border rounded-lg p-3 shadow-sm">
-                    <h3 class="font-semibold text-base mb-1.5">Experiência</h3>
+                    <h3 class="font-semibold text-base mb-1">Experiência</h3>
 
-                    <div class="mb-2">
+                    <div class="mb-1.5">
                         <div class="font-semibold text-sm">Motorista de Aplicativo</div>
                         <div class="text-xs text-gray-500">Juiz de Fora, Dez 2021 — Atual</div>
-                        <ul class="text-xs list-disc list-inside mt-1 text-gray-700">
+                        <ul class="text-xs list-disc list-inside mt-0.5 text-gray-700">
                             <li>Otimização de rotas com GPS e foco em atendimento ao cliente.</li>
                         </ul>
                     </div>
 
-                    <div class="mb-2">
+                    <div class="mb-1.5">
                         <div class="font-semibold text-sm">Encarregado Operacional — Rodoviário Camilo dos Santos</div>
                         <div class="text-xs text-gray-500">Jan 2020 — Nov 2021</div>
-                        <ul class="text-xs list-disc list-inside mt-1 text-gray-700">
+                        <ul class="text-xs list-disc list-inside mt-0.5 text-gray-700">
                             <li>Liderança de equipe, implementação de processos e relatórios estratégicos.</li>
                         </ul>
                     </div>
@@ -157,7 +157,7 @@
                     <div>
                         <div class="font-semibold text-sm">Auxiliar Administrativo — Sociedade Eunice Weaver</div>
                         <div class="text-xs text-gray-500">2015 — 2019 (vários períodos)</div>
-                        <ul class="text-xs list-disc list-inside mt-1 text-gray-700">
+                        <ul class="text-xs list-disc list-inside mt-0.5 text-gray-700">
                             <li>Organização de documentos, suporte administrativo e atendimento.</li>
                         </ul>
                     </div>
@@ -165,41 +165,41 @@
             </div>
 
             <div>
-                <h2 class="text-lg font-bold mb-2 border-b border-[color:var(--accent)] pb-1.5">Projetos & Portfólio</h2>
-                <div class="grid md:grid-cols-2 gap-4">
+                <h2 class="text-base font-bold mb-1 border-b border-[color:var(--accent)] pb-1">Projetos & Portfólio</h2>
+                <div class="grid md:grid-cols-2 gap-3">
                     <article class="p-3 bg-gray-50 rounded-lg shadow-sm">
-                        <h3 class="font-semibold">Comerc.IAs — Site / Produção Comercial</h3>
+                        <h3 class="font-semibold text-sm">Comerc.IAs — Site / Produção Comercial</h3>
                         <p class="text-xs text-gray-600 mt-0.5">Website de produção comercial com IA (aplicação React). Veja o site e o código no GitHub.</p>
-                        <div class="mt-2 flex gap-2">
-                            <a href="https://www.comercias.com.br/" target="_blank" rel="noopener" class="text-sm underline hover:text-blue-600 transition">https://www.comercias.com.br/</a>
+                        <div class="mt-1 flex gap-2">
+                            <a href="https://www.comercias.com.br/" target="_blank" rel="noopener" class="text-xs underline hover:text-blue-600 transition">https://www.comercias.com.br/</a>
                         </div>
                     </article>
 
                     <article class="p-3 bg-gray-50 rounded-lg shadow-sm">
-                        <h3 class="font-semibold">Cardápio Glacê Confeitaria</h3>
+                        <h3 class="font-semibold text-sm">Cardápio Glacê Confeitaria</h3>
                         <p class="text-xs text-gray-600 mt-0.5">Cardápio completo com finalização de compra por whatsapp</p>
-                        <div class="mt-2 flex gap-2">
-                            <a href="https://cardapio-glace.vercel.app/" target="_blank" rel="noopener" class="text-sm underline hover:text-blue-600 transition">https://cardapio-glace.vercel.app/</a>
+                        <div class="mt-1 flex gap-2">
+                            <a href="https://cardapio-glace.vercel.app/" target="_blank" rel="noopener" class="text-xs underline hover:text-blue-600 transition">https://cardapio-glace.vercel.app/</a>
                         </div>
                     </article>
                 </div>
             </div>
 
             <div class="bg-white border rounded-lg p-3 shadow-sm">
-                <h3 class="font-semibold mb-1">Fortalezas</h3>
-                <ul class="list-disc list-inside text-sm text-gray-700">
+                <h3 class="font-semibold mb-1 text-sm">Fortalezas</h3>
+                <ul class="list-disc list-inside text-xs text-gray-700">
                     <li>Adaptabilidade e aprendizagem rápida</li>
                     <li>Foco em resultados e organização</li>
                     <li>Curiosidade em IA e produção multimídia</li>
                 </ul>
 
-                <div class="mt-3 text-sm">
+                <div class="mt-2 text-xs">
                     <strong>Quer conversar?</strong> <a href="mailto:alvaroaom.jf@gmail.com" class="underline hover:text-blue-600 transition">Envie um e-mail</a>.
                 </div>
             </div>
         </section>
 
-        <footer class="p-3 text-center text-xs text-gray-500">
+        <footer class="p-2 text-center text-xs text-gray-500">
             Desenvolvido por Álvaro Amorim — &copy; <span id="year"></span>
         </footer>
     </main>
@@ -266,8 +266,8 @@
             showMessage('Gerando PDF, aguarde...');
 
             const opt = {
-                // Margens mais estreitas para caber em uma página: [top, left, bottom, right]
-                margin:       [0.3, 0.35, 0.3, 0.35], 
+                // Margens ultra-estreitas para máxima compactação: [top, left, bottom, right]
+                margin:       [0.2, 0.3, 0.2, 0.3], 
                 filename:     'Curriculo-Alvaro-Martins.pdf',
                 image:        { type: 'jpeg', quality: 0.98 },
                 // Configuração html2canvas: desabilitar logging
