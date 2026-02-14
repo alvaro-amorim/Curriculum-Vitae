@@ -1,328 +1,932 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Álvaro Amorim — Currículo</title>
-    <meta name="description" content="Currículo e portfólio de Álvaro Amorim - Desenvolvedor Full Stack" />
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-        :root { --accent: #2563eb; }
-        body { 
-            font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; 
-            background: #f3f4f6; 
-        }
-        
-        /* Ocultar elementos com a classe no-print em impressão */
-        @media print {
-            .no-print { display: none !important; }
-            body { background: white !important; }
-            main { box-shadow: none !important; border-radius: 0 !important; }
-            /* Ajuste para evitar cortes */
-            html, body { margin: 0; padding: 0; }
-        }
-        /* Estilo para a caixa de mensagem/modal */
-        .message-box {
-            position: fixed;
-            inset: 0;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
-            z-index: 50;
-        }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0b1220" />
+  <title>Álvaro Amorim — Currículo</title>
+  <meta name="description" content="Currículo interativo de Álvaro Amorim — Desenvolvedor Full Stack (React | Node.js)." />
+
+  <style>
+    :root{
+      --bg: #0b1220;
+      --surface: rgba(255,255,255,.06);
+      --surface2: rgba(255,255,255,.10);
+      --border: rgba(255,255,255,.10);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.72);
+      --muted2: rgba(255,255,255,.55);
+      --accent: #7c3aed;
+      --accent2:#22c55e;
+      --shadow: 0 20px 50px rgba(0,0,0,.35);
+      --radius: 18px;
+      --radius2: 24px;
+      --maxw: 1100px;
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+
+    [data-theme="light"]{
+      --bg: #f5f7fb;
+      --surface: rgba(15,23,42,.05);
+      --surface2: rgba(15,23,42,.08);
+      --border: rgba(15,23,42,.12);
+      --text: rgba(15,23,42,.92);
+      --muted: rgba(15,23,42,.75);
+      --muted2: rgba(15,23,42,.55);
+      --shadow: 0 20px 50px rgba(2,6,23,.12);
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family: var(--font);
+      background:
+        radial-gradient(1200px 600px at 18% -10%, rgba(124,58,237,.35), transparent 60%),
+        radial-gradient(900px 500px at 110% 25%, rgba(34,197,94,.25), transparent 55%),
+        radial-gradient(900px 500px at 20% 120%, rgba(59,130,246,.20), transparent 55%),
+        var(--bg);
+      color: var(--text);
+      overflow-x:hidden;
+    }
+
+    a{ color:inherit; text-decoration:none; }
+    .container{
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding: 18px 18px 60px;
+    }
+
+    /* Topbar */
+    .topbar{
+      position: sticky;
+      top: 0;
+      z-index: 999;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      background: color-mix(in srgb, var(--bg) 60%, transparent);
+      border-bottom: 1px solid var(--border);
+    }
+    .topbar-inner{
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding: 14px 18px;
+      display:flex;
+      gap:12px;
+      align-items:center;
+      justify-content:space-between;
+    }
+    .brand{
+      display:flex; gap:12px; align-items:center;
+      min-width: 240px;
+    }
+    .dot{
+      width: 12px; height: 12px; border-radius:999px;
+      background: linear-gradient(135deg, var(--accent), #3b82f6);
+      box-shadow: 0 0 0 6px rgba(124,58,237,.15);
+      flex:none;
+    }
+    .brand h1{
+      font-size: 14px;
+      margin:0;
+      letter-spacing:.2px;
+      line-height:1.1;
+    }
+    .brand p{
+      margin: 3px 0 0;
+      font-size: 12px;
+      color: var(--muted2);
+    }
+
+    .actions{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      box-shadow: 0 10px 28px rgba(0,0,0,.15);
+      transition: transform .15s ease, background .15s ease, border-color .15s ease;
+      user-select:none;
+      cursor:pointer;
+      font-weight: 700;
+      letter-spacing: .2px;
+      line-height: 1;
+      font-size: 14px;
+      min-height: 48px;
+    }
+    .btn:hover{ transform: translateY(-1px); background: var(--surface2); border-color: color-mix(in srgb, var(--border) 60%, var(--accent) 40%); }
+    .btn:active{ transform: translateY(0px) scale(.99); }
+    .btn.primary{
+      border-color: color-mix(in srgb, var(--accent) 40%, var(--border) 60%);
+      background: linear-gradient(135deg, rgba(124,58,237,.25), rgba(59,130,246,.18));
+    }
+    .btn.success{
+      border-color: color-mix(in srgb, var(--accent2) 40%, var(--border) 60%);
+      background: linear-gradient(135deg, rgba(34,197,94,.20), rgba(16,185,129,.12));
+    }
+    .btn.small{
+      padding: 12px 14px;
+      font-size: 13px;
+      min-height: 44px;
+      border-radius: 12px;
+    }
+
+    .icon{
+      width: 18px; height: 18px; display:inline-block;
+    }
+
+    /* Layout card */
+    .hero{
+      margin-top: 18px;
+      display:grid;
+      grid-template-columns: 360px 1fr;
+      gap: 16px;
+    }
+    @media (max-width: 980px){
+      .hero{ grid-template-columns: 1fr; }
+      .brand{ min-width: unset; }
+      .actions{ justify-content:flex-start; }
+    }
+
+    .card{
+      border: 1px solid var(--border);
+      background: color-mix(in srgb, var(--surface) 88%, transparent);
+      border-radius: var(--radius2);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card-inner{ padding: 18px; }
+
+    .profile{
+      position: relative;
+      overflow:hidden;
+    }
+    .profile::before{
+      content:"";
+      position:absolute; inset:-1px;
+      background:
+        radial-gradient(500px 220px at 40% 10%, rgba(124,58,237,.40), transparent 60%),
+        radial-gradient(420px 260px at 90% 35%, rgba(34,197,94,.25), transparent 55%),
+        radial-gradient(420px 260px at 20% 90%, rgba(59,130,246,.20), transparent 55%);
+      filter: blur(0px);
+      opacity:.9;
+      pointer-events:none;
+    }
+    .profile .card-inner{
+      position: relative;
+      padding: 18px;
+    }
+
+    .avatar{
+      width: 112px; height: 112px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      overflow:hidden;
+      background: var(--surface);
+      box-shadow: 0 18px 40px rgba(0,0,0,.25);
+      flex:none;
+    }
+    .avatar img{
+      width:100%; height:100%;
+      object-fit: cover;
+      display:block;
+    }
+
+    .headline{
+      display:flex;
+      gap:14px;
+      align-items:center;
+    }
+    .name{
+      margin:0;
+      font-size: 22px;
+      letter-spacing:.2px;
+      line-height:1.1;
+    }
+    .role{
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-weight: 650;
+      font-size: 13px;
+    }
+    .pillrow{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top: 12px;
+    }
+    .pill{
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 650;
+    }
+
+    .contact{
+      margin-top: 14px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .row{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:space-between;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px 12px;
+      background: rgba(255,255,255,.03);
+    }
+    .row .label{
+      display:flex; flex-direction:column; gap:3px;
+      min-width: 0;
+    }
+    .row .label span:nth-child(1){
+      font-size: 11px;
+      color: var(--muted2);
+      letter-spacing: .25px;
+      text-transform: uppercase;
+      font-weight: 800;
+    }
+    .row .label span:nth-child(2){
+      font-size: 13px;
+      color: var(--text);
+      font-weight: 700;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+      max-width: 240px;
+    }
+
+    .link{
+      opacity: .95;
+      text-decoration: underline;
+      text-decoration-color: color-mix(in srgb, var(--border) 60%, var(--accent) 40%);
+      text-underline-offset: 3px;
+    }
+
+    .toast{
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 22px;
+      z-index: 9999;
+      background: color-mix(in srgb, var(--bg) 85%, transparent);
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      border-radius: 999px;
+      box-shadow: var(--shadow);
+      font-weight: 750;
+      font-size: 13px;
+      color: var(--text);
+      opacity:0;
+      pointer-events:none;
+      transition: opacity .2s ease, transform .2s ease;
+    }
+    .toast.show{
+      opacity:1;
+      transform: translateX(-50%) translateY(-2px);
+    }
+
+    /* Main content */
+    .section{
+      margin-bottom: 16px;
+    }
+    .section h2{
+      margin: 0 0 10px;
+      font-size: 13px;
+      color: var(--muted2);
+      text-transform: uppercase;
+      letter-spacing: .35px;
+    }
+
+    .summary{
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.03);
+      padding: 14px 14px;
+    }
+    .summary ul{
+      margin:0;
+      padding-left: 18px;
+      color: var(--muted);
+      line-height: 1.55;
+      font-weight: 600;
+      font-size: 13.5px;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 980px){
+      .grid{ grid-template-columns: 1fr; }
+    }
+
+    .tags{
+      display:flex; flex-wrap:wrap; gap:8px;
+    }
+    .tag{
+      padding: 9px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 750;
+      transition: transform .15s ease, border-color .15s ease, background .15s ease;
+      cursor: default;
+    }
+    .tag:hover{
+      transform: translateY(-1px);
+      background: rgba(255,255,255,.05);
+      border-color: color-mix(in srgb, var(--border) 60%, var(--accent) 40%);
+    }
+
+    .filters{
+      display:flex; gap:8px; flex-wrap:wrap;
+      margin-bottom: 10px;
+    }
+
+    .timeline{
+      display:flex;
+      flex-direction:column;
+      gap: 12px;
+    }
+    .item{
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.03);
+      padding: 14px 14px;
+    }
+    .item .top{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      justify-content:space-between;
+      flex-wrap:wrap;
+    }
+    .item h3{
+      margin:0;
+      font-size: 14px;
+      letter-spacing:.2px;
+    }
+    .item .meta{
+      color: var(--muted2);
+      font-weight: 750;
+      font-size: 12px;
+      margin-top: 3px;
+    }
+    .item ul{
+      margin: 10px 0 0;
+      padding-left: 18px;
+      color: var(--muted);
+      line-height: 1.55;
+      font-weight: 600;
+      font-size: 13.5px;
+    }
+
+    .projects{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 980px){
+      .projects{ grid-template-columns: 1fr; }
+    }
+    .project{
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.03);
+      padding: 14px 14px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      min-height: 140px;
+      transition: transform .15s ease, border-color .15s ease, background .15s ease;
+    }
+    .project:hover{
+      transform: translateY(-1px);
+      background: rgba(255,255,255,.05);
+      border-color: color-mix(in srgb, var(--border) 60%, var(--accent) 40%);
+    }
+    .project h3{ margin:0; font-size: 14px; }
+    .project p{
+      margin:0;
+      color: var(--muted);
+      font-weight: 600;
+      line-height: 1.5;
+      font-size: 13.5px;
+    }
+    .project .foot{
+      margin-top:auto;
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+    }
+    .mini{
+      font-size: 12px;
+      color: var(--muted2);
+      font-weight: 800;
+    }
+
+    /* Modal */
+    dialog{
+      border: none;
+      padding: 0;
+      border-radius: 20px;
+      width: min(720px, calc(100vw - 28px));
+      background: color-mix(in srgb, var(--bg) 88%, transparent);
+      color: var(--text);
+      box-shadow: 0 40px 120px rgba(0,0,0,.50);
+    }
+    dialog::backdrop{
+      background: rgba(0,0,0,.55);
+      backdrop-filter: blur(6px);
+    }
+    .modal{
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow:hidden;
+    }
+    .modal-head{
+      padding: 14px 16px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      border-bottom: 1px solid var(--border);
+      background: rgba(255,255,255,.03);
+    }
+    .modal-head strong{ font-size: 14px; letter-spacing:.2px; }
+    .modal-body{ padding: 16px; }
+    .modal-body p{
+      margin: 0 0 12px;
+      color: var(--muted);
+      line-height: 1.6;
+      font-weight: 650;
+      font-size: 13.5px;
+    }
+
+    /* reveal animation */
+    .reveal{ opacity:0; transform: translateY(10px); transition: opacity .5s ease, transform .5s ease; }
+    .reveal.show{ opacity:1; transform: translateY(0px); }
+    @media (prefers-reduced-motion: reduce){
+      .reveal{ transition:none; transform:none; }
+      .btn{ transition:none; }
+      .project{ transition:none; }
+    }
+
+    /* Print */
+    @media print{
+      body{ background: white !important; color: #0f172a !important; }
+      .topbar{ display:none !important; }
+      .card{ box-shadow: none !important; }
+      .card, .item, .project, .summary, .row, .tag{ border-color: rgba(15,23,42,.18) !important; }
+      a{ text-decoration: none !important; }
+      .reveal{ opacity:1 !important; transform:none !important; }
+      .project:hover{ transform:none !important; }
+      dialog{ display:none !important; }
+    }
+  </style>
 </head>
-<body class="min-h-screen p-2 md:p-6 lg:p-8 text-gray-800">
-    <main id="page-root" class="max-w-5xl mx-auto bg-white rounded-xl shadow-xl overflow-hidden">
-        <!-- Header (Muito Compactado) -->
-        <header class="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 md:p-6 relative">
-            <div class="relative z-10 flex items-center gap-4">
-                <!-- Foto / iniciais (Reduzido ao máximo) -->
-                <div class="flex-shrink-0">
-                    <div id="photoWrap" class="w-16 h-16 md:w-24 md:h-24 rounded-full bg-white/10 border-3 border-white overflow-hidden shadow-lg flex items-center justify-center text-lg md:text-2xl font-bold text-white">
-                        <img 
-                            id="profileImg" 
-                            src="assets/foto.png" 
-                            alt="Foto de Álvaro Martins" 
-                            class="w-full h-full object-cover hidden" 
-                            onerror="document.getElementById('profileImg').classList.add('hidden'); document.getElementById('initials').classList.remove('hidden');"
-                            onload="document.getElementById('profileImg').classList.remove('hidden'); document.getElementById('initials').classList.add('hidden');"
-                        />
-                        <span id="initials" class="block">AA</span>
-                    </div>
-                </div>
 
-                <div class="flex-1">
-                    <div class="flex items-start">
-                        <div class="flex-1">
-                            <h1 class="text-lg md:text-xl font-extrabold tracking-tight">Álvaro Amorim de Oliveira Martins</h1>
-                            <p class="mt-0.5 text-xs opacity-95">Desenvolvedor Full Stack | IA, Vídeo & Produção Comercial</p>
-                            <div class="mt-1 flex flex-wrap items-center gap-2 text-xs">
-                                <a href="mailto:alvaroaom.jf@gmail.com" class="flex items-center gap-1 underline hover:text-white/80">
-                                    <!-- Icone de Email (Lucide Mail) -->
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 opacity-90" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-                                    alvaroaom.jf@gmail.com
-                                </a>
-                                <div class="flex items-center gap-1">
-                                    <!-- Icone de Telefone (Lucide Phone) -->
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 opacity-90" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.63A2 2 0 0 1 4.08 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-                                    <span>(32) 99114-7944</span>
-                                </div>
-                            </div>
-                        </div>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <span class="dot" aria-hidden="true"></span>
+        <div>
+          <h1>Currículo Interativo</h1>
+          <p>Álvaro Amorim • Full Stack (React | Node.js)</p>
+        </div>
+      </div>
 
-                        <!-- Botões Imprimir / Baixar (Ajustados para ter Download de Imagem) -->
-                        <div class="ml-2 no-print flex flex-col md:flex-row items-center gap-1">
-                            <button id="btnPrint" class="px-2 py-0.5 rounded-md border border-white/30 bg-white/10 text-white text-xs hover:bg-white/20 transition duration-150" title="Imprimir esta página">Imprimir</button>
-                            <button id="btnPng" class="px-2 py-0.5 rounded-md border border-white/30 bg-white/10 text-white text-xs hover:bg-white/20 transition duration-150" title="Baixar como Imagem PNG">Baixar (PNG)</button>
-                            <button id="btnPdf" class="px-2 py-0.5 rounded-md border border-white bg-white text-blue-700 text-xs font-medium hover:opacity-95 transition duration-150" title="Baixar como PDF">Baixar (PDF)</button>
-                        </div>
-                    </div>
+      <div class="actions">
+        <a class="btn primary" href="/Alvaro_Amorim_CV_2026_1pg.pdf" download>
+          <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M12 3v10m0 0 4-4m-4 4-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          Baixar PDF
+        </a>
 
-                    <div class="mt-1.5 text-xs opacity-90">
-                        <span class="inline-block bg-white/20 px-2 py-0.5 rounded-full">Full Stack — HTML • CSS • JS • React • Node</span>
-                        <span class="ml-2 inline-block bg-white/10 px-2 py-0.5 rounded-full">IA • Edição de vídeo • Produção comercial</span>
-                    </div>
-                </div>
+        <a class="btn success" href="/Alvaro_Amorim_CV_2026_1pg.docx" download>
+          <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M8 3h6l4 4v14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="2"/>
+            <path d="M14 3v5h5" stroke="currentColor" stroke-width="2"/>
+          </svg>
+          Baixar DOCX
+        </a>
+
+        <button class="btn small" id="printBtn" type="button" title="Imprimir / Salvar como PDF">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M7 8V4h10v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M7 17h10v3H7v-3Z" stroke="currentColor" stroke-width="2"/>
+            <path d="M6 16H5a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          Imprimir
+        </button>
+
+        <button class="btn small" id="themeBtn" type="button" title="Alternar tema">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M12 3a7 7 0 1 0 9 9 9 9 0 0 1-9-9Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          Tema
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="hero">
+      <!-- LEFT -->
+      <section class="card profile reveal">
+        <div class="card-inner">
+          <div class="headline">
+            <div class="avatar" aria-label="Foto de perfil">
+              <img src="imagem.png" alt="Foto de Álvaro Amorim" />
             </div>
-            <div aria-hidden class="absolute inset-0 opacity-10 pointer-events-none"></div>
-        </header>
 
-        <!-- Conteúdo (Compactado: p-4 e space-y-4) -->
-        <section class="p-4 md:p-6 lg:p-8 space-y-4">
             <div>
-                <h2 class="text-base font-bold text-gray-800 mb-1 border-b border-[color:var(--accent)] pb-1">Resumo Profissional</h2>
-                <p class="text-xs text-gray-700 leading-normal">
-                    Desenvolvedor Full Stack em formação, com experiência em gestão operacional, atendimento ao cliente e produção de conteúdo/vídeo comercial com auxílio de IA.
-                    Habilidades em <strong>React, Node.js, APIs REST, Git</strong>, além de experiência prática em projetos de automação e criação de sites comerciais.
-                </p>
+              <h2 class="name">Álvaro Amorim de Oliveira Martins</h2>
+              <p class="role">Desenvolvedor Full Stack (React | Node.js) • Aplicações Web • APIs REST</p>
+
+              <div class="pillrow" aria-label="Destaques">
+                <span class="pill">React</span>
+                <span class="pill">Node.js</span>
+                <span class="pill">APIs REST</span>
+                <span class="pill">MySQL</span>
+                <span class="pill">Deploy (Vercel)</span>
+                <span class="pill">Git/GitHub</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="contact" aria-label="Contato">
+            <div class="row">
+              <div class="label">
+                <span>Local</span>
+                <span>Juiz de Fora, MG</span>
+              </div>
+              <span class="pill">Brasil</span>
             </div>
 
-            <div class="grid md:grid-cols-3 gap-3">
-                <div class="p-2 bg-gray-50 rounded-lg">
-                    <h3 class="font-semibold mb-1 text-sm">Técnicas</h3>
-                    <ul class="text-xs space-y-0.5 list-disc list-inside text-gray-700">
-                        <li>HTML, CSS, JavaScript, React, Node.js</li>
-                        <li>Git / GitHub, MySQL, APIs REST</li>
-                        <li>IA aplicada à geração de imagens e vídeo</li>
-                    </ul>
-                </div>
-                <div class="p-2 bg-gray-50 rounded-lg">
-                    <h3 class="font-semibold mb-1 text-sm">Ferramentas</h3>
-                    <ul class="text-xs space-y-0.5 list-disc list-inside text-gray-700">
-                        <li>Create React App, Tailwind CSS</li>
-                        <li>Adobe Premiere / edição básica de vídeo</li>
-                        <li>Prompting para modelos multimodais</li>
-                    </ul>
-                </div>
-                <div class="p-2 bg-gray-50 rounded-lg">
-                    <h3 class="font-semibold mb-1 text-sm">Pessoais</h3>
-                    <ul class="text-xs space-y-0.5 list-disc list-inside text-gray-700">
-                        <li>Comunicação clara</li>
-                        <li>Organização e autonomia</li>
-                        <li>Inovação e pensamento criativo</li>
-                    </ul>
-                </div>
+            <div class="row">
+              <div class="label">
+                <span>Telefone</span>
+                <span id="phoneText">(32) 99114-7944</span>
+              </div>
+              <button class="btn small" type="button" data-copy="#phoneText">Copiar</button>
             </div>
 
-            <div class="grid md:grid-cols-2 gap-3">
-                <div class="bg-white border rounded-lg p-3 shadow-sm">
-                    <h3 class="font-semibold text-base mb-1">Formação</h3>
-                    <p class="text-sm text-gray-600">Desenvolvimento Full Stack — Universidade Estácio de Sá, Juiz de Fora, MG</p>
-                    <p class="text-xs text-gray-500 mt-0.5">Fev 2023 — Jul 2025</p>
-                </div>
+            <div class="row">
+              <div class="label">
+                <span>E-mail</span>
+                <span id="emailText">alvaroaom.jf@gmail.com</span>
+              </div>
+              <button class="btn small" type="button" data-copy="#emailText">Copiar</button>
+            </div>
 
-                <div class="bg-white border rounded-lg p-3 shadow-sm">
-                    <h3 class="font-semibold text-base mb-1">Experiência</h3>
+            <div class="row">
+              <div class="label">
+                <span>Portfólio</span>
+                <span><a class="link" href="https://www.comercias.com.br/" target="_blank" rel="noreferrer">comercias.com.br</a></span>
+              </div>
+              <a class="btn small" href="https://www.comercias.com.br/" target="_blank" rel="noreferrer">Abrir</a>
+            </div>
 
-                    <div class="mb-1.5">
-                        <div class="font-semibold text-sm">Motorista de Aplicativo</div>
-                        <div class="text-xs text-gray-500">Juiz de Fora, Dez 2021 — Atual</div>
-                        <ul class="text-xs list-disc list-inside mt-0.5 text-gray-700">
-                            <li>Otimização de rotas com GPS e foco em atendimento ao cliente.</li>
-                        </ul>
-                    </div>
+            <div class="row">
+              <div class="label">
+                <span>Projeto</span>
+                <span><a class="link" href="https://cardapio-glace.vercel.app/" target="_blank" rel="noreferrer">cardapio-glace.vercel.app</a></span>
+              </div>
+              <a class="btn small" href="https://cardapio-glace.vercel.app/" target="_blank" rel="noreferrer">Abrir</a>
+            </div>
+          </div>
+        </div>
+      </section>
 
-                    <div class="mb-1.5">
-                        <div class="font-semibold text-sm">Encarregado Operacional — Rodoviário Camilo dos Santos</div>
-                        <div class="text-xs text-gray-500">Jan 2020 — Nov 2021</div>
-                        <ul class="text-xs list-disc list-inside mt-0.5 text-gray-700">
-                            <li>Liderança de equipe, implementação de processos e relatórios estratégicos.</li>
-                        </ul>
-                    </div>
+      <!-- RIGHT -->
+      <main class="card reveal">
+        <div class="card-inner">
+          <section class="section">
+            <h2>Resumo</h2>
+            <div class="summary">
+              <ul>
+                <li>Formado em Desenvolvimento Full Stack, com foco em JavaScript (ES6+), React e Node.js para aplicações web responsivas e orientadas a produto.</li>
+                <li>Entrega de projetos em produção com organização de código, versionamento (Git) e integrações via APIs REST; base em MySQL.</li>
+                <li>Vivência prévia em liderança operacional: disciplina de processos, priorização e comunicação objetiva.</li>
+              </ul>
+            </div>
+          </section>
 
+          <div class="grid">
+            <section class="section">
+              <h2>Tecnologias</h2>
+
+              <div class="filters" aria-label="Filtros de habilidades">
+                <button class="btn small" type="button" data-skill-filter="all">Todas</button>
+                <button class="btn small" type="button" data-skill-filter="front">Front-end</button>
+                <button class="btn small" type="button" data-skill-filter="back">Back-end</button>
+                <button class="btn small" type="button" data-skill-filter="devops">DevOps</button>
+                <button class="btn small" type="button" data-skill-filter="other">Outros</button>
+              </div>
+
+              <div class="tags" id="skillTags">
+                <span class="tag" data-skill="front">React</span>
+                <span class="tag" data-skill="front">JavaScript (ES6+)</span>
+                <span class="tag" data-skill="front">HTML5</span>
+                <span class="tag" data-skill="front">CSS3</span>
+                <span class="tag" data-skill="front">Tailwind CSS</span>
+
+                <span class="tag" data-skill="back">Node.js</span>
+                <span class="tag" data-skill="back">APIs REST</span>
+                <span class="tag" data-skill="back">MySQL</span>
+
+                <span class="tag" data-skill="devops">Git/GitHub</span>
+                <span class="tag" data-skill="devops">npm</span>
+                <span class="tag" data-skill="devops">Deploy (Vercel)</span>
+
+                <span class="tag" data-skill="other">AWS (fundamentos)</span>
+                <span class="tag" data-skill="other">Segurança de endpoint (Cisco)</span>
+              </div>
+            </section>
+
+            <section class="section">
+              <h2>Formação</h2>
+              <div class="timeline">
+                <div class="item">
+                  <div class="top">
                     <div>
-                        <div class="font-semibold text-sm">Auxiliar Administrativo — Sociedade Eunice Weaver</div>
-                        <div class="text-xs text-gray-500">2015 — 2019 (vários períodos)</div>
-                        <ul class="text-xs list-disc list-inside mt-0.5 text-gray-700">
-                            <li>Organização de documentos, suporte administrativo e atendimento.</li>
-                        </ul>
+                      <h3>Tecnólogo em Desenvolvimento Full Stack — Estácio</h3>
+                      <div class="meta">Centro Universitário Estácio de Santa Catarina</div>
                     </div>
+                    <span class="pill">2025</span>
+                  </div>
+                  <ul>
+                    <li>Conclusão: 03/07/2025 • Colação: 26/09/2025</li>
+                  </ul>
                 </div>
-            </div>
 
-            <div>
-                <h2 class="text-base font-bold mb-1 border-b border-[color:var(--accent)] pb-1">Projetos & Portfólio</h2>
-                <div class="grid md:grid-cols-2 gap-3">
-                    <article class="p-3 bg-gray-50 rounded-lg shadow-sm">
-                        <h3 class="font-semibold text-sm">Comerc.IAs — Site / Produção Comercial</h3>
-                        <p class="text-xs text-gray-600 mt-0.5">Website de produção comercial com IA (aplicação React). Veja o site e o código no GitHub.</p>
-                        <div class="mt-1 flex gap-2">
-                            <a href="https://www.comercias.com.br/" target="_blank" rel="noopener" class="text-xs underline hover:text-blue-600 transition">https://www.comercias.com.br/</a>
-                        </div>
-                    </article>
-
-                    <article class="p-3 bg-gray-50 rounded-lg shadow-sm">
-                        <h3 class="font-semibold text-sm">Cardápio Glacê Confeitaria</h3>
-                        <p class="text-xs text-gray-600 mt-0.5">Cardápio completo com finalização de compra por whatsapp</p>
-                        <div class="mt-1 flex gap-2">
-                            <a href="https://cardapio-glace.vercel.app/" target="_blank" rel="noopener" class="text-xs underline hover:text-blue-600 transition">https://cardapio-glace.vercel.app/</a>
-                        </div>
-                    </article>
+                <div class="item">
+                  <div class="top">
+                    <div>
+                      <h3>Certificações e cursos</h3>
+                      <div class="meta">AWS • Cisco • IA aplicada a negócios</div>
+                    </div>
+                    <span class="pill">2024–2026</span>
+                  </div>
+                  <ul>
+                    <li>AWS Discovery Day — Computação em Nuvem (5h) — 27/05/2024</li>
+                    <li>Capacitação AWS — Computação em Nuvem (10h) — 03/06/2024 a 10/06/2024</li>
+                    <li>Cisco Networking Academy — Segurança de endpoint — 07/11/2024</li>
+                    <li>Pré-MBA em IA para Negócios — EXAME Education / Saint Paul (3h) — 20/01/2026</li>
+                  </ul>
                 </div>
-            </div>
+              </div>
+            </section>
+          </div>
 
-            <div class="bg-white border rounded-lg p-3 shadow-sm">
-                <h3 class="font-semibold mb-1 text-sm">Fortalezas</h3>
-                <ul class="list-disc list-inside text-xs text-gray-700">
-                    <li>Adaptabilidade e aprendizagem rápida</li>
-                    <li>Foco em resultados e organização</li>
-                    <li>Curiosidade em IA e produção multimídia</li>
+          <section class="section">
+            <h2>Projetos (produção)</h2>
+            <div class="projects">
+              <article class="project" data-project="comerc">
+                <div>
+                  <h3>Comerc.IAs — Website/portfólio em React</h3>
+                  <p>UI responsiva e componentizada, com estrutura voltada à evolução incremental do produto e apresentação profissional de serviços.</p>
+                </div>
+                <div class="foot">
+                  <span class="mini">React • Componentização • UI/UX</span>
+                  <button class="btn small" type="button" data-open="comerc">Detalhes</button>
+                </div>
+              </article>
+
+              <article class="project" data-project="glace">
+                <div>
+                  <h3>Cardápio Glacê — Catálogo + compra via WhatsApp</h3>
+                  <p>Fluxo direto de navegação/seleção de itens com CTA de compra. Publicado e mantido via Git, com deploy no Vercel.</p>
+                </div>
+                <div class="foot">
+                  <span class="mini">Web App • CTA • Deploy</span>
+                  <button class="btn small" type="button" data-open="glace">Detalhes</button>
+                </div>
+              </article>
+            </div>
+          </section>
+
+          <section class="section">
+            <h2>Experiência</h2>
+            <div class="timeline">
+              <div class="item">
+                <div class="top">
+                  <div>
+                    <h3>Comerc.IAs (projeto próprio) — Desenvolvedor Full Stack</h3>
+                    <div class="meta">2025 — atual</div>
+                  </div>
+                  <span class="pill">Produto</span>
+                </div>
+                <ul>
+                  <li>Desenvolvimento e manutenção de websites/landing pages com foco em performance, clareza de mensagem e conversão.</li>
+                  <li>Iteração rápida a partir de feedback: ajustes em UI, conteúdo e estrutura para melhorar entendimento e tomada de decisão do usuário.</li>
+                  <li>Versionamento e organização de código para continuidade e evolução do projeto.</li>
                 </ul>
+              </div>
 
-                <div class="mt-2 text-xs">
-                    <strong>Quer conversar?</strong> <a href="mailto:alvaroaom.jf@gmail.com" class="underline hover:text-blue-600 transition">Envie um e-mail</a>.
+              <div class="item">
+                <div class="top">
+                  <div>
+                    <h3>Experiência transferível (resumo)</h3>
+                    <div class="meta">Operações • Processos • Liderança</div>
+                  </div>
+                  <span class="pill">Base</span>
                 </div>
+                <ul>
+                  <li>Encarregado Operacional (Rodoviário Camilo dos Santos, 2020–2021)</li>
+                  <li>Auxiliar Administrativo (Sociedade Eunice Weaver, 2015–2019)</li>
+                  <li>Motorista de aplicativo (autônomo, 2021–atual)</li>
+                </ul>
+              </div>
             </div>
-        </section>
+          </section>
 
-        <footer class="p-2 text-center text-xs text-gray-500">
-            Desenvolvido por Álvaro Amorim — &copy; <span id="year"></span>
-        </footer>
-    </main>
+          <section class="section">
+            <h2>Links</h2>
+            <div class="summary">
+              <ul>
+                <li>Portfólio: <a class="link" href="https://www.comercias.com.br/" target="_blank" rel="noreferrer">https://www.comercias.com.br/</a></li>
+                <li>Projeto: <a class="link" href="https://cardapio-glace.vercel.app/" target="_blank" rel="noreferrer">https://cardapio-glace.vercel.app/</a></li>
+              </ul>
+            </div>
+          </section>
 
-    <!-- html2pdf.js (CDN) e html2canvas -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+        </div>
+      </main>
+    </div>
+  </div>
 
-    <script>
-        // Funções auxiliares para feedback visual
-        const showMessage = (msg) => {
-             // Remove mensagem anterior se existir
-            const existingMessage = document.getElementById('temp-message');
-            if(existingMessage) existingMessage.remove();
+  <!-- Modal -->
+  <dialog id="projectDialog" aria-label="Detalhes do projeto">
+    <div class="modal">
+      <div class="modal-head">
+        <strong id="dlgTitle">Projeto</strong>
+        <button class="btn small" id="dlgClose" type="button">Fechar</button>
+      </div>
+      <div class="modal-body">
+        <p id="dlgBody"></p>
+        <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+          <a class="btn primary" id="dlgLink" href="#" target="_blank" rel="noreferrer">Abrir link</a>
+          <button class="btn small" id="dlgCopy" type="button">Copiar link</button>
+        </div>
+      </div>
+    </div>
+  </dialog>
 
-            const messageBox = document.createElement('div');
-            messageBox.id = 'temp-message';
-            messageBox.className = 'message-box';
-            messageBox.innerHTML = `
-                <div class="bg-white p-6 rounded-lg shadow-2xl max-w-sm w-full">
-                    <p class="text-gray-800">${msg}</p>
-                    <button class="mt-4 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition" onclick="document.getElementById('temp-message').remove()">Fechar</button>
-                </div>
-            `;
-            document.body.appendChild(messageBox);
-            // Mensagem desaparece após 5 segundos, a menos que seja fechada manualmente
-            setTimeout(() => {
-                const tempMsg = document.getElementById('temp-message');
-                if(tempMsg) tempMsg.remove();
-            }, 5000);
-        };
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-        // Atualizar ano no footer
-        document.getElementById('year').textContent = new Date().getFullYear();
+  <script>
+    // Theme (persist)
+    const root = document.documentElement;
+    const themeBtn = document.getElementById("themeBtn");
+    const savedTheme = localStorage.getItem("cv_theme");
+    if (savedTheme) root.setAttribute("data-theme", savedTheme);
 
-        // Tenta carregar imagem, senão mostra iniciais (AA)
-        const img = document.getElementById('profileImg');
-        const initials = document.getElementById('initials');
+    themeBtn.addEventListener("click", () => {
+      const current = root.getAttribute("data-theme") || "dark";
+      const next = current === "dark" ? "light" : "dark";
+      root.setAttribute("data-theme", next);
+      localStorage.setItem("cv_theme", next);
+      toast(next === "dark" ? "Tema escuro ativado" : "Tema claro ativado");
+    });
 
-        // Garante que o fallback inicial seja 'AA' se a imagem não carregar imediatamente
-        img.addEventListener('error', () => {
-             // O evento onerror já está no HTML, mas reafirmo a lógica
-             if (initials) initials.textContent = 'AA';
+    // Print
+    document.getElementById("printBtn").addEventListener("click", () => window.print());
+
+    // Toast
+    const toastEl = document.getElementById("toast");
+    let toastTimer;
+    function toast(msg){
+      clearTimeout(toastTimer);
+      toastEl.textContent = msg;
+      toastEl.classList.add("show");
+      toastTimer = setTimeout(() => toastEl.classList.remove("show"), 1600);
+    }
+
+    // Copy buttons
+    document.querySelectorAll("[data-copy]").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        const sel = btn.getAttribute("data-copy");
+        const el = document.querySelector(sel);
+        const text = el ? el.textContent.trim() : "";
+        if (!text) return;
+        try{
+          await navigator.clipboard.writeText(text);
+          toast("Copiado para a área de transferência");
+        }catch{
+          // fallback
+          const t = document.createElement("textarea");
+          t.value = text;
+          document.body.appendChild(t);
+          t.select();
+          document.execCommand("copy");
+          t.remove();
+          toast("Copiado");
+        }
+      });
+    });
+
+    // Skills filter
+    const tags = Array.from(document.querySelectorAll("#skillTags .tag"));
+    document.querySelectorAll("[data-skill-filter]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const filter = btn.getAttribute("data-skill-filter");
+        tags.forEach(tag => {
+          const cat = tag.getAttribute("data-skill");
+          tag.style.display = (filter === "all" || cat === filter) ? "inline-flex" : "none";
         });
+        toast(filter === "all" ? "Mostrando todas as skills" : `Filtro: ${btn.textContent}`);
+      });
+    });
 
-        // Imprimir (janela do navegador)
-        document.getElementById('btnPrint').addEventListener('click', function () {
-            window.print();
-        });
+    // Reveal on scroll
+    const revealEls = document.querySelectorAll(".reveal");
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) e.target.classList.add("show");
+      });
+    }, { threshold: 0.10 });
+    revealEls.forEach(el => io.observe(el));
 
-        // Gerar PDF (html2pdf)
-        document.getElementById('btnPdf').addEventListener('click', function () {
-            // Verifica se a biblioteca html2pdf foi carregada
-            if (typeof html2pdf === 'undefined') {
-                 showMessage('Erro: A biblioteca html2pdf não foi carregada. Tente novamente ou use a opção Imprimir.');
-                 return;
-            }
+    // Projects modal
+    const dialog = document.getElementById("projectDialog");
+    const dlgTitle = document.getElementById("dlgTitle");
+    const dlgBody = document.getElementById("dlgBody");
+    const dlgLink = document.getElementById("dlgLink");
+    const dlgClose = document.getElementById("dlgClose");
+    const dlgCopy = document.getElementById("dlgCopy");
 
-            const element = document.getElementById('page-root');
-            if (!element) {
-                showMessage('Elemento principal não encontrado para gerar PDF.');
-                return;
-            }
-            
-            showMessage('Gerando PDF, aguarde...');
+    const projects = {
+      comerc: {
+        title: "Comerc.IAs — Website/portfólio em React",
+        body:
+          "Página institucional/portfólio com foco em apresentação clara, layout moderno e estrutura preparada para evolução. Componentização, responsividade e organização para manutenção contínua.",
+        link: "https://www.comercias.com.br/"
+      },
+      glace: {
+        title: "Cardápio Glacê — Catálogo + compra via WhatsApp",
+        body:
+          "Web app para navegação e seleção de itens com CTA direto para compra via WhatsApp. Publicação e manutenção via Git, com deploy no Vercel para entrega rápida e estável.",
+        link: "https://cardapio-glace.vercel.app/"
+      }
+    };
 
-            const opt = {
-                // Margens ultra-estreitas para máxima compactação: [top, left, bottom, right]
-                margin:       [0.2, 0.3, 0.2, 0.3], 
-                filename:     'Curriculo-Alvaro-Martins.pdf',
-                image:        { type: 'jpeg', quality: 0.98 },
-                // Configuração html2canvas: desabilitar logging
-                html2canvas:  { scale: 2, useCORS: true, logging: false }, 
-                jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
-            };
+    document.querySelectorAll("[data-open]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const key = btn.getAttribute("data-open");
+        const p = projects[key];
+        if (!p) return;
+        dlgTitle.textContent = p.title;
+        dlgBody.textContent = p.body;
+        dlgLink.href = p.link;
+        dlgLink.textContent = "Abrir link";
+        dialog.showModal();
+      });
+    });
 
-            // Nova implementação com .then() para ser mais robusta
-            html2pdf().set(opt).from(element).save().then(() => {
-                 const tempMsg = document.getElementById('temp-message');
-                 if(tempMsg) tempMsg.remove();
-            }).catch(err => {
-                console.error('Erro ao gerar PDF:', err);
-                showMessage('Falha ao gerar PDF. Ocorreu um erro inesperado. Tente usar a opção Imprimir do navegador.');
-            });
-        });
-        
-        // Gerar PNG (usando html2canvas, que está no bundle html2pdf.js)
-        document.getElementById('btnPng').addEventListener('click', function () {
-             // html2canvas é exposto globalmente pelo bundle do html2pdf.js
-            if (typeof html2canvas === 'undefined') {
-                 showMessage('Erro: A biblioteca html2canvas não foi carregada. Tente novamente.');
-                 return;
-            }
+    dlgClose.addEventListener("click", () => dialog.close());
+    dlgCopy.addEventListener("click", async () => {
+      const url = dlgLink.href;
+      try{
+        await navigator.clipboard.writeText(url);
+        toast("Link copiado");
+      }catch{
+        toast("Não consegui copiar automaticamente");
+      }
+    });
 
-            const element = document.getElementById('page-root');
-            if (!element) {
-                showMessage('Elemento principal não encontrado para gerar PNG.');
-                return;
-            }
-            
-            showMessage('Gerando Imagem (PNG), aguarde...');
-
-            // html2canvas converte o elemento em um canvas
-            html2canvas(element, { scale: 2, useCORS: true, logging: false }).then(canvas => {
-                // Converte o canvas para Data URL (PNG)
-                const image = canvas.toDataURL('image/png').replace('image/png', 'image/octet-stream');
-                
-                // Cria um link temporário para download
-                const link = document.createElement('a');
-                link.download = 'Curriculo-Alvaro-Martins.png';
-                link.href = image;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                
-                // Remove a mensagem temporária
-                const tempMsg = document.getElementById('temp-message');
-                if(tempMsg) tempMsg.remove();
-
-            }).catch(err => {
-                console.error('Erro ao gerar PNG:', err);
-                showMessage('Falha ao gerar PNG. Ocorreu um erro inesperado.');
-            });
-        });
-    </script>
+    // Close modal on click outside
+    dialog.addEventListener("click", (e) => {
+      const rect = dialog.getBoundingClientRect();
+      const inDialog = (
+        e.clientX >= rect.left && e.clientX <= rect.right &&
+        e.clientY >= rect.top && e.clientY <= rect.bottom
+      );
+      if (!inDialog) dialog.close();
+    });
+  </script>
 </body>
 </html>
