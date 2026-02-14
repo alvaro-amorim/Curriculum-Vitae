@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-theme="dark">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -7,22 +7,41 @@
   <title>Álvaro Amorim — Currículo</title>
   <meta name="description" content="Currículo interativo de Álvaro Amorim — Desenvolvedor Full Stack (React | Node.js)." />
 
+  <!-- Open Graph -->
+  <meta property="og:title" content="Álvaro Amorim — Currículo" />
+  <meta property="og:description" content="Currículo interativo — Full Stack (React | Node.js)." />
+  <meta property="og:type" content="website" />
+
   <style>
+    /* ================================
+       Base / Tokens
+       ================================ */
     :root{
       --bg: #0b1220;
       --surface: rgba(255,255,255,.06);
       --surface2: rgba(255,255,255,.10);
       --border: rgba(255,255,255,.10);
+
       --text: rgba(255,255,255,.92);
       --muted: rgba(255,255,255,.72);
       --muted2: rgba(255,255,255,.55);
+
       --accent: #7c3aed;
       --accent2:#22c55e;
+
       --shadow: 0 20px 50px rgba(0,0,0,.35);
       --radius: 18px;
       --radius2: 24px;
-      --maxw: 1100px;
-      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+
+      --maxw: 1120px;
+
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial,
+              "Apple Color Emoji","Segoe UI Emoji";
+
+      /* Spotlight */
+      --spot-x: 50%;
+      --spot-y: 20%;
+      --spot-on: 0;
     }
 
     [data-theme="light"]{
@@ -30,34 +49,71 @@
       --surface: rgba(15,23,42,.05);
       --surface2: rgba(15,23,42,.08);
       --border: rgba(15,23,42,.12);
+
       --text: rgba(15,23,42,.92);
       --muted: rgba(15,23,42,.75);
       --muted2: rgba(15,23,42,.55);
+
       --shadow: 0 20px 50px rgba(2,6,23,.12);
     }
 
     *{ box-sizing:border-box; }
-    html,body{ height:100%; }
+    html, body{ height:100%; }
+    html{ background: var(--bg); }
+
+    /* Evita quebra no meio das palavras */
     body{
       margin:0;
       font-family: var(--font);
-      background:
-        radial-gradient(1200px 600px at 18% -10%, rgba(124,58,237,.35), transparent 60%),
-        radial-gradient(900px 500px at 110% 25%, rgba(34,197,94,.25), transparent 55%),
-        radial-gradient(900px 500px at 20% 120%, rgba(59,130,246,.20), transparent 55%),
-        var(--bg);
       color: var(--text);
       overflow-x:hidden;
+      min-height: 100%;
+
+      word-break: normal;
+      overflow-wrap: break-word;
+      hyphens: none;
+
+      /* Fundo base sólido */
+      background: var(--bg);
+      position: relative;
+    }
+
+    /* Fundo em layer separado (evita banding/faixas em mobile) */
+    body::before{
+      content:"";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+
+      background:
+        radial-gradient(1200px 600px at 18% -10%, rgba(124,58,237,.26), transparent 60%),
+        radial-gradient(900px 500px at 110% 25%, rgba(34,197,94,.18), transparent 55%),
+        radial-gradient(900px 500px at 20% 120%, rgba(59,130,246,.14), transparent 55%),
+        var(--bg);
+
+      filter: blur(10px);
+      transform: scale(1.03);
+      opacity: .95;
+      will-change: transform, opacity;
     }
 
     a{ color:inherit; text-decoration:none; }
     .container{
       max-width: var(--maxw);
       margin: 0 auto;
-      padding: 18px 18px 60px;
+      padding: 18px 18px 70px;
     }
 
-    /* Topbar */
+    :focus-visible{
+      outline: 2px solid color-mix(in srgb, var(--accent) 70%, white 30%);
+      outline-offset: 2px;
+      border-radius: 12px;
+    }
+
+    /* ================================
+       Topbar
+       ================================ */
     .topbar{
       position: sticky;
       top: 0;
@@ -67,6 +123,7 @@
       background: color-mix(in srgb, var(--bg) 60%, transparent);
       border-bottom: 1px solid var(--border);
     }
+
     .topbar-inner{
       max-width: var(--maxw);
       margin: 0 auto;
@@ -76,16 +133,29 @@
       align-items:center;
       justify-content:space-between;
     }
+
     .brand{
-      display:flex; gap:12px; align-items:center;
+      display:flex;
+      gap:12px;
+      align-items:center;
       min-width: 240px;
     }
+
     .dot{
-      width: 12px; height: 12px; border-radius:999px;
+      width: 12px;
+      height: 12px;
+      border-radius:999px;
       background: linear-gradient(135deg, var(--accent), #3b82f6);
       box-shadow: 0 0 0 6px rgba(124,58,237,.15);
       flex:none;
+      animation: pulse 2.4s ease-in-out infinite;
     }
+
+    @keyframes pulse{
+      0%, 100%{ transform: scale(1); box-shadow: 0 0 0 6px rgba(124,58,237,.15); }
+      50%{ transform: scale(1.08); box-shadow: 0 0 0 10px rgba(124,58,237,.10); }
+    }
+
     .brand h1{
       font-size: 14px;
       margin:0;
@@ -105,6 +175,7 @@
       flex-wrap:wrap;
       justify-content:flex-end;
     }
+
     .btn{
       display:inline-flex;
       align-items:center;
@@ -117,14 +188,19 @@
       transition: transform .15s ease, background .15s ease, border-color .15s ease;
       user-select:none;
       cursor:pointer;
-      font-weight: 700;
+      font-weight: 750;
       letter-spacing: .2px;
       line-height: 1;
       font-size: 14px;
       min-height: 48px;
     }
-    .btn:hover{ transform: translateY(-1px); background: var(--surface2); border-color: color-mix(in srgb, var(--border) 60%, var(--accent) 40%); }
+    .btn:hover{
+      transform: translateY(-1px);
+      background: var(--surface2);
+      border-color: color-mix(in srgb, var(--border) 60%, var(--accent) 40%);
+    }
     .btn:active{ transform: translateY(0px) scale(.99); }
+
     .btn.primary{
       border-color: color-mix(in srgb, var(--accent) 40%, var(--border) 60%);
       background: linear-gradient(135deg, rgba(124,58,237,.25), rgba(59,130,246,.18));
@@ -133,6 +209,7 @@
       border-color: color-mix(in srgb, var(--accent2) 40%, var(--border) 60%);
       background: linear-gradient(135deg, rgba(34,197,94,.20), rgba(16,185,129,.12));
     }
+
     .btn.small{
       padding: 12px 14px;
       font-size: 13px;
@@ -140,17 +217,30 @@
       border-radius: 12px;
     }
 
-    .icon{
-      width: 18px; height: 18px; display:inline-block;
+    .btn.ghost{
+      background: transparent;
+      box-shadow: none;
     }
 
-    /* Layout card */
+    .btn.is-active{
+      border-color: color-mix(in srgb, var(--accent) 55%, var(--border) 45%);
+      background: color-mix(in srgb, var(--surface2) 70%, rgba(124,58,237,.08) 30%);
+      transform: translateY(-1px);
+    }
+
+    .icon{ width: 18px; height: 18px; display:inline-block; }
+
+    /* ================================
+       Layout
+       ================================ */
     .hero{
       margin-top: 18px;
       display:grid;
       grid-template-columns: 360px 1fr;
       gap: 16px;
+      align-items:start;
     }
+
     @media (max-width: 980px){
       .hero{ grid-template-columns: 1fr; }
       .brand{ min-width: unset; }
@@ -163,8 +253,27 @@
       border-radius: var(--radius2);
       box-shadow: var(--shadow);
       overflow:hidden;
+      position: relative;
+      isolation: isolate;
     }
-    .card-inner{ padding: 18px; }
+
+    /* Spotlight */
+    .card::after{
+      content:"";
+      position:absolute;
+      inset:-1px;
+      pointer-events:none;
+      opacity: var(--spot-on);
+      transition: opacity .2s ease;
+      background:
+        radial-gradient(420px 260px at var(--spot-x) var(--spot-y),
+          color-mix(in srgb, var(--accent) 35%, transparent) 0%,
+          transparent 60%);
+      mix-blend-mode: screen;
+      z-index: 0;
+    }
+
+    .card-inner{ padding: 18px; position: relative; z-index: 1; }
 
     .profile{
       position: relative;
@@ -172,22 +281,21 @@
     }
     .profile::before{
       content:"";
-      position:absolute; inset:-1px;
+      position:absolute;
+      inset:-1px;
       background:
         radial-gradient(500px 220px at 40% 10%, rgba(124,58,237,.40), transparent 60%),
         radial-gradient(420px 260px at 90% 35%, rgba(34,197,94,.25), transparent 55%),
         radial-gradient(420px 260px at 20% 90%, rgba(59,130,246,.20), transparent 55%);
-      filter: blur(0px);
       opacity:.9;
       pointer-events:none;
+      z-index: 0;
     }
-    .profile .card-inner{
-      position: relative;
-      padding: 18px;
-    }
+    .profile .card-inner{ position: relative; z-index: 1; }
 
     .avatar{
-      width: 112px; height: 112px;
+      width: 112px;
+      height: 112px;
       border-radius: 24px;
       border: 1px solid var(--border);
       overflow:hidden;
@@ -196,7 +304,8 @@
       flex:none;
     }
     .avatar img{
-      width:100%; height:100%;
+      width:100%;
+      height:100%;
       object-fit: cover;
       display:block;
     }
@@ -206,24 +315,29 @@
       gap:14px;
       align-items:center;
     }
+
     .name{
       margin:0;
       font-size: 22px;
       letter-spacing:.2px;
       line-height:1.1;
     }
+
     .role{
       margin: 6px 0 0;
       color: var(--muted);
       font-weight: 650;
       font-size: 13px;
+      line-height: 1.35;
     }
+
     .pillrow{
       display:flex;
       gap:8px;
       flex-wrap:wrap;
       margin-top: 12px;
     }
+
     .pill{
       padding: 8px 10px;
       border-radius: 999px;
@@ -232,6 +346,7 @@
       font-size: 12px;
       color: var(--muted);
       font-weight: 650;
+      white-space: nowrap;
     }
 
     .contact{
@@ -240,6 +355,7 @@
       flex-direction:column;
       gap:10px;
     }
+
     .row{
       display:flex;
       gap:10px;
@@ -250,10 +366,14 @@
       padding: 12px 12px;
       background: rgba(255,255,255,.03);
     }
+
     .row .label{
-      display:flex; flex-direction:column; gap:3px;
+      display:flex;
+      flex-direction:column;
+      gap:3px;
       min-width: 0;
     }
+
     .row .label span:nth-child(1){
       font-size: 11px;
       color: var(--muted2);
@@ -261,6 +381,7 @@
       text-transform: uppercase;
       font-weight: 800;
     }
+
     .row .label span:nth-child(2){
       font-size: 13px;
       color: var(--text);
@@ -276,8 +397,10 @@
       text-decoration: underline;
       text-decoration-color: color-mix(in srgb, var(--border) 60%, var(--accent) 40%);
       text-underline-offset: 3px;
+      overflow-wrap: anywhere;
     }
 
+    /* Toast */
     .toast{
       position: fixed;
       left: 50%;
@@ -301,10 +424,27 @@
       transform: translateX(-50%) translateY(-2px);
     }
 
-    /* Main content */
-    .section{
-      margin-bottom: 16px;
+    /* Floating "Topo" */
+    .toTop{
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 9998;
+      opacity: 0;
+      transform: translateY(10px);
+      pointer-events: none;
+      transition: opacity .2s ease, transform .2s ease;
     }
+    .toTop.show{
+      opacity: 1;
+      transform: translateY(0px);
+      pointer-events: auto;
+    }
+
+    /* ================================
+       Conteúdo
+       ================================ */
+    .section{ margin-bottom: 16px; }
     .section h2{
       margin: 0 0 10px;
       font-size: 13px;
@@ -319,26 +459,40 @@
       background: rgba(255,255,255,.03);
       padding: 14px 14px;
     }
+
     .summary ul{
       margin:0;
       padding-left: 18px;
       color: var(--muted);
-      line-height: 1.55;
+      line-height: 1.60;
       font-weight: 600;
       font-size: 13.5px;
     }
+
     .grid{
       display:grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
+      align-items: start;
     }
+
     @media (max-width: 980px){
       .grid{ grid-template-columns: 1fr; }
     }
 
-    .tags{
-      display:flex; flex-wrap:wrap; gap:8px;
+    .filters{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-bottom: 10px;
     }
+
+    .tags{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+    }
+
     .tag{
       padding: 9px 10px;
       border-radius: 999px;
@@ -349,6 +503,7 @@
       font-weight: 750;
       transition: transform .15s ease, border-color .15s ease, background .15s ease;
       cursor: default;
+      white-space: nowrap;
     }
     .tag:hover{
       transform: translateY(-1px);
@@ -356,22 +511,19 @@
       border-color: color-mix(in srgb, var(--border) 60%, var(--accent) 40%);
     }
 
-    .filters{
-      display:flex; gap:8px; flex-wrap:wrap;
-      margin-bottom: 10px;
-    }
-
     .timeline{
       display:flex;
       flex-direction:column;
       gap: 12px;
     }
+
     .item{
       border: 1px solid var(--border);
       border-radius: var(--radius);
       background: rgba(255,255,255,.03);
       padding: 14px 14px;
     }
+
     .item .top{
       display:flex;
       gap:10px;
@@ -379,22 +531,25 @@
       justify-content:space-between;
       flex-wrap:wrap;
     }
+
     .item h3{
       margin:0;
       font-size: 14px;
       letter-spacing:.2px;
     }
+
     .item .meta{
       color: var(--muted2);
       font-weight: 750;
       font-size: 12px;
       margin-top: 3px;
     }
+
     .item ul{
       margin: 10px 0 0;
       padding-left: 18px;
       color: var(--muted);
-      line-height: 1.55;
+      line-height: 1.60;
       font-weight: 600;
       font-size: 13.5px;
     }
@@ -404,9 +559,11 @@
       grid-template-columns: 1fr 1fr;
       gap: 12px;
     }
+
     @media (max-width: 980px){
       .projects{ grid-template-columns: 1fr; }
     }
+
     .project{
       border: 1px solid var(--border);
       border-radius: var(--radius);
@@ -415,22 +572,25 @@
       display:flex;
       flex-direction:column;
       gap:10px;
-      min-height: 140px;
+      min-height: 148px;
       transition: transform .15s ease, border-color .15s ease, background .15s ease;
     }
+
     .project:hover{
       transform: translateY(-1px);
       background: rgba(255,255,255,.05);
       border-color: color-mix(in srgb, var(--border) 60%, var(--accent) 40%);
     }
+
     .project h3{ margin:0; font-size: 14px; }
     .project p{
       margin:0;
       color: var(--muted);
       font-weight: 600;
-      line-height: 1.5;
+      line-height: 1.55;
       font-size: 13.5px;
     }
+
     .project .foot{
       margin-top:auto;
       display:flex;
@@ -439,18 +599,21 @@
       align-items:center;
       justify-content:space-between;
     }
+
     .mini{
       font-size: 12px;
       color: var(--muted2);
       font-weight: 800;
     }
 
-    /* Modal */
+    /* ================================
+       Modal
+       ================================ */
     dialog{
       border: none;
       padding: 0;
       border-radius: 20px;
-      width: min(720px, calc(100vw - 28px));
+      width: min(740px, calc(100vw - 28px));
       background: color-mix(in srgb, var(--bg) 88%, transparent);
       color: var(--text);
       box-shadow: 0 40px 120px rgba(0,0,0,.50);
@@ -477,29 +640,77 @@
     .modal-body p{
       margin: 0 0 12px;
       color: var(--muted);
-      line-height: 1.6;
+      line-height: 1.65;
       font-weight: 650;
       font-size: 13.5px;
     }
-
-    /* reveal animation */
-    .reveal{ opacity:0; transform: translateY(10px); transition: opacity .5s ease, transform .5s ease; }
-    .reveal.show{ opacity:1; transform: translateY(0px); }
-    @media (prefers-reduced-motion: reduce){
-      .reveal{ transition:none; transform:none; }
-      .btn{ transition:none; }
-      .project{ transition:none; }
+    .modal-list{
+      margin: 0 0 14px;
+      padding-left: 18px;
+      color: var(--muted);
+      line-height: 1.60;
+      font-weight: 600;
+      font-size: 13.5px;
     }
 
-    /* Print */
+    /* ================================
+       Reveal animation
+       ================================ */
+    .reveal{
+      opacity:0;
+      transform: translateY(10px);
+      transition: opacity .5s ease, transform .5s ease;
+    }
+    .reveal.show{ opacity:1; transform: translateY(0px); }
+
+    @media (prefers-reduced-motion: reduce){
+      .reveal{ transition:none; transform:none; }
+      .btn, .project, .tag{ transition:none; }
+      .dot{ animation:none; }
+      .card::after{ transition:none; }
+      .toTop{ transition:none; }
+      body::before{ filter:none; }
+    }
+
+    /* ================================
+       Tema claro mais sólido (não deixa o fundo "vazar")
+       ================================ */
+    [data-theme="light"] .card{
+      background: rgba(255,255,255,.86);
+    }
+    [data-theme="light"] .summary,
+    [data-theme="light"] .item,
+    [data-theme="light"] .project,
+    [data-theme="light"] .row{
+      background: rgba(255,255,255,.72);
+    }
+    [data-theme="light"] .profile::before{
+      opacity: .22; /* reduz coloração do card do perfil no tema claro */
+    }
+
+    /* Mobile: reduzir ainda mais interferência do gradiente */
+    @media (max-width: 640px){
+      body::before{
+        filter: blur(14px);
+        opacity: .70;
+      }
+      [data-theme="light"] .topbar{
+        background: rgba(245,247,251,.86);
+      }
+    }
+
+    /* ================================
+       Print
+       ================================ */
     @media print{
       body{ background: white !important; color: #0f172a !important; }
-      .topbar{ display:none !important; }
+      .topbar, .toTop{ display:none !important; }
       .card{ box-shadow: none !important; }
-      .card, .item, .project, .summary, .row, .tag{ border-color: rgba(15,23,42,.18) !important; }
+      .card, .item, .project, .summary, .row, .tag{
+        border-color: rgba(15,23,42,.18) !important;
+      }
       a{ text-decoration: none !important; }
       .reveal{ opacity:1 !important; transform:none !important; }
-      .project:hover{ transform:none !important; }
       dialog{ display:none !important; }
     }
   </style>
@@ -517,34 +728,45 @@
       </div>
 
       <div class="actions">
-        <a class="btn primary" href="/Alvaro_Amorim_CV_2026_1pg.pdf" download>
+        <a class="btn primary"
+           href="cv-alvaro-amorimpdf.pdf"
+           download>
           <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M12 3v10m0 0 4-4m-4 4-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            <path d="M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M12 3v10m0 0 4-4m-4 4-4-4"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
           </svg>
           Baixar PDF
         </a>
 
-        <a class="btn success" href="/Alvaro_Amorim_CV_2026_1pg.docx" download>
+        <a class="btn success"
+           href="cv-alvaro-amorimdocx.docx"
+           download>
           <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M8 3h6l4 4v14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="2"/>
+            <path d="M8 3h6l4 4v14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"
+                  stroke="currentColor" stroke-width="2"/>
             <path d="M14 3v5h5" stroke="currentColor" stroke-width="2"/>
           </svg>
           Baixar DOCX
         </a>
 
-        <button class="btn small" id="printBtn" type="button" title="Imprimir / Salvar como PDF">
+        <button class="btn small" id="printBtn" type="button" title="Imprimir PDF">
           <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M7 8V4h10v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            <path d="M7 17h10v3H7v-3Z" stroke="currentColor" stroke-width="2"/>
-            <path d="M6 16H5a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M7 8V4h10v4"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M7 17h10v3H7v-3Z"
+                  stroke="currentColor" stroke-width="2"/>
+            <path d="M6 16H5a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-1"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
           </svg>
           Imprimir
         </button>
 
-        <button class="btn small" id="themeBtn" type="button" title="Alternar tema">
+        <button class="btn small" id="themeBtn" type="button" title="Alternar tema (T)">
           <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M12 3a7 7 0 1 0 9 9 9 9 0 0 1-9-9Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M12 3a7 7 0 1 0 9 9 9 9 0 0 1-9-9Z"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
           </svg>
           Tema
         </button>
@@ -555,7 +777,7 @@
   <div class="container">
     <div class="hero">
       <!-- LEFT -->
-      <section class="card profile reveal">
+      <section class="card profile reveal js-spotlight">
         <div class="card-inner">
           <div class="headline">
             <div class="avatar" aria-label="Foto de perfil">
@@ -564,7 +786,9 @@
 
             <div>
               <h2 class="name">Álvaro Amorim de Oliveira Martins</h2>
-              <p class="role">Desenvolvedor Full Stack (React | Node.js) • Aplicações Web • APIs REST</p>
+              <p class="role">
+                Desenvolvedor Full Stack (React | Node.js) • Aplicações Web • APIs REST
+              </p>
 
               <div class="pillrow" aria-label="Destaques">
                 <span class="pill">React</span>
@@ -591,7 +815,9 @@
                 <span>Telefone</span>
                 <span id="phoneText">(32) 99114-7944</span>
               </div>
-              <button class="btn small" type="button" data-copy="#phoneText">Copiar</button>
+              <button class="btn small" type="button" data-copy="#phoneText" title="Copiar telefone">
+                Copiar
+              </button>
             </div>
 
             <div class="row">
@@ -599,38 +825,69 @@
                 <span>E-mail</span>
                 <span id="emailText">alvaroaom.jf@gmail.com</span>
               </div>
-              <button class="btn small" type="button" data-copy="#emailText">Copiar</button>
+              <button class="btn small" type="button" data-copy="#emailText" title="Copiar e-mail">
+                Copiar
+              </button>
             </div>
 
             <div class="row">
               <div class="label">
                 <span>Portfólio</span>
-                <span><a class="link" href="https://www.comercias.com.br/" target="_blank" rel="noreferrer">comercias.com.br</a></span>
+                <span>
+                  <a class="link"
+                     href="https://www.comercias.com.br/"
+                     target="_blank" rel="noreferrer">
+                    comercias.com.br
+                  </a>
+                </span>
               </div>
-              <a class="btn small" href="https://www.comercias.com.br/" target="_blank" rel="noreferrer">Abrir</a>
+              <a class="btn small"
+                 href="https://www.comercias.com.br/"
+                 target="_blank" rel="noreferrer">
+                Abrir
+              </a>
             </div>
 
             <div class="row">
               <div class="label">
                 <span>Projeto</span>
-                <span><a class="link" href="https://cardapio-glace.vercel.app/" target="_blank" rel="noreferrer">cardapio-glace.vercel.app</a></span>
+                <span>
+                  <a class="link"
+                     href="https://cardapio-glace.vercel.app/"
+                     target="_blank" rel="noreferrer">
+                    cardapio-glace.vercel.app
+                  </a>
+                </span>
               </div>
-              <a class="btn small" href="https://cardapio-glace.vercel.app/" target="_blank" rel="noreferrer">Abrir</a>
+              <a class="btn small"
+                 href="https://cardapio-glace.vercel.app/"
+                 target="_blank" rel="noreferrer">
+                Abrir
+              </a>
             </div>
           </div>
         </div>
       </section>
 
       <!-- RIGHT -->
-      <main class="card reveal">
+      <main class="card reveal js-spotlight">
         <div class="card-inner">
           <section class="section">
             <h2>Resumo</h2>
             <div class="summary">
               <ul>
-                <li>Formado em Desenvolvimento Full Stack, com foco em JavaScript (ES6+), React e Node.js para aplicações web responsivas e orientadas a produto.</li>
-                <li>Entrega de projetos em produção com organização de código, versionamento (Git) e integrações via APIs REST; base em MySQL.</li>
-                <li>Vivência prévia em liderança operacional: disciplina de processos, priorização e comunicação objetiva.</li>
+                <li>
+                  Formado em Desenvolvimento Full Stack, com foco em JavaScript (ES6+), React e Node.js
+                  para aplicações web responsivas e orientadas a produto.
+                </li>
+                <li>
+                  Entrega de projetos em produção com organização de código, versionamento (Git) e
+                  integrações via APIs REST; base em MySQL.
+                </li>
+                <li>
+                  Vivência prévia em liderança operacional: disciplina de processos, priorização e
+                  comunicação objetiva.
+                </li>
               </ul>
             </div>
           </section>
@@ -640,11 +897,21 @@
               <h2>Tecnologias</h2>
 
               <div class="filters" aria-label="Filtros de habilidades">
-                <button class="btn small" type="button" data-skill-filter="all">Todas</button>
-                <button class="btn small" type="button" data-skill-filter="front">Front-end</button>
-                <button class="btn small" type="button" data-skill-filter="back">Back-end</button>
-                <button class="btn small" type="button" data-skill-filter="devops">DevOps</button>
-                <button class="btn small" type="button" data-skill-filter="other">Outros</button>
+                <button class="btn small is-active" type="button" data-skill-filter="all">
+                  Todas
+                </button>
+                <button class="btn small" type="button" data-skill-filter="front">
+                  Front-end
+                </button>
+                <button class="btn small" type="button" data-skill-filter="back">
+                  Back-end
+                </button>
+                <button class="btn small" type="button" data-skill-filter="devops">
+                  DevOps
+                </button>
+                <button class="btn small" type="button" data-skill-filter="other">
+                  Outros
+                </button>
               </div>
 
               <div class="tags" id="skillTags">
@@ -669,6 +936,7 @@
 
             <section class="section">
               <h2>Formação</h2>
+
               <div class="timeline">
                 <div class="item">
                   <div class="top">
@@ -704,26 +972,37 @@
 
           <section class="section">
             <h2>Projetos (produção)</h2>
+
             <div class="projects">
               <article class="project" data-project="comerc">
                 <div>
                   <h3>Comerc.IAs — Website/portfólio em React</h3>
-                  <p>UI responsiva e componentizada, com estrutura voltada à evolução incremental do produto e apresentação profissional de serviços.</p>
+                  <p>
+                    UI responsiva e componentizada, com estrutura voltada à evolução incremental do
+                    produto e apresentação profissional de serviços.
+                  </p>
                 </div>
                 <div class="foot">
                   <span class="mini">React • Componentização • UI/UX</span>
-                  <button class="btn small" type="button" data-open="comerc">Detalhes</button>
+                  <button class="btn small" type="button" data-open="comerc">
+                    Detalhes
+                  </button>
                 </div>
               </article>
 
               <article class="project" data-project="glace">
                 <div>
                   <h3>Cardápio Glacê — Catálogo + compra via WhatsApp</h3>
-                  <p>Fluxo direto de navegação/seleção de itens com CTA de compra. Publicado e mantido via Git, com deploy no Vercel.</p>
+                  <p>
+                    Fluxo direto de navegação/seleção de itens com CTA de compra. Publicado e mantido
+                    via Git, com deploy no Vercel.
+                  </p>
                 </div>
                 <div class="foot">
                   <span class="mini">Web App • CTA • Deploy</span>
-                  <button class="btn small" type="button" data-open="glace">Detalhes</button>
+                  <button class="btn small" type="button" data-open="glace">
+                    Detalhes
+                  </button>
                 </div>
               </article>
             </div>
@@ -731,6 +1010,7 @@
 
           <section class="section">
             <h2>Experiência</h2>
+
             <div class="timeline">
               <div class="item">
                 <div class="top">
@@ -741,8 +1021,14 @@
                   <span class="pill">Produto</span>
                 </div>
                 <ul>
-                  <li>Desenvolvimento e manutenção de websites/landing pages com foco em performance, clareza de mensagem e conversão.</li>
-                  <li>Iteração rápida a partir de feedback: ajustes em UI, conteúdo e estrutura para melhorar entendimento e tomada de decisão do usuário.</li>
+                  <li>
+                    Desenvolvimento e manutenção de websites/landing pages com foco em performance,
+                    clareza de mensagem e conversão.
+                  </li>
+                  <li>
+                    Iteração rápida a partir de feedback: ajustes em UI, conteúdo e estrutura para
+                    melhorar entendimento e tomada de decisão do usuário.
+                  </li>
                   <li>Versionamento e organização de código para continuidade e evolução do projeto.</li>
                 </ul>
               </div>
@@ -768,12 +1054,25 @@
             <h2>Links</h2>
             <div class="summary">
               <ul>
-                <li>Portfólio: <a class="link" href="https://www.comercias.com.br/" target="_blank" rel="noreferrer">https://www.comercias.com.br/</a></li>
-                <li>Projeto: <a class="link" href="https://cardapio-glace.vercel.app/" target="_blank" rel="noreferrer">https://cardapio-glace.vercel.app/</a></li>
+                <li>
+                  Portfólio:
+                  <a class="link"
+                     href="https://www.comercias.com.br/"
+                     target="_blank" rel="noreferrer">
+                    https://www.comercias.com.br/
+                  </a>
+                </li>
+                <li>
+                  Projeto:
+                  <a class="link"
+                     href="https://cardapio-glace.vercel.app/"
+                     target="_blank" rel="noreferrer">
+                    https://cardapio-glace.vercel.app/
+                  </a>
+                </li>
               </ul>
             </div>
           </section>
-
         </div>
       </main>
     </div>
@@ -786,8 +1085,11 @@
         <strong id="dlgTitle">Projeto</strong>
         <button class="btn small" id="dlgClose" type="button">Fechar</button>
       </div>
+
       <div class="modal-body">
         <p id="dlgBody"></p>
+        <ul class="modal-list" id="dlgList"></ul>
+
         <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
           <a class="btn primary" id="dlgLink" href="#" target="_blank" rel="noreferrer">Abrir link</a>
           <button class="btn small" id="dlgCopy" type="button">Copiar link</button>
@@ -798,27 +1100,22 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+  <div class="toTop" id="toTop">
+    <button class="btn small" type="button" title="Voltar ao topo (G)">
+      ↑ Topo
+    </button>
+  </div>
+
   <script>
-    // Theme (persist)
+    /* =======================================================
+       Tema (persistente)
+       ======================================================= */
     const root = document.documentElement;
     const themeBtn = document.getElementById("themeBtn");
+
     const savedTheme = localStorage.getItem("cv_theme");
     if (savedTheme) root.setAttribute("data-theme", savedTheme);
 
-    themeBtn.addEventListener("click", () => {
-      const current = root.getAttribute("data-theme") || "dark";
-      const next = current === "dark" ? "light" : "dark";
-      root.setAttribute("data-theme", next);
-      localStorage.setItem("cv_theme", next);
-      toast(next === "dark" ? "Tema escuro ativado" : "Tema claro ativado");
-    });
-
-    // Print
-    document.getElementById("printBtn").addEventListener("click", () => window.print());
-
-    // Toast
-    const toastEl = document.getElementById("toast");
-    let toastTimer;
     function toast(msg){
       clearTimeout(toastTimer);
       toastEl.textContent = msg;
@@ -826,43 +1123,110 @@
       toastTimer = setTimeout(() => toastEl.classList.remove("show"), 1600);
     }
 
-    // Copy buttons
+    function setTheme(next){
+      root.setAttribute("data-theme", next);
+      localStorage.setItem("cv_theme", next);
+      toast(next === "dark" ? "Tema escuro ativado" : "Tema claro ativado");
+    }
+
+    themeBtn.addEventListener("click", () => {
+      const current = root.getAttribute("data-theme") || "dark";
+      setTheme(current === "dark" ? "light" : "dark");
+    });
+
+    /* =======================================================
+       Toast
+       ======================================================= */
+    const toastEl = document.getElementById("toast");
+    let toastTimer;
+
+    /* =======================================================
+       Copiar (telefone / e-mail / link do modal)
+       ======================================================= */
+    async function copyText(text){
+      try{
+        await navigator.clipboard.writeText(text);
+        return true;
+      }catch{
+        const t = document.createElement("textarea");
+        t.value = text;
+        document.body.appendChild(t);
+        t.select();
+        document.execCommand("copy");
+        t.remove();
+        return true;
+      }
+    }
+
     document.querySelectorAll("[data-copy]").forEach(btn => {
       btn.addEventListener("click", async () => {
         const sel = btn.getAttribute("data-copy");
         const el = document.querySelector(sel);
         const text = el ? el.textContent.trim() : "";
         if (!text) return;
-        try{
-          await navigator.clipboard.writeText(text);
-          toast("Copiado para a área de transferência");
-        }catch{
-          // fallback
-          const t = document.createElement("textarea");
-          t.value = text;
-          document.body.appendChild(t);
-          t.select();
-          document.execCommand("copy");
-          t.remove();
-          toast("Copiado");
-        }
+        await copyText(text);
+        toast("Copiado para a área de transferência");
       });
     });
 
-    // Skills filter
+    /* =======================================================
+       Imprimir PDF (em vez de imprimir a página)
+       ======================================================= */
+    const printBtn = document.getElementById("printBtn");
+    const PDF_URL = "cv-alvaro-amorimpdf.pdf";
+
+    function printPdf(url){
+      const iframe = document.createElement("iframe");
+      iframe.style.position = "fixed";
+      iframe.style.right = "0";
+      iframe.style.bottom = "0";
+      iframe.style.width = "0";
+      iframe.style.height = "0";
+      iframe.style.border = "0";
+      iframe.src = url;
+
+      iframe.onload = () => {
+        try{
+          iframe.contentWindow.focus();
+          iframe.contentWindow.print();
+        }catch(err){
+          window.open(url, "_blank");
+        }
+        setTimeout(() => iframe.remove(), 1500);
+      };
+
+      document.body.appendChild(iframe);
+    }
+
+    printBtn.addEventListener("click", () => printPdf(PDF_URL));
+
+    /* =======================================================
+       Skills filter (com estado ativo)
+       ======================================================= */
     const tags = Array.from(document.querySelectorAll("#skillTags .tag"));
-    document.querySelectorAll("[data-skill-filter]").forEach(btn => {
+    const filterBtns = Array.from(document.querySelectorAll("[data-skill-filter]"));
+
+    function setActiveFilter(btn){
+      filterBtns.forEach(b => b.classList.toggle("is-active", b === btn));
+    }
+
+    filterBtns.forEach(btn => {
       btn.addEventListener("click", () => {
         const filter = btn.getAttribute("data-skill-filter");
+        setActiveFilter(btn);
+
         tags.forEach(tag => {
           const cat = tag.getAttribute("data-skill");
           tag.style.display = (filter === "all" || cat === filter) ? "inline-flex" : "none";
         });
+
         toast(filter === "all" ? "Mostrando todas as skills" : `Filtro: ${btn.textContent}`);
       });
     });
 
-    // Reveal on scroll
+    /* =======================================================
+       Reveal on scroll
+       ======================================================= */
     const revealEls = document.querySelectorAll(".reveal");
     const io = new IntersectionObserver((entries) => {
       entries.forEach(e => {
@@ -871,25 +1235,36 @@
     }, { threshold: 0.10 });
     revealEls.forEach(el => io.observe(el));
 
-    // Projects modal
+    /* =======================================================
+       Modal de projetos
+       ======================================================= */
     const dialog = document.getElementById("projectDialog");
     const dlgTitle = document.getElementById("dlgTitle");
-    const dlgBody = document.getElementById("dlgBody");
-    const dlgLink = document.getElementById("dlgLink");
+    const dlgBody  = document.getElementById("dlgBody");
+    const dlgList  = document.getElementById("dlgList");
+    const dlgLink  = document.getElementById("dlgLink");
     const dlgClose = document.getElementById("dlgClose");
-    const dlgCopy = document.getElementById("dlgCopy");
+    const dlgCopy  = document.getElementById("dlgCopy");
 
     const projects = {
       comerc: {
         title: "Comerc.IAs — Website/portfólio em React",
-        body:
-          "Página institucional/portfólio com foco em apresentação clara, layout moderno e estrutura preparada para evolução. Componentização, responsividade e organização para manutenção contínua.",
+        body: "Página institucional/portfólio com foco em apresentação clara, layout moderno e estrutura preparada para evolução.",
+        bullets: [
+          "Componentização e responsividade (mobile-first).",
+          "Conteúdo estruturado para leitura rápida (recrutadores/clientes).",
+          "Base preparada para evoluir seções, cases e serviços."
+        ],
         link: "https://www.comercias.com.br/"
       },
       glace: {
         title: "Cardápio Glacê — Catálogo + compra via WhatsApp",
-        body:
-          "Web app para navegação e seleção de itens com CTA direto para compra via WhatsApp. Publicação e manutenção via Git, com deploy no Vercel para entrega rápida e estável.",
+        body: "Web app para navegação e seleção de itens com CTA direto para compra via WhatsApp.",
+        bullets: [
+          "Fluxo simples: catálogo → escolha → CTA (WhatsApp).",
+          "Deploy no Vercel e versionamento via Git.",
+          "Objetivo: reduzir fricção e aumentar conversão."
+        ],
         link: "https://cardapio-glace.vercel.app/"
       }
     };
@@ -899,33 +1274,88 @@
         const key = btn.getAttribute("data-open");
         const p = projects[key];
         if (!p) return;
+
         dlgTitle.textContent = p.title;
-        dlgBody.textContent = p.body;
-        dlgLink.href = p.link;
-        dlgLink.textContent = "Abrir link";
+        dlgBody.textContent  = p.body;
+        dlgList.innerHTML    = p.bullets.map(x => `<li>${x}</li>`).join("");
+        dlgLink.href         = p.link;
+
         dialog.showModal();
       });
     });
 
     dlgClose.addEventListener("click", () => dialog.close());
+
     dlgCopy.addEventListener("click", async () => {
-      const url = dlgLink.href;
-      try{
-        await navigator.clipboard.writeText(url);
-        toast("Link copiado");
-      }catch{
-        toast("Não consegui copiar automaticamente");
-      }
+      await copyText(dlgLink.href);
+      toast("Link copiado");
     });
 
-    // Close modal on click outside
     dialog.addEventListener("click", (e) => {
       const rect = dialog.getBoundingClientRect();
       const inDialog = (
         e.clientX >= rect.left && e.clientX <= rect.right &&
-        e.clientY >= rect.top && e.clientY <= rect.bottom
+        e.clientY >= rect.top  && e.clientY <= rect.bottom
       );
       if (!inDialog) dialog.close();
+    });
+
+    /* =======================================================
+       Spotlight (cards)
+       ======================================================= */
+    const spotlightCards = document.querySelectorAll(".js-spotlight");
+
+    function setSpotlight(el, x, y, on){
+      el.style.setProperty("--spot-x", `${x}%`);
+      el.style.setProperty("--spot-y", `${y}%`);
+      el.style.setProperty("--spot-on", on ? 1 : 0);
+    }
+
+    spotlightCards.forEach(card => {
+      card.addEventListener("pointermove", (ev) => {
+        const r = card.getBoundingClientRect();
+        const x = ((ev.clientX - r.left) / r.width)  * 100;
+        const y = ((ev.clientY - r.top)  / r.height) * 100;
+        setSpotlight(card, x, y, true);
+      });
+
+      card.addEventListener("pointerleave", () => setSpotlight(card, 50, 20, false));
+      card.addEventListener("pointerenter", () => setSpotlight(card, 50, 20, true));
+    });
+
+    /* =======================================================
+       Botão "Topo" + Atalhos
+       ======================================================= */
+    const toTopWrap = document.getElementById("toTop");
+    const toTopBtn  = toTopWrap.querySelector("button");
+
+    function toggleToTop(){
+      const show = window.scrollY > 420;
+      toTopWrap.classList.toggle("show", show);
+    }
+    toggleToTop();
+    window.addEventListener("scroll", toggleToTop, { passive: true });
+
+    toTopBtn.addEventListener("click", () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    window.addEventListener("keydown", (e) => {
+      const key = e.key.toLowerCase();
+
+      if (key === "t" && !e.ctrlKey && !e.metaKey && !e.altKey){
+        e.preventDefault();
+        themeBtn.click();
+      }
+
+      if (key === "g" && !e.ctrlKey && !e.metaKey && !e.altKey){
+        e.preventDefault();
+        toTopBtn.click();
+      }
+
+      if (key === "escape" && dialog.open){
+        dialog.close();
+      }
     });
   </script>
 </body>
