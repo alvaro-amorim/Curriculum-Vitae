@@ -1,15 +1,18 @@
 <!doctype html>
-<html lang="pt-BR" data-theme="dark">
+<html lang="pt-BR" data-theme="light">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#0b1220" />
+
+  <!-- Ajuste automático no JS ao alternar tema -->
+  <meta name="theme-color" content="#f5f7fb" id="metaThemeColor" />
+
   <title>Álvaro Amorim — Currículo</title>
-  <meta name="description" content="Currículo interativo de Álvaro Amorim — Desenvolvedor Full Stack (React | Node.js)." />
+  <meta id="metaDescription" name="description" content="Currículo interativo de Álvaro Amorim — Desenvolvedor Full Stack (React, Node.js e Python)." />
 
   <!-- Open Graph -->
-  <meta property="og:title" content="Álvaro Amorim — Currículo" />
-  <meta property="og:description" content="Currículo interativo — Full Stack (React | Node.js)." />
+  <meta id="ogTitle" property="og:title" content="Álvaro Amorim — Currículo" />
+  <meta id="ogDescription" property="og:description" content="Currículo interativo — Full Stack (React, Node.js e Python)." />
   <meta property="og:type" content="website" />
 
   <style>
@@ -61,7 +64,6 @@
     html, body{ height:100%; }
     html{ background: var(--bg); }
 
-    /* Evita quebra no meio das palavras */
     body{
       margin:0;
       font-family: var(--font);
@@ -73,12 +75,10 @@
       overflow-wrap: break-word;
       hyphens: none;
 
-      /* Fundo base sólido */
       background: var(--bg);
       position: relative;
     }
 
-    /* Fundo em layer separado (evita banding/faixas em mobile) */
     body::before{
       content:"";
       position: fixed;
@@ -230,6 +230,53 @@
 
     .icon{ width: 18px; height: 18px; display:inline-block; }
 
+    .lang-switch{
+      min-width: 90px;
+      justify-content: center;
+      gap: 9px;
+    }
+
+    .switch-track{
+      width: 38px;
+      height: 22px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: color-mix(in srgb, var(--surface2) 75%, transparent);
+      position: relative;
+      transition: background .15s ease, border-color .15s ease;
+      flex: none;
+    }
+
+    .switch-thumb{
+      width: 16px;
+      height: 16px;
+      border-radius: 999px;
+      background: color-mix(in srgb, white 88%, var(--accent) 12%);
+      position: absolute;
+      left: 2px;
+      top: 2px;
+      box-shadow: 0 3px 10px rgba(0,0,0,.22);
+      transition: transform .15s ease, background .15s ease;
+    }
+
+    .lang-switch.is-en .switch-track{
+      background: linear-gradient(135deg, rgba(124,58,237,.30), rgba(59,130,246,.24));
+      border-color: color-mix(in srgb, var(--accent) 50%, var(--border) 50%);
+    }
+
+    .lang-switch.is-en .switch-thumb{
+      transform: translateX(16px);
+      background: white;
+    }
+
+    .switch-label{
+      min-width: 20px;
+      text-align: center;
+      font-size: 12px;
+      letter-spacing: .3px;
+      font-weight: 850;
+    }
+
     /* ================================
        Layout
        ================================ */
@@ -257,7 +304,6 @@
       isolation: isolate;
     }
 
-    /* Spotlight */
     .card::after{
       content:"";
       position:absolute;
@@ -572,7 +618,7 @@
       display:flex;
       flex-direction:column;
       gap:10px;
-      min-height: 148px;
+      min-height: 160px;
       transition: transform .15s ease, border-color .15s ease, background .15s ease;
     }
 
@@ -673,7 +719,7 @@
     }
 
     /* ================================
-       Tema claro mais sólido (não deixa o fundo "vazar")
+       Tema claro mais sólido
        ================================ */
     [data-theme="light"] .card{
       background: rgba(255,255,255,.86);
@@ -685,10 +731,9 @@
       background: rgba(255,255,255,.72);
     }
     [data-theme="light"] .profile::before{
-      opacity: .22; /* reduz coloração do card do perfil no tema claro */
+      opacity: .22;
     }
 
-    /* Mobile: reduzir ainda mais interferência do gradiente */
     @media (max-width: 640px){
       body::before{
         filter: blur(14px);
@@ -722,33 +767,21 @@
       <div class="brand">
         <span class="dot" aria-hidden="true"></span>
         <div>
-          <h1>Currículo Interativo</h1>
-          <p>Álvaro Amorim • Full Stack (React | Node.js)</p>
+          <h1 id="brandTitle">Currículo Interativo</h1>
+          <p id="brandSubtitle">Álvaro Amorim • Full Stack (React, Node.js e Python)</p>
         </div>
       </div>
 
       <div class="actions">
-        <a class="btn primary"
-           href="cv-alvaro-amorimpdf.pdf"
-           download>
+        <!-- Se você for hospedar este HTML, coloque o PDF com este mesmo nome na mesma pasta -->
+        <a class="btn primary" id="downloadBtn" href="curriculo-alvaro-amorim.pdf" download>
           <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path d="M12 3v10m0 0 4-4m-4 4-4-4"
                   stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             <path d="M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"
                   stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
           </svg>
-          Baixar PDF
-        </a>
-
-        <a class="btn success"
-           href="cv-alvaro-amorimdocx.docx"
-           download>
-          <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M8 3h6l4 4v14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"
-                  stroke="currentColor" stroke-width="2"/>
-            <path d="M14 3v5h5" stroke="currentColor" stroke-width="2"/>
-          </svg>
-          Baixar DOCX
+          <span id="downloadLabel">Baixar PDF</span>
         </a>
 
         <button class="btn small" id="printBtn" type="button" title="Imprimir PDF">
@@ -760,7 +793,7 @@
             <path d="M6 16H5a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-1"
                   stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
           </svg>
-          Imprimir
+          <span id="printLabel">Imprimir</span>
         </button>
 
         <button class="btn small" id="themeBtn" type="button" title="Alternar tema (T)">
@@ -768,7 +801,20 @@
             <path d="M12 3a7 7 0 1 0 9 9 9 9 0 0 1-9-9Z"
                   stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
           </svg>
-          Tema
+          <span id="themeLabel">Tema</span>
+        </button>
+
+        <button class="btn small lang-switch"
+                id="langSwitch"
+                type="button"
+                role="switch"
+                aria-checked="false"
+                aria-label="Alternar idioma para inglês"
+                title="Alternar para inglês">
+          <span class="switch-track" aria-hidden="true">
+            <span class="switch-thumb"></span>
+          </span>
+          <span class="switch-label" id="langSwitchText">PT</span>
         </button>
       </div>
     </div>
@@ -780,69 +826,70 @@
       <section class="card profile reveal js-spotlight">
         <div class="card-inner">
           <div class="headline">
-            <div class="avatar" aria-label="Foto de perfil">
-              <img src="imagem.png" alt="Foto de Álvaro Amorim" />
+            <div class="avatar" id="profileAvatar" aria-label="Foto de perfil">
+              <img id="profileImage" src="imagem.png" alt="Foto de Álvaro Amorim" />
             </div>
 
             <div>
               <h2 class="name">Álvaro Amorim de Oliveira Martins</h2>
-              <p class="role">
-                Desenvolvedor Full Stack (React | Node.js) • Aplicações Web • APIs REST
+              <p class="role" id="roleText">
+                Desenvolvedor Full Stack (React, Node.js e Python) • Web &amp; Mobile • APIs REST • MySQL
               </p>
 
-              <div class="pillrow" aria-label="Destaques">
+              <div class="pillrow" id="highlightsRow" aria-label="Destaques">
                 <span class="pill">React</span>
                 <span class="pill">Node.js</span>
+                <span class="pill">Python</span>
                 <span class="pill">APIs REST</span>
                 <span class="pill">MySQL</span>
-                <span class="pill">Deploy (Vercel)</span>
-                <span class="pill">Git/GitHub</span>
+                <span class="pill">Vercel</span>
               </div>
             </div>
           </div>
 
-          <div class="contact" aria-label="Contato">
+          <div class="contact" id="contactCard" aria-label="Contato">
             <div class="row">
               <div class="label">
-                <span>Local</span>
+                <span id="localLabel">Local</span>
                 <span>Juiz de Fora, MG</span>
               </div>
-              <span class="pill">Brasil</span>
+              <span class="pill" id="countryLabel">Brasil</span>
             </div>
 
             <div class="row">
               <div class="label">
-                <span>Telefone</span>
+                <span id="phoneLabel">Telefone</span>
                 <span id="phoneText">(32) 99114-7944</span>
               </div>
-              <button class="btn small" type="button" data-copy="#phoneText" title="Copiar telefone">
-                Copiar
+              <button class="btn small" id="copyPhoneBtn" type="button" data-copy="#phoneText" title="Copiar telefone">
+                <span id="copyPhoneBtnText">Copiar</span>
               </button>
             </div>
 
             <div class="row">
               <div class="label">
-                <span>E-mail</span>
+                <span id="emailLabel">E-mail</span>
                 <span id="emailText">alvaroaom.jf@gmail.com</span>
               </div>
-              <button class="btn small" type="button" data-copy="#emailText" title="Copiar e-mail">
-                Copiar
+              <button class="btn small" id="copyEmailBtn" type="button" data-copy="#emailText" title="Copiar e-mail">
+                <span id="copyEmailBtnText">Copiar</span>
               </button>
             </div>
 
             <div class="row">
               <div class="label">
-                <span>Portfólio</span>
+                <span id="portfolioLabel">Portfólio</span>
                 <span>
                   <a class="link"
-                     href="https://www.comercias.com.br/"
+                     href="https://www.comercias.com.br/pt"
                      target="_blank" rel="noreferrer">
-                    comercias.com.br
+                    comercias.com.br/pt
                   </a>
                 </span>
               </div>
               <a class="btn small"
-                 href="https://www.comercias.com.br/"
+                 id="openPortfolioBtn"
+                 href="https://www.comercias.com.br/pt"
                  target="_blank" rel="noreferrer">
                 Abrir
               </a>
@@ -850,20 +897,41 @@
 
             <div class="row">
               <div class="label">
-                <span>Projeto</span>
+                <span id="githubLabel">GitHub</span>
                 <span>
                   <a class="link"
-                     href="https://cardapio-glace.vercel.app/"
+                     href="https://github.com/alvaro-amorim"
                      target="_blank" rel="noreferrer">
-                    cardapio-glace.vercel.app
+                    github.com/alvaro-amorim
                   </a>
                 </span>
               </div>
               <a class="btn small"
-                 href="https://cardapio-glace.vercel.app/"
+                 id="openGithubBtn"
+                 href="https://github.com/alvaro-amorim"
                  target="_blank" rel="noreferrer">
                 Abrir
               </a>
+            </div>
+
+            <div class="row">
+              <div class="label">
+                <span id="resumeLinkLabel">Link do currículo</span>
+                <span>
+                  <a class="link"
+                     href="https://curriculum-vitae-babr.vercel.app/"
+                     target="_blank" rel="noreferrer">
+                    curriculum-vitae-babr.vercel.app
+                  </a>
+                </span>
+              </div>
+              <button class="btn small"
+                      id="copyResumeLinkBtn"
+                      type="button"
+                      data-copy-link="https://curriculum-vitae-babr.vercel.app/"
+                      title="Copiar link do currículo">
+                <span id="copyResumeLinkBtnText">Copiar</span>
+              </button>
             </div>
           </div>
         </div>
@@ -873,97 +941,92 @@
       <main class="card reveal js-spotlight">
         <div class="card-inner">
           <section class="section">
-            <h2>Resumo</h2>
+            <h2 id="summaryTitle">Resumo</h2>
             <div class="summary">
-              <ul>
-                <li>
-                  Formado em Desenvolvimento Full Stack, com foco em JavaScript (ES6+), React e Node.js
-                  para aplicações web responsivas e orientadas a produto.
-                </li>
-                <li>
-                  Entrega de projetos em produção com organização de código, versionamento (Git) e
-                  integrações via APIs REST; base em MySQL.
-                </li>
-                <li>
-                  Vivência prévia em liderança operacional: disciplina de processos, priorização e
-                  comunicação objetiva.
-                </li>
+              <ul id="summaryList">
+                <li id="summaryItem1">Desenvolvedor Full Stack (React, Node.js e Python) com experiência em aplicações web e mobile responsivas, APIs REST e integrações com MySQL.</li>
+                <li id="summaryItem2">Atuo com arquitetura, prototipação e automação de processos para reduzir retrabalho e aumentar a consistência de entrega.</li>
+                <li id="summaryItem3">Estudo e aplico soluções com agentes de IA e integrações com ferramentas de CRM (ex.: Salesforce).</li>
               </ul>
             </div>
           </section>
 
           <div class="grid">
             <section class="section">
-              <h2>Tecnologias</h2>
+              <h2 id="skillsTitle">Habilidades</h2>
 
-              <div class="filters" aria-label="Filtros de habilidades">
-                <button class="btn small is-active" type="button" data-skill-filter="all">
-                  Todas
-                </button>
-                <button class="btn small" type="button" data-skill-filter="front">
-                  Front-end
-                </button>
-                <button class="btn small" type="button" data-skill-filter="back">
-                  Back-end
-                </button>
-                <button class="btn small" type="button" data-skill-filter="devops">
-                  DevOps
-                </button>
-                <button class="btn small" type="button" data-skill-filter="other">
-                  Outros
-                </button>
+              <div class="filters" id="skillFilters" aria-label="Filtros de habilidades">
+                <button class="btn small is-active" id="filterAll" type="button" data-skill-filter="all">Todas</button>
+                <button class="btn small" id="filterFront" type="button" data-skill-filter="front">Front-end</button>
+                <button class="btn small" id="filterBack" type="button" data-skill-filter="back">Back-end</button>
+                <button class="btn small" id="filterDevops" type="button" data-skill-filter="devops">DevOps</button>
+                <button class="btn small" id="filterOther" type="button" data-skill-filter="other">Outros</button>
               </div>
 
               <div class="tags" id="skillTags">
-                <span class="tag" data-skill="front">React</span>
+                <!-- Front -->
                 <span class="tag" data-skill="front">JavaScript (ES6+)</span>
-                <span class="tag" data-skill="front">HTML5</span>
-                <span class="tag" data-skill="front">CSS3</span>
-                <span class="tag" data-skill="front">Tailwind CSS</span>
+                <span class="tag" data-skill="front">TypeScript</span>
+                <span class="tag" data-skill="front">HTML5 + CSS3</span>
+                <span class="tag" data-skill="front">React</span>
+                <span class="tag" data-skill="front">Next.js</span>
+                <span class="tag" data-skill="front">Tailwind</span>
+                <span class="tag" data-skill="front">UI libs</span>
 
+                <!-- Back -->
                 <span class="tag" data-skill="back">Node.js</span>
+                <span class="tag" data-skill="back">Python</span>
+                <span class="tag" data-skill="back">NestJS</span>
                 <span class="tag" data-skill="back">APIs REST</span>
+                <span class="tag" data-skill="back">Auth (JWT/OAuth)</span>
+                <span class="tag" data-skill="back">Prisma</span>
                 <span class="tag" data-skill="back">MySQL</span>
+                <span class="tag" data-skill="back">PostgreSQL</span>
+                <span class="tag" data-skill="back">Supabase</span>
 
+                <!-- DevOps -->
                 <span class="tag" data-skill="devops">Git/GitHub</span>
-                <span class="tag" data-skill="devops">npm</span>
-                <span class="tag" data-skill="devops">Deploy (Vercel)</span>
+                <span class="tag" data-skill="devops">Docker</span>
+                <span class="tag" data-skill="devops">CI/CD</span>
+                <span class="tag" data-skill="devops">Vercel</span>
 
-                <span class="tag" data-skill="other">AWS (fundamentos)</span>
-                <span class="tag" data-skill="other">Segurança de endpoint (Cisco)</span>
+                <!-- Outros -->
+                <span class="tag" data-skill="other">n8n</span>
+                <span class="tag" data-skill="other">Salesforce</span>
+                <span class="tag" data-skill="other">SEO</span>
+                <span class="tag" data-skill="other">Power BI</span>
+                <span class="tag" data-skill="other">Scrum</span>
+                <span class="tag" data-skill="other">Unity</span>
+                <span class="tag" data-skill="other">Blender</span>
               </div>
             </section>
 
             <section class="section">
-              <h2>Formação</h2>
+              <h2 id="educationTitle">Educação &amp; Certificações</h2>
 
               <div class="timeline">
                 <div class="item">
                   <div class="top">
                     <div>
-                      <h3>Tecnólogo em Desenvolvimento Full Stack — Estácio</h3>
-                      <div class="meta">Centro Universitário Estácio de Santa Catarina</div>
+                      <h3 id="degreeTitle">Tecnólogo em Desenvolvimento Full Stack</h3>
+                      <div class="meta" id="degreeSchool">Universidade Estácio de Sá</div>
                     </div>
-                    <span class="pill">2025</span>
+                    <span class="pill">2023–2025</span>
                   </div>
-                  <ul>
-                    <li>Conclusão: 03/07/2025 • Colação: 26/09/2025</li>
-                  </ul>
                 </div>
 
                 <div class="item">
                   <div class="top">
                     <div>
-                      <h3>Certificações e cursos</h3>
-                      <div class="meta">AWS • Cisco • IA aplicada a negócios</div>
+                      <h3 id="certTitle">Certificações</h3>
+                      <div class="meta" id="certMeta">Cloud • Segurança • IA aplicada a negócios</div>
                     </div>
-                    <span class="pill">2024–2026</span>
+                    <span class="pill" id="certPill">Cursos</span>
                   </div>
                   <ul>
-                    <li>AWS Discovery Day — Computação em Nuvem (5h) — 27/05/2024</li>
-                    <li>Capacitação AWS — Computação em Nuvem (10h) — 03/06/2024 a 10/06/2024</li>
-                    <li>Cisco Networking Academy — Segurança de endpoint — 07/11/2024</li>
-                    <li>Pré-MBA em IA para Negócios — EXAME Education / Saint Paul (3h) — 20/01/2026</li>
+                    <li id="certItem1">Capacitação Amazon Cloud Services AWS (KaSolutions)</li>
+                    <li id="certItem2">Segurança de Endpoint (Cisco Networking Academy)</li>
+                    <li id="certItem3">Pré-MBA em IA para Negócios (EXAME / Saint Paul)</li>
                   </ul>
                 </div>
               </div>
@@ -971,102 +1034,129 @@
           </div>
 
           <section class="section">
-            <h2>Projetos (produção)</h2>
+            <h2 id="projectsTitle">Projetos</h2>
 
             <div class="projects">
               <article class="project" data-project="comerc">
                 <div>
-                  <h3>Comerc.IAs — Website/portfólio em React</h3>
-                  <p>
-                    UI responsiva e componentizada, com estrutura voltada à evolução incremental do
-                    produto e apresentação profissional de serviços.
-                  </p>
+                  <h3 id="projectComercTitle">Comerc IAs (projeto próprio)</h3>
+                  <p id="projectComercDesc">Agência Tech e Audiovisual com foco em inteligência artificial e automações para negócios.</p>
                 </div>
                 <div class="foot">
-                  <span class="mini">React • Componentização • UI/UX</span>
-                  <button class="btn small" type="button" data-open="comerc">
-                    Detalhes
-                  </button>
+                  <span class="mini">Nano Banana • Veo • ElevenLabs • Suno • Sora • Seedance</span>
+                  <button class="btn small" type="button" data-open="comerc">Detalhes</button>
+                </div>
+              </article>
+
+              <article class="project" data-project="website">
+                <div>
+                  <h3 id="projectWebsiteTitle">Website Corporativo Completo</h3>
+                  <p id="projectWebsiteDesc">Website completo com dashboard de analytics próprio (Admin) e integração de tracking/coleta de eventos.</p>
+                </div>
+                <div class="foot">
+                  <span class="mini">React • Bootstrap • Node.js (Serverless) • Supabase</span>
+                  <button class="btn small" type="button" data-open="website">Detalhes</button>
+                </div>
+              </article>
+
+              <article class="project" data-project="gdash">
+                <div>
+                  <h3 id="projectGdashTitle">Gdash Challenge — Dashboard IA de Monitoramento Climático</h3>
+                  <p id="projectGdashDesc">App full stack orientado a eventos, com pipeline de dados e insights em IA via API Gemini em tempo real.</p>
+                </div>
+                <div class="foot">
+                  <span class="mini">NestJS • Python • RabbitMQ • Go • React • Tailwind</span>
+                  <button class="btn small" type="button" data-open="gdash">Detalhes</button>
                 </div>
               </article>
 
               <article class="project" data-project="glace">
                 <div>
-                  <h3>Cardápio Glacê — Catálogo + compra via WhatsApp</h3>
-                  <p>
-                    Fluxo direto de navegação/seleção de itens com CTA de compra. Publicado e mantido
-                    via Git, com deploy no Vercel.
-                  </p>
+                  <h3 id="projectGlaceTitle">Cardápio Confeitaria + App de Controle (Integrados)</h3>
+                  <p id="projectGlaceDesc">Catálogo com compra via WhatsApp/Telegram + controle de estoque/caixa/pedidos e chatbot coletor no Telegram.</p>
                 </div>
                 <div class="foot">
-                  <span class="mini">Web App • CTA • Deploy</span>
-                  <button class="btn small" type="button" data-open="glace">
-                    Detalhes
-                  </button>
+                  <span class="mini">Next.js • WhatsApp API • MongoDB • Python</span>
+                  <button class="btn small" type="button" data-open="glace">Detalhes</button>
                 </div>
               </article>
             </div>
           </section>
 
           <section class="section">
-            <h2>Experiência</h2>
+            <h2 id="experienceTitle">Experiência</h2>
 
             <div class="timeline">
               <div class="item">
                 <div class="top">
                   <div>
-                    <h3>Comerc.IAs (projeto próprio) — Desenvolvedor Full Stack</h3>
-                    <div class="meta">2025 — atual</div>
+                    <h3 id="expComercTitle">Comerc IAs — Desenvolvedor Full Stack</h3>
+                    <div class="meta" id="expComercMeta">2021 — Presente</div>
                   </div>
-                  <span class="pill">Produto</span>
+                  <span class="pill" id="expComercPill">Produto</span>
                 </div>
                 <ul>
-                  <li>
-                    Desenvolvimento e manutenção de websites/landing pages com foco em performance,
-                    clareza de mensagem e conversão.
-                  </li>
-                  <li>
-                    Iteração rápida a partir de feedback: ajustes em UI, conteúdo e estrutura para
-                    melhorar entendimento e tomada de decisão do usuário.
-                  </li>
-                  <li>Versionamento e organização de código para continuidade e evolução do projeto.</li>
+                  <li id="expComercItem1">Desenvolvimento de aplicações web responsivas (React) e back-end (Node.js/Python).</li>
+                  <li id="expComercItem2">Criação e manutenção de APIs REST e integrações com banco de dados (MySQL).</li>
+                  <li id="expComercItem3">Automação de processos e deploy em Vercel/AWS.</li>
+                  <li id="expComercItem4">Edição e produção de vídeos para campanhas e conteúdos digitais.</li>
                 </ul>
               </div>
 
               <div class="item">
                 <div class="top">
                   <div>
-                    <h3>Experiência transferível (resumo)</h3>
-                    <div class="meta">Operações • Processos • Liderança</div>
+                    <h3 id="expOpsTitle">Encargado Operacional</h3>
+                    <div class="meta" id="expOpsMeta">Supervisão de Carga e Descarga — Rodoviário Camilo dos Santos</div>
                   </div>
-                  <span class="pill">Base</span>
+                  <span class="pill">2019 — 2021</span>
                 </div>
                 <ul>
-                  <li>Encarregado Operacional (Rodoviário Camilo dos Santos, 2020–2021)</li>
-                  <li>Auxiliar Administrativo (Sociedade Eunice Weaver, 2015–2019)</li>
-                  <li>Motorista de aplicativo (autônomo, 2021–atual)</li>
+                  <li id="expOpsItem1">Coordenação de equipe, conferência de cargas e controle de prazos em operação logística.</li>
+                  <li id="expOpsItem2">Acompanhamento de indicadores e rotinas de segurança no pátio.</li>
+                </ul>
+              </div>
+
+              <div class="item">
+                <div class="top">
+                  <div>
+                    <h3 id="expAdminTitle">Auxiliar Administrativo</h3>
+                    <div class="meta" id="expAdminMeta">Sociedade Eunice Weaver de Juiz de Fora</div>
+                  </div>
+                  <span class="pill">2015 — 2019</span>
+                </div>
+                <ul>
+                  <li id="expAdminItem1">Rotinas administrativas, atendimento, organização de documentos e controles em planilhas.</li>
                 </ul>
               </div>
             </div>
           </section>
 
           <section class="section">
-            <h2>Links</h2>
+            <h2 id="linksTitle">Links</h2>
             <div class="summary">
               <ul>
                 <li>
-                  Portfólio:
-                  <a class="link"
-                     href="https://www.comercias.com.br/"
-                     target="_blank" rel="noreferrer">
-                    https://www.comercias.com.br/
+                  <span id="linksPortfolioLabel">Portfólio</span>:
+                  <a class="link" href="https://www.comercias.com.br/pt" target="_blank" rel="noreferrer">
+                    https://www.comercias.com.br/pt
                   </a>
                 </li>
                 <li>
-                  Projeto:
-                  <a class="link"
-                     href="https://cardapio-glace.vercel.app/"
-                     target="_blank" rel="noreferrer">
+                  <span id="linksGithubLabel">GitHub</span>:
+                  <a class="link" href="https://github.com/alvaro-amorim" target="_blank" rel="noreferrer">
+                    https://github.com/alvaro-amorim
+                  </a>
+                </li>
+                <li>
+                  <span id="linksGdashLabel">Gdash Challenge</span>:
+                  <a class="link" id="gdashRepoText" href="https://github.com/alvaro-amorim/desafio-gdash-2025-02/tree/alvaro-amorim" target="_blank" rel="noreferrer">
+                    Repositório no GitHub
+                  </a>
+                </li>
+                <li>
+                  <span id="linksGlaceLabel">Cardápio Glacê</span>:
+                  <a class="link" href="https://cardapio-glace.vercel.app/" target="_blank" rel="noreferrer">
                     https://cardapio-glace.vercel.app/
                   </a>
                 </li>
@@ -1101,20 +1191,163 @@
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <div class="toTop" id="toTop">
-    <button class="btn small" type="button" title="Voltar ao topo (G)">
-      ↑ Topo
+    <button class="btn small" id="toTopBtn" type="button" title="Voltar ao topo (G)">
+      <span aria-hidden="true">↑</span>
+      <span id="toTopLabel">Topo</span>
     </button>
   </div>
 
   <script>
-    /* =======================================================
-       Tema (persistente)
-       ======================================================= */
     const root = document.documentElement;
     const themeBtn = document.getElementById("themeBtn");
+    const printBtn = document.getElementById("printBtn");
+    const langSwitch = document.getElementById("langSwitch");
+    const metaTheme = document.getElementById("metaThemeColor");
+    const metaDescription = document.getElementById("metaDescription");
+    const ogTitle = document.getElementById("ogTitle");
+    const ogDescription = document.getElementById("ogDescription");
+    const dialog = document.getElementById("projectDialog");
+    const dlgTitle = document.getElementById("dlgTitle");
+    const dlgBody = document.getElementById("dlgBody");
+    const dlgList = document.getElementById("dlgList");
+    const dlgLink = document.getElementById("dlgLink");
+    const dlgClose = document.getElementById("dlgClose");
+    const dlgCopy = document.getElementById("dlgCopy");
 
-    const savedTheme = localStorage.getItem("cv_theme");
-    if (savedTheme) root.setAttribute("data-theme", savedTheme);
+    const toastEl = document.getElementById("toast");
+    let toastTimer;
+
+    const EN_META = {
+      htmlLang: "en-US",
+      pageTitle: "Álvaro Amorim — Resume",
+      description: "Interactive resume of Álvaro Amorim — Full Stack Developer (React, Node.js and Python).",
+      ogTitle: "Álvaro Amorim — Resume",
+      ogDescription: "Interactive resume — Full Stack (React, Node.js and Python)."
+    };
+
+    const EN_TEXT = {
+      brandTitle: "Interactive Resume",
+      brandSubtitle: "Álvaro Amorim • Full Stack (React, Node.js and Python)",
+      downloadLabel: "Download PDF",
+      printLabel: "Print",
+      themeLabel: "Theme",
+      langSwitchText: "EN",
+      roleText: "Full Stack Developer (React, Node.js and Python) • Web & Mobile • REST APIs • MySQL",
+      localLabel: "Location",
+      countryLabel: "Brazil",
+      phoneLabel: "Phone",
+      copyPhoneBtnText: "Copy",
+      emailLabel: "Email",
+      copyEmailBtnText: "Copy",
+      portfolioLabel: "Portfolio",
+      openPortfolioBtn: "Open",
+      githubLabel: "GitHub",
+      openGithubBtn: "Open",
+      resumeLinkLabel: "Resume link",
+      copyResumeLinkBtnText: "Copy",
+      summaryTitle: "Summary",
+      summaryItem1: "Full Stack Developer (React, Node.js and Python) with experience in responsive web and mobile applications, REST APIs, and MySQL integrations.",
+      summaryItem2: "I work with architecture, prototyping, and process automation to reduce rework and improve delivery consistency.",
+      summaryItem3: "I study and apply solutions with AI agents and integrations with CRM tools (e.g., Salesforce).",
+      skillsTitle: "Skills",
+      filterAll: "All",
+      filterFront: "Front-end",
+      filterBack: "Back-end",
+      filterDevops: "DevOps",
+      filterOther: "Other",
+      educationTitle: "Education & Certifications",
+      degreeTitle: "Technologist in Full Stack Development",
+      degreeSchool: "Estácio de Sá University",
+      certTitle: "Certifications",
+      certMeta: "Cloud • Security • AI applied to business",
+      certPill: "Courses",
+      certItem1: "Amazon Cloud Services AWS Training (KaSolutions)",
+      certItem2: "Endpoint Security (Cisco Networking Academy)",
+      certItem3: "Pre-MBA in AI for Business (EXAME / Saint Paul)",
+      projectsTitle: "Projects",
+      projectComercTitle: "Comerc IAs (personal project)",
+      projectComercDesc: "Tech and Audiovisual agency focused on artificial intelligence and business automations.",
+      projectWebsiteTitle: "Complete Corporate Website",
+      projectWebsiteDesc: "Complete website with a custom analytics dashboard (Admin) and event tracking/data collection integration.",
+      projectGdashTitle: "Gdash Challenge — AI Climate Monitoring Dashboard",
+      projectGdashDesc: "Event-driven full stack app with data pipeline and real-time AI insights via Gemini API.",
+      projectGlaceTitle: "Pastry Menu + Control App (Integrated)",
+      projectGlaceDesc: "Catalog with WhatsApp/Telegram checkout + stock/cash/orders control and a Telegram order collector bot.",
+      experienceTitle: "Experience",
+      expComercTitle: "Comerc IAs — Full Stack Developer",
+      expComercMeta: "2021 — Present",
+      expComercPill: "Product",
+      expComercItem1: "Development of responsive web applications (React) and back-end services (Node.js/Python).",
+      expComercItem2: "Creation and maintenance of REST APIs and database integrations (MySQL).",
+      expComercItem3: "Process automation and deployment on Vercel/AWS.",
+      expComercItem4: "Video editing and production for campaigns and digital content.",
+      expOpsTitle: "Operations Supervisor",
+      expOpsMeta: "Load and Unload Supervision — Rodoviário Camilo dos Santos",
+      expOpsItem1: "Team coordination, cargo verification, and deadline control in logistics operations.",
+      expOpsItem2: "Monitoring indicators and safety routines in the yard.",
+      expAdminTitle: "Administrative Assistant",
+      expAdminMeta: "Sociedade Eunice Weaver de Juiz de Fora",
+      expAdminItem1: "Administrative routines, customer service, document organization, and spreadsheet controls.",
+      linksTitle: "Links",
+      linksPortfolioLabel: "Portfolio",
+      linksGithubLabel: "GitHub",
+      linksGdashLabel: "Gdash Challenge",
+      gdashRepoText: "Repository on GitHub",
+      linksGlaceLabel: "Glacê Menu",
+      dlgClose: "Close",
+      dlgLink: "Open link",
+      dlgCopy: "Copy link",
+      toTopLabel: "Top"
+    };
+
+    const EN_ATTRS = {
+      printBtn: { title: "Print PDF" },
+      themeBtn: { title: "Toggle theme (T)" },
+      langSwitch: {
+        title: "Switch to Portuguese",
+        "aria-label": "Switch language to Portuguese"
+      },
+      profileAvatar: { "aria-label": "Profile photo" },
+      profileImage: { alt: "Photo of Álvaro Amorim" },
+      highlightsRow: { "aria-label": "Highlights" },
+      contactCard: { "aria-label": "Contact" },
+      copyPhoneBtn: { title: "Copy phone number" },
+      copyEmailBtn: { title: "Copy email" },
+      copyResumeLinkBtn: { title: "Copy resume link" },
+      skillFilters: { "aria-label": "Skill filters" },
+      projectDialog: { "aria-label": "Project details" },
+      toTopBtn: { title: "Back to top (G)" }
+    };
+
+    const TOASTS = {
+      pt: {
+        themeDark: "Tema escuro ativado",
+        themeLight: "Tema claro ativado",
+        copied: "Copiado para a área de transferência",
+        linkCopied: "Link copiado",
+        showAllSkills: "Mostrando todas as skills",
+        filterPrefix: "Filtro"
+      },
+      en: {
+        themeDark: "Dark theme enabled",
+        themeLight: "Light theme enabled",
+        copied: "Copied to clipboard",
+        linkCopied: "Link copied",
+        showAllSkills: "Showing all skills",
+        filterPrefix: "Filter"
+      }
+    };
+
+    const BASE_TEXT = {};
+    const BASE_ATTRS = {};
+    const BASE_PAGE = {};
+    const textIds = Object.keys(EN_TEXT);
+    const attrIds = Object.keys(EN_ATTRS);
+    let currentLang = "pt";
+    let currentProjectKey = null;
+    let activeProjects;
+    const detailBtns = Array.from(document.querySelectorAll("[data-open]"));
+    const baseDetailLabels = detailBtns.map(btn => btn.textContent.trim());
 
     function toast(msg){
       clearTimeout(toastTimer);
@@ -1123,25 +1356,109 @@
       toastTimer = setTimeout(() => toastEl.classList.remove("show"), 1600);
     }
 
+    function captureBaseLanguage(){
+      textIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) BASE_TEXT[id] = el.textContent.trim();
+      });
+
+      attrIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const attrs = EN_ATTRS[id];
+        BASE_ATTRS[id] = {};
+        Object.keys(attrs).forEach(attr => {
+          BASE_ATTRS[id][attr] = el.getAttribute(attr) || "";
+        });
+      });
+
+      BASE_PAGE.htmlLang = root.getAttribute("lang") || "pt-BR";
+      BASE_PAGE.pageTitle = document.title;
+      BASE_PAGE.description = metaDescription ? (metaDescription.getAttribute("content") || "") : "";
+      BASE_PAGE.ogTitle = ogTitle ? (ogTitle.getAttribute("content") || "") : "";
+      BASE_PAGE.ogDescription = ogDescription ? (ogDescription.getAttribute("content") || "") : "";
+    }
+
+    function applyTextMap(map){
+      Object.keys(map).forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = map[id];
+      });
+    }
+
+    function applyAttrMap(map){
+      Object.keys(map).forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const attrs = map[id];
+        Object.keys(attrs).forEach(attr => {
+          el.setAttribute(attr, attrs[attr]);
+        });
+      });
+    }
+
+    function tToast(key){
+      return TOASTS[currentLang][key];
+    }
+
+    function updateThemeColor(theme){
+      if (!metaTheme) return;
+      metaTheme.setAttribute("content", theme === "dark" ? "#0b1220" : "#f5f7fb");
+    }
+
     function setTheme(next){
       root.setAttribute("data-theme", next);
-      localStorage.setItem("cv_theme", next);
-      toast(next === "dark" ? "Tema escuro ativado" : "Tema claro ativado");
+      updateThemeColor(next);
+      toast(next === "dark" ? tToast("themeDark") : tToast("themeLight"));
+    }
+
+    function applyLanguage(nextLang){
+      const useEn = nextLang === "en";
+      currentLang = useEn ? "en" : "pt";
+
+      if (useEn){
+        applyTextMap(EN_TEXT);
+        applyAttrMap(EN_ATTRS);
+        root.setAttribute("lang", EN_META.htmlLang);
+        document.title = EN_META.pageTitle;
+        if (metaDescription) metaDescription.setAttribute("content", EN_META.description);
+        if (ogTitle) ogTitle.setAttribute("content", EN_META.ogTitle);
+        if (ogDescription) ogDescription.setAttribute("content", EN_META.ogDescription);
+      }else{
+        applyTextMap(BASE_TEXT);
+        applyAttrMap(BASE_ATTRS);
+        root.setAttribute("lang", BASE_PAGE.htmlLang);
+        document.title = BASE_PAGE.pageTitle;
+        if (metaDescription) metaDescription.setAttribute("content", BASE_PAGE.description);
+        if (ogTitle) ogTitle.setAttribute("content", BASE_PAGE.ogTitle);
+        if (ogDescription) ogDescription.setAttribute("content", BASE_PAGE.ogDescription);
+      }
+
+      detailBtns.forEach((btn, idx) => {
+        btn.textContent = useEn ? "Details" : (baseDetailLabels[idx] || "Detalhes");
+      });
+
+      langSwitch.classList.toggle("is-en", useEn);
+      langSwitch.setAttribute("aria-checked", useEn ? "true" : "false");
+
+      activeProjects = useEn ? projectsEn : projects;
+      if (currentProjectKey && dialog.open){
+        renderProject(currentProjectKey);
+      }
     }
 
     themeBtn.addEventListener("click", () => {
-      const current = root.getAttribute("data-theme") || "dark";
+      const current = root.getAttribute("data-theme") || "light";
       setTheme(current === "dark" ? "light" : "dark");
     });
 
-    /* =======================================================
-       Toast
-       ======================================================= */
-    const toastEl = document.getElementById("toast");
-    let toastTimer;
+    langSwitch.addEventListener("click", () => {
+      applyLanguage(currentLang === "pt" ? "en" : "pt");
+    });
+
 
     /* =======================================================
-       Copiar (telefone / e-mail / link do modal)
+       Copiar (telefone / e-mail / links)
        ======================================================= */
     async function copyText(text){
       try{
@@ -1165,15 +1482,23 @@
         const text = el ? el.textContent.trim() : "";
         if (!text) return;
         await copyText(text);
-        toast("Copiado para a área de transferência");
+        toast(tToast("copied"));
+      });
+    });
+
+    document.querySelectorAll("[data-copy-link]").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        const link = btn.getAttribute("data-copy-link") || "";
+        if (!link) return;
+        await copyText(link);
+        toast(tToast("linkCopied"));
       });
     });
 
     /* =======================================================
        Imprimir PDF (em vez de imprimir a página)
        ======================================================= */
-    const printBtn = document.getElementById("printBtn");
-    const PDF_URL = "cv-alvaro-amorimpdf.pdf";
+    const PDF_URL = "curriculo-alvaro-amorim.pdf";
 
     function printPdf(url){
       const iframe = document.createElement("iframe");
@@ -1220,7 +1545,7 @@
           tag.style.display = (filter === "all" || cat === filter) ? "inline-flex" : "none";
         });
 
-        toast(filter === "all" ? "Mostrando todas as skills" : `Filtro: ${btn.textContent}`);
+        toast(filter === "all" ? tToast("showAllSkills") : `${tToast("filterPrefix")}: ${btn.textContent}`);
       });
     });
 
@@ -1238,48 +1563,111 @@
     /* =======================================================
        Modal de projetos
        ======================================================= */
-    const dialog = document.getElementById("projectDialog");
-    const dlgTitle = document.getElementById("dlgTitle");
-    const dlgBody  = document.getElementById("dlgBody");
-    const dlgList  = document.getElementById("dlgList");
-    const dlgLink  = document.getElementById("dlgLink");
-    const dlgClose = document.getElementById("dlgClose");
-    const dlgCopy  = document.getElementById("dlgCopy");
-
     const projects = {
       comerc: {
-        title: "Comerc.IAs — Website/portfólio em React",
-        body: "Página institucional/portfólio com foco em apresentação clara, layout moderno e estrutura preparada para evolução.",
+        title: "Comerc IAs (projeto próprio)",
+        body: "Agência Tech e Audiovisual com foco em inteligência artificial e automações para negócios.",
         bullets: [
-          "Componentização e responsividade (mobile-first).",
-          "Conteúdo estruturado para leitura rápida (recrutadores/clientes).",
-          "Base preparada para evoluir seções, cases e serviços."
+          "Desenvolvimento Full Stack e AI Creator.",
+          "Portfólio dos meus projetos de audiovisual.",
+          "Ferramentas: Nano Banana, Veo, ElevenLabs, Suno, Sora e Seedance."
         ],
-        link: "https://www.comercias.com.br/"
+        link: "https://www.comercias.com.br/pt"
+      },
+      website: {
+        title: "Website Corporativo Completo",
+        body: "Website completo com dashboard de analytics próprio (Admin) e integração de tracking/coleta de eventos.",
+        bullets: [
+          "Stack: HTML5 + CSS3 + JavaScript (ES6+) + React + Bootstrap.",
+          "Back-end: Node.js (Serverless Functions).",
+          "Banco/infra: Supabase (PostgreSQL/SQL)."
+        ],
+        link: "https://www.comercias.com.br/pt"
+      },
+      gdash: {
+        title: "Gdash Challenge — Dashboard IA de Monitoramento Climático",
+        body: "App full stack orientado a eventos, com pipeline de dados e visualização de métricas.",
+        bullets: [
+          "App Full Stack de microserviços orientados a eventos.",
+          "Pipeline de dados e visualização de métricas.",
+          "Insights em IA via API Gemini em tempo real."
+        ],
+        link: "https://github.com/alvaro-amorim/desafio-gdash-2025-02/tree/alvaro-amorim"
       },
       glace: {
-        title: "Cardápio Glacê — Catálogo + compra via WhatsApp",
-        body: "Web app para navegação e seleção de itens com CTA direto para compra via WhatsApp.",
+        title: "Cardápio Confeitaria + App de Controle (Integrados)",
+        body: "Catálogo de produtos com compra via WhatsApp/Telegram + controle e automações internas.",
         bullets: [
-          "Fluxo simples: catálogo → escolha → CTA (WhatsApp).",
-          "Deploy no Vercel e versionamento via Git.",
-          "Objetivo: reduzir fricção e aumentar conversão."
+          "Catálogo de produtos com compra via WhatsApp ou Telegram.",
+          "App completo de controle de Estoque, Caixa e Pedidos.",
+          "Dashboard com Gerente IA: avisos, tarefas e inconsistências entre planilhas.",
+          "Chatbot coletor de pedidos (Telegram)."
         ],
         link: "https://cardapio-glace.vercel.app/"
       }
     };
 
+    const projectsEn = {
+      comerc: {
+        title: "Comerc IAs (personal project)",
+        body: "Tech and Audiovisual agency focused on artificial intelligence and business automations.",
+        bullets: [
+          "Full Stack development and AI Creator.",
+          "Portfolio of my audiovisual projects.",
+          "Tools: Nano Banana, Veo, ElevenLabs, Suno, Sora and Seedance."
+        ],
+        link: "https://www.comercias.com.br/pt"
+      },
+      website: {
+        title: "Complete Corporate Website",
+        body: "Complete website with a custom analytics dashboard (Admin) and event tracking/data collection integration.",
+        bullets: [
+          "Stack: HTML5 + CSS3 + JavaScript (ES6+) + React + Bootstrap.",
+          "Back-end: Node.js (Serverless Functions).",
+          "Database/infra: Supabase (PostgreSQL/SQL)."
+        ],
+        link: "https://www.comercias.com.br/pt"
+      },
+      gdash: {
+        title: "Gdash Challenge — AI Climate Monitoring Dashboard",
+        body: "Event-driven full stack app with data pipeline and metric visualization.",
+        bullets: [
+          "Event-driven Full Stack app with microservices.",
+          "Data pipeline and metrics visualization.",
+          "Real-time AI insights via Gemini API."
+        ],
+        link: "https://github.com/alvaro-amorim/desafio-gdash-2025-02/tree/alvaro-amorim"
+      },
+      glace: {
+        title: "Pastry Menu + Control App (Integrated)",
+        body: "Product catalog with WhatsApp/Telegram checkout + internal control and automations.",
+        bullets: [
+          "Product catalog with checkout via WhatsApp or Telegram.",
+          "Complete app for Inventory, Cash Flow, and Orders control.",
+          "Dashboard with AI Manager: alerts, tasks, and spreadsheet inconsistencies.",
+          "Order-collection chatbot (Telegram)."
+        ],
+        link: "https://cardapio-glace.vercel.app/"
+      }
+    };
+
+    activeProjects = projects;
+
+    function renderProject(key){
+      const p = activeProjects[key];
+      if (!p) return;
+      currentProjectKey = key;
+
+      dlgTitle.textContent = p.title;
+      dlgBody.textContent = p.body;
+      dlgList.innerHTML = p.bullets.map(x => `<li>${x}</li>`).join("");
+      dlgLink.href = p.link;
+    }
+
     document.querySelectorAll("[data-open]").forEach(btn => {
       btn.addEventListener("click", () => {
         const key = btn.getAttribute("data-open");
-        const p = projects[key];
-        if (!p) return;
-
-        dlgTitle.textContent = p.title;
-        dlgBody.textContent  = p.body;
-        dlgList.innerHTML    = p.bullets.map(x => `<li>${x}</li>`).join("");
-        dlgLink.href         = p.link;
-
+        renderProject(key);
         dialog.showModal();
       });
     });
@@ -1288,7 +1676,7 @@
 
     dlgCopy.addEventListener("click", async () => {
       await copyText(dlgLink.href);
-      toast("Link copiado");
+      toast(tToast("linkCopied"));
     });
 
     dialog.addEventListener("click", (e) => {
@@ -1357,6 +1745,10 @@
         dialog.close();
       }
     });
+
+    captureBaseLanguage();
+    applyLanguage("pt");
+    setTheme("light");
   </script>
 </body>
 </html>
