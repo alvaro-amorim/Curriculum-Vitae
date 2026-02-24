@@ -773,8 +773,7 @@
       </div>
 
       <div class="actions">
-        <!-- Se você for hospedar este HTML, coloque o PDF com este mesmo nome na mesma pasta -->
-        <a class="btn primary" id="downloadBtn" href="curriculo-alvaro-amorim.pdf" download>
+        <a class="btn primary" id="downloadBtn" href="cv-alvaro-amorimpdf-pt.pdf" download="cv-alvaro-amorimpdf-pt.pdf">
           <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path d="M12 3v10m0 0 4-4m-4 4-4-4"
                   stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
@@ -782,6 +781,16 @@
                   stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
           </svg>
           <span id="downloadLabel">Baixar PDF</span>
+        </a>
+
+        <a class="btn success" id="downloadDocxBtn" href="cv-alvaro-amorimdocx-pt.docx" download="cv-alvaro-amorimdocx-pt.docx">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M12 3v10m0 0 4-4m-4 4-4-4"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <span id="downloadDocxLabel">Baixar DOCX</span>
         </a>
 
         <button class="btn small" id="printBtn" type="button" title="Imprimir PDF">
@@ -1201,6 +1210,8 @@
     const root = document.documentElement;
     const themeBtn = document.getElementById("themeBtn");
     const printBtn = document.getElementById("printBtn");
+    const downloadBtn = document.getElementById("downloadBtn");
+    const downloadDocxBtn = document.getElementById("downloadDocxBtn");
     const langSwitch = document.getElementById("langSwitch");
     const metaTheme = document.getElementById("metaThemeColor");
     const metaDescription = document.getElementById("metaDescription");
@@ -1229,6 +1240,7 @@
       brandTitle: "Interactive Resume",
       brandSubtitle: "Álvaro Amorim • Full Stack (React, Node.js and Python)",
       downloadLabel: "Download PDF",
+      downloadDocxLabel: "Download DOCX",
       printLabel: "Print",
       themeLabel: "Theme",
       langSwitchText: "EN",
@@ -1348,6 +1360,16 @@
     let activeProjects;
     const detailBtns = Array.from(document.querySelectorAll("[data-open]"));
     const baseDetailLabels = detailBtns.map(btn => btn.textContent.trim());
+    const DOWNLOAD_FILES = {
+      pt: {
+        pdf: "cv-alvaro-amorimpdf-pt.pdf",
+        docx: "cv-alvaro-amorimdocx-pt.docx"
+      },
+      en: {
+        pdf: "cv-alvaro-amorimpdf-en.pdf",
+        docx: "cv-alvaro-amorimdocx-en.docx"
+      }
+    };
 
     function toast(msg){
       clearTimeout(toastTimer);
@@ -1406,6 +1428,23 @@
       metaTheme.setAttribute("content", theme === "dark" ? "#0b1220" : "#f5f7fb");
     }
 
+    function getCurrentFiles(){
+      return DOWNLOAD_FILES[currentLang] || DOWNLOAD_FILES.pt;
+    }
+
+    function syncDownloadLinks(){
+      const files = getCurrentFiles();
+      if (downloadBtn){
+        downloadBtn.setAttribute("href", files.pdf);
+        downloadBtn.setAttribute("download", files.pdf);
+      }
+      if (downloadDocxBtn){
+        downloadDocxBtn.setAttribute("href", files.docx);
+        downloadDocxBtn.setAttribute("download", files.docx);
+      }
+      return files;
+    }
+
     function setTheme(next){
       root.setAttribute("data-theme", next);
       updateThemeColor(next);
@@ -1440,6 +1479,7 @@
 
       langSwitch.classList.toggle("is-en", useEn);
       langSwitch.setAttribute("aria-checked", useEn ? "true" : "false");
+      syncDownloadLinks();
 
       activeProjects = useEn ? projectsEn : projects;
       if (currentProjectKey && dialog.open){
@@ -1498,8 +1538,6 @@
     /* =======================================================
        Imprimir PDF (em vez de imprimir a página)
        ======================================================= */
-    const PDF_URL = "curriculo-alvaro-amorim.pdf";
-
     function printPdf(url){
       const iframe = document.createElement("iframe");
       iframe.style.position = "fixed";
@@ -1523,7 +1561,10 @@
       document.body.appendChild(iframe);
     }
 
-    printBtn.addEventListener("click", () => printPdf(PDF_URL));
+    printBtn.addEventListener("click", () => {
+      const files = getCurrentFiles();
+      printPdf(files.pdf);
+    });
 
     /* =======================================================
        Skills filter (com estado ativo)
