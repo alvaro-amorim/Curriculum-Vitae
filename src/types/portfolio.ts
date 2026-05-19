@@ -1,0 +1,57 @@
+export type Locale = "pt" | "en";
+
+export type ThemeName = "dark" | "light";
+
+export type LocalizedText = Record<Locale, string>;
+
+export type SkillCategory = "front" | "back" | "devops" | "other";
+
+export type Skill = {
+  name: string;
+  category: SkillCategory;
+};
+
+export type DownloadAsset = {
+  label: string;
+  href: string;
+  fileName: string;
+};
+
+export type ProfileLink = {
+  label: LocalizedText;
+  href: string;
+  display: string;
+  kind: "portfolio" | "github" | "project" | "repo";
+};
+
+export type Project = {
+  slug: string;
+  title: LocalizedText;
+  description: LocalizedText;
+  details: LocalizedText;
+  stack: string[];
+  highlights: Record<Locale, string[]>;
+  website: string;
+  repository?: string;
+};
+
+export type ExperienceItem = {
+  title: LocalizedText;
+  organization?: string;
+  period: LocalizedText;
+  badge: LocalizedText;
+  items?: Record<Locale, string[]>;
+};
+
+export type EducationItem = {
+  title: LocalizedText;
+  institution: LocalizedText;
+  period: string;
+};
+
+export type CertificationGroup = {
+  title: LocalizedText;
+  meta: LocalizedText;
+  badge: LocalizedText;
+  items: LocalizedText[];
+};

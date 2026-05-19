@@ -1,0 +1,1 @@
+export { certificationGroup } from "./education";
