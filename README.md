@@ -101,7 +101,7 @@ Fase 6.1 implementada e auditada, ainda sem checkpoint/commit: metadata global e
 
 A aplicação possui home, rota `/curriculo`, conteúdo principal separado em `src/content`, tema claro/escuro básico, PT/EN básico, downloads PDF/DOCX preservados, case studies de projetos, interações avançadas no front-end, APIs locais seguras, Developer Lab técnico e SEO básico para divulgação.
 
-O arquivo `index.html` permanece na raiz como referência/backup da versão estática anterior. Os arquivos originais de imagem, PDF e DOCX também permanecem preservados na raiz, com cópias em `public/` para uso pelo Next.js.
+O arquivo `legacy/index.html` preserva a versão estática anterior apenas como referência histórica. Ele não é usado pelo app Next.js atual, cuja versão ativa está em `src/app`. Os arquivos originais de imagem, PDF e DOCX permanecem preservados na raiz, com cópias em `public/` para uso pelo Next.js.
 
 ## Próximas Fases
 

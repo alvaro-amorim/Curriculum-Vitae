@@ -74,7 +74,7 @@ Estado real após auditoria:
 - SEO básico, sitemap e robots funcionando.
 - Conteúdo profissional preservado e estruturado.
 - Downloads PDF/DOCX preservados em `public/resume`.
-- `index.html` legado ainda existe na raiz como referência histórica, mas não é usado pelo Next.js.
+- `legacy/index.html` preserva o HTML estático antigo como referência histórica; ele não é usado pelo Next.js.
 
 Porém:
 
