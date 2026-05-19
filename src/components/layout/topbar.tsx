@@ -39,7 +39,7 @@ export function Topbar() {
           <Button aria-label={t.nav.theme} onClick={toggleTheme} size="sm" variant="secondary">
             {t.nav.theme}
           </Button>
-          <Button aria-label="Alternar idioma" onClick={toggleLocale} size="sm" variant="secondary">
+          <Button aria-label={locale === "pt" ? "Alternar idioma" : "Switch language"} onClick={toggleLocale} size="sm" variant="secondary">
             {locale === "pt" ? "EN" : "PT"}
           </Button>
         </nav>

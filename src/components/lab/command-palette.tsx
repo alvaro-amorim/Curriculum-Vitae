@@ -249,16 +249,22 @@ export function CommandPalette() {
         >
           <div
             aria-modal="true"
+            aria-describedby="command-palette-description"
+            aria-labelledby="command-palette-title"
             className="soft-reveal mx-auto max-w-2xl overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg)] shadow-[var(--shadow-card)]"
             role="dialog"
           >
             <div className="border-b border-[var(--border)] p-4">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <h2 className="text-base font-semibold text-[var(--text)]">{t.lab.commandPalette.title}</h2>
-                  <p className="mt-1 text-sm text-[var(--muted)]">{t.lab.commandPalette.description}</p>
+                  <h2 className="text-base font-semibold text-[var(--text)]" id="command-palette-title">
+                    {t.lab.commandPalette.title}
+                  </h2>
+                  <p className="mt-1 text-sm text-[var(--muted)]" id="command-palette-description">
+                    {t.lab.commandPalette.description}
+                  </p>
                 </div>
-                <Button aria-label="Esc" onClick={closePalette} size="sm" variant="ghost">
+                <Button aria-label={locale === "pt" ? "Fechar command palette" : "Close command palette"} onClick={closePalette} size="sm" variant="ghost">
                   Esc
                 </Button>
               </div>
@@ -271,7 +277,11 @@ export function CommandPalette() {
                 type="search"
                 value={query}
               />
-              {status ? <p className="mt-2 text-sm text-[var(--muted)]">{status}</p> : null}
+              {status ? (
+                <p aria-live="polite" className="mt-2 text-sm text-[var(--muted)]">
+                  {status}
+                </p>
+              ) : null}
             </div>
 
             <div className="max-h-[68vh] overflow-y-auto p-2">

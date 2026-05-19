@@ -22,17 +22,23 @@ export async function generateMetadata({ params }: ProjectPageProps): Promise<Me
 
   if (!project) {
     return {
-      title: "Projeto não encontrado - Álvaro Amorim",
+      title: "Projeto não encontrado",
     };
   }
 
   return {
-    title: `${project.title.pt} | Case Study - Álvaro Amorim`,
+    title: {
+      absolute: `${project.title.pt} | Case Study — Álvaro Amorim`,
+    },
     description: project.shortDescription.pt,
+    alternates: {
+      canonical: `/projetos/${project.slug}`,
+    },
     openGraph: {
-      title: `${project.title.pt} | Case Study - Álvaro Amorim`,
+      title: `${project.title.pt} — Case Study`,
       description: project.shortDescription.pt,
       type: "article",
+      url: `/projetos/${project.slug}`,
     },
   };
 }

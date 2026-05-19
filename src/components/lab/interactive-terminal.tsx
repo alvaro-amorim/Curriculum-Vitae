@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { FormEvent, useMemo, useRef, useState } from "react";
+import { FormEvent, useMemo, useState } from "react";
 
 import { usePortfolioUi } from "@/components/layout/app-shell";
 import { Badge } from "@/components/ui/badge";
@@ -36,7 +36,6 @@ export function InteractiveTerminal() {
   const { locale, t } = usePortfolioUi();
   const [history, setHistory] = useState<TerminalLine[]>([]);
   const [input, setInput] = useState("");
-  const inputRef = useRef<HTMLInputElement>(null);
 
   const primarySkills = useMemo(() => {
     const highlighted = new Set(profile.highlights);
@@ -230,7 +229,6 @@ export function InteractiveTerminal() {
       <div
         aria-live="polite"
         className="min-h-[360px] space-y-3 overflow-x-auto p-5 font-mono text-sm"
-        onClick={() => inputRef.current?.focus()}
       >
         {history.length === 0 ? (
           <p className="text-[var(--muted)]">
@@ -299,7 +297,6 @@ export function InteractiveTerminal() {
             id="interactive-terminal-input"
             onChange={(event) => setInput(event.target.value)}
             placeholder={t.lab.terminal.placeholder}
-            ref={inputRef}
             value={input}
           />
           <Button size="sm" type="submit" variant="primary">

@@ -56,7 +56,10 @@ src/
       score/route.ts
       terminal/route.ts
     lab/page.tsx
+    not-found.tsx
     page.tsx
+    robots.ts
+    sitemap.ts
     curriculo/page.tsx
     layout.tsx
     globals.css
@@ -92,18 +95,38 @@ Fase 1 concluída e commitada. Fase 2 concluída e commitada com a área de case
 
 Fase 4 concluída e commitada: foram criadas APIs em modo local/mock com Route Handlers, validação Zod, respostas padronizadas e fallback sem banco para `/api/health`, `/api/contact`, `/api/analytics`, `/api/terminal` e `/api/score`.
 
-Fase 5.1 implementada e auditada, ainda sem checkpoint/commit: foi criada a rota `/lab` com Developer Lab, Debug Challenge, Architecture Builder, API Latency Game, pontuação local de sessão e envio seguro opcional para `/api/score`.
+Fase 5 concluída e commitada: foi criada a rota `/lab` com Developer Lab, Debug Challenge, Architecture Builder, API Latency Game, pontuação local de sessão e envio seguro opcional para `/api/score`.
 
-A aplicação possui home, rota `/curriculo`, conteúdo principal separado em `src/content`, tema claro/escuro básico, PT/EN básico, downloads PDF/DOCX preservados, case studies de projetos, interações avançadas no front-end, APIs locais seguras e Developer Lab técnico para evolução futura.
+Fase 6.1 implementada e auditada, ainda sem checkpoint/commit: metadata global e por rota, sitemap, robots, página 404, ajustes leves de acessibilidade e readiness de deploy foram preparados.
+
+A aplicação possui home, rota `/curriculo`, conteúdo principal separado em `src/content`, tema claro/escuro básico, PT/EN básico, downloads PDF/DOCX preservados, case studies de projetos, interações avançadas no front-end, APIs locais seguras, Developer Lab técnico e SEO básico para divulgação.
 
 O arquivo `index.html` permanece na raiz como referência/backup da versão estática anterior. Os arquivos originais de imagem, PDF e DOCX também permanecem preservados na raiz, com cópias em `public/` para uso pelo Next.js.
 
 ## Próximas Fases
 
-- Fase 5: auditar, consolidar e criar checkpoint do Developer Lab.
-- Fase 6: polimento final de SEO, acessibilidade, performance, README e deploy.
+- Fase 6: auditar, consolidar e criar checkpoint do polimento final.
 
 Supabase real, banco de dados, envio real de e-mail, analytics persistente, autenticação, dashboard admin, ranking real e Developer Lab completo ainda não foram implementados. Nenhuma fase futura está marcada como concluída.
+
+## Deploy Readiness
+
+Checklist para deploy na Vercel:
+
+```powershell
+npm install
+npm run lint
+npm run typecheck
+npm run build
+```
+
+Variável recomendada:
+
+```txt
+NEXT_PUBLIC_APP_URL=https://seu-dominio-ou-projeto.vercel.app
+```
+
+Depois de configurar a variável no projeto da Vercel, o deploy pode ser feito pelo fluxo Git/Vercel ou pela CLI da Vercel. Este README não indica deploy concluído; a publicação real ainda precisa ser executada e validada.
 
 ## Testes Manuais das APIs
 

@@ -1,4 +1,6 @@
-export const SITE_URL = "https://curriculum-vitae-babr.vercel.app/";
+const configuredAppUrl = process.env.NEXT_PUBLIC_APP_URL?.trim();
+
+export const SITE_URL = (configuredAppUrl || "http://localhost:3000").replace(/\/$/, "");
 
 export const APP_NAME = "Alvaro.dev Portfolio OS";
 
