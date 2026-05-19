@@ -32,7 +32,7 @@ export function ProjectsPreview({ showLinks = true, featuredOnly = false, limit 
 
       <div className="mt-4 grid gap-4 md:grid-cols-2">
         {visibleProjects.map((project) => (
-          <article className="flex min-h-48 flex-col justify-between rounded-xl border border-[var(--border)] bg-[var(--surface-muted)] p-4" key={project.slug}>
+          <article className="interactive-surface flex min-h-48 flex-col justify-between rounded-xl border border-[var(--border)] bg-[var(--surface-muted)] p-4" key={project.slug}>
             <div>
               <h3 className="font-semibold">{project.title[locale]}</h3>
               <p className="mt-1 text-xs font-semibold uppercase tracking-[0.14em] text-[var(--accent)]">{project.subtitle[locale]}</p>

@@ -51,8 +51,10 @@ src/
     layout.tsx
     globals.css
   components/
+    lab/
     layout/
     resume/
+    projects/
     ui/
   content/
     profile.ts
@@ -74,16 +76,17 @@ public/
 
 ## Status Atual
 
-Fase 1 concluída e commitada. Fase 2.1 implementada e auditada, ainda sem checkpoint/commit: a aplicação possui home, rota `/curriculo`, conteúdo principal separado em `src/content`, tema claro/escuro básico, PT/EN básico, downloads PDF/DOCX preservados e área inicial de case studies em `/projetos` e `/projetos/[slug]`.
+Fase 1 concluída e commitada. Fase 2 concluída e commitada com a área de case studies em `/projetos` e `/projetos/[slug]`. Fase 3.1 implementada e auditada, ainda sem checkpoint/commit: a home possui terminal interativo client-side, command palette com atalho `Ctrl+K`/`Cmd+K`, skill matrix e microinterações leves com respeito a `prefers-reduced-motion`.
+
+A aplicação possui home, rota `/curriculo`, conteúdo principal separado em `src/content`, tema claro/escuro básico, PT/EN básico, downloads PDF/DOCX preservados, case studies de projetos e interações avançadas apenas no front-end.
 
 O arquivo `index.html` permanece na raiz como referência/backup da versão estática anterior. Os arquivos originais de imagem, PDF e DOCX também permanecem preservados na raiz, com cópias em `public/` para uso pelo Next.js.
 
 ## Próximas Fases
 
-- Fase 2: criar checkpoint/commit da listagem e páginas de case study para projetos.
-- Fase 3: adicionar interatividade avançada com terminal visual, command palette e skill radar.
+- Fase 3: criar checkpoint da interatividade avançada front-end.
 - Fase 4: adicionar APIs reais com validação e fallback sem banco.
 - Fase 5: criar Developer Lab com mini-games técnicos.
 - Fase 6: polimento final de SEO, acessibilidade, performance, README e deploy.
 
-Nenhuma fase futura está marcada como concluída.
+Backend, APIs, Supabase, analytics persistente, mini-games e Developer Lab completo ainda não foram implementados. Nenhuma fase futura está marcada como concluída.

@@ -6,9 +6,16 @@ export type LocalizedText = Record<Locale, string>;
 
 export type SkillCategory = "front" | "back" | "devops" | "other";
 
+export type SkillDomain = "front" | "back" | "database" | "devops" | "ai" | "product";
+
+export type SkillLevel = "practical" | "project" | "learning" | "foundation";
+
 export type Skill = {
   name: string;
   category: SkillCategory;
+  domain?: SkillDomain;
+  level?: SkillLevel;
+  evidence?: LocalizedText;
 };
 
 export type DownloadAsset = {

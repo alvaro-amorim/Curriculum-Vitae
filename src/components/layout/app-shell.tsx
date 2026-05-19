@@ -6,6 +6,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import { dictionary, type Dictionary } from "@/content/translations";
 import { STORAGE_KEYS } from "@/lib/constants";
 import type { Locale, ThemeName } from "@/types/portfolio";
+import { CommandPalette } from "@/components/lab/command-palette";
 
 import { Topbar } from "./topbar";
 
@@ -103,6 +104,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     <PortfolioUiContext.Provider value={value}>
       <div className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
         <Topbar />
+        <CommandPalette />
         {children}
       </div>
     </PortfolioUiContext.Provider>

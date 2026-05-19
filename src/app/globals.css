@@ -72,6 +72,52 @@ img {
   color: var(--text);
 }
 
+@media (prefers-reduced-motion: no-preference) {
+  .interactive-surface {
+    transition:
+      transform 180ms ease,
+      border-color 180ms ease,
+      background-color 180ms ease,
+      box-shadow 180ms ease;
+  }
+
+  .interactive-surface:hover {
+    transform: translateY(-2px);
+  }
+
+  .soft-reveal {
+    animation: soft-reveal 220ms ease both;
+  }
+
+  .terminal-caret {
+    animation: terminal-caret 1s steps(2, end) infinite;
+  }
+}
+
+@keyframes soft-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes terminal-caret {
+  0%,
+  45% {
+    opacity: 1;
+  }
+
+  46%,
+  100% {
+    opacity: 0;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -80,5 +126,9 @@ img {
     animation-iteration-count: 1 !important;
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
+  }
+
+  .terminal-caret {
+    opacity: 1;
   }
 }

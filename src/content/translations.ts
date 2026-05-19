@@ -60,6 +60,46 @@ type TranslationTree = {
     currentPhase: string;
     resumeCta: string;
   };
+  lab: {
+    terminal: {
+      title: string;
+      description: string;
+      promptLabel: string;
+      placeholder: string;
+      initial: string;
+      helpTitle: string;
+      unknownCommand: string;
+      projectNotFound: string;
+      openingProject: string;
+      stackTitle: string;
+      projectsTitle: string;
+      contactTitle: string;
+      downloadTitle: string;
+      cleared: string;
+    };
+    commandPalette: {
+      trigger: string;
+      title: string;
+      description: string;
+      searchPlaceholder: string;
+      noResults: string;
+      navigation: string;
+      projects: string;
+      downloads: string;
+      actions: string;
+      copyEmail: string;
+      copiedEmail: string;
+      toggleTheme: string;
+      toggleLanguage: string;
+    };
+    skillRadar: {
+      title: string;
+      description: string;
+      filtersLabel: string;
+      allDomains: string;
+      levelSummary: string;
+    };
+  };
   resume: {
     title: string;
     subtitle: string;
@@ -140,12 +180,52 @@ export const dictionary: Record<Locale, TranslationTree> = {
       title: "Álvaro Amorim",
       subtitle: "Desenvolvedor Full Stack",
       intro: "Construo aplicações web, produtos SaaS, automações e integrações com IA, com foco em entrega funcional, arquitetura limpa e experiência de produto.",
-      statusTitle: "Case studies estruturados",
-      statusDescription: "Projetos reais agora têm rota dedicada, páginas individuais e conteúdo técnico organizado por problema, solução, stack e desafios.",
-      architectureTitle: "Próxima evolução",
-      architectureDescription: "Interatividade avançada, APIs reais e Developer Lab entram nas próximas fases, sem misturar backend ou mini-games nesta etapa.",
-      currentPhase: "Fase 2.1",
+      statusTitle: "Interatividade front-end",
+      statusDescription: "Terminal client-side, command palette e matriz de habilidades tornam o portfólio mais explorável sem adicionar backend nesta fase.",
+      architectureTitle: "Evolução controlada",
+      architectureDescription: "APIs reais, persistência, Supabase e mini-games continuam reservados para fases futuras.",
+      currentPhase: "Fase 3.1",
       resumeCta: "Currículo objetivo",
+    },
+    lab: {
+      terminal: {
+        title: "Terminal interativo",
+        description: "Explore perfil, stack, projetos e downloads por comandos client-side.",
+        promptLabel: "Comando do terminal",
+        placeholder: "Digite help, projects ou open margem-app",
+        initial: "Digite help para ver os comandos disponíveis.",
+        helpTitle: "Comandos disponíveis",
+        unknownCommand: "Comando não reconhecido. Use help para ver as opções.",
+        projectNotFound: "Projeto não encontrado. Use projects para listar os slugs.",
+        openingProject: "Abrindo case study",
+        stackTitle: "Stack principal",
+        projectsTitle: "Projetos disponíveis",
+        contactTitle: "Contato",
+        downloadTitle: "Downloads",
+        cleared: "Histórico limpo.",
+      },
+      commandPalette: {
+        trigger: "Ctrl K",
+        title: "Command palette",
+        description: "Busque rotas, projetos, downloads e ações rápidas.",
+        searchPlaceholder: "Buscar comando ou projeto",
+        noResults: "Nenhuma ação encontrada.",
+        navigation: "Navegação",
+        projects: "Projetos",
+        downloads: "Downloads",
+        actions: "Ações",
+        copyEmail: "Copiar e-mail",
+        copiedEmail: "E-mail copiado.",
+        toggleTheme: "Alternar tema",
+        toggleLanguage: "Alternar idioma",
+      },
+      skillRadar: {
+        title: "Skill matrix",
+        description: "Habilidades agrupadas por domínio com níveis honestos de familiaridade e evidência prática.",
+        filtersLabel: "Filtros de habilidades",
+        allDomains: "Todos",
+        levelSummary: "Distribuição por nível",
+      },
     },
     resume: {
       title: "Currículo Interativo",
@@ -225,12 +305,52 @@ export const dictionary: Record<Locale, TranslationTree> = {
       title: "Álvaro Amorim",
       subtitle: "Full Stack Developer",
       intro: "I build web applications, SaaS products, automation flows, and AI integrations with a focus on functional delivery, clean architecture, and product experience.",
-      statusTitle: "Structured case studies",
-      statusDescription: "Real projects now have a dedicated route, individual pages, and technical content organized by problem, solution, stack, and challenges.",
-      architectureTitle: "Next evolution",
-      architectureDescription: "Advanced interaction, real APIs, and the Developer Lab belong to later phases without mixing backend or mini-games into this step.",
-      currentPhase: "Phase 2.1",
+      statusTitle: "Front-end interaction",
+      statusDescription: "Client-side terminal, command palette, and skill matrix make the portfolio more explorable without adding backend in this phase.",
+      architectureTitle: "Controlled evolution",
+      architectureDescription: "Real APIs, persistence, Supabase, and mini-games remain reserved for later phases.",
+      currentPhase: "Phase 3.1",
       resumeCta: "Objective resume",
+    },
+    lab: {
+      terminal: {
+        title: "Interactive terminal",
+        description: "Explore profile, stack, projects, and downloads through client-side commands.",
+        promptLabel: "Terminal command",
+        placeholder: "Type help, projects, or open margem-app",
+        initial: "Type help to see the available commands.",
+        helpTitle: "Available commands",
+        unknownCommand: "Command not recognized. Use help to see the options.",
+        projectNotFound: "Project not found. Use projects to list the slugs.",
+        openingProject: "Opening case study",
+        stackTitle: "Main stack",
+        projectsTitle: "Available projects",
+        contactTitle: "Contact",
+        downloadTitle: "Downloads",
+        cleared: "History cleared.",
+      },
+      commandPalette: {
+        trigger: "Ctrl K",
+        title: "Command palette",
+        description: "Search routes, projects, downloads, and quick actions.",
+        searchPlaceholder: "Search command or project",
+        noResults: "No action found.",
+        navigation: "Navigation",
+        projects: "Projects",
+        downloads: "Downloads",
+        actions: "Actions",
+        copyEmail: "Copy email",
+        copiedEmail: "Email copied.",
+        toggleTheme: "Toggle theme",
+        toggleLanguage: "Toggle language",
+      },
+      skillRadar: {
+        title: "Skill matrix",
+        description: "Skills grouped by domain with honest familiarity labels and practical evidence.",
+        filtersLabel: "Skill filters",
+        allDomains: "All",
+        levelSummary: "Level distribution",
+      },
     },
     resume: {
       title: "Interactive Resume",
