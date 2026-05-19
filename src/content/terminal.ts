@@ -40,6 +40,22 @@ export const terminalCommands: TerminalCommand[] = [
       en: "Lists projects and slugs.",
     },
   },
+  {
+    name: "lab",
+    usage: "lab",
+    description: {
+      pt: "Abre o Developer Lab.",
+      en: "Opens the Developer Lab.",
+    },
+  },
+  {
+    name: "open lab",
+    usage: "open lab",
+    description: {
+      pt: "Abre o Developer Lab.",
+      en: "Opens the Developer Lab.",
+    },
+  },
   ...projects.map<TerminalCommand>((project) => ({
     name: `open ${project.slug}`,
     usage: `open ${project.slug}`,

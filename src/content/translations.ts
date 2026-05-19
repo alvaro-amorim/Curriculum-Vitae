@@ -9,6 +9,7 @@ type TranslationTree = {
     home: string;
     resume: string;
     projects: string;
+    lab: string;
     theme: string;
     language: string;
     mainNavigation: string;
@@ -22,6 +23,7 @@ type TranslationTree = {
     open: string;
     viewResume: string;
     viewProjects: string;
+    openLab: string;
     viewGithub: string;
   };
   projectsPage: {
@@ -71,6 +73,7 @@ type TranslationTree = {
       unknownCommand: string;
       projectNotFound: string;
       openingProject: string;
+      openingLab: string;
       stackTitle: string;
       projectsTitle: string;
       contactTitle: string;
@@ -136,6 +139,7 @@ export const dictionary: Record<Locale, TranslationTree> = {
       home: "Home",
       resume: "Currículo",
       projects: "Projetos",
+      lab: "Lab",
       theme: "Tema",
       language: "PT",
       mainNavigation: "Navegação principal",
@@ -149,6 +153,7 @@ export const dictionary: Record<Locale, TranslationTree> = {
       open: "Abrir",
       viewResume: "Abrir currículo",
       viewProjects: "Ver projetos",
+      openLab: "Abrir Developer Lab",
       viewGithub: "Ver GitHub",
     },
     projectsPage: {
@@ -180,11 +185,11 @@ export const dictionary: Record<Locale, TranslationTree> = {
       title: "Álvaro Amorim",
       subtitle: "Desenvolvedor Full Stack",
       intro: "Construo aplicações web, produtos SaaS, automações e integrações com IA, com foco em entrega funcional, arquitetura limpa e experiência de produto.",
-      statusTitle: "Interatividade front-end",
-      statusDescription: "Terminal client-side, command palette e matriz de habilidades tornam o portfólio mais explorável sem adicionar backend nesta fase.",
-      architectureTitle: "Evolução controlada",
-      architectureDescription: "APIs reais, persistência, Supabase e mini-games continuam reservados para fases futuras.",
-      currentPhase: "Fase 3.1",
+      statusTitle: "Developer Lab ativo",
+      statusDescription: "Mini-games técnicos demonstram raciocínio de depuração, arquitetura e performance com pontuação local.",
+      architectureTitle: "Backend local/mock",
+      architectureDescription: "APIs seguras em Route Handlers recebem score e eventos em modo local, sem Supabase ou banco real nesta fase.",
+      currentPhase: "Fase 5.1",
       resumeCta: "Currículo objetivo",
     },
     lab: {
@@ -198,6 +203,7 @@ export const dictionary: Record<Locale, TranslationTree> = {
         unknownCommand: "Comando não reconhecido. Use help para ver as opções.",
         projectNotFound: "Projeto não encontrado. Use projects para listar os slugs.",
         openingProject: "Abrindo case study",
+        openingLab: "Abrindo Developer Lab",
         stackTitle: "Stack principal",
         projectsTitle: "Projetos disponíveis",
         contactTitle: "Contato",
@@ -261,6 +267,7 @@ export const dictionary: Record<Locale, TranslationTree> = {
       home: "Home",
       resume: "Resume",
       projects: "Projects",
+      lab: "Lab",
       theme: "Theme",
       language: "EN",
       mainNavigation: "Main navigation",
@@ -274,6 +281,7 @@ export const dictionary: Record<Locale, TranslationTree> = {
       open: "Open",
       viewResume: "Open resume",
       viewProjects: "View projects",
+      openLab: "Open Developer Lab",
       viewGithub: "View GitHub",
     },
     projectsPage: {
@@ -305,11 +313,11 @@ export const dictionary: Record<Locale, TranslationTree> = {
       title: "Álvaro Amorim",
       subtitle: "Full Stack Developer",
       intro: "I build web applications, SaaS products, automation flows, and AI integrations with a focus on functional delivery, clean architecture, and product experience.",
-      statusTitle: "Front-end interaction",
-      statusDescription: "Client-side terminal, command palette, and skill matrix make the portfolio more explorable without adding backend in this phase.",
-      architectureTitle: "Controlled evolution",
-      architectureDescription: "Real APIs, persistence, Supabase, and mini-games remain reserved for later phases.",
-      currentPhase: "Phase 3.1",
+      statusTitle: "Developer Lab active",
+      statusDescription: "Technical mini-games show debugging, architecture, and performance reasoning with local scoring.",
+      architectureTitle: "Local/mock backend",
+      architectureDescription: "Safe Route Handler APIs receive scores and events in local mode, without Supabase or a real database in this phase.",
+      currentPhase: "Phase 5.1",
       resumeCta: "Objective resume",
     },
     lab: {
@@ -323,6 +331,7 @@ export const dictionary: Record<Locale, TranslationTree> = {
         unknownCommand: "Command not recognized. Use help to see the options.",
         projectNotFound: "Project not found. Use projects to list the slugs.",
         openingProject: "Opening case study",
+        openingLab: "Opening Developer Lab",
         stackTitle: "Main stack",
         projectsTitle: "Available projects",
         contactTitle: "Contact",

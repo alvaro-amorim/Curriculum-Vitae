@@ -28,6 +28,8 @@ Depois acesse:
 ```txt
 http://localhost:3000
 http://localhost:3000/curriculo
+http://localhost:3000/projetos
+http://localhost:3000/lab
 ```
 
 ## Scripts Disponíveis
@@ -53,6 +55,7 @@ src/
       health/route.ts
       score/route.ts
       terminal/route.ts
+    lab/page.tsx
     page.tsx
     curriculo/page.tsx
     layout.tsx
@@ -72,8 +75,10 @@ src/
     experience.ts
     certifications.ts
     downloads.ts
+    challenges.ts
     translations.ts
   lib/
+    lab-score.ts
   types/
 
 public/
@@ -85,19 +90,20 @@ public/
 
 Fase 1 concluída e commitada. Fase 2 concluída e commitada com a área de case studies em `/projetos` e `/projetos/[slug]`. Fase 3 concluída e commitada com terminal interativo client-side, command palette com atalho `Ctrl+K`/`Cmd+K`, skill matrix e microinterações leves com respeito a `prefers-reduced-motion`.
 
-Fase 4.1 implementada e auditada, ainda sem checkpoint/commit: foram criadas APIs em modo local/mock com Route Handlers, validação Zod, respostas padronizadas e fallback sem banco para `/api/health`, `/api/contact`, `/api/analytics`, `/api/terminal` e `/api/score`.
+Fase 4 concluída e commitada: foram criadas APIs em modo local/mock com Route Handlers, validação Zod, respostas padronizadas e fallback sem banco para `/api/health`, `/api/contact`, `/api/analytics`, `/api/terminal` e `/api/score`.
 
-A aplicação possui home, rota `/curriculo`, conteúdo principal separado em `src/content`, tema claro/escuro básico, PT/EN básico, downloads PDF/DOCX preservados, case studies de projetos, interações avançadas no front-end e APIs locais seguras para evolução futura.
+Fase 5.1 implementada e auditada, ainda sem checkpoint/commit: foi criada a rota `/lab` com Developer Lab, Debug Challenge, Architecture Builder, API Latency Game, pontuação local de sessão e envio seguro opcional para `/api/score`.
+
+A aplicação possui home, rota `/curriculo`, conteúdo principal separado em `src/content`, tema claro/escuro básico, PT/EN básico, downloads PDF/DOCX preservados, case studies de projetos, interações avançadas no front-end, APIs locais seguras e Developer Lab técnico para evolução futura.
 
 O arquivo `index.html` permanece na raiz como referência/backup da versão estática anterior. Os arquivos originais de imagem, PDF e DOCX também permanecem preservados na raiz, com cópias em `public/` para uso pelo Next.js.
 
 ## Próximas Fases
 
-- Fase 4: criar checkpoint das APIs locais/mock; Supabase real fica para etapa futura.
-- Fase 5: criar Developer Lab com mini-games técnicos.
+- Fase 5: auditar, consolidar e criar checkpoint do Developer Lab.
 - Fase 6: polimento final de SEO, acessibilidade, performance, README e deploy.
 
-Supabase real, banco de dados, envio real de e-mail, analytics persistente, autenticação, mini-games e Developer Lab completo ainda não foram implementados. Nenhuma fase futura está marcada como concluída.
+Supabase real, banco de dados, envio real de e-mail, analytics persistente, autenticação, dashboard admin, ranking real e Developer Lab completo ainda não foram implementados. Nenhuma fase futura está marcada como concluída.
 
 ## Testes Manuais das APIs
 

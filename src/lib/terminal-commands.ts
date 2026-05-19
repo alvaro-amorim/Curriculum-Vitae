@@ -64,8 +64,29 @@ export function executeTerminalCommand(command: string, locale: Locale = localeF
         ok: true,
         output: ["Projetos disponíveis:", ...projects.map((project) => `${project.slug} - ${project.title[locale]} (${project.status[locale]})`)],
       };
+    case "lab":
+      return {
+        ok: true,
+        output: [locale === "pt" ? "Abrindo Developer Lab" : "Opening Developer Lab", "/lab"],
+        action: {
+          type: "navigate",
+          target: "/lab",
+        },
+      };
     case "open": {
       const slug = args[0];
+
+      if (slug === "lab") {
+        return {
+          ok: true,
+          output: [locale === "pt" ? "Abrindo Developer Lab" : "Opening Developer Lab", "/lab"],
+          action: {
+            type: "navigate",
+            target: "/lab",
+          },
+        };
+      }
+
       const project = slug ? getProjectBySlug(slug) : undefined;
 
       if (!project) {
@@ -119,4 +140,3 @@ export function executeTerminalCommand(command: string, locale: Locale = localeF
       };
   }
 }
-

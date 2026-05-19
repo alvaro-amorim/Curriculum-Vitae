@@ -108,8 +108,39 @@ export function InteractiveTerminal() {
           }),
         ];
         break;
+      case "lab":
+        response = [
+          output({
+            text: t.lab.terminal.openingLab,
+            links: [
+              {
+                href: "/lab",
+                label: "/lab",
+              },
+            ],
+          }),
+        ];
+        window.setTimeout(() => router.push("/lab"), 120);
+        break;
       case "open": {
         const slug = args[0];
+
+        if (slug === "lab") {
+          response = [
+            output({
+              text: t.lab.terminal.openingLab,
+              links: [
+                {
+                  href: "/lab",
+                  label: "/lab",
+                },
+              ],
+            }),
+          ];
+          window.setTimeout(() => router.push("/lab"), 120);
+          break;
+        }
+
         const project = slug ? getProjectBySlug(slug) : undefined;
 
         if (!project) {

@@ -91,6 +91,14 @@ export function CommandPalette() {
         keywords: ["projetos", "projects", "cases"],
         run: () => router.push("/projetos"),
       },
+      {
+        id: "go-lab",
+        label: t.actions.openLab,
+        description: "/lab",
+        group: "navigation",
+        keywords: ["lab", "developer lab", "mini-games", "debug", "architecture", "latency"],
+        run: () => router.push("/lab"),
+      },
       ...projects.map<PaletteAction>((project) => ({
         id: `open-${project.slug}`,
         label: project.title[locale],

@@ -72,3 +72,61 @@ export type CertificationGroup = {
   badge: LocalizedText;
   items: LocalizedText[];
 };
+
+export type LabGameId = "debug" | "architecture" | "latency";
+
+export type LabPageCopy = {
+  title: LocalizedText;
+  description: LocalizedText;
+  sessionScore: LocalizedText;
+  pending: LocalizedText;
+  completed: LocalizedText;
+  apiSynced: LocalizedText;
+  apiPending: LocalizedText;
+  apiFailed: LocalizedText;
+  backLinksLabel: LocalizedText;
+};
+
+export type DebugChallengeItem = {
+  id: string;
+  title: LocalizedText;
+  prompt: LocalizedText;
+  code: string;
+  options: {
+    id: string;
+    label: LocalizedText;
+    isCorrect: boolean;
+    feedback: LocalizedText;
+  }[];
+  explanation: LocalizedText;
+};
+
+export type ArchitectureBlock = {
+  id: string;
+  label: LocalizedText;
+  description: LocalizedText;
+  role: "required" | "bonus" | "unsafe";
+  feedback: LocalizedText;
+};
+
+export type ArchitectureChallenge = {
+  id: string;
+  title: LocalizedText;
+  scenario: LocalizedText;
+  blocks: ArchitectureBlock[];
+};
+
+export type LatencyOption = {
+  id: string;
+  label: LocalizedText;
+  description: LocalizedText;
+  impact: "positive" | "negative";
+  feedback: LocalizedText;
+};
+
+export type LatencyChallenge = {
+  id: string;
+  title: LocalizedText;
+  scenario: LocalizedText;
+  options: LatencyOption[];
+};

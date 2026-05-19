@@ -28,6 +28,9 @@ export function HomeOverview() {
             <Link className={buttonClassName("secondary")} href="/projetos">
               {t.actions.viewProjects}
             </Link>
+            <Link className={buttonClassName("secondary")} href="/lab">
+              {t.actions.openLab}
+            </Link>
             <a className={buttonClassName("secondary")} href={profile.github} rel="noreferrer" target="_blank">
               {t.actions.viewGithub}
             </a>
