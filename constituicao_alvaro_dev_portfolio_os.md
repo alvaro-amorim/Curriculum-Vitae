@@ -74,7 +74,9 @@ Estado real após auditoria:
 - SEO básico, sitemap e robots funcionando.
 - Conteúdo profissional preservado e estruturado.
 - Downloads PDF/DOCX preservados em `public/resume`.
-- `legacy/index.html` preserva o HTML estático antigo como referência histórica; ele não é usado pelo Next.js.
+- O HTML estático antigo e os PDFs/DOCX legados da raiz foram removidos do repositório porque já existem em backup externo.
+- A versão ativa é o app Next.js em `src/app`.
+- Downloads ativos permanecem em `public/resume/` e a imagem ativa permanece em `public/profile/`.
 
 Porém:
 
@@ -280,14 +282,14 @@ Objetivo:
 - Confirmar Vercel como Next.js.
 - Confirmar último commit em produção.
 - Testar rotas públicas.
-- Decidir se `index.html` legado sai da raiz ou vai para `legacy/`.
-- Garantir que a Vercel não sirva mais HTML antigo.
+- Confirmar que `index.html` legado não está mais na raiz nem em `legacy/`.
+- Garantir que a Vercel não sirva HTML antigo ou deployment vazio.
 
 Critérios de aceite:
 
 - Produção serve a versão Next.
 - `/`, `/curriculo`, `/projetos`, `/lab`, `/api/health` funcionam.
-- `index.html` não confunde deploy.
+- Não há `index.html` legado confundindo deploy.
 
 ### Fase R1 — Redesign Visual Premium da Home
 
