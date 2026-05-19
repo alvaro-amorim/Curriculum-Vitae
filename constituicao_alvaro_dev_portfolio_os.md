@@ -54,6 +54,408 @@ Apesar disso, a versão atual ainda demonstra mais domínio de HTML/CSS/JS vanil
 
 ---
 
+## Estado Atual Real
+
+As fases 1 a 6 já foram implementadas e publicadas como **fundação técnica** do projeto:
+
+- Fase 1: base Next.js com App Router, TypeScript, Tailwind, conteúdo estruturado e rota `/curriculo`.
+- Fase 2: área de projetos e case studies em `/projetos` e `/projetos/[slug]`.
+- Fase 3: terminal client-side, command palette e skill matrix.
+- Fase 4: APIs em modo local/mock com validação e respostas padronizadas.
+- Fase 5: primeira versão do Developer Lab.
+- Fase 6: metadata, sitemap, robots, not-found, README e deploy readiness.
+
+Estado real após auditoria:
+
+- Fundação Next.js funcional.
+- Deploy/Vercel corrigido para preset Next.js.
+- Rotas principais funcionando: `/`, `/curriculo`, `/projetos`, `/projetos/[slug]`, `/lab`, `/api/health`.
+- APIs mock/local funcionando como base técnica.
+- SEO básico, sitemap e robots funcionando.
+- Conteúdo profissional preservado e estruturado.
+- Downloads PDF/DOCX preservados em `public/resume`.
+- `index.html` legado ainda existe na raiz como referência histórica, mas não é usado pelo Next.js.
+
+Porém:
+
+- O resultado atual **não está aprovado como experiência final**.
+- O projeto atual **não deve ser tratado como pronto para apresentação premium**.
+- A home atual não impressiona nos primeiros segundos.
+- O visual atual está genérico e conservador.
+- O Developer Lab atual é funcional, mas **não é gamificado de verdade**.
+- A skill matrix atual é uma lista filtrável com barras, não um radar visual memorável.
+- O terminal atual funciona, mas ainda parece um formulário estilizado.
+- A próxima etapa obrigatória é uma fase de resgate criativo/visual.
+
+Conclusão: a fundação técnica está concluída; a experiência visual e interativa foi reprovada para o objetivo original.
+
+---
+
+## Diagnóstico de Falha da Primeira Versão
+
+O desenvolvimento anterior priorizou segurança, validação, arquitetura incremental e baixo risco. Essa decisão produziu um MVP técnico correto, com build estável, rotas funcionais, dados estruturados e APIs mock/local.
+
+O problema é que a visão original exigia mais do que correção técnica. O objetivo era criar uma experiência memorável, premium e interativa que demonstrasse criatividade front-end, motion design, lógica de jogo, arquitetura visual e produto.
+
+Falhas identificadas:
+
+- O projeto ficou conservador demais.
+- A home virou uma composição de cards e CTAs, não uma primeira dobra memorável.
+- O erro principal do Developer Lab foi tratar "mini-games" como questionários, listas de alternativas e checklists com score.
+- O erro visual foi depender de cards genéricos, grids simples, badges, bordas e animações mínimas.
+- O erro de produto foi não criar uma narrativa visual forte.
+- O terminal não virou um command center real.
+- A skill matrix não virou uma visualização forte.
+- As páginas de projeto têm estrutura, mas ainda não têm storytelling visual premium.
+
+Essa primeira versão deve ser preservada como base técnica, mas não como experiência final.
+
+---
+
+## Nova Direção Obrigatória — Developer Arcade OS
+
+A nova direção criativa do projeto é:
+
+```txt
+Developer Arcade OS / Portfolio Arcade OS
+```
+
+O produto deve evoluir para um portfólio premium e interativo com estética de sistema, laboratório técnico e arcade de desenvolvimento.
+
+A nova versão deve priorizar:
+
+- Portfólio premium, não dashboard genérico.
+- Experiência interativa, não apenas navegação por cards.
+- Estética de sistema/dev arcade.
+- Visual memorável nos primeiros segundos.
+- Animações de scroll e transições perceptíveis.
+- Loading/boot sequence inicial com identidade própria.
+- Terminal/command center real.
+- Jogos simples, divertidos e ligados à programação.
+- Case studies com storytelling visual.
+- Back-end e APIs como suporte técnico da experiência, não como único diferencial.
+
+O site deve parecer uma experiência criada por alguém que entende front-end, produto, UX, estado, animação, arquitetura e sistemas web.
+
+Não é aceitável continuar criando apenas cards, checklists e quizzes e chamá-los de experiência avançada.
+
+---
+
+## Definição Correta de Mini-game
+
+Mini-game **não é**:
+
+- Quiz simples.
+- Checklist.
+- Formulário com score.
+- Lista de alternativas estática.
+- Card clicável com feedback.
+- Tabela com pontuação.
+
+Mini-game **deve ser**:
+
+- Jogável.
+- Visual.
+- Divertido.
+- Com regras claras.
+- Com estado.
+- Com pontuação.
+- Com feedback visual.
+- Com interação real.
+- Preferencialmente com movimento, colisão, tempo, fases, mapa, canvas, SVG ou simulação.
+
+O mini-game precisa demonstrar uma competência técnica real, mas também precisa parecer uma experiência de jogo. Ele pode ser simples, mas não pode ser apenas um formulário disfarçado.
+
+### Runtime Runner / Bug Runner
+
+Inspirado no tipo de experiência do jogo offline do Chrome, mas sem copiar assets, marca, visual ou identidade do Chrome.
+
+Ideia:
+
+- Personagem, cursor ou dev bot correndo.
+- Desviar de bugs, null pointer, timeout, 404, build failed e merge conflict.
+- Coletar power-ups como tests, cache, type safety e CI passed.
+- Pontuação e dificuldade progressiva.
+
+Demonstra:
+
+- Game loop.
+- Teclado.
+- Colisão.
+- Canvas/SVG/CSS.
+- Estado.
+- Performance front-end.
+
+### Bug Maze / Commit Maze
+
+Inspirado em maze game clássico, mas original e com tema de programação. Não deve copiar visual, nome, assets ou marca de jogos existentes.
+
+Ideia:
+
+- Jogador coleta commits, tests ou deploy tokens.
+- Inimigos são bugs, regressions, legacy code e production errors.
+- Power-ups como debug mode, rollback e test coverage.
+- Mapa simples em grid.
+
+Demonstra:
+
+- Grid engine.
+- Movimento.
+- Colisão.
+- IA simples.
+- Estado.
+- Fases.
+
+### Debug Arena
+
+Ideia:
+
+- Interface visual de editor.
+- Bugs aparecem em linhas de código.
+- Usuário identifica ou corrige antes do build falhar.
+- Feedback técnico depois da jogada.
+
+Demonstra:
+
+- UI de editor.
+- Lógica de validação.
+- Feedback técnico.
+- Animação.
+- Estado.
+
+### Latency Lab
+
+Ideia:
+
+- Painel de API com latência simulada.
+- Usuário aplica cache, paginação, debounce, índice e background job.
+- Gráficos e métricas mudam visualmente.
+- Request waterfall ou painel de performance.
+
+Demonstra:
+
+- Raciocínio full stack.
+- Visualização de métricas.
+- Gráficos.
+- Simulação.
+- Back-end awareness.
+
+---
+
+## Animações e Motion Design Obrigatórios
+
+As próximas fases devem incluir motion design real e perceptível:
+
+- Loading inicial estilo boot de sistema.
+- Scroll reveal por seção.
+- Transições suaves entre áreas.
+- Hover states mais ricos.
+- Background animado leve.
+- Terminal com digitação real.
+- Command palette com animação premium.
+- Feedback visual em jogos.
+- Animações de score, erro e sucesso.
+- Respeito a `prefers-reduced-motion`.
+
+Regras:
+
+- A animação deve melhorar a experiência.
+- A animação não pode prejudicar leitura.
+- A animação não pode pesar demais.
+- A experiência precisa funcionar em mobile.
+- Usuários com redução de movimento devem receber alternativa estável.
+
+Animações moderadas e quase invisíveis não são suficientes para a nova direção. O objetivo é ter motion design elegante, não ruído visual.
+
+---
+
+## Roadmap de Resgate
+
+Este roadmap complementa e substitui a interpretação de que as fases 1 a 6 encerram o produto. As fases anteriores entregaram a base técnica. As fases abaixo são obrigatórias para alcançar a experiência desejada.
+
+### Fase R0 — Deploy, legado e limpeza operacional
+
+Objetivo:
+
+- Confirmar Vercel como Next.js.
+- Confirmar último commit em produção.
+- Testar rotas públicas.
+- Decidir se `index.html` legado sai da raiz ou vai para `legacy/`.
+- Garantir que a Vercel não sirva mais HTML antigo.
+
+Critérios de aceite:
+
+- Produção serve a versão Next.
+- `/`, `/curriculo`, `/projetos`, `/lab`, `/api/health` funcionam.
+- `index.html` não confunde deploy.
+
+### Fase R1 — Redesign Visual Premium da Home
+
+Objetivo:
+
+- Reescrever hero/home.
+- Criar identidade visual forte.
+- Criar primeira dobra memorável.
+- Aplicar direção Developer Arcade OS.
+- Adicionar background/efeitos leves.
+- Melhorar tipografia, escala, spacing e CTAs.
+
+Critérios de aceite:
+
+- Impressiona nos primeiros 5 segundos.
+- Não parece template genérico.
+- Comunica valor rapidamente.
+- Terminal/command center vira peça visual central.
+- Mobile continua bom.
+
+### Fase R2 — Motion System e Loading Experience
+
+Objetivo:
+
+- Loading/boot sequence.
+- Scroll animations.
+- Page transitions.
+- Microinterações.
+- `prefers-reduced-motion`.
+
+Critérios de aceite:
+
+- Animações perceptíveis e elegantes.
+- Nada pesado.
+- Nada atrapalha acessibilidade.
+
+### Fase R3 — Terminal e Command Center Premium
+
+Objetivo:
+
+- Terminal parecer ferramenta real.
+- Autocomplete.
+- Histórico.
+- Navegação por setas.
+- Comandos agrupados.
+- Outputs ricos.
+- Integração segura com API se fizer sentido.
+
+Critérios de aceite:
+
+- Terminal não parece input simples.
+- Terminal é útil, bonito e demonstra React/state/UX.
+
+### Fase R4 — Developer Arcade com Jogos Reais
+
+Objetivo:
+
+- Substituir checklists/quizzes por jogos reais.
+- Implementar Runtime Runner/Bug Runner.
+- Implementar Bug Maze/Commit Maze ou versão inicial.
+- Transformar Debug Challenge em Debug Arena.
+- Transformar API Latency Game em Latency Lab visual.
+
+Critérios de aceite:
+
+- Jogos são jogáveis.
+- Jogos possuem estado, score e feedback.
+- Jogos demonstram habilidades técnicas.
+- Jogos divertem sem parecer infantis.
+
+### Fase R5 — Case Studies Premium
+
+Objetivo:
+
+- Transformar páginas de projeto em storytelling visual.
+- Adicionar diagramas.
+- Mostrar arquitetura.
+- Adicionar screenshots/mockups quando houver assets reais.
+- Explicar trade-offs.
+- Explicar decisões técnicas.
+- Mostrar resultados sem exagero.
+
+Critérios de aceite:
+
+- Cada case parece estudo profissional.
+- Recrutador entende problema, solução, stack e raciocínio.
+
+### Fase R6 — Polimento Final e Deploy Premium
+
+Objetivo:
+
+- Mobile.
+- Performance.
+- Acessibilidade.
+- SEO.
+- OG image visual.
+- Screenshots finais.
+- Produção validada.
+
+Critérios de aceite:
+
+- Build passa.
+- Produção serve a versão correta.
+- Rotas principais funcionam.
+- Usuário aprova visualmente antes de commit final.
+
+---
+
+## Bibliotecas e Recursos Permitidos no Resgate
+
+Recomendações:
+
+- `motion` ou `framer-motion` para animações, transições e scroll reveal.
+- React Flow para Architecture Builder visual.
+- Recharts para métricas e Latency Lab.
+- Canvas API, SVG ou CSS puro para games.
+- CodeMirror leve ou editor fake em CSS para Debug Arena.
+- shadcn/ui apenas se ajudar com Dialog, Tabs ou Command.
+- Evitar Three.js por enquanto.
+
+Regras de dependência:
+
+- Não instalar tudo de uma vez.
+- Cada dependência precisa justificar valor real.
+- Prioridade é experiência, performance e manutenção.
+- Se CSS/SVG/Canvas nativo resolver bem, preferir solução nativa.
+- Dependências não podem virar desculpa para adiar a direção visual.
+
+---
+
+## Regras Para Evitar Nova Confusão
+
+- Não chamar checklist de mini-game.
+- Não chamar lista com barras de skill radar.
+- Não aceitar hero estático como home premium.
+- Não aceitar card genérico como experiência interativa.
+- Não priorizar novas APIs antes de resolver visual/UX.
+- Não iniciar Supabase antes do produto visual estar satisfatório.
+- Não mexer em backend persistente nesta fase.
+- Não inventar informações profissionais.
+- Não remover a rota `/curriculo` objetiva.
+- Não quebrar downloads PDF/DOCX.
+- Não quebrar PT/EN e tema.
+- Não comprometer acessibilidade.
+- Não criar jogo que copie marca, assets, personagem, nome ou identidade de Chrome, Pac-Man ou qualquer IP.
+- Pode se inspirar em mecânicas conhecidas, mas visual, nome, assets e execução devem ser originais.
+
+---
+
+## Critérios de Aceite Globais da Nova Versão
+
+A nova versão só será considerada satisfatória se:
+
+- A home impressiona nos primeiros 5 segundos.
+- O visual não parece dashboard genérico.
+- Existe motion design perceptível.
+- O terminal parece command center.
+- O Developer Lab tem pelo menos 1 jogo real jogável.
+- Jogos são relacionados à programação.
+- Mini-games têm pontuação e feedback visual.
+- Case studies parecem premium.
+- Mobile funciona bem.
+- `lint`, `typecheck` e `build` passam.
+- Produção Vercel serve a versão correta.
+- Usuário aprova visualmente antes de commit final.
+
+---
+
 ## 3. Princípio Central
 
 Este projeto deve seguir a seguinte ideia:
@@ -66,7 +468,7 @@ Cada seção precisa demonstrar uma habilidade válida:
 - A interface demonstra front-end.
 - Os dados estruturados demonstram organização.
 - As rotas e APIs demonstram back-end.
-- Os mini-games demonstram lógica.
+- Os mini-games reais demonstram lógica, estado, interação e performance front-end.
 - Os dashboards demonstram dados e produto.
 - O terminal interativo demonstra criatividade e domínio técnico.
 - O tracking de eventos demonstra visão de produto.
@@ -89,9 +491,11 @@ Outras alternativas aceitáveis:
 Álvaro.dev — Interactive Resume
 Álvaro Amorim — Developer Lab
 Álvaro Amorim — Full Stack Lab
+Álvaro.dev — Developer Arcade OS
+Álvaro.dev — Portfolio Arcade OS
 ```
 
-A nomenclatura final pode ser ajustada, mas a ideia de “Portfolio OS” deve orientar a experiência: a página deve parecer um sistema, um painel ou um ambiente interativo, não apenas um currículo estático.
+A nomenclatura final pode ser ajustada, mas a ideia de “Portfolio OS” agora deve ser guiada pela direção Developer Arcade OS: a página deve parecer um sistema interativo memorável, com jogos e motion design, não apenas um currículo estático ou um painel comum.
 
 ---
 
@@ -111,7 +515,12 @@ Usar:
 - React Hook Form para formulários.
 - Zod para validação.
 - Recharts para gráficos simples.
+- React Flow para arquitetura visual, se o Architecture Builder evoluir para canvas/blocos conectados.
+- Canvas API, SVG ou CSS puro para mini-games 2D leves.
+- CodeMirror leve ou editor fake em CSS para Debug Arena, se houver ganho real.
 - next-themes para tema claro/escuro, se fizer sentido.
+
+Não instalar todas as dependências de uma vez. Cada biblioteca precisa justificar valor claro para experiência, performance ou manutenção.
 
 ### 5.2 Back-end
 
@@ -292,7 +701,7 @@ Evitar:
 
 ## 8. Experiência Principal da Home
 
-A home deve parecer uma tela inicial de um sistema.
+A home deve parecer a abertura de um Developer Arcade OS, não uma página estática nem um dashboard genérico. A versão em cards e grids simples é aceitável como fundação técnica, mas não atende a experiência final desejada.
 
 ### 8.1 Hero
 
@@ -312,6 +721,8 @@ Deve ter CTAs:
 - Baixar PDF.
 - Copiar contato.
 - Ver GitHub.
+
+Além dos CTAs, a primeira dobra deve ter uma peça visual forte: boot sequence, command center, cena interativa, background técnico animado ou outro elemento memorável. Um hero estático com texto e cards não é suficiente para a nova direção.
 
 ### 8.2 Terminal Interativo
 
@@ -513,20 +924,22 @@ Criar rota:
 /lab
 ```
 
-O Developer Lab deve ser uma área interativa para demonstrar habilidades.
+O Developer Lab deve evoluir para Developer Arcade: uma área com jogos reais e simulações visuais ligadas à programação. A versão atual baseada em perguntas, checklists e pontuação é uma fundação funcional, mas não satisfaz a definição final de mini-game.
 
-### 11.1 Debug Challenge
+### 11.1 Debug Arena
 
-Um mini-game onde o usuário recebe um trecho de código com bug e precisa identificar o problema.
+Experiência visual onde o usuário interage com uma interface de editor, identifica bugs em linhas de código e tenta corrigir antes do build falhar.
 
 Funcionalidades:
 
-- Mostrar snippet.
-- Opções de resposta.
-- Feedback após resposta.
-- Explicação técnica.
+- Mostrar código em interface de editor ou editor fake.
+- Destacar linhas suspeitas.
+- Permitir seleção/correção por interação real, não apenas alternativa estática.
+- Mostrar feedback após a jogada.
+- Explicar tecnicamente a correção.
 - Pontuação.
 - Dificuldade: fácil, médio, difícil.
+- Estado de build, erro e sucesso com feedback visual.
 
 Exemplo de desafio:
 
@@ -543,9 +956,11 @@ O jogo deve explicar:
 - Como corrigir.
 - Qual boa prática aplicar.
 
+Se esta experiência for implementada apenas como quiz de múltipla escolha, ela deve ser tratada como protótipo didático, não como mini-game final.
+
 ### 11.2 Architecture Builder
 
-Mini-game onde o usuário monta a arquitetura de uma aplicação.
+Mini-game visual onde o usuário monta a arquitetura de uma aplicação com blocos, conexões ou canvas simples.
 
 Exemplo:
 
@@ -572,9 +987,11 @@ Critérios de avaliação:
 - Banco protegido por camada server-side.
 - Cache quando fizer sentido.
 
-### 11.3 API Latency Game
+Não precisa começar com drag and drop complexo, mas a versão final deve parecer uma construção visual de arquitetura, não apenas uma checklist.
 
-Mini-game de performance.
+### 11.3 Latency Lab
+
+Simulação visual de performance full stack.
 
 Cenário:
 
@@ -592,7 +1009,7 @@ Opções:
 - Rodar processamento pesado em background.
 - Buscar tudo no client sem filtro.
 
-O jogo deve dar feedback e pontuação.
+O jogo deve mostrar métricas antes/depois, feedback e pontuação. Sempre que possível, deve ter painel visual de latência, waterfall, gráfico, barras ou outra representação clara do impacto das decisões.
 
 ### 11.4 Skill Radar
 
@@ -613,6 +1030,8 @@ Não deve inventar senioridade falsa. Usar labels honestos:
 - Experiência em projeto.
 - Estudando/aprimorando.
 - Base conceitual.
+
+Uma lista filtrável com barras pode ser usada como base, mas não deve ser chamada de radar se não houver visualização realmente diferenciada.
 
 ---
 
@@ -1147,11 +1566,11 @@ O projeto deve demonstrar back-end real, mesmo que simples.
 
 ---
 
-### Fase 5 — Developer Lab
+### Fase 5 — Developer Lab Foundation
 
 Objetivo:
 
-Adicionar mini-games técnicos.
+Adicionar a primeira fundação do Developer Lab, sem considerar esta entrega como a versão final dos mini-games.
 
 Entregas:
 
@@ -1164,7 +1583,7 @@ Entregas:
 
 Critério de aceite:
 
-Os mini-games devem ensinar ou demonstrar raciocínio técnico, não apenas divertir.
+Esta fase só é aceita como fundação técnica se demonstrar raciocínio, estado e feedback. Se os desafios forem quizzes, checklists ou formulários com score, eles não satisfazem a definição final de mini-game e devem ser substituídos no Roadmap de Resgate.
 
 ---
 
@@ -1190,7 +1609,7 @@ Entregas:
 
 Critério de aceite:
 
-O projeto deve estar pronto para ser usado em processos seletivos.
+A fundação técnica deve estar pronta para deploy e validação pública. Isso não significa aprovação visual final: o projeto só deve ser tratado como portfólio premium depois do resgate criativo, dos jogos reais e da aprovação visual do usuário.
 
 ---
 
@@ -1210,6 +1629,9 @@ Antes de implementar qualquer coisa, analise o HTML atual do currículo e identi
 
 Objetivo do projeto:
 Criar uma aplicação full stack de portfólio/currículo que demonstre habilidades reais de front-end, back-end, arquitetura, APIs, UX, animações, mini-games técnicos e organização profissional.
+
+Observação obrigatória:
+As fases 1 a 6 já formam uma fundação técnica. Para as próximas etapas, siga o Roadmap de Resgate e a direção Developer Arcade OS. Não trate cards, checklists ou quizzes como experiência final.
 
 Siga o documento Constituição Técnica — Álvaro.dev Portfolio OS.
 
@@ -1328,6 +1750,8 @@ Não implemente mini-games, banco de dados ou backend completo ainda.
 [ ] Criar sistema de pontuação.
 [ ] Criar feedback técnico.
 [ ] Integrar /api/score se existir.
+[ ] Confirmar se há jogo real jogável ou marcar como fundação/protótipo.
+[ ] Rejeitar checklist/quiz como mini-game final.
 [ ] Testar mobile.
 [ ] Rodar lint/typecheck/build.
 [ ] Atualizar README.
@@ -1351,6 +1775,8 @@ Não implemente mini-games, banco de dados ou backend completo ainda.
 [ ] Conferir PT/EN.
 [ ] Conferir tema claro/escuro.
 [ ] Rodar lint/typecheck/build.
+[ ] Confirmar que o polimento não está sendo tratado como aprovação visual final.
+[ ] Confirmar se a Vercel serve a versão Next.js correta.
 [ ] Atualizar README final.
 ```
 
@@ -1358,16 +1784,24 @@ Não implemente mini-games, banco de dados ou backend completo ainda.
 
 ## 32. Definição de Pronto
 
-O projeto só deve ser considerado pronto quando:
+A definição de pronto final fica suspensa até a conclusão do Roadmap de Resgate. As fases 1 a 6 comprovam fundação técnica, mas não comprovam experiência visual premium.
+
+O projeto só deve ser considerado pronto como Álvaro.dev Portfolio OS final quando:
 
 - A aplicação estiver em Next.js.
 - O conteúdo atual estiver preservado.
 - A arquitetura estiver componentizada.
-- A home estiver mais impactante que o currículo atual.
+- A home impressionar nos primeiros 5 segundos.
+- O visual não parecer dashboard genérico.
+- Houver motion design perceptível e respeitoso.
 - Houver rota objetiva de currículo.
 - Houver rota de projetos/case studies.
-- Houver interatividade real.
+- Houver case studies com storytelling visual.
+- Houver interatividade real, não apenas cards clicáveis.
 - Houver pelo menos uma demonstração de back-end.
+- O terminal parecer command center.
+- O Developer Lab tiver pelo menos um jogo real jogável relacionado à programação.
+- Os mini-games tiverem estado, regras, pontuação e feedback visual.
 - Houver documentação.
 - Build estiver passando.
 - Mobile estiver bom.
@@ -1375,7 +1809,9 @@ O projeto só deve ser considerado pronto quando:
 - PT/EN funcionando.
 - Links funcionando.
 - PDF/DOCX disponíveis.
-- O projeto estiver pronto para ser enviado em processo seletivo.
+- A produção Vercel servir a versão correta.
+- O usuário aprovar visualmente a experiência antes do commit final.
+- O projeto estiver pronto para ser enviado em processo seletivo como peça premium.
 
 ---
 
@@ -1397,3 +1833,5 @@ O visitante deve entender rapidamente:
 A melhor versão deste projeto é aquela em que o recrutador pensa:
 
 > “Esse candidato não apenas listou tecnologias. Ele construiu uma experiência completa para provar que sabe usá-las.”
+
+Portanto, uma versão apenas organizada, estável e funcional ainda não é suficiente. A próxima etapa deve provar criatividade front-end, domínio de UX e lógica interativa por meio de uma experiência visual memorável.
