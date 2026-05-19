@@ -24,6 +24,30 @@ type TranslationTree = {
     viewProjects: string;
     viewGithub: string;
   };
+  projectsPage: {
+    title: string;
+    description: string;
+    allCategories: string;
+    filtersLabel: string;
+    featured: string;
+    viewCase: string;
+    backHome: string;
+    openResume: string;
+  };
+  caseStudy: {
+    backToProjects: string;
+    status: string;
+    categories: string;
+    stack: string;
+    problem: string;
+    solution: string;
+    highlights: string;
+    technicalChallenges: string;
+    whatItShows: string;
+    links: string;
+    visitProject: string;
+    viewRepository: string;
+  };
   home: {
     eyebrow: string;
     title: string;
@@ -87,16 +111,40 @@ export const dictionary: Record<Locale, TranslationTree> = {
       viewProjects: "Ver projetos",
       viewGithub: "Ver GitHub",
     },
+    projectsPage: {
+      title: "Case studies de projetos",
+      description: "Projetos reais organizados como estudos de caso: contexto, solução, stack, desafios técnicos e o que cada entrega demonstra.",
+      allCategories: "Todas",
+      filtersLabel: "Filtros de projetos",
+      featured: "Destaques",
+      viewCase: "Ver case study",
+      backHome: "Voltar para home",
+      openResume: "Abrir currículo",
+    },
+    caseStudy: {
+      backToProjects: "Voltar para projetos",
+      status: "Status",
+      categories: "Categorias",
+      stack: "Stack",
+      problem: "Problema",
+      solution: "Solução",
+      highlights: "Funcionalidades e destaques",
+      technicalChallenges: "Desafios técnicos",
+      whatItShows: "O que este projeto demonstra",
+      links: "Links",
+      visitProject: "Abrir projeto",
+      viewRepository: "Ver repositório",
+    },
     home: {
       eyebrow: "Álvaro.dev Portfolio OS",
       title: "Álvaro Amorim",
       subtitle: "Desenvolvedor Full Stack",
       intro: "Construo aplicações web, produtos SaaS, automações e integrações com IA, com foco em entrega funcional, arquitetura limpa e experiência de produto.",
-      statusTitle: "Migração estrutural inicial",
-      statusDescription: "Base Next.js com conteúdo preservado, arquivos estruturados e currículo objetivo em rota dedicada.",
+      statusTitle: "Case studies estruturados",
+      statusDescription: "Projetos reais agora têm rota dedicada, páginas individuais e conteúdo técnico organizado por problema, solução, stack e desafios.",
       architectureTitle: "Próxima evolução",
-      architectureDescription: "Case studies, interatividade avançada, APIs reais e Developer Lab entram nas próximas fases, sem misturar tudo na primeira entrega.",
-      currentPhase: "Fase 1.1",
+      architectureDescription: "Interatividade avançada, APIs reais e Developer Lab entram nas próximas fases, sem misturar backend ou mini-games nesta etapa.",
+      currentPhase: "Fase 2.1",
       resumeCta: "Currículo objetivo",
     },
     resume: {
@@ -148,16 +196,40 @@ export const dictionary: Record<Locale, TranslationTree> = {
       viewProjects: "View projects",
       viewGithub: "View GitHub",
     },
+    projectsPage: {
+      title: "Project case studies",
+      description: "Real projects organized as case studies: context, solution, stack, technical challenges, and what each delivery demonstrates.",
+      allCategories: "All",
+      filtersLabel: "Project filters",
+      featured: "Featured",
+      viewCase: "View case study",
+      backHome: "Back home",
+      openResume: "Open resume",
+    },
+    caseStudy: {
+      backToProjects: "Back to projects",
+      status: "Status",
+      categories: "Categories",
+      stack: "Stack",
+      problem: "Problem",
+      solution: "Solution",
+      highlights: "Features and highlights",
+      technicalChallenges: "Technical challenges",
+      whatItShows: "What this project shows",
+      links: "Links",
+      visitProject: "Open project",
+      viewRepository: "View repository",
+    },
     home: {
       eyebrow: "Álvaro.dev Portfolio OS",
       title: "Álvaro Amorim",
       subtitle: "Full Stack Developer",
       intro: "I build web applications, SaaS products, automation flows, and AI integrations with a focus on functional delivery, clean architecture, and product experience.",
-      statusTitle: "Initial structural migration",
-      statusDescription: "Next.js foundation with preserved content, structured files, and a direct resume route.",
+      statusTitle: "Structured case studies",
+      statusDescription: "Real projects now have a dedicated route, individual pages, and technical content organized by problem, solution, stack, and challenges.",
       architectureTitle: "Next evolution",
-      architectureDescription: "Case studies, advanced interaction, real APIs, and the Developer Lab belong to later phases instead of being mixed into the first delivery.",
-      currentPhase: "Phase 1.1",
+      architectureDescription: "Advanced interaction, real APIs, and the Developer Lab belong to later phases without mixing backend or mini-games into this step.",
+      currentPhase: "Phase 2.1",
       resumeCta: "Objective resume",
     },
     resume: {

@@ -74,13 +74,13 @@ public/
 
 ## Status Atual
 
-Fase 1.1 concluída: base Next.js criada, home inicial disponível, rota `/curriculo` criada, conteúdo principal separado em `src/content`, tema claro/escuro básico, PT/EN básico e downloads PDF/DOCX preservados.
+Fase 1 concluída e commitada. Fase 2.1 implementada e auditada, ainda sem checkpoint/commit: a aplicação possui home, rota `/curriculo`, conteúdo principal separado em `src/content`, tema claro/escuro básico, PT/EN básico, downloads PDF/DOCX preservados e área inicial de case studies em `/projetos` e `/projetos/[slug]`.
 
 O arquivo `index.html` permanece na raiz como referência/backup da versão estática anterior. Os arquivos originais de imagem, PDF e DOCX também permanecem preservados na raiz, com cópias em `public/` para uso pelo Next.js.
 
 ## Próximas Fases
 
-- Fase 2: criar listagem e páginas de case study para projetos.
+- Fase 2: criar checkpoint/commit da listagem e páginas de case study para projetos.
 - Fase 3: adicionar interatividade avançada com terminal visual, command palette e skill radar.
 - Fase 4: adicionar APIs reais com validação e fallback sem banco.
 - Fase 5: criar Developer Lab com mini-games técnicos.

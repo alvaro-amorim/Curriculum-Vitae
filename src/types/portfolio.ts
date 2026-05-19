@@ -27,12 +27,22 @@ export type ProfileLink = {
 export type Project = {
   slug: string;
   title: LocalizedText;
-  description: LocalizedText;
-  details: LocalizedText;
+  subtitle: LocalizedText;
+  shortDescription: LocalizedText;
+  fullDescription: LocalizedText;
+  status: LocalizedText;
+  category: string[];
   stack: string[];
+  problem: LocalizedText;
+  solution: LocalizedText;
   highlights: Record<Locale, string[]>;
-  website: string;
-  repository?: string;
+  technicalChallenges: Record<Locale, string[]>;
+  whatItShows: LocalizedText;
+  links: {
+    website: string;
+    repository?: string;
+  };
+  featured?: boolean;
 };
 
 export type ExperienceItem = {

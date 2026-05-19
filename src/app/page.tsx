@@ -6,7 +6,7 @@ export default function HomePage() {
     <>
       <HomeOverview />
       <section className="mx-auto max-w-6xl px-4 pb-10">
-        <ProjectsPreview showLinks={false} />
+        <ProjectsPreview featuredOnly limit={3} showLinks={false} />
       </section>
     </>
   );

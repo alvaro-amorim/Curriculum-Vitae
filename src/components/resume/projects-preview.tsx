@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import { projects, projectLinks } from "@/content/projects";
 import { profileLinks } from "@/content/profile";
 import { buttonClassName } from "@/components/ui/button";
@@ -9,24 +11,32 @@ import { Card } from "@/components/ui/card";
 
 type ProjectsPreviewProps = {
   showLinks?: boolean;
+  featuredOnly?: boolean;
+  limit?: number;
 };
 
-export function ProjectsPreview({ showLinks = true }: ProjectsPreviewProps) {
+export function ProjectsPreview({ showLinks = true, featuredOnly = false, limit }: ProjectsPreviewProps) {
   const { locale, t } = usePortfolioUi();
+  const visibleProjects = projects
+    .filter((project) => !featuredOnly || project.featured)
+    .slice(0, limit ?? projects.length);
 
   return (
     <Card>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-lg font-semibold">{t.resume.projects}</h2>
-        <span className="text-sm text-[var(--muted)]">{projects.length} {t.resume.projectCountLabel}</span>
+        <Link className={buttonClassName("ghost", "sm")} href="/projetos">
+          {t.actions.viewProjects}
+        </Link>
       </div>
 
       <div className="mt-4 grid gap-4 md:grid-cols-2">
-        {projects.map((project) => (
+        {visibleProjects.map((project) => (
           <article className="flex min-h-48 flex-col justify-between rounded-xl border border-[var(--border)] bg-[var(--surface-muted)] p-4" key={project.slug}>
             <div>
               <h3 className="font-semibold">{project.title[locale]}</h3>
-              <p className="mt-2 text-sm leading-6 text-[var(--muted)]">{project.description[locale]}</p>
+              <p className="mt-1 text-xs font-semibold uppercase tracking-[0.14em] text-[var(--accent)]">{project.subtitle[locale]}</p>
+              <p className="mt-2 text-sm leading-6 text-[var(--muted)]">{project.shortDescription[locale]}</p>
             </div>
             <div className="mt-4 flex flex-col gap-3">
               <div className="flex flex-wrap gap-2">
@@ -35,12 +45,15 @@ export function ProjectsPreview({ showLinks = true }: ProjectsPreviewProps) {
                 ))}
               </div>
               <div className="flex flex-wrap gap-2">
-                <a className={buttonClassName("secondary", "sm")} href={project.website} rel="noreferrer" target="_blank">
+                <Link className={buttonClassName("primary", "sm")} href={`/projetos/${project.slug}`}>
+                  {t.projectsPage.viewCase}
+                </Link>
+                <a className={buttonClassName("secondary", "sm")} href={project.links.website} rel="noreferrer" target="_blank">
                   {t.actions.open}
                 </a>
-                {project.repository ? (
-                  <a className={buttonClassName("ghost", "sm")} href={project.repository} rel="noreferrer" target="_blank">
-                    Repo
+                {project.links.repository ? (
+                  <a className={buttonClassName("ghost", "sm")} href={project.links.repository} rel="noreferrer" target="_blank">
+                    {t.caseStudy.viewRepository}
                   </a>
                 ) : null}
               </div>

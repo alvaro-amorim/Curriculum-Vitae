@@ -27,6 +27,9 @@ export function Topbar() {
           <Link className={buttonClassName("secondary", "sm")} href="/curriculo">
             {t.nav.resume}
           </Link>
+          <Link className={buttonClassName("ghost", "sm")} href="/projetos">
+            {t.nav.projects}
+          </Link>
           <a className={buttonClassName("primary", "sm")} href={activeDownload.href} download={activeDownload.fileName}>
             {t.actions.downloadPdf}
           </a>
