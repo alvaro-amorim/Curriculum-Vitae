@@ -91,6 +91,15 @@ Porém:
 
 Conclusão: a fundação técnica está concluída; a experiência visual e interativa foi reprovada para o objetivo original.
 
+Atualização pós-R1:
+
+- As tentativas R1.1, R1.1B e a última versão cinematográfica da primeira dobra foram reprovadas visualmente pelo usuário.
+- A reprovação não invalida a fundação técnica, mas invalida a direção visual dessas tentativas.
+- O projeto continua funcional tecnicamente, com deploy/Vercel estabilizado, rotas principais funcionando e downloads preservados.
+- A experiência visual ainda **não está aprovada**.
+- Nenhum checkpoint visual deve ser criado sem aprovação visual humana explícita.
+- A próxima direção oficial passa a ser a fase **R1-C — Portfolio OS Premium Rebuild**.
+
 ---
 
 ## Diagnóstico de Falha da Primeira Versão
@@ -455,6 +464,227 @@ A nova versão só será considerada satisfatória se:
 - `lint`, `typecheck` e `build` passam.
 - Produção Vercel serve a versão correta.
 - Usuário aprova visualmente antes de commit final.
+
+---
+
+## R1-C — Portfolio OS Premium Rebuild
+
+Esta é a nova fase oficial de reconstrução visual do projeto.
+
+As tentativas R1.1, R1.1B e a última tentativa cinematográfica devem ser tratadas como experimentos não aprovados. Elas passaram em validações técnicas, mas não atingiram o padrão visual esperado. O erro principal foi continuar tentando resolver direção visual com grids, cards, bordas, labels, blocos escuros e composição insuficiente.
+
+Objetivo da R1-C:
+
+- Reconstruir a experiência visual com padrão premium real.
+- Trabalhar com abordagem hero-first.
+- Criar narrativa visual clara antes de expandir o restante da home.
+- Aplicar UI/UX avançada com hierarquia, profundidade e composição forte.
+- Usar motion design com propósito, não como decoração para mascarar layout fraco.
+- Preservar performance, acessibilidade, PT/EN, tema, rotas, downloads e conteúdo factual.
+
+Princípio central da R1-C:
+
+> Build passar não significa pronto.
+
+Uma entrega visual só pode ser considerada pronta se todos os itens abaixo forem verdadeiros:
+
+- `npm run lint` passa.
+- `npm run typecheck` passa.
+- `npm run build` passa.
+- Playwright, Browser MCP ou Chrome DevTools MCP validam desktop e mobile.
+- Screenshots são gerados e anexados ou listados no relatório.
+- Não há mistura indevida de PT/EN.
+- Não há erro de acentuação, ortografia ou encoding.
+- Não há `Ã`, `�` ou qualquer mojibake no HTML/DOM visível.
+- Não há overflow horizontal.
+- Não há console errors nem page errors.
+- O usuário aprova visualmente de forma explícita.
+
+Sem aprovação visual humana, a fase permanece em revisão, mesmo que lint, typecheck e build estejam verdes.
+
+### Estratégia Visual Obrigatória da R1-C
+
+A nova direção visual deve seguir estes critérios:
+
+- Dark-first premium.
+- Hero-first.
+- Uma composição dominante, não dashboard.
+- Headline curta, memorável e legível.
+- No máximo 2 CTAs primários e 2 CTAs secundários na primeira dobra.
+- Imagem ou identity node dominante, sem cortes estranhos.
+- Profundidade em 3 planos: fundo, palco visual e overlays.
+- Motion curto, sutil e com propósito.
+- Mobile desenhado como experiência própria, não versão quebrada do desktop.
+- Tema claro premium, não apenas inversão automática do dark.
+- Estética de produto/portfólio premium, não admin panel.
+
+A primeira dobra deve parecer desenhada como peça principal do produto. Ela não pode ser apenas uma coleção de componentes.
+
+### Anti-patterns Proibidos na R1-C
+
+Não fazer:
+
+- Não criar grid de cards genéricos na primeira dobra.
+- Não usar foto cortada, esmagada, grande demais ou mal posicionada no mobile.
+- Não esconder CTA principal abaixo da dobra.
+- Não misturar textos PT/EN.
+- Não aceitar `Ã`, `�` ou qualquer mojibake.
+- Não chamar checklist, quiz ou formulário com score de mini-game final.
+- Não usar animação decorativa como substituta de bom layout.
+- Não usar CSS gigante desorganizado sem tokens, seções e responsabilidade clara.
+- Não entregar apenas com validação técnica sem validação visual.
+- Não priorizar Supabase, banco, ranking, dashboard admin ou novas APIs antes da experiência visual estar aprovada.
+- Não criar terminal gigante vazio para preencher espaço.
+- Não repetir estética de dashboard administrativo.
+- Não tratar badge, borda e glow como direção visual completa.
+
+### Roadmap R1-C Recomendado
+
+#### R1-C.0 — Documentation & Visual Contract
+
+Objetivo:
+
+- Atualizar documentação.
+- Registrar critérios de aceite.
+- Congelar tentativas visuais reprovadas como experimentos não aprovados.
+- Deixar claro que aprovação visual humana é gate obrigatório.
+
+Critérios de aceite:
+
+- Documentação mestre atualizada.
+- R1-C definida como direção oficial.
+- Anti-patterns e gates visuais documentados.
+- Nenhum código visual novo implementado nesta subfase.
+
+#### R1-C.1 — Clean Reset
+
+Objetivo:
+
+- Descartar implementação visual reprovada se ainda estiver sem commit.
+- Preservar rotas, downloads, tema, currículo, projetos, lab e conteúdo.
+- Voltar para uma base técnica limpa antes de nova tentativa visual.
+
+Critérios de aceite:
+
+- Worktree limpo ou com escopo documentado.
+- Nenhum arquivo de `public/resume/` ou `public/profile/` removido.
+- `/curriculo`, `/projetos`, `/lab`, `/api/health` e downloads funcionando.
+
+#### R1-C.2 — Design Foundation
+
+Objetivo:
+
+- Criar tokens de cor, tipografia, espaçamento, motion e foco.
+- Organizar CSS para evitar `globals.css` descontrolado.
+- Garantir i18n por locale e encoding limpo.
+- Definir estilos base de dark e light premium antes de compor a home.
+
+Critérios de aceite:
+
+- Tokens nomeados e reutilizáveis.
+- CSS organizado por seções.
+- `prefers-reduced-motion` previsto desde o início.
+- Strings PT/EN separadas por locale.
+- Nenhum mojibake.
+
+#### R1-C.3 — Premium Hero Only
+
+Objetivo:
+
+- Implementar apenas a primeira dobra.
+- Validar desktop/mobile, PT/EN, dark/light.
+- Gerar screenshots.
+- Só avançar se o usuário aprovar visualmente.
+
+Critérios de aceite:
+
+- Causa boa primeira impressão em até 5 segundos.
+- Não parece template genérico.
+- Não parece dashboard.
+- CTA principal visível sem scroll.
+- Headline legível e forte.
+- Foto/identity node bem integrado.
+- Mobile não parece versão quebrada do desktop.
+- Desktop e mobile têm composições próprias.
+- PT e EN estão 100% separados.
+- Acentuação correta.
+- Screenshots fornecidos.
+- Usuário aprova explicitamente.
+
+#### R1-C.4 — Command Center / Command Palette
+
+Objetivo:
+
+- Implementar depois do hero aprovado.
+- Tornar command center e command palette acessíveis, keyboard-first e visualmente premium.
+- Evitar terminal grande vazio ou input sem propósito.
+
+Critérios de aceite:
+
+- Navegação por teclado preservada.
+- Estados de foco claros.
+- Visual compatível com o hero aprovado.
+- Sem regressão em comandos existentes.
+
+#### R1-C.5 — Below-the-fold Narrative
+
+Objetivo:
+
+- Projetos como missões.
+- Skills como módulos.
+- Lab/arcade teaser sem roubar foco do hero.
+- Construir narrativa progressiva abaixo da primeira dobra.
+
+Critérios de aceite:
+
+- Abaixo da dobra complementa o hero, não compete com ele.
+- Projetos usam dados reais.
+- Skills mantêm níveis honestos.
+- Lab/arcade teaser não promete jogos finalizados que ainda não existem.
+
+#### R1-C.6 — QA, Performance and Release Gate
+
+Objetivo:
+
+- Playwright visual snapshots.
+- Testes de i18n/encoding.
+- Core Web Vitals.
+- Lighthouse.
+- Checklist final antes de commit, push ou deploy.
+
+Critérios de aceite:
+
+- `lint`, `typecheck` e `build` passam.
+- Desktop e mobile validados visualmente.
+- Dark e light validados.
+- PT e EN validados.
+- Sem overflow horizontal.
+- Sem console/page errors.
+- Produção Vercel serve a versão correta após publicação.
+
+### Validação Visual Obrigatória
+
+Para qualquer fase visual a partir da R1-C:
+
+- O Codex deve usar Playwright sempre que possível.
+- Se Browser MCP ou Chrome DevTools MCP estiverem disponíveis, também podem ser usados.
+- A página real deve ser aberta localmente.
+- Desktop e mobile devem ser testados.
+- PT e EN devem ser testados.
+- Dark e light devem ser testados.
+- Screenshots devem ser salvos ou listados.
+- Console errors e page errors devem ser inspecionados.
+- Overflow horizontal deve ser verificado.
+- Strings misturadas PT/EN devem ser procuradas.
+- Mojibake deve ser procurado com `Ã` e `�`.
+
+Se a ferramenta visual falhar, isso deve ser relatado. A entrega visual não deve ser tratada como aprovada apenas por validação textual ou build verde.
+
+### Supabase Durante R1-C
+
+Supabase ainda **não deve ser iniciado**.
+
+O usuário ainda não criou nem configurou Supabase para este projeto. A prioridade atual é experiência visual, UX e aprovação humana da nova direção. Supabase, banco real, dashboard admin, ranking real e analytics persistente só devem entrar depois que a base visual estiver aprovada.
 
 ---
 
