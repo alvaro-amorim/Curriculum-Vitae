@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
 import type { ReactNode } from "react";
 
 import { AppShell } from "@/components/layout/app-shell";
@@ -6,6 +7,18 @@ import { profile } from "@/content/profile";
 import { APP_NAME, SITE_URL } from "@/lib/constants";
 
 import "./globals.css";
+
+const geistSans = Geist({
+  subsets: ["latin"],
+  variable: "--font-geist-sans",
+  display: "swap",
+});
+
+const geistMono = Geist_Mono({
+  subsets: ["latin"],
+  variable: "--font-geist-mono",
+  display: "swap",
+});
 
 const defaultDescription =
   "Álvaro Amorim — Desenvolvedor Full Stack focado em aplicações web, SaaS, automações e integrações com IA.";
@@ -43,14 +56,14 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   colorScheme: "dark light",
   themeColor: [
-    { color: "#09111f", media: "(prefers-color-scheme: dark)" },
-    { color: "#f7f8fb", media: "(prefers-color-scheme: light)" },
+    { color: "#050914", media: "(prefers-color-scheme: dark)" },
+    { color: "#f5f7fb", media: "(prefers-color-scheme: light)" },
   ],
 };
 
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
   return (
-    <html data-theme="dark" lang="pt-BR" suppressHydrationWarning>
+    <html className={`${geistSans.variable} ${geistMono.variable}`} data-theme="dark" lang="pt-BR" suppressHydrationWarning>
       <body>
         <AppShell>{children}</AppShell>
       </body>
