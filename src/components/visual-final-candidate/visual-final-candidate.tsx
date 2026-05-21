@@ -16,10 +16,10 @@ import styles from "./visual-final-candidate.module.css";
 
 type StyleVars = CSSProperties & Record<`--${string}`, string | number>;
 
-const BOOT_DURATION = 3600;
+const BOOT_DURATION = 4450;
 const SHOWCASE_INTERVAL = 6400;
 const ACTIVE_STACK_LIMIT = 5;
-const SESSION_KEY = "portfolio-visual-final-candidate-v2";
+const SESSION_KEY = "portfolio-visual-final-candidate-v3";
 
 const featuredSkillNames: Record<SkillDomain, string[]> = {
   front: ["React", "Next.js", "TypeScript", "CSS3"],
@@ -33,8 +33,8 @@ const featuredSkillNames: Record<SkillDomain, string[]> = {
 const copy = {
   pt: {
     bootLabel: "Portfolio OS",
-    bootSteps: ["inicializando núcleo visual", "mapeando projetos", "conectando stacks", "abrindo vitrine"],
-    bootFooter: "vitrine interativa em execução",
+    bootSteps: ["iniciando núcleo", "varrendo grid visual", "montando vitrine", "conectando projetos", "abrindo sistema"],
+    bootFooter: "vitrine visual em abertura",
     eyebrow: "ÁLVARO.DEV / VITRINE DE PRODUTOS",
     title: "Produtos web, SaaS e IA em movimento.",
     subtitle: "Full Stack criando produtos web, automações e IA com arquitetura, interface e entrega real.",
@@ -77,8 +77,8 @@ const copy = {
   },
   en: {
     bootLabel: "Portfolio OS",
-    bootSteps: ["initializing visual core", "mapping projects", "connecting stacks", "opening showcase"],
-    bootFooter: "interactive showcase online",
+    bootSteps: ["starting core", "scanning visual grid", "assembling showcase", "linking projects", "opening system"],
+    bootFooter: "visual showcase opening",
     eyebrow: "ÁLVARO.DEV / PRODUCT SHOWCASE",
     title: "Web, SaaS and AI products in motion.",
     subtitle: "Full Stack Developer building web products, automations and AI integrations with product-grade delivery.",
@@ -177,7 +177,9 @@ function useBoot() {
 
   useEffect(() => {
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduceMotion || window.sessionStorage.getItem(SESSION_KEY) === "1") {
+    const forceBoot = new URLSearchParams(window.location.search).get("boot") === "1";
+
+    if (reduceMotion || (!forceBoot && window.sessionStorage.getItem(SESSION_KEY) === "1")) {
       const skipTimer = window.setTimeout(() => setBooting(false), 0);
       return () => window.clearTimeout(skipTimer);
     }
@@ -371,27 +373,44 @@ function BootScreen({ locale }: { locale: Locale }) {
         <span />
         <span />
         <span />
+        <span />
       </div>
-      <div className={styles.bootCore} aria-hidden="true">
-        <span />
-        <span />
-        <span />
-        <span />
+      <div className={styles.bootFrame} aria-hidden="true">
+        <div className={styles.bootCore}>
+          <span />
+          <span />
+          <span />
+          <span />
+        </div>
+        <div className={styles.bootNodes}>
+          <span />
+          <span />
+          <span />
+          <span />
+          <span />
+          <span />
+        </div>
+        <div className={styles.bootRings}>
+          <span />
+          <span />
+          <span />
+        </div>
       </div>
       <div className={styles.bootConsole}>
         <p>{t.bootLabel}</p>
         <strong>{t.bootFooter}</strong>
-        <div>
+        <div className={styles.bootSequence}>
           {t.bootSteps.map((step, index) => (
             <span key={step} style={{ "--step": index } as StyleVars}>
               {step}
             </span>
           ))}
         </div>
-        <small>
+        <small className={styles.bootProgress}>
           <i />
         </small>
       </div>
+      <div className={styles.bootLaunch} aria-hidden="true" />
     </div>
   );
 }

@@ -113,7 +113,7 @@
     #02040a;
   color: var(--ink);
   pointer-events: none;
-  animation: bootExit 560ms cubic-bezier(0.2, 0.8, 0.2, 1) 3.04s forwards;
+  animation: bootExit 720ms cubic-bezier(0.16, 1, 0.3, 1) 3.72s forwards;
 }
 
 .boot::before,
@@ -132,16 +132,18 @@
 }
 
 .boot::after {
-  background: linear-gradient(112deg, transparent 0 38%, color-mix(in srgb, var(--cyan) 22%, transparent) 49%, transparent 60%);
+  background:
+    linear-gradient(112deg, transparent 0 38%, color-mix(in srgb, var(--cyan) 24%, transparent) 49%, transparent 60%),
+    linear-gradient(180deg, transparent 0 48%, rgba(255, 255, 255, 0.08) 49%, transparent 50%);
   transform: translateX(-76%);
-  animation: bootScan 3.2s cubic-bezier(0.18, 0.82, 0.24, 1) forwards;
+  animation: bootScan 4.12s cubic-bezier(0.18, 0.82, 0.24, 1) forwards;
 }
 
 .bootAtmosphere span {
   position: absolute;
   border-radius: 999px;
   opacity: 0;
-  animation: bootBloom 3.35s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  animation: bootBloom 4.12s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 }
 
 .bootAtmosphere span:nth-child(1) {
@@ -170,7 +172,16 @@
   animation-delay: 1.15s;
 }
 
-.bootCore {
+.bootAtmosphere span:nth-child(4) {
+  top: 42%;
+  left: 42%;
+  width: clamp(18rem, 28vw, 31rem);
+  aspect-ratio: 1 / 0.62;
+  background: radial-gradient(circle, color-mix(in srgb, var(--blue) 18%, transparent), transparent 72%);
+  animation-delay: 1.72s;
+}
+
+.bootFrame {
   display: grid;
   position: relative;
   z-index: 2;
@@ -179,11 +190,24 @@
   min-width: 18rem;
   aspect-ratio: 1;
   transform: translate(-11vw, -2vh);
+  animation: bootFrameReveal 4.18s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.bootCore {
+  display: grid;
+  position: absolute;
+  inset: 0;
+  place-items: center;
 }
 
 .bootCore::before,
 .bootCore::after,
-.bootCore span {
+.bootCore span,
+.bootRings span,
+.bootNodes span,
+.bootNodes::before,
+.bootNodes::after,
+.bootLaunch {
   position: absolute;
   content: "";
 }
@@ -193,7 +217,9 @@
   border: 1px solid color-mix(in srgb, var(--cyan) 30%, transparent);
   border-radius: 32% 68% 58% 42% / 50% 42% 58% 50%;
   background: conic-gradient(from 120deg, transparent, color-mix(in srgb, var(--cyan) 18%, transparent), transparent, color-mix(in srgb, var(--violet) 18%, transparent), transparent);
-  animation: bootObjectIn 3.25s cubic-bezier(0.18, 0.82, 0.24, 1) forwards, spin 18s linear infinite;
+  animation:
+    bootObjectIn 4.05s cubic-bezier(0.18, 0.82, 0.24, 1) forwards,
+    spin 18s linear infinite;
 }
 
 .bootCore::after {
@@ -207,7 +233,7 @@
   background-size: 26px 26px;
   box-shadow: 0 0 80px color-mix(in srgb, var(--cyan) 20%, transparent);
   transform: rotate(-5deg);
-  animation: bootPanelIn 3.1s cubic-bezier(0.18, 0.82, 0.24, 1) forwards;
+  animation: bootPanelIn 4.05s cubic-bezier(0.18, 0.82, 0.24, 1) forwards;
 }
 
 .bootCore span {
@@ -215,7 +241,7 @@
   height: 1px;
   background: linear-gradient(90deg, transparent, var(--cyan), var(--violet), transparent);
   opacity: 0;
-  animation: bootLine 3.1s ease-in-out infinite;
+  animation: bootLine 1.46s ease-in-out infinite;
 }
 
 .bootCore span:nth-child(1) {
@@ -237,6 +263,103 @@
   animation-delay: 1.38s;
 }
 
+.bootRings {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.bootRings span {
+  inset: 11%;
+  border: 1px solid color-mix(in srgb, var(--cyan) 18%, transparent);
+  border-radius: 999px;
+  opacity: 0;
+  transform: scale(0.88);
+  animation: bootRing 3.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.bootRings span:nth-child(2) {
+  inset: 22%;
+  border-color: color-mix(in srgb, var(--violet) 22%, transparent);
+  animation-delay: 520ms;
+}
+
+.bootRings span:nth-child(3) {
+  inset: 35%;
+  border-radius: 30% 70% 62% 38% / 52% 40% 60% 48%;
+  border-color: color-mix(in srgb, var(--green) 18%, transparent);
+  animation-delay: 1.08s;
+}
+
+.bootNodes {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.bootNodes::before,
+.bootNodes::after {
+  width: 76%;
+  height: 1px;
+  top: 50%;
+  left: 12%;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--cyan) 38%, transparent), transparent);
+  opacity: 0;
+  animation: bootNodeLine 3.8s ease forwards;
+}
+
+.bootNodes::after {
+  --node-line-angle: 90deg;
+}
+
+.bootNodes span {
+  width: 0.56rem;
+  height: 0.56rem;
+  border: 1px solid color-mix(in srgb, var(--cyan) 60%, transparent);
+  border-radius: 999px;
+  background: rgba(248, 251, 255, 0.16);
+  box-shadow: 0 0 24px color-mix(in srgb, var(--cyan) 32%, transparent);
+  opacity: 0;
+  animation: bootNode 3.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.bootNodes span:nth-child(1) {
+  top: 16%;
+  left: 32%;
+}
+
+.bootNodes span:nth-child(2) {
+  top: 24%;
+  right: 18%;
+  animation-delay: 260ms;
+}
+
+.bootNodes span:nth-child(3) {
+  right: 12%;
+  bottom: 33%;
+  animation-delay: 620ms;
+}
+
+.bootNodes span:nth-child(4) {
+  bottom: 16%;
+  left: 38%;
+  animation-delay: 920ms;
+}
+
+.bootNodes span:nth-child(5) {
+  top: 48%;
+  left: 12%;
+  animation-delay: 1.18s;
+}
+
+.bootNodes span:nth-child(6) {
+  top: 46%;
+  right: 38%;
+  animation-delay: 1.42s;
+}
+
 .bootConsole {
   position: absolute;
   right: max(8vw, 4rem);
@@ -248,6 +371,7 @@
   border-radius: 1.3rem;
   background: rgba(5, 10, 22, 0.82);
   box-shadow: 0 30px 120px rgba(0, 0, 0, 0.42);
+  animation: bootConsoleExit 720ms cubic-bezier(0.16, 1, 0.3, 1) 3.6s forwards;
 }
 
 .bootConsole p,
@@ -276,7 +400,7 @@
   animation-delay: 280ms;
 }
 
-.bootConsole div {
+.bootSequence {
   display: grid;
   gap: 0.44rem;
   margin-top: 1rem;
@@ -287,7 +411,7 @@
   font-family: var(--font-mono);
   font-size: 0.8rem;
   font-weight: 800;
-  animation-delay: calc(620ms + var(--step) * 520ms);
+  animation-delay: calc(620ms + var(--step) * 560ms);
 }
 
 .bootConsole span::before {
@@ -302,7 +426,7 @@
   vertical-align: 0.05em;
 }
 
-.bootConsole small {
+.bootProgress {
   display: block;
   height: 0.26rem;
   margin-top: 1rem;
@@ -311,14 +435,26 @@
   background: rgba(255, 255, 255, 0.1);
 }
 
-.bootConsole i {
+.bootProgress i {
   display: block;
   width: 100%;
   height: 100%;
   border-radius: inherit;
   background: linear-gradient(90deg, var(--cyan), var(--blue), var(--violet));
   transform-origin: left;
-  animation: bootProgress 3.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: bootProgress 3.92s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.bootLaunch {
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 47%, rgba(255, 255, 255, 0.72), transparent 8rem),
+    radial-gradient(circle at 50% 47%, color-mix(in srgb, var(--cyan) 34%, transparent), transparent 28rem);
+  opacity: 0;
+  transform: scale(0.78);
+  animation: bootLaunch 980ms cubic-bezier(0.16, 1, 0.3, 1) 3.38s forwards;
 }
 
 /* Hero */
@@ -336,6 +472,10 @@
 .heroCopy {
   position: relative;
   z-index: 3;
+}
+
+.ready .heroCopy {
+  animation: heroCopyIn 780ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .heroCopy p,
@@ -432,6 +572,10 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.12),
     0 50px 160px rgba(0, 0, 0, 0.46);
   transform: translate3d(calc(var(--rx, 0) * 0.18px), calc(var(--ry, 0) * -0.18px), 0);
+}
+
+.ready .heroStage {
+  animation: heroStageOpen 980ms cubic-bezier(0.16, 1, 0.3, 1) 80ms both;
 }
 
 .heroStage::before,
@@ -1682,6 +1826,80 @@
   }
 }
 
+@keyframes bootFrameReveal {
+  0% {
+    transform: translate(-11vw, 3vh) scale(0.82);
+    opacity: 0;
+  }
+  18% {
+    opacity: 1;
+  }
+  74% {
+    transform: translate(-11vw, -2vh) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(9vw, 0) scale(1.18);
+    opacity: 0.28;
+  }
+}
+
+@keyframes bootRing {
+  0% {
+    transform: scale(0.82);
+    opacity: 0;
+  }
+  28%,
+  82% {
+    opacity: 0.72;
+  }
+  100% {
+    transform: scale(1.16);
+    opacity: 0.1;
+  }
+}
+
+@keyframes bootNodeLine {
+  0%,
+  18% {
+    transform: rotate(var(--node-line-angle, 0deg)) scaleX(0.08);
+    opacity: 0;
+  }
+  42%,
+  78% {
+    transform: rotate(var(--node-line-angle, 0deg)) scaleX(1);
+    opacity: 1;
+  }
+  100% {
+    transform: rotate(var(--node-line-angle, 0deg)) scaleX(1.08);
+    opacity: 0.08;
+  }
+}
+
+@keyframes bootNode {
+  0%,
+  24% {
+    transform: translateY(8px);
+    opacity: 0;
+  }
+  42%,
+  82% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-4px);
+    opacity: 0.18;
+  }
+}
+
+@keyframes bootConsoleExit {
+  to {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+}
+
 @keyframes bootProgress {
   from {
     transform: scaleX(0.04);
@@ -1691,9 +1909,49 @@
   }
 }
 
+@keyframes bootLaunch {
+  0%,
+  18% {
+    opacity: 0;
+    transform: scale(0.78);
+  }
+  58% {
+    opacity: 0.92;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.34);
+  }
+}
+
 @keyframes textReveal {
   to {
     transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes heroCopyIn {
+  from {
+    transform: translateY(18px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes heroStageOpen {
+  from {
+    clip-path: inset(12% 10% 10% 10% round 2rem);
+    filter: brightness(0.78);
+    opacity: 0;
+  }
+  to {
+    clip-path: inset(0 0 0 0 round 2rem);
+    filter: brightness(1);
     opacity: 1;
   }
 }
@@ -1847,7 +2105,7 @@
     display: none;
   }
 
-  .bootCore {
+  .bootFrame {
     width: min(82vw, 24rem);
     transform: translateY(-9vh);
   }
