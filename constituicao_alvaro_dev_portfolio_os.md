@@ -584,6 +584,270 @@ Anti-patterns proibidos daqui para frente:
 - Não aceitar erro de acentuação, `Ã`, `�` ou qualquer mojibake.
 - Não aplicar a candidata visual na home oficial antes de aprovação visual humana.
 
+### R1-E — Roadmap Oficial de Fechamento Visual Premium
+
+A fase R1-E é o roadmap oficial aprovado para transformar a direção preservada em `/visual-final-candidate` em uma experiência ultra premium pronta para virar a home oficial.
+
+Estado atual real:
+
+- Checkpoint publicado: `7a67287 feat: preserve visual final candidate direction`.
+- `/visual-final-candidate` é a direção visual preservada e aprovada como base.
+- `/visual-final-candidate` ainda **não é a home oficial**.
+- A home oficial `/` continua na versão antiga.
+- Os protótipos antigos `/visual-prototype` e `/visual-exploration` foram removidos.
+- A primeira dobra ainda precisa evoluir muito antes de virar oficial.
+
+Decisão oficial:
+
+- R1-E é o roadmap oficial até o fechamento visual do projeto.
+- O objetivo é transformar a candidata visual em uma experiência ultra premium.
+- O foco inicial é a primeira dobra viva, interativa e orientada a projetos.
+- Build passar não significa pronto.
+- Aprovação visual humana continua obrigatória antes de qualquer avanço crítico.
+
+Regra de escopo:
+
+- R1-E.1 deve trabalhar somente em `/visual-final-candidate`.
+- A home oficial `/` só pode ser substituída na R1-E.6.
+- R1-E.6 só pode acontecer depois de aprovação visual humana explícita.
+
+Prioridade absoluta da R1-E:
+
+- A primeira dobra deve ser a melhor parte do site.
+- Ela deve ter carrossel vivo de projetos.
+- O projeto ativo deve ter frame visual grande.
+- A stack deve estar conectada ao projeto ativo.
+- A experiência deve ter animações e transições premium.
+- O palco deve reagir ao mouse com tracking, spotlight, parallax, profundidade ou canvas.
+- O carrossel deve ter autoplay pausável e controles manuais.
+- O mobile deve ser desenhado como experiência própria.
+- PT/EN devem permanecer corretos e separados.
+- `prefers-reduced-motion` deve ser respeitado.
+- Deve existir espaço real para screenshots, mockups e imagens dos projetos.
+- Enquanto as imagens reais não existirem, o fallback deve ser premium, honesto e não enganoso.
+
+#### R1-E.0 — Cleanup & Documentation Sync
+
+Status: executado e publicado.
+
+Objetivo:
+
+- Remover protótipos visuais legados/reprovados.
+- Preservar `/visual-final-candidate`.
+- Atualizar documentação de estado real.
+- Manter a home oficial `/` intacta.
+
+Critérios:
+
+- `/visual-final-candidate` preservada.
+- `/visual-prototype` e `/visual-exploration` removidos.
+- `public/resume/` e `public/profile/` intactos.
+- Nenhuma aplicação da candidata na home oficial.
+
+#### R1-E.1 — First Fold Living Showcase
+
+Objetivo:
+
+- Trabalhar somente em `/visual-final-candidate`.
+- Transformar a primeira dobra em uma vitrine viva de produto.
+- Criar carrossel visual/interativo de projetos.
+- Mostrar projeto ativo com imagem real ou placeholder premium.
+- Mostrar stack animada e conectada ao projeto ativo.
+- Adicionar mouse tracking, spotlight, parallax e transições cinematográficas.
+- Implementar autoplay pausável e controles manuais.
+- Criar mobile premium, não desktop espremido.
+
+Não fazer:
+
+- Não aplicar nada na home oficial `/`.
+- Não alterar `/curriculo`, `/projetos`, `/lab` ou `/api`.
+- Não criar screenshots falsos.
+- Não transformar a primeira dobra em dashboard, grid de cards ou terminal parado.
+
+Critérios de aceite:
+
+- A primeira dobra comunica valor em até 5 segundos.
+- Projetos são percebidos como vitrine visual, não lista.
+- O projeto ativo domina a composição de forma premium.
+- Stack, movimento e interação estão ligados ao projeto ativo.
+- Mobile funciona como composição própria.
+- PT/EN, acentuação, encoding e reduced motion passam.
+- Screenshots e validação visual humana são obrigatórios antes de avançar.
+
+#### R1-E.2 — Cinematic Loading System
+
+Objetivo:
+
+- Elevar o loading para uma abertura memorável do Portfolio OS.
+- Criar boot visual com duração controlada.
+- Montar visualmente o palco, os projetos e o sistema.
+- Fazer a transição loading -> hero parecer contínua.
+- Simplificar ou pular a experiência em `prefers-reduced-motion`.
+
+Critérios:
+
+- Não usar spinner genérico.
+- Não bloquear navegação recorrente de forma irritante.
+- Não causar layout shift relevante.
+- Não animar texto de forma que prejudique nitidez.
+
+#### R1-E.3 — Project Visual Asset System
+
+Objetivo:
+
+- Definir campos definitivos para imagens dos projetos.
+- Preparar a estrutura para screenshots, mockups, vídeos e galerias reais.
+
+Modelo recomendado:
+
+```ts
+visuals: {
+  thumbnail: string | null;
+  heroImage: string | null;
+  mockupImage: string | null;
+  gallery: string[];
+  video?: string | null;
+  background?: string | null;
+  alt: LocalizedText;
+  status: "pending" | "available";
+}
+```
+
+Diretório futuro recomendado:
+
+```txt
+public/projects/<slug>/
+```
+
+Critérios:
+
+- Nunca inventar screenshot falso.
+- Fallback premium deve dizer claramente que a imagem está em preparação.
+- Diferenciar thumbnail, hero image, mockup image, gallery, video e background.
+- Manter PT/EN correto nos textos alternativos.
+
+#### R1-E.4 — Premium Scroll Narrative
+
+Objetivo:
+
+- Criar narrativa contínua abaixo da primeira dobra.
+- Integrar projetos, stacks, formação/certificações, experiência e CTA final.
+- Evitar blocos soltos, listas comuns e cards genéricos.
+
+Critérios:
+
+- O scroll deve parecer progressão visual.
+- Não usar scroll-jacking agressivo.
+- Stacks devem se conectar aos projetos.
+- Formação e certificações devem parecer trilha técnica, não currículo cru.
+
+#### R1-E.5 — Motion/Interaction Refinement
+
+Objetivo:
+
+- Refinar mouse tracking, spotlight, tilt, parallax, hover, focus e transitions.
+- Avaliar `motion`, GSAP, Canvas ou SVG avançado se houver ganho real.
+- Garantir nitidez de texto e separação entre camadas visuais e camadas textuais.
+- Garantir fallback completo para `prefers-reduced-motion`.
+
+Critérios:
+
+- Movimento precisa ter propósito.
+- Interações precisam reforçar hierarquia e produto.
+- Texto não deve ser animado com scale, blur ou perspectiva pesada.
+- Performance e acessibilidade continuam gates obrigatórios.
+
+#### R1-E.6 — Apply Candidate to Official Home
+
+Objetivo:
+
+- Substituir `/` pela experiência aprovada.
+- Executar somente depois de aprovação visual humana da candidata.
+- Preservar rotas internas, downloads, sitemap, robots e Vercel.
+
+Critérios:
+
+- `/` passa a servir a experiência aprovada.
+- `/visual-final-candidate` pode ser preservada temporariamente para comparação ou arquivada em fase posterior.
+- `/curriculo`, `/projetos`, `/lab`, `/api/health` e downloads continuam funcionando.
+- Vercel precisa servir a versão correta.
+
+#### R1-E.7 — Projects and Case Studies Premium
+
+Objetivo:
+
+- Evoluir `/projetos` e `/projetos/[slug]`.
+- Adicionar screenshots reais, galerias, arquitetura, decisões técnicas e resultados honestos.
+- Transformar case studies em storytelling visual premium.
+
+Critérios:
+
+- Não inventar métricas.
+- Não inventar screenshots.
+- Não exagerar impacto profissional.
+- Cada case deve explicar contexto, solução, stack, desafios e evidências reais.
+
+#### R1-E.8 — Developer Lab Real Games
+
+Objetivo:
+
+- Substituir quiz/checklist por jogos reais.
+- Evoluir Runtime/Bug Runner, Bug Maze, Debug Arena e Latency Lab.
+
+Critérios:
+
+- Jogos devem ter regras, estado, pontuação e feedback visual.
+- Jogos devem ser jogáveis, não formulários disfarçados.
+- Supabase só entra se for aprovado em fase posterior.
+- Sem ranking real, banco ou persistência antes de aprovação explícita.
+
+#### R1-E.9 — Final QA, Deploy and Release Gate
+
+Objetivo:
+
+- Fechar a experiência com validação técnica, visual, acessível e pública.
+
+Validações obrigatórias:
+
+- `npm run lint`.
+- `npm run typecheck`.
+- `npm run build`.
+- `npm run validate:foundation`.
+- Playwright, Browser MCP ou Chrome/CDP com screenshots.
+- Desktop/mobile.
+- Dark/light.
+- PT/EN.
+- Encoding e busca por `Ã` e `�`.
+- Console errors, console warnings relevantes e page errors.
+- Lighthouse.
+- Acessibilidade.
+- Downloads PDF/DOCX.
+- Vercel production.
+- Aprovação visual humana final.
+
+### Critérios Globais de Aceite da R1-E
+
+- Nada de dashboard como experiência principal.
+- Nada de cards genéricos como solução dominante.
+- Nada de PT/EN misturado.
+- Nada de acentuação quebrada.
+- Nada de mojibake.
+- Nada de screenshot falso.
+- Nada de aplicar na home antes de aprovação humana.
+- Nada de Supabase antes da experiência visual estar aprovada.
+- QA visual é obrigatório.
+- Screenshots e, quando possível, vídeo curto são obrigatórios antes de pedir aprovação humana.
+
+### Próximo Passo Oficial
+
+O próximo passo oficial é:
+
+```txt
+R1-E.1 — First Fold Living Showcase
+```
+
+Essa fase deve ocorrer somente em `/visual-final-candidate`.
+
 ### Roadmap R1-C Recomendado
 
 #### R1-C.0 — Documentation & Visual Contract
