@@ -538,6 +538,52 @@ Não fazer:
 - Não repetir estética de dashboard administrativo.
 - Não tratar badge, borda e glow como direção visual completa.
 
+### Atualização R1-D.SELECT — Candidata Visual Preservada
+
+Após as reprovações visuais das tentativas R1.1, R1.1B, R1-C.3 e dos refinamentos estáticos do hero, o projeto passou por uma etapa de exploração visual real.
+
+Estado real atual:
+
+- A rota `/visual-final-candidate` é a melhor direção visual validada pelo usuário até agora.
+- Essa rota **não é a home oficial**.
+- Essa rota **não é a versão final**.
+- A home oficial `/` permanece preservada até aprovação visual humana explícita.
+- A fase R1-D.SELECT escolheu a direção **Interactive Product Showcase** como base.
+- A candidata incorpora a atmosfera viva, o boot e a sensação de sistema da direção **Cinematic Operating System**.
+- Os protótipos `/visual-prototype` e `/visual-exploration` foram tratados como experimentos legados/reprovados e podem ser removidos quando não houver dependência real.
+- A próxima prioridade é transformar a primeira dobra em uma vitrine viva, ultra premium e interativa.
+
+Regra central reforçada:
+
+> Build passar não significa pronto. A versão só avança quando a validação visual humana aprovar.
+
+Prioridade central da próxima etapa visual:
+
+- A primeira dobra deve ser a melhor parte do site.
+- A primeira dobra deve apresentar projetos como showcase/carrossel interativo.
+- O projeto ativo deve ter imagem, screenshot real ou placeholder premium preparado para receber imagem futura.
+- A stack relacionada ao projeto ativo deve aparecer de forma animada e conectada ao showcase.
+- A troca de projetos deve ter transição cinematográfica.
+- O mouse deve influenciar parallax, spotlight, tilt, canvas, brilho ou perspectiva.
+- A experiência precisa comunicar valor em até 5 segundos.
+- O layout não pode parecer dashboard, card grid comum ou template.
+- PT/EN devem permanecer separados, sem mistura indevida de idioma.
+- Acentuação, ortografia e encoding precisam permanecer limpos.
+- `prefers-reduced-motion`, mobile e acessibilidade continuam obrigatórios.
+
+Anti-patterns proibidos daqui para frente:
+
+- Não voltar para dashboard ou cards genéricos como estrutura dominante.
+- Não usar terminal gigante vazio na primeira dobra.
+- Não usar skill matrix comum como seção principal.
+- Não usar foto grande com chips soltos como direção visual.
+- Não usar placeholder pobre, vazio ou com aparência improvisada.
+- Não usar apenas fade, hover simples ou glow como prova de motion premium.
+- Não criar scroll sem narrativa.
+- Não misturar PT com EN fora dos termos técnicos aceitos.
+- Não aceitar erro de acentuação, `Ã`, `�` ou qualquer mojibake.
+- Não aplicar a candidata visual na home oficial antes de aprovação visual humana.
+
 ### Roadmap R1-C Recomendado
 
 #### R1-C.0 — Documentation & Visual Contract
