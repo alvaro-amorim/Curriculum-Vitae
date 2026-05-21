@@ -66,6 +66,26 @@ export const projects: Project[] = [
     links: {
       website: "https://margemapp.com.br/",
     },
+    visuals: {
+      thumbnail: null,
+      heroImage: null,
+      gallery: [],
+      alt: {
+        pt: "Área visual preparada para imagem do projeto MARGEM APP.",
+        en: "Visual area prepared for the MARGEM APP project image.",
+      },
+      status: "pending",
+      accent: {
+        primary: "#7dd3fc",
+        secondary: "#3b82f6",
+        tertiary: "#c084fc",
+      },
+      layout: "operational-saas",
+      mockupHint: {
+        pt: "Moldura para operação SaaS com receitas, custos e rotulagem.",
+        en: "Frame for a SaaS operation with recipes, costs and labeling.",
+      },
+    },
     featured: true,
   },
   {
@@ -130,6 +150,26 @@ export const projects: Project[] = [
     },
     links: {
       website: "https://airivals.com.br/",
+    },
+    visuals: {
+      thumbnail: null,
+      heroImage: null,
+      gallery: [],
+      alt: {
+        pt: "Área visual preparada para imagem do projeto RIVALS AI.",
+        en: "Visual area prepared for the RIVALS AI project image.",
+      },
+      status: "pending",
+      accent: {
+        primary: "#67e8f9",
+        secondary: "#22c55e",
+        tertiary: "#7dd3fc",
+      },
+      layout: "social-ai",
+      mockupHint: {
+        pt: "Arena visual para debates, personagens e feed com IA.",
+        en: "Visual arena for AI debates, characters and feed.",
+      },
     },
     featured: true,
   },
@@ -196,6 +236,26 @@ export const projects: Project[] = [
     links: {
       website: "https://sdr-crm-ai-wine.vercel.app/",
     },
+    visuals: {
+      thumbnail: null,
+      heroImage: null,
+      gallery: [],
+      alt: {
+        pt: "Área visual preparada para imagem do projeto SDR EXPERT CRM.",
+        en: "Visual area prepared for the SDR EXPERT CRM project image.",
+      },
+      status: "pending",
+      accent: {
+        primary: "#c084fc",
+        secondary: "#3b82f6",
+        tertiary: "#f0abfc",
+      },
+      layout: "crm-pipeline",
+      mockupHint: {
+        pt: "Moldura para pipeline comercial, campanhas e simulação.",
+        en: "Frame for commercial pipeline, campaigns and simulation.",
+      },
+    },
     featured: true,
   },
   {
@@ -260,6 +320,26 @@ export const projects: Project[] = [
     },
     links: {
       website: "https://www.comercias.com.br/",
+    },
+    visuals: {
+      thumbnail: null,
+      heroImage: null,
+      gallery: [],
+      alt: {
+        pt: "Área visual preparada para imagem do projeto COMERC IAS.",
+        en: "Visual area prepared for the COMERC IAS project image.",
+      },
+      status: "pending",
+      accent: {
+        primary: "#ffd166",
+        secondary: "#f97316",
+        tertiary: "#7dd3fc",
+      },
+      layout: "institutional-site",
+      mockupHint: {
+        pt: "Moldura para página institucional com área interna e métricas.",
+        en: "Frame for institutional page with internal area and metrics.",
+      },
     },
   },
   {
@@ -326,6 +406,26 @@ export const projects: Project[] = [
       website: "https://gdash.comercias.com.br",
       repository: "https://github.com/alvaro-amorim/gdash-project-challenge",
     },
+    visuals: {
+      thumbnail: null,
+      heroImage: null,
+      gallery: [],
+      alt: {
+        pt: "Área visual preparada para imagem do projeto GDASH DASHBOARD.",
+        en: "Visual area prepared for the GDASH DASHBOARD project image.",
+      },
+      status: "pending",
+      accent: {
+        primary: "#93c5fd",
+        secondary: "#6366f1",
+        tertiary: "#67e8f9",
+      },
+      layout: "data-monitoring",
+      mockupHint: {
+        pt: "Moldura para mapa de dados, sinais climáticos e insights.",
+        en: "Frame for data map, climate signals and insights.",
+      },
+    },
     featured: true,
   },
   {
@@ -390,6 +490,26 @@ export const projects: Project[] = [
     },
     links: {
       website: "https://cardapio-glace.vercel.app/",
+    },
+    visuals: {
+      thumbnail: null,
+      heroImage: null,
+      gallery: [],
+      alt: {
+        pt: "Área visual preparada para imagem do projeto GLACÊ CONFEITARIA.",
+        en: "Visual area prepared for the GLACÊ CONFEITARIA project image.",
+      },
+      status: "pending",
+      accent: {
+        primary: "#f0abfc",
+        secondary: "#a855f7",
+        tertiary: "#7dd3fc",
+      },
+      layout: "commerce-catalog",
+      mockupHint: {
+        pt: "Moldura para catálogo público, pedidos e gestão interna.",
+        en: "Frame for public catalog, orders and internal management.",
+      },
     },
   },
 ];

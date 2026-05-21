@@ -3,6 +3,7 @@
 import type { CSSProperties, PointerEvent, UIEvent } from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
+import Image from "next/image";
 import Link from "next/link";
 
 import { usePortfolioUi } from "@/components/layout/app-shell";
@@ -236,6 +237,15 @@ function useReveal() {
 }
 
 function getProjectTone(project: Project, index: number): StyleVars {
+  if (project.visuals?.accent) {
+    return {
+      "--project-accent": project.visuals.accent.primary,
+      "--project-accent-2": project.visuals.accent.secondary,
+      "--project-accent-3": project.visuals.accent.tertiary,
+      "--project-seed": project.slug.length + index,
+    };
+  }
+
   const tones = [
     ["#7dd3fc", "#3b82f6", "#c084fc"],
     ["#67e8f9", "#22c55e", "#7dd3fc"],
@@ -252,6 +262,82 @@ function getProjectTone(project: Project, index: number): StyleVars {
     "--project-accent-3": selected[2],
     "--project-seed": project.slug.length + index,
   };
+}
+
+function ProjectVisualSurface({
+  blueprintClassName,
+  className,
+  imageSizes,
+  locale,
+  pendingLabel,
+  project,
+}: {
+  blueprintClassName: string;
+  className: string;
+  imageSizes: string;
+  locale: Locale;
+  pendingLabel: string;
+  project: Project;
+}) {
+  const visuals = project.visuals;
+  const imageSource = visuals?.heroImage ?? visuals?.thumbnail ?? null;
+  const hasImage = visuals?.status === "available" && Boolean(imageSource);
+  const visualStatus = visuals?.status ?? "pending";
+  const visualLayout = visuals?.layout ?? "operational-saas";
+  const visualAlt = visuals?.alt[locale] ?? project.title[locale];
+  const gallerySlots = visuals?.gallery.length ? visuals.gallery.slice(0, 3) : [null, null, null];
+
+  return (
+    <div
+      className={`${className} ${styles.visualSurface}`}
+      data-visual-layout={visualLayout}
+      data-visual-status={visualStatus}
+      role="img"
+      aria-label={hasImage ? visualAlt : `${pendingLabel}: ${visualAlt}`}
+    >
+      <div className={styles.screenTopline}>
+        <span />
+        <span />
+        <span />
+        <strong>{hasImage ? visualAlt : pendingLabel}</strong>
+      </div>
+      {hasImage && imageSource ? (
+        <Image alt={visualAlt} className={styles.visualImage} fill sizes={imageSizes} src={imageSource} />
+      ) : (
+        <>
+          <div className={styles.visualMockupShell} aria-hidden="true">
+            <span />
+            <span />
+            <span />
+          </div>
+          <div className={`${blueprintClassName} ${styles.visualBlueprint}`} aria-hidden="true">
+            <span />
+            <span />
+            <span />
+            <span />
+            <span />
+            <span />
+            <span />
+            <span />
+          </div>
+          <div className={styles.visualGalleryStrip} aria-hidden="true">
+            {gallerySlots.map((slot, index) => (
+              <span data-filled={Boolean(slot)} key={`${project.slug}-gallery-${index}`} />
+            ))}
+          </div>
+          <div className={styles.visualHint}>
+            <strong>{visuals?.mockupHint[locale] ?? visualAlt}</strong>
+            <small>{pendingLabel}</small>
+          </div>
+        </>
+      )}
+      <div className={styles.screenIdentity}>
+        <small>{project.status[locale]}</small>
+        <strong>{project.title[locale]}</strong>
+        <em>{project.subtitle[locale]}</em>
+      </div>
+    </div>
+  );
 }
 
 function LivingCanvas() {
@@ -421,28 +507,21 @@ function ProductFrame({ project, locale, featured = false }: { project: Project;
   const visibleStack = project.stack.slice(0, featured ? 3 : 4);
 
   return (
-    <article className={`${styles.productFrame} ${featured ? styles.featuredFrame : ""}`} onPointerMove={handleLocalPointer}>
-      <div className={styles.productScreen} role="img" aria-label={`${t.imagePending}: ${project.title[locale]}`}>
-        <div className={styles.screenTopline}>
-          <span />
-          <span />
-          <span />
-          <strong>{t.imagePending}</strong>
-        </div>
-        <div className={styles.screenBlueprint} aria-hidden="true">
-          <span />
-          <span />
-          <span />
-          <span />
-          <span />
-          <span />
-        </div>
-        <div className={styles.screenIdentity}>
-          <small>{project.status[locale]}</small>
-          <strong>{project.title[locale]}</strong>
-          <em>{project.subtitle[locale]}</em>
-        </div>
-      </div>
+    <article
+      className={`${styles.productFrame} ${featured ? styles.featuredFrame : ""}`}
+      data-visual-layout={project.visuals?.layout}
+      data-visual-status={project.visuals?.status ?? "pending"}
+      onPointerMove={handleLocalPointer}
+      style={getProjectTone(project, 0)}
+    >
+      <ProjectVisualSurface
+        blueprintClassName={styles.screenBlueprint}
+        className={styles.productScreen}
+        imageSizes="(max-width: 680px) 92vw, 62vw"
+        locale={locale}
+        pendingLabel={t.imagePending}
+        project={project}
+      />
       <div className={styles.productMeta}>
         <p>{featured ? t.featuredProject : t.productStage}</p>
         <h3>{project.title[locale]}</h3>
@@ -496,33 +575,20 @@ function ProjectVisualFrame({ locale, project, projectIndex }: { locale: Locale;
     <article
       className={styles.activeProjectFrame}
       data-project-frame={project.slug}
+      data-visual-layout={project.visuals?.layout}
+      data-visual-status={project.visuals?.status ?? "pending"}
       key={project.slug}
       onPointerMove={handleLocalPointer}
       style={getProjectTone(project, projectIndex)}
     >
-      <div className={styles.activeScreen} role="img" aria-label={`${t.imagePending}: ${project.title[locale]}`}>
-        <div className={styles.screenTopline}>
-          <span />
-          <span />
-          <span />
-          <strong>{t.imagePending}</strong>
-        </div>
-        <div className={styles.heroBlueprint} aria-hidden="true">
-          <span />
-          <span />
-          <span />
-          <span />
-          <span />
-          <span />
-          <span />
-          <span />
-        </div>
-        <div className={styles.screenIdentity}>
-          <small>{project.status[locale]}</small>
-          <strong>{project.title[locale]}</strong>
-          <em>{project.subtitle[locale]}</em>
-        </div>
-      </div>
+      <ProjectVisualSurface
+        blueprintClassName={styles.heroBlueprint}
+        className={styles.activeScreen}
+        imageSizes="(max-width: 680px) 92vw, 52vw"
+        locale={locale}
+        pendingLabel={t.imagePending}
+        project={project}
+      />
       <div className={styles.activeProjectMeta}>
         <p>{t.activeProject}</p>
         <h2>{project.title[locale]}</h2>

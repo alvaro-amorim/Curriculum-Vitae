@@ -18,6 +18,29 @@ export type Skill = {
   evidence?: LocalizedText;
 };
 
+export type ProjectVisualLayout =
+  | "operational-saas"
+  | "social-ai"
+  | "crm-pipeline"
+  | "institutional-site"
+  | "data-monitoring"
+  | "commerce-catalog";
+
+export type ProjectVisuals = {
+  thumbnail: string | null;
+  heroImage: string | null;
+  gallery: string[];
+  alt: LocalizedText;
+  status: "pending" | "available";
+  accent: {
+    primary: string;
+    secondary: string;
+    tertiary: string;
+  };
+  layout: ProjectVisualLayout;
+  mockupHint: LocalizedText;
+};
+
 export type DownloadAsset = {
   label: string;
   href: string;
@@ -49,6 +72,7 @@ export type Project = {
     website: string;
     repository?: string;
   };
+  visuals?: ProjectVisuals;
   featured?: boolean;
 };
 

@@ -789,6 +789,7 @@
   position: relative;
   min-width: 0;
   overflow: hidden;
+  isolation: isolate;
   background:
     linear-gradient(rgba(255, 255, 255, 0.055) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px),
@@ -822,6 +823,170 @@
     linear-gradient(90deg, color-mix(in srgb, var(--project-accent, var(--cyan)) 42%, transparent), transparent 38%),
     linear-gradient(180deg, rgba(255, 255, 255, 0.085), transparent 28%);
   opacity: 0.36;
+}
+
+.visualSurface {
+  isolation: isolate;
+}
+
+.visualImage {
+  z-index: 1;
+  object-fit: cover;
+}
+
+.visualMockupShell {
+  position: absolute;
+  inset: 4.15rem 2.15rem 2rem;
+  z-index: 2;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--project-accent, var(--cyan)) 18%, rgba(255, 255, 255, 0.1));
+  border-radius: 1.2rem;
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--project-accent, var(--cyan)) 16%, transparent), transparent 34%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent 34%),
+    rgba(255, 255, 255, 0.035);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 0 52px color-mix(in srgb, var(--project-accent-2, var(--blue)) 10%, transparent);
+}
+
+.visualMockupShell::before,
+.visualMockupShell::after {
+  position: absolute;
+  content: "";
+  pointer-events: none;
+}
+
+.visualMockupShell::before {
+  inset: 1.1rem;
+  border-radius: 0.95rem;
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+  background-size: 34px 34px;
+  mask-image: radial-gradient(circle at 46% 46%, black 0 56%, transparent 88%);
+}
+
+.visualMockupShell::after {
+  inset: auto 9% 13%;
+  height: 31%;
+  border: 1px solid color-mix(in srgb, var(--project-accent-3, var(--violet)) 22%, transparent);
+  border-radius: 1rem;
+  background:
+    linear-gradient(90deg, transparent, color-mix(in srgb, var(--project-accent-3, var(--violet)) 18%, transparent), transparent),
+    rgba(255, 255, 255, 0.04);
+  opacity: 0.62;
+}
+
+.visualMockupShell > span {
+  position: absolute;
+  z-index: 2;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--project-accent, var(--cyan)) 42%, transparent);
+  box-shadow: 0 0 28px color-mix(in srgb, var(--project-accent, var(--cyan)) 18%, transparent);
+}
+
+.visualMockupShell > span:nth-child(1) {
+  top: 14%;
+  left: 10%;
+  width: 36%;
+  height: 0.22rem;
+}
+
+.visualMockupShell > span:nth-child(2) {
+  top: 28%;
+  right: 12%;
+  width: 24%;
+  height: 0.22rem;
+  background: color-mix(in srgb, var(--project-accent-3, var(--violet)) 46%, transparent);
+}
+
+.visualMockupShell > span:nth-child(3) {
+  right: 16%;
+  bottom: 18%;
+  width: 0.9rem;
+  height: 0.9rem;
+  border: 1px solid color-mix(in srgb, var(--project-accent-2, var(--blue)) 54%, transparent);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.visualSurface[data-visual-layout="social-ai"] .visualMockupShell {
+  border-radius: 999px 1.3rem 999px 1.3rem;
+}
+
+.visualSurface[data-visual-layout="crm-pipeline"] .visualMockupShell::after {
+  height: 46%;
+  background:
+    repeating-linear-gradient(90deg, color-mix(in srgb, var(--project-accent, var(--cyan)) 22%, transparent) 0 1px, transparent 1px 22%),
+    rgba(255, 255, 255, 0.04);
+}
+
+.visualSurface[data-visual-layout="data-monitoring"] .visualMockupShell::after {
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 28% 48%, color-mix(in srgb, var(--project-accent, var(--cyan)) 38%, transparent), transparent 18%),
+    linear-gradient(90deg, transparent, color-mix(in srgb, var(--project-accent-2, var(--blue)) 22%, transparent), transparent);
+}
+
+.visualSurface[data-visual-layout="commerce-catalog"] .visualMockupShell::after {
+  height: 42%;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.1) 0 18%, transparent 18% 24%, rgba(255, 255, 255, 0.08) 24% 44%, transparent 44% 50%, rgba(255, 255, 255, 0.08) 50% 70%, transparent 70%),
+    rgba(255, 255, 255, 0.04);
+}
+
+.visualGalleryStrip {
+  display: flex;
+  position: absolute;
+  top: 3.72rem;
+  right: 2.2rem;
+  z-index: 5;
+  gap: 0.42rem;
+  pointer-events: none;
+}
+
+.visualGalleryStrip span {
+  width: 2.7rem;
+  height: 1.5rem;
+  border: 1px solid color-mix(in srgb, var(--project-accent, var(--cyan)) 22%, rgba(255, 255, 255, 0.1));
+  border-radius: 0.48rem;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--project-accent, var(--cyan)) 12%, transparent), transparent),
+    rgba(3, 8, 18, 0.52);
+  box-shadow: 0 0 18px color-mix(in srgb, var(--project-accent, var(--cyan)) 8%, transparent);
+}
+
+.visualHint {
+  position: absolute;
+  right: 2.2rem;
+  bottom: 2rem;
+  z-index: 6;
+  width: min(21rem, 42%);
+  padding: 0.82rem 0.95rem;
+  border: 1px solid color-mix(in srgb, var(--project-accent, var(--cyan)) 18%, rgba(255, 255, 255, 0.1));
+  border-radius: 0.95rem;
+  background: rgba(2, 7, 16, 0.64);
+  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.28);
+}
+
+.visualHint strong,
+.visualHint small {
+  display: block;
+  font-family: var(--font-mono);
+  line-height: 1.42;
+}
+
+.visualHint strong {
+  color: rgba(248, 251, 255, 0.76);
+  font-size: 0.72rem;
+  font-weight: 860;
+}
+
+.visualHint small {
+  margin-top: 0.42rem;
+  color: color-mix(in srgb, var(--project-accent, var(--cyan)) 68%, white);
+  font-size: 0.66rem;
+  font-weight: 900;
 }
 
 .heroBlueprint {
@@ -896,6 +1061,14 @@
 .heroBlueprint span:nth-child(8) {
   bottom: 32%;
   left: 28%;
+}
+
+.heroBlueprint.visualBlueprint {
+  opacity: 0.9;
+}
+
+.activeScreen .visualHint {
+  display: none;
 }
 
 .activeProjectMeta {
@@ -1163,7 +1336,7 @@
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 1.65rem;
   background:
-    radial-gradient(circle at var(--lx, 50%) var(--ly, 44%), color-mix(in srgb, var(--cyan) 15%, transparent), transparent 14rem),
+    radial-gradient(circle at var(--lx, 50%) var(--ly, 44%), color-mix(in srgb, var(--project-accent, var(--cyan)) 15%, transparent), transparent 14rem),
     linear-gradient(135deg, rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.03)),
     rgba(7, 13, 27, 0.78);
   box-shadow:
@@ -1176,7 +1349,7 @@
 }
 
 .productFrame:hover {
-  border-color: color-mix(in srgb, var(--cyan) 38%, rgba(255, 255, 255, 0.15));
+  border-color: color-mix(in srgb, var(--project-accent, var(--cyan)) 38%, rgba(255, 255, 255, 0.15));
 }
 
 .featuredFrame {
@@ -1218,10 +1391,11 @@
   min-width: 0;
   min-height: 27rem;
   overflow: hidden;
+  isolation: isolate;
   background:
     linear-gradient(rgba(255, 255, 255, 0.055) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px),
-    radial-gradient(circle at 24% 28%, color-mix(in srgb, var(--cyan) 16%, transparent), transparent 15rem),
+    radial-gradient(circle at 24% 28%, color-mix(in srgb, var(--project-accent, var(--cyan)) 16%, transparent), transparent 15rem),
     rgba(255, 255, 255, 0.035);
   background-size: 32px 32px, 32px 32px, auto, auto;
 }
@@ -1332,6 +1506,23 @@
 .screenBlueprint span:nth-child(6) {
   right: 8%;
   bottom: 8%;
+}
+
+.screenBlueprint span:nth-child(7),
+.screenBlueprint span:nth-child(8) {
+  width: 1.6rem;
+  height: 0.18rem;
+  background: color-mix(in srgb, var(--project-accent-2, var(--blue)) 34%, transparent);
+}
+
+.screenBlueprint span:nth-child(7) {
+  top: 18%;
+  right: 22%;
+}
+
+.screenBlueprint span:nth-child(8) {
+  bottom: 18%;
+  left: 34%;
 }
 
 .screenIdentity {
