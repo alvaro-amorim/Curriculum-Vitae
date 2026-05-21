@@ -3,7 +3,6 @@
 import type { CSSProperties, PointerEvent, UIEvent } from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
-import Image from "next/image";
 import Link from "next/link";
 
 import { usePortfolioUi } from "@/components/layout/app-shell";
@@ -17,8 +16,10 @@ import styles from "./visual-final-candidate.module.css";
 
 type StyleVars = CSSProperties & Record<`--${string}`, string | number>;
 
-const BOOT_DURATION = 5200;
-const SESSION_KEY = "portfolio-visual-final-candidate-v1";
+const BOOT_DURATION = 3600;
+const SHOWCASE_INTERVAL = 6400;
+const ACTIVE_STACK_LIMIT = 5;
+const SESSION_KEY = "portfolio-visual-final-candidate-v2";
 
 const featuredSkillNames: Record<SkillDomain, string[]> = {
   front: ["React", "Next.js", "TypeScript", "CSS3"],
@@ -32,12 +33,11 @@ const featuredSkillNames: Record<SkillDomain, string[]> = {
 const copy = {
   pt: {
     bootLabel: "Portfolio OS",
-    bootSteps: ["iniciando núcleo", "montando palco visual", "ativando projetos", "sincronizando sistema"],
-    bootFooter: "abrindo vitrine interativa",
-    eyebrow: "ÁLVARO.DEV / PRODUCT SHOWCASE",
-    title: "Produtos web, SaaS e IA em uma vitrine viva.",
-    subtitle:
-      "Desenvolvedor Full Stack criando produtos web, SaaS, automações e integrações com IA com foco em interfaces, arquitetura e entrega real.",
+    bootSteps: ["inicializando núcleo visual", "mapeando projetos", "conectando stacks", "abrindo vitrine"],
+    bootFooter: "vitrine interativa em execução",
+    eyebrow: "ÁLVARO.DEV / VITRINE DE PRODUTOS",
+    title: "Produtos web, SaaS e IA em movimento.",
+    subtitle: "Full Stack criando produtos web, automações e IA com arquitetura, interface e entrega real.",
     primary: "Ver projetos",
     secondary: "Abrir currículo",
     tertiary: "Developer Lab",
@@ -47,9 +47,21 @@ const copy = {
     imagePending: "Imagem do projeto em preparação",
     featuredProject: "produto em destaque",
     productStage: "palco de produto",
+    liveShowcase: "vitrine viva",
+    connectedStack: "tecnologias conectadas",
+    activeProject: "projeto ativo",
+    carouselLabel: "Carrossel de projetos da primeira dobra",
+    previousProject: "Projeto anterior",
+    nextProject: "Próximo projeto",
+    pauseAutoplay: "Pausar rotação",
+    resumeAutoplay: "Retomar rotação",
+    autoplayPaused: "rotação pausada",
+    autoplayRunning: "rotação automática",
+    selectProject: "Selecionar projeto",
+    projectProgress: "progresso do projeto ativo",
     caseButton: "Ver estudo",
     siteButton: "Abrir site",
-    projectsEyebrow: "showcase de produto",
+    projectsEyebrow: "vitrine de produto",
     projectsTitle: "Projetos com espaço real para screenshots.",
     projectsIntro:
       "A candidata prioriza áreas visuais grandes para receber imagens, vídeos ou mockups reais. Enquanto isso, os frames mostram uma blueprint intencional, sem simular screenshots falsos.",
@@ -65,12 +77,11 @@ const copy = {
   },
   en: {
     bootLabel: "Portfolio OS",
-    bootSteps: ["initializing core", "mounting visual stage", "activating projects", "syncing system"],
-    bootFooter: "opening interactive showcase",
+    bootSteps: ["initializing visual core", "mapping projects", "connecting stacks", "opening showcase"],
+    bootFooter: "interactive showcase online",
     eyebrow: "ÁLVARO.DEV / PRODUCT SHOWCASE",
-    title: "Web products, SaaS and AI inside a living showcase.",
-    subtitle:
-      "Full Stack Developer building web apps, SaaS products, automations and AI integrations with focus on interfaces, architecture and real delivery.",
+    title: "Web, SaaS and AI products in motion.",
+    subtitle: "Full Stack Developer building web products, automations and AI integrations with product-grade delivery.",
     primary: "View projects",
     secondary: "Open resume",
     tertiary: "Developer Lab",
@@ -80,6 +91,18 @@ const copy = {
     imagePending: "Project image in preparation",
     featuredProject: "featured product",
     productStage: "product stage",
+    liveShowcase: "living showcase",
+    connectedStack: "connected stack",
+    activeProject: "active project",
+    carouselLabel: "First fold project carousel",
+    previousProject: "Previous project",
+    nextProject: "Next project",
+    pauseAutoplay: "Pause rotation",
+    resumeAutoplay: "Resume rotation",
+    autoplayPaused: "rotation paused",
+    autoplayRunning: "auto rotation",
+    selectProject: "Select project",
+    projectProgress: "active project progress",
     caseButton: "View case",
     siteButton: "Open site",
     projectsEyebrow: "product showcase",
@@ -170,6 +193,25 @@ function useBoot() {
   return booting;
 }
 
+function useReducedMotion() {
+  const [reducedMotion, setReducedMotion] = useState(() =>
+    typeof window === "undefined" ? false : window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+  );
+
+  useEffect(() => {
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    function syncPreference(event: MediaQueryListEvent) {
+      setReducedMotion(event.matches);
+    }
+
+    media.addEventListener("change", syncPreference);
+    return () => media.removeEventListener("change", syncPreference);
+  }, []);
+
+  return reducedMotion;
+}
+
 function useReveal() {
   useEffect(() => {
     const root = document.querySelector<HTMLElement>("[data-final-candidate]");
@@ -189,6 +231,25 @@ function useReveal() {
     for (const element of elements) observer.observe(element);
     return () => observer.disconnect();
   }, []);
+}
+
+function getProjectTone(project: Project, index: number): StyleVars {
+  const tones = [
+    ["#7dd3fc", "#3b82f6", "#c084fc"],
+    ["#67e8f9", "#22c55e", "#7dd3fc"],
+    ["#c084fc", "#3b82f6", "#f0abfc"],
+    ["#ffd166", "#f97316", "#7dd3fc"],
+    ["#93c5fd", "#6366f1", "#67e8f9"],
+    ["#f0abfc", "#a855f7", "#7dd3fc"],
+  ];
+  const selected = tones[index % tones.length];
+
+  return {
+    "--project-accent": selected[0],
+    "--project-accent-2": selected[1],
+    "--project-accent-3": selected[2],
+    "--project-seed": project.slug.length + index,
+  };
 }
 
 function LivingCanvas() {
@@ -386,43 +447,195 @@ function ProductFrame({ project, locale, featured = false }: { project: Project;
   );
 }
 
-function HeroStage({ locale, featuredProject }: { locale: Locale; featuredProject: Project }) {
+function ActiveStackOrbit({ locale, project }: { locale: Locale; project: Project }) {
   const t = copy[locale];
-  const satellites = projects.filter((project) => project.featured && project.slug !== featuredProject.slug).slice(0, 3);
+  const stackItems = project.stack.slice(0, ACTIVE_STACK_LIMIT);
 
   return (
-    <div className={styles.heroStage} data-product-stage onPointerMove={handleLocalPointer}>
+    <div className={styles.activeStackOrbit} aria-label={`${t.connectedStack}: ${project.title[locale]}`}>
+      <p>{t.connectedStack}</p>
+      <div className={styles.stackConnector} aria-hidden="true">
+        <span />
+        <span />
+        <span />
+      </div>
+      <div className={styles.stackNodes}>
+        {stackItems.map((stack, index) => (
+          <span data-stack-node key={`${project.slug}-${stack}`} style={{ "--node": index } as StyleVars} title={stack}>
+            {stack}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ProjectVisualFrame({ locale, project, projectIndex }: { locale: Locale; project: Project; projectIndex: number }) {
+  const t = copy[locale];
+
+  return (
+    <article
+      className={styles.activeProjectFrame}
+      data-project-frame={project.slug}
+      key={project.slug}
+      onPointerMove={handleLocalPointer}
+      style={getProjectTone(project, projectIndex)}
+    >
+      <div className={styles.activeScreen} role="img" aria-label={`${t.imagePending}: ${project.title[locale]}`}>
+        <div className={styles.screenTopline}>
+          <span />
+          <span />
+          <span />
+          <strong>{t.imagePending}</strong>
+        </div>
+        <div className={styles.heroBlueprint} aria-hidden="true">
+          <span />
+          <span />
+          <span />
+          <span />
+          <span />
+          <span />
+          <span />
+          <span />
+        </div>
+        <div className={styles.screenIdentity}>
+          <small>{project.status[locale]}</small>
+          <strong>{project.title[locale]}</strong>
+          <em>{project.subtitle[locale]}</em>
+        </div>
+      </div>
+      <div className={styles.activeProjectMeta}>
+        <p>{t.activeProject}</p>
+        <h2>{project.title[locale]}</h2>
+        <span>{project.shortDescription[locale]}</span>
+        <div className={styles.frameActions}>
+          <Link href={`/projetos/${project.slug}`}>{t.caseButton}</Link>
+          <a href={project.links.website} rel="noreferrer" target="_blank">
+            {t.siteButton}
+          </a>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+function ShowcaseControls({
+  activeIndex,
+  autoplayRunning,
+  locale,
+  onNext,
+  onPrevious,
+  onSelect,
+  onToggleAutoplay,
+  projectsList,
+}: {
+  activeIndex: number;
+  autoplayRunning: boolean;
+  locale: Locale;
+  onNext: () => void;
+  onPrevious: () => void;
+  onSelect: (index: number) => void;
+  onToggleAutoplay: () => void;
+  projectsList: Project[];
+}) {
+  const t = copy[locale];
+
+  return (
+    <div className={styles.showcaseControls} aria-label={t.carouselLabel}>
+      <button aria-label={t.previousProject} className={styles.roundControl} data-carousel-previous type="button" onClick={onPrevious}>
+        <span aria-hidden="true">←</span>
+      </button>
+      <div className={styles.projectDots} role="tablist" aria-label={t.carouselLabel}>
+        {projectsList.map((project, index) => (
+          <button
+            aria-label={`${t.selectProject}: ${project.title[locale]}`}
+            aria-selected={index === activeIndex}
+            className={index === activeIndex ? styles.activeDot : undefined}
+            data-carousel-project={project.slug}
+            key={project.slug}
+            role="tab"
+            type="button"
+            onClick={() => onSelect(index)}
+          >
+            <span>{String(index + 1).padStart(2, "0")}</span>
+            <strong>{project.title[locale]}</strong>
+          </button>
+        ))}
+      </div>
+      <button aria-label={t.nextProject} className={styles.roundControl} data-carousel-next type="button" onClick={onNext}>
+        <span aria-hidden="true">→</span>
+      </button>
+      <button aria-pressed={!autoplayRunning} className={styles.autoplayControl} data-carousel-autoplay type="button" onClick={onToggleAutoplay}>
+        {autoplayRunning ? t.pauseAutoplay : t.resumeAutoplay}
+      </button>
+    </div>
+  );
+}
+
+function HeroStage({
+  activeIndex,
+  autoplayRunning,
+  locale,
+  onNext,
+  onPauseChange,
+  onPrevious,
+  onSelectProject,
+  onToggleAutoplay,
+  projectsList,
+}: {
+  activeIndex: number;
+  autoplayRunning: boolean;
+  locale: Locale;
+  onNext: () => void;
+  onPauseChange: (paused: boolean) => void;
+  onPrevious: () => void;
+  onSelectProject: (index: number) => void;
+  onToggleAutoplay: () => void;
+  projectsList: Project[];
+}) {
+  const t = copy[locale];
+  const activeProject = projectsList[activeIndex] ?? projectsList[0];
+
+  return (
+    <div
+      className={styles.heroStage}
+      data-product-stage
+      data-active-project={activeProject.slug}
+      onBlurCapture={() => onPauseChange(false)}
+      onFocusCapture={() => onPauseChange(true)}
+      onPointerEnter={() => onPauseChange(true)}
+      onPointerLeave={() => onPauseChange(false)}
+      onPointerMove={handleLocalPointer}
+      style={getProjectTone(activeProject, activeIndex)}
+    >
       <LivingCanvas />
       <div className={styles.stageGrid} aria-hidden="true" />
       <div className={styles.stageHeader}>
-        <span>{t.stageLabel}</span>
-        <small>{t.stageHint}</small>
-      </div>
-      <div className={styles.operatorModule}>
-        <Image alt={locale === "pt" ? "Foto de Álvaro Amorim." : "Photo of Álvaro Amorim."} height={68} sizes="68px" src={profile.avatar} width={68} />
-        <div>
-          <span>{t.operator}</span>
-          <strong>Full Stack</strong>
-        </div>
+        <span>{t.liveShowcase}</span>
+        <small>
+          {String(activeIndex + 1).padStart(2, "0")} / {String(projectsList.length).padStart(2, "0")}
+        </small>
       </div>
       <div className={styles.systemCore} aria-hidden="true">
         <span />
         <span />
         <span />
       </div>
-      <ProductFrame featured locale={locale} project={featuredProject} />
-      <div className={styles.satelliteRail} aria-hidden="true">
-        {satellites.map((project, index) => (
-          <span key={project.slug} style={{ "--item": index } as StyleVars}>
-            {project.title[locale]}
-          </span>
-        ))}
+      <ProjectVisualFrame key={activeProject.slug} locale={locale} project={activeProject} projectIndex={activeIndex} />
+      <ActiveStackOrbit locale={locale} project={activeProject} />
+      <div className={styles.showcaseProgress} aria-label={t.projectProgress}>
+        <span key={`${activeProject.slug}-${autoplayRunning}`} className={autoplayRunning ? styles.progressActive : styles.progressPaused} />
       </div>
-      <div className={styles.stageSignals} aria-hidden="true">
-        {["Next.js", "React", "TypeScript", "Node.js", locale === "pt" ? "IA + APIs" : "AI + APIs"].map((signal) => (
-          <span key={signal}>{signal}</span>
-        ))}
-      </div>
+      <ShowcaseControls
+        activeIndex={activeIndex}
+        autoplayRunning={autoplayRunning}
+        locale={locale}
+        projectsList={projectsList}
+        onNext={onNext}
+        onPrevious={onPrevious}
+        onSelect={onSelectProject}
+        onToggleAutoplay={onToggleAutoplay}
+      />
     </div>
   );
 }
@@ -521,9 +734,37 @@ export function VisualFinalCandidate() {
   const { locale } = usePortfolioUi();
   const t = copy[locale];
   const booting = useBoot();
+  const reducedMotion = useReducedMotion();
+  const showcaseProjects = projects;
   const featuredProjects = projects.filter((project) => project.featured).slice(0, 4);
-  const heroProject = featuredProjects[1] ?? featuredProjects[0] ?? projects[0];
+  const [activeProjectIndex, setActiveProjectIndex] = useState(0);
+  const [stagePaused, setStagePaused] = useState(false);
+  const [manualPause, setManualPause] = useState(false);
+  const autoplayRunning = !booting && !reducedMotion && !stagePaused && !manualPause;
   useReveal();
+
+  useEffect(() => {
+    if (!autoplayRunning) return;
+
+    const interval = window.setInterval(() => {
+      setActiveProjectIndex((current) => (current + 1) % showcaseProjects.length);
+    }, SHOWCASE_INTERVAL);
+
+    return () => window.clearInterval(interval);
+  }, [autoplayRunning, showcaseProjects.length]);
+
+  function selectProject(index: number) {
+    setActiveProjectIndex((index + showcaseProjects.length) % showcaseProjects.length);
+    setManualPause(true);
+  }
+
+  function nextProject() {
+    selectProject(activeProjectIndex + 1);
+  }
+
+  function previousProject() {
+    selectProject(activeProjectIndex - 1);
+  }
 
   return (
     <main
@@ -551,12 +792,19 @@ export function VisualFinalCandidate() {
             <Link className={styles.secondary} href="/curriculo">
               {t.secondary}
             </Link>
-            <Link className={styles.ghost} href="/lab">
-              {t.tertiary}
-            </Link>
           </div>
         </div>
-        <HeroStage featuredProject={heroProject} locale={locale} />
+        <HeroStage
+          activeIndex={activeProjectIndex}
+          autoplayRunning={autoplayRunning}
+          locale={locale}
+          projectsList={showcaseProjects}
+          onNext={nextProject}
+          onPauseChange={setStagePaused}
+          onPrevious={previousProject}
+          onSelectProject={selectProject}
+          onToggleAutoplay={() => setManualPause((paused) => !paused)}
+        />
       </section>
 
       <section className={styles.narrative} data-section="projects">
