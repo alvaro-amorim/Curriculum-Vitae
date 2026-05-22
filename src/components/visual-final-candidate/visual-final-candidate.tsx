@@ -66,13 +66,18 @@ const copy = {
     projectsTitle: "Projetos com espaço real para screenshots.",
     projectsIntro:
       "A candidata prioriza áreas visuais grandes para receber imagens, vídeos ou mockups reais. Enquanto isso, os frames mostram uma blueprint intencional, sem simular screenshots falsos.",
+    projectScene: "cena de produto",
+    projectFlow: "fluxo visual",
     stackEyebrow: "motor técnico",
     stackTitle: "Stack como sistema de capacidades conectadas.",
     stackIntro: "Os módulos mostram evidência prática por domínio, sem transformar skills em uma lista de barras.",
+    stackConnection: "conexão com projetos",
     timelineEyebrow: "trilha técnica",
     timelineTitle: "Formação e certificações como evolução do sistema.",
+    timelineIntro: "A linha mostra base acadêmica e certificações como camadas que sustentam produto, dados, segurança e IA.",
     labEyebrow: "camada futura",
     labTitle: "Developer Lab preparado para interação.",
+    labIntro: "Os jogos aparecem como módulos planejados do mesmo sistema, sem vender protótipo como experiência final.",
     finalTitle: "Pronto para transformar essa direção na home oficial?",
     finalSubtitle: "Esta rota é uma candidata visual isolada. A home principal continua preservada até aprovação humana.",
   },
@@ -110,13 +115,18 @@ const copy = {
     projectsTitle: "Projects with real space for screenshots.",
     projectsIntro:
       "The candidate prioritizes large visual areas ready for real images, videos or mockups. Until then, the frames show an intentional blueprint without simulating fake screenshots.",
+    projectScene: "product scene",
+    projectFlow: "visual flow",
     stackEyebrow: "technical engine",
     stackTitle: "Stack as a connected capability system.",
     stackIntro: "Modules show practical evidence by domain without turning skills into a bar list.",
+    stackConnection: "project connection",
     timelineEyebrow: "technical track",
     timelineTitle: "Education and certifications as system evolution.",
+    timelineIntro: "The line shows education and certifications as layers supporting product, data, security and AI.",
     labEyebrow: "future layer",
     labTitle: "Developer Lab prepared for interaction.",
+    labIntro: "The games appear as planned modules of the same system without selling a prototype as the final experience.",
     finalTitle: "Ready to turn this direction into the official home?",
     finalSubtitle: "This route is an isolated visual candidate. The main home remains preserved until human approval.",
   },
@@ -604,6 +614,69 @@ function ProjectVisualFrame({ locale, project, projectIndex }: { locale: Locale;
   );
 }
 
+function ProjectStory({ index, locale, project, total }: { index: number; locale: Locale; project: Project; total: number }) {
+  const t = copy[locale];
+  const visibleStack = project.stack.slice(0, 4);
+  const categories = project.category.slice(0, 2).map((category) => formatCategory(category, locale));
+
+  return (
+    <div
+      className={styles.projectStory}
+      data-candidate-reveal
+      data-visual-layout={project.visuals?.layout}
+      style={{ ...getProjectTone(project, index), "--item": index } as StyleVars}
+    >
+      <div className={styles.storyMarker} aria-hidden="true">
+        <span>{String(index + 1).padStart(2, "0")}</span>
+        <i />
+        <small>{String(total).padStart(2, "0")}</small>
+      </div>
+      <ProductFrame locale={locale} project={project} />
+      <aside className={styles.storySignal} aria-label={`${t.projectScene}: ${project.title[locale]}`}>
+        <p>{t.projectFlow}</p>
+        <strong>{project.status[locale]}</strong>
+        <div>
+          {categories.map((category) => (
+            <span key={category}>{category}</span>
+          ))}
+        </div>
+        <ul>
+          {visibleStack.map((stack) => (
+            <li key={stack}>{stack}</li>
+          ))}
+        </ul>
+      </aside>
+    </div>
+  );
+}
+
+function ProductStories({ locale, projectsList }: { locale: Locale; projectsList: Project[] }) {
+  return (
+    <div className={styles.productStories}>
+      {projectsList.map((project, index) => (
+        <ProjectStory index={index} key={project.slug} locale={locale} project={project} total={projectsList.length} />
+      ))}
+    </div>
+  );
+}
+
+function NarrativeRail({ locale }: { locale: Locale }) {
+  const labels =
+    locale === "pt"
+      ? ["vitrine", "stack", "trilha", "lab", "contato"]
+      : ["showcase", "stack", "track", "lab", "contact"];
+
+  return (
+    <div className={styles.narrativeRail} aria-hidden="true">
+      {labels.map((label, index) => (
+        <span key={label} style={{ "--item": index } as StyleVars}>
+          {label}
+        </span>
+      ))}
+    </div>
+  );
+}
+
 function ShowcaseControls({
   activeIndex,
   autoplayRunning,
@@ -725,12 +798,19 @@ function HeroStage({
   );
 }
 
-function StackSystem({ locale }: { locale: Locale }) {
+function StackSystem({ locale, projectsList }: { locale: Locale; projectsList: Project[] }) {
   const [active, setActive] = useState<SkillDomain>("front");
   const selected = useMemo(() => {
     const allowed = new Set(featuredSkillNames[active]);
     return skills.filter((skill) => allowed.has(skill.name));
   }, [active]);
+  const relatedProjects = useMemo(() => {
+    const selectedNames = new Set(selected.map((skill) => skill.name));
+    return projectsList
+      .filter((project) => project.stack.some((stack) => selectedNames.has(stack) || (active === "ai" && /AI|IA|OpenAI|Gemini/i.test(stack))))
+      .slice(0, 3);
+  }, [active, projectsList, selected]);
+  const t = copy[locale];
 
   return (
     <div className={styles.stackSystem} data-candidate-reveal>
@@ -758,6 +838,16 @@ function StackSystem({ locale }: { locale: Locale }) {
           );
         })}
       </div>
+      <div className={styles.stackProjectTrace} aria-label={t.stackConnection}>
+        <p>{t.stackConnection}</p>
+        {relatedProjects.map((project, index) => (
+          <a href={project.links.website} key={project.slug} rel="noreferrer" style={{ ...getProjectTone(project, index), "--item": index } as StyleVars} target="_blank">
+            <span>{String(index + 1).padStart(2, "0")}</span>
+            <strong>{project.title[locale]}</strong>
+            <small>{project.stack.slice(0, 3).join(" / ")}</small>
+          </a>
+        ))}
+      </div>
     </div>
   );
 }
@@ -777,16 +867,23 @@ function Timeline({ locale }: { locale: Locale }) {
   ];
 
   return (
-    <div className={styles.timeline} data-candidate-reveal>
-      {items.map((item, index) => (
-        <article key={`${item.title}-${index}`} style={{ "--item": index } as StyleVars}>
-          <span>{item.badge}</span>
-          <div>
-            <h3>{item.title}</h3>
-            <p>{item.meta}</p>
-          </div>
-        </article>
-      ))}
+    <div className={styles.timelineStage} data-candidate-reveal>
+      <div className={styles.timelineConstellation} aria-hidden="true">
+        <span />
+        <span />
+        <span />
+      </div>
+      <div className={styles.timeline}>
+        {items.map((item, index) => (
+          <article key={`${item.title}-${index}`} style={{ "--item": index } as StyleVars}>
+            <span>{item.badge}</span>
+            <div>
+              <h3>{item.title}</h3>
+              <p>{item.meta}</p>
+            </div>
+          </article>
+        ))}
+      </div>
     </div>
   );
 }
@@ -794,13 +891,21 @@ function Timeline({ locale }: { locale: Locale }) {
 function LabLayer({ locale }: { locale: Locale }) {
   return (
     <div className={styles.labLayer} data-candidate-reveal>
-      {labModules[locale].map(([title, status, description], index) => (
-        <article key={title} style={{ "--item": index } as StyleVars}>
-          <span>{status}</span>
-          <strong>{title}</strong>
-          <p>{description}</p>
-        </article>
-      ))}
+      <div className={styles.labPreview} aria-hidden="true">
+        <span />
+        <span />
+        <span />
+        <strong>Developer Lab</strong>
+      </div>
+      <div className={styles.labModules}>
+        {labModules[locale].map(([title, status, description], index) => (
+          <article key={title} style={{ "--item": index } as StyleVars}>
+            <span>{status}</span>
+            <strong>{title}</strong>
+            <p>{description}</p>
+          </article>
+        ))}
+      </div>
     </div>
   );
 }
@@ -864,6 +969,7 @@ export function VisualFinalCandidate() {
       <div className={styles.progressRail} aria-hidden="true">
         <span />
       </div>
+      <NarrativeRail locale={locale} />
 
       <section className={styles.hero} data-section="hero">
         <div className={styles.heroCopy}>
@@ -894,25 +1000,21 @@ export function VisualFinalCandidate() {
 
       <section className={styles.narrative} data-section="projects">
         <SectionHeading eyebrow={t.projectsEyebrow} intro={t.projectsIntro} title={t.projectsTitle} />
-        <div className={styles.projectShowcase}>
-          {featuredProjects.map((project) => (
-            <ProductFrame key={project.slug} locale={locale} project={project} />
-          ))}
-        </div>
+        <ProductStories locale={locale} projectsList={featuredProjects} />
       </section>
 
       <section className={styles.narrative} data-section="stack">
         <SectionHeading eyebrow={t.stackEyebrow} intro={t.stackIntro} title={t.stackTitle} />
-        <StackSystem locale={locale} />
+        <StackSystem locale={locale} projectsList={featuredProjects} />
       </section>
 
       <section className={styles.narrative} data-section="timeline">
-        <SectionHeading eyebrow={t.timelineEyebrow} title={t.timelineTitle} />
+        <SectionHeading eyebrow={t.timelineEyebrow} intro={t.timelineIntro} title={t.timelineTitle} />
         <Timeline locale={locale} />
       </section>
 
       <section className={styles.narrative} data-section="lab">
-        <SectionHeading eyebrow={t.labEyebrow} title={t.labTitle} />
+        <SectionHeading eyebrow={t.labEyebrow} intro={t.labIntro} title={t.labTitle} />
         <LabLayer locale={locale} />
       </section>
 
