@@ -1,8 +1,12 @@
 .candidate {
   --px: 58%;
   --py: 42%;
+  --lx: 50%;
+  --ly: 50%;
   --mx: 0;
   --my: 0;
+  --rx: 0;
+  --ry: 0;
   --scroll-progress: 0%;
   --bg: #02040a;
   --ink: #f8fbff;
@@ -17,6 +21,8 @@
   --violet: #c084fc;
   --green: #67e8f9;
   --amber: #ffd166;
+  --ease-premium: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-soft: cubic-bezier(0.22, 0.72, 0.24, 1);
   position: fixed;
   inset: 0;
   z-index: 140;
@@ -40,6 +46,15 @@
 .candidate a,
 .candidate button {
   font: inherit;
+}
+
+.candidate a:focus-visible,
+.candidate button:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--cyan) 74%, white);
+  outline-offset: 4px;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.18),
+    0 0 34px color-mix(in srgb, var(--cyan) 34%, transparent);
 }
 
 .backdrop,
@@ -572,6 +587,11 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.12),
     0 50px 160px rgba(0, 0, 0, 0.46);
   transform: translate3d(calc(var(--rx, 0) * 0.18px), calc(var(--ry, 0) * -0.18px), 0);
+  transition:
+    border-color 360ms var(--ease-soft),
+    box-shadow 360ms var(--ease-soft),
+    transform 360ms var(--ease-soft);
+  will-change: transform;
 }
 
 .ready .heroStage {
@@ -597,6 +617,19 @@
   border-radius: inherit;
   background: radial-gradient(circle at var(--lx, 50%) var(--ly, 50%), rgba(255, 255, 255, 0.2), transparent 17rem);
   mix-blend-mode: overlay;
+  transition: opacity 280ms ease;
+}
+
+.heroStage[data-autoplay="paused"]::after {
+  opacity: 0.72;
+}
+
+.heroStage:hover {
+  border-color: color-mix(in srgb, var(--project-accent, var(--cyan)) 34%, rgba(255, 255, 255, 0.18));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    0 54px 170px rgba(0, 0, 0, 0.5),
+    0 0 96px color-mix(in srgb, var(--project-accent, var(--cyan)) 10%, transparent);
 }
 
 .livingCanvas,
@@ -782,7 +815,49 @@
     0 40px 120px rgba(0, 0, 0, 0.4),
     0 0 90px color-mix(in srgb, var(--project-accent, var(--cyan)) 12%, transparent);
   transform: translate3d(calc(var(--rx, 0) * 0.35px), calc(var(--ry, 0) * -0.45px), 0);
-  animation: projectFrameIn 680ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  transition:
+    border-color 320ms var(--ease-soft),
+    box-shadow 320ms var(--ease-soft),
+    transform 320ms var(--ease-soft);
+  animation: projectFrameIn 760ms var(--ease-premium) both;
+  will-change: transform;
+}
+
+.activeProjectFrame::before,
+.activeProjectFrame::after {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  content: "";
+}
+
+.activeProjectFrame::before {
+  background:
+    radial-gradient(circle at var(--lx, 50%) var(--ly, 50%), color-mix(in srgb, var(--project-accent, var(--cyan)) 20%, transparent), transparent 18rem),
+    linear-gradient(120deg, transparent 0 38%, rgba(255, 255, 255, 0.08) 49%, transparent 60%);
+  mix-blend-mode: screen;
+  opacity: 0.72;
+}
+
+.activeProjectFrame::after {
+  width: 42%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.16), transparent);
+  transform: translateX(-125%) skewX(-14deg);
+  animation: frameSweep 2.8s var(--ease-premium) 160ms both;
+}
+
+.activeProjectFrame > * {
+  position: relative;
+  z-index: 1;
+}
+
+.activeProjectFrame:hover {
+  border-color: color-mix(in srgb, var(--project-accent, var(--cyan)) 42%, rgba(255, 255, 255, 0.16));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    0 46px 132px rgba(0, 0, 0, 0.44),
+    0 0 112px color-mix(in srgb, var(--project-accent, var(--cyan)) 15%, transparent);
 }
 
 .activeScreen {
@@ -848,6 +923,10 @@
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.1),
     inset 0 0 52px color-mix(in srgb, var(--project-accent-2, var(--blue)) 10%, transparent);
+  transition:
+    border-color 300ms var(--ease-soft),
+    box-shadow 300ms var(--ease-soft),
+    transform 300ms var(--ease-soft);
 }
 
 .visualMockupShell::before,
@@ -876,6 +955,7 @@
     linear-gradient(90deg, transparent, color-mix(in srgb, var(--project-accent-3, var(--violet)) 18%, transparent), transparent),
     rgba(255, 255, 255, 0.04);
   opacity: 0.62;
+  animation: visualScan 4.8s ease-in-out infinite;
 }
 
 .visualMockupShell > span {
@@ -1253,11 +1333,13 @@
   background: rgba(4, 9, 21, 0.7);
   color: var(--ink);
   cursor: pointer;
+  touch-action: manipulation;
   transition:
-    border-color 180ms ease,
-    background 180ms ease,
-    transform 180ms ease,
-    color 180ms ease;
+    border-color 220ms var(--ease-soft),
+    background 220ms var(--ease-soft),
+    box-shadow 220ms var(--ease-soft),
+    transform 220ms var(--ease-soft),
+    color 220ms var(--ease-soft);
 }
 
 .roundControl {
@@ -1285,11 +1367,15 @@
 .roundControl:hover,
 .autoplayControl:hover,
 .projectDots button:hover,
+.roundControl:focus-visible,
+.autoplayControl:focus-visible,
+.projectDots button:focus-visible,
 .projectDots .activeDot {
   border-color: color-mix(in srgb, var(--project-accent, var(--cyan)) 54%, transparent);
   background: color-mix(in srgb, var(--project-accent, var(--cyan)) 13%, rgba(4, 9, 21, 0.82));
   color: #fff;
   transform: translateY(-1px);
+  box-shadow: 0 0 26px color-mix(in srgb, var(--project-accent, var(--cyan)) 16%, transparent);
 }
 
 .projectDots {
@@ -1301,6 +1387,7 @@
 
 .projectDots button {
   display: grid;
+  position: relative;
   min-width: 0;
   width: 1.45rem;
   min-height: 1.45rem;
@@ -1311,7 +1398,27 @@
   text-align: center;
 }
 
+.projectDots button::after {
+  position: absolute;
+  inset: 0.26rem;
+  border-radius: inherit;
+  background: color-mix(in srgb, var(--project-accent, var(--cyan)) 42%, transparent);
+  opacity: 0;
+  transform: scale(0.4);
+  transition:
+    opacity 220ms var(--ease-soft),
+    transform 220ms var(--ease-soft);
+  content: "";
+}
+
+.projectDots .activeDot::after {
+  opacity: 1;
+  transform: scale(1);
+}
+
 .projectDots span {
+  position: relative;
+  z-index: 1;
   color: color-mix(in srgb, var(--project-accent, var(--cyan)) 62%, white);
   font-family: var(--font-mono);
   font-size: 0.58rem;
@@ -1344,12 +1451,60 @@
     0 36px 120px rgba(0, 0, 0, 0.34);
   transform: perspective(1200px) rotateX(calc(var(--ry, 0) * 0.12deg)) rotateY(calc(var(--rx, 0) * 0.16deg));
   transition:
-    border-color 180ms ease,
-    transform 180ms ease;
+    border-color 300ms var(--ease-soft),
+    box-shadow 300ms var(--ease-soft),
+    transform 300ms var(--ease-soft);
+  will-change: transform;
+}
+
+.productFrame::before,
+.productFrame::after {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  content: "";
+}
+
+.productFrame::before {
+  background:
+    radial-gradient(circle at var(--lx, 50%) var(--ly, 44%), color-mix(in srgb, var(--project-accent, var(--cyan)) 18%, transparent), transparent 16rem),
+    linear-gradient(120deg, transparent 0 42%, rgba(255, 255, 255, 0.055) 50%, transparent 58%);
+  mix-blend-mode: screen;
+  opacity: 0.48;
+  transition: opacity 260ms ease;
+}
+
+.productFrame::after {
+  inset: 1px;
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.055), transparent 38%, rgba(255, 255, 255, 0.025));
+  opacity: 0.44;
+}
+
+.productFrame > * {
+  position: relative;
+  z-index: 1;
 }
 
 .productFrame:hover {
   border-color: color-mix(in srgb, var(--project-accent, var(--cyan)) 38%, rgba(255, 255, 255, 0.15));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.13),
+    0 42px 130px rgba(0, 0, 0, 0.38),
+    0 0 86px color-mix(in srgb, var(--project-accent, var(--cyan)) 12%, transparent);
+}
+
+.productFrame:hover::before {
+  opacity: 0.78;
+}
+
+.productFrame:hover .visualMockupShell {
+  border-color: color-mix(in srgb, var(--project-accent, var(--cyan)) 32%, rgba(255, 255, 255, 0.14));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.13),
+    inset 0 0 70px color-mix(in srgb, var(--project-accent-2, var(--blue)) 13%, transparent),
+    0 0 44px color-mix(in srgb, var(--project-accent, var(--cyan)) 10%, transparent);
 }
 
 .featuredFrame {
@@ -1626,6 +1781,19 @@
   font-size: 0.82rem;
   font-weight: 850;
   text-decoration: none;
+  transition:
+    border-color 220ms var(--ease-soft),
+    background 220ms var(--ease-soft),
+    box-shadow 220ms var(--ease-soft),
+    transform 220ms var(--ease-soft);
+}
+
+.frameActions a:hover,
+.frameActions a:focus-visible {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--project-accent, var(--cyan)) 44%, rgba(255, 255, 255, 0.12));
+  background: color-mix(in srgb, var(--project-accent, var(--cyan)) 13%, rgba(255, 255, 255, 0.08));
+  box-shadow: 0 18px 60px color-mix(in srgb, var(--project-accent, var(--cyan)) 10%, transparent);
 }
 
 /* Narrative sections */
@@ -1673,9 +1841,10 @@
   position: fixed;
   top: 50%;
   left: clamp(0.55rem, 1.4vw, 1.1rem);
-  z-index: 20;
+  z-index: 2;
   gap: 0.72rem;
   transform: translateY(-50%);
+  opacity: 0.58;
   pointer-events: none;
 }
 
@@ -1813,9 +1982,15 @@
   padding: 1rem;
   border: 1px solid color-mix(in srgb, var(--project-accent, var(--cyan)) 18%, rgba(255, 255, 255, 0.1));
   border-radius: 1.1rem;
-  background: rgba(2, 7, 16, 0.66);
+  background:
+    radial-gradient(circle at var(--lx, 50%) var(--ly, 45%), color-mix(in srgb, var(--project-accent, var(--cyan)) 14%, transparent), transparent 9rem),
+    rgba(2, 7, 16, 0.66);
   box-shadow: 0 24px 70px rgba(0, 0, 0, 0.32);
   pointer-events: none;
+  transition:
+    border-color 260ms var(--ease-soft),
+    opacity 260ms ease,
+    transform 260ms var(--ease-soft);
 }
 
 .projectStory:nth-child(even) .storySignal {
@@ -1861,6 +2036,11 @@
   font-weight: 800;
 }
 
+.projectStory:hover .storySignal {
+  border-color: color-mix(in srgb, var(--project-accent, var(--cyan)) 32%, rgba(255, 255, 255, 0.12));
+  transform: translateY(-3px);
+}
+
 .stackSystem {
   display: grid;
   position: relative;
@@ -1871,10 +2051,20 @@
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 1.8rem;
   background:
-    radial-gradient(circle at 62% 45%, color-mix(in srgb, var(--cyan) 12%, transparent), transparent 20rem),
+    radial-gradient(circle at var(--lx, 62%) var(--ly, 45%), color-mix(in srgb, var(--cyan) 15%, transparent), transparent 21rem),
     linear-gradient(112deg, rgba(255, 255, 255, 0.04), transparent 48%, color-mix(in srgb, var(--violet) 7%, transparent)),
     rgba(255, 255, 255, 0.055);
   box-shadow: 0 34px 110px rgba(0, 0, 0, 0.28);
+  transition:
+    border-color 300ms var(--ease-soft),
+    box-shadow 300ms var(--ease-soft);
+}
+
+.stackSystem:hover {
+  border-color: color-mix(in srgb, var(--cyan) 24%, rgba(255, 255, 255, 0.14));
+  box-shadow:
+    0 38px 120px rgba(0, 0, 0, 0.32),
+    0 0 80px color-mix(in srgb, var(--cyan) 7%, transparent);
 }
 
 .stackOrbit {
@@ -1928,17 +2118,21 @@
   cursor: pointer;
   font-weight: 850;
   text-align: left;
+  touch-action: manipulation;
   transition:
-    border-color 180ms ease,
-    background 180ms ease,
-    color 180ms ease;
+    border-color 220ms var(--ease-soft),
+    background 220ms var(--ease-soft),
+    color 220ms var(--ease-soft),
+    transform 220ms var(--ease-soft);
 }
 
 .domainRail button:hover,
+.domainRail button:focus-visible,
 .domainRail .activeDomain {
   border-color: color-mix(in srgb, var(--cyan) 45%, transparent);
   background: color-mix(in srgb, var(--cyan) 13%, rgba(255, 255, 255, 0.055));
   color: var(--ink);
+  transform: translateX(3px);
 }
 
 .capabilityMap {
@@ -1950,6 +2144,8 @@
 }
 
 .capabilityMap article {
+  position: relative;
+  overflow: hidden;
   min-height: 10.4rem;
   padding: 1.35rem;
   border: 1px solid rgba(255, 255, 255, 0.11);
@@ -1959,6 +2155,32 @@
     rgba(5, 10, 22, 0.52);
   animation: moduleIn 560ms ease both;
   animation-delay: calc(var(--item) * 90ms);
+  transition:
+    border-color 260ms var(--ease-soft),
+    background 260ms var(--ease-soft),
+    transform 260ms var(--ease-soft);
+}
+
+.capabilityMap article::before {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 20% 0%, color-mix(in srgb, var(--cyan) 12%, transparent), transparent 9rem);
+  opacity: 0;
+  transition: opacity 260ms ease;
+  content: "";
+  pointer-events: none;
+}
+
+.capabilityMap article:hover {
+  border-color: color-mix(in srgb, var(--cyan) 24%, rgba(255, 255, 255, 0.12));
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04)),
+    rgba(5, 10, 22, 0.6);
+  transform: translateY(-4px);
+}
+
+.capabilityMap article:hover::before {
+  opacity: 1;
 }
 
 .capabilityMap span {
@@ -2011,17 +2233,20 @@
   color: inherit;
   text-decoration: none;
   transition:
-    transform 200ms ease,
-    border-color 200ms ease,
-    background 200ms ease;
+    transform 240ms var(--ease-soft),
+    border-color 240ms var(--ease-soft),
+    background 240ms var(--ease-soft),
+    box-shadow 240ms var(--ease-soft);
 }
 
-.stackProjectTrace a:hover {
+.stackProjectTrace a:hover,
+.stackProjectTrace a:focus-visible {
   transform: translateY(-3px);
   border-color: color-mix(in srgb, var(--project-accent, var(--cyan)) 34%, rgba(255, 255, 255, 0.1));
   background:
     radial-gradient(circle at var(--lx, 50%) var(--ly, 40%), color-mix(in srgb, var(--project-accent, var(--cyan)) 20%, transparent), transparent 8rem),
     rgba(255, 255, 255, 0.06);
+  box-shadow: 0 18px 60px color-mix(in srgb, var(--project-accent, var(--cyan)) 9%, transparent);
 }
 
 .stackProjectTrace span {
@@ -2055,9 +2280,21 @@
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 1.8rem;
   background:
+    radial-gradient(circle at var(--lx, 24%) var(--ly, 32%), color-mix(in srgb, var(--cyan) 10%, transparent), transparent 20rem),
     radial-gradient(circle at 24% 32%, color-mix(in srgb, var(--violet) 12%, transparent), transparent 20rem),
     linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.025)),
     rgba(4, 8, 18, 0.62);
+  box-shadow: 0 32px 110px rgba(0, 0, 0, 0.24);
+  transition:
+    border-color 300ms var(--ease-soft),
+    box-shadow 300ms var(--ease-soft);
+}
+
+.timelineStage:hover {
+  border-color: color-mix(in srgb, var(--violet) 24%, rgba(255, 255, 255, 0.14));
+  box-shadow:
+    0 36px 118px rgba(0, 0, 0, 0.3),
+    0 0 78px color-mix(in srgb, var(--violet) 7%, transparent);
 }
 
 .timelineConstellation {
@@ -2172,6 +2409,23 @@
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.075), transparent),
     rgba(255, 255, 255, 0.045);
+  transition:
+    border-color 240ms var(--ease-soft),
+    background 240ms var(--ease-soft),
+    transform 240ms var(--ease-soft);
+}
+
+.timeline article:hover div {
+  border-color: color-mix(in srgb, var(--cyan) 26%, rgba(255, 255, 255, 0.12));
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent),
+    rgba(255, 255, 255, 0.06);
+  transform: translateX(4px);
+}
+
+.timeline article:hover > span {
+  border-color: color-mix(in srgb, var(--cyan) 56%, transparent);
+  box-shadow: 0 0 34px color-mix(in srgb, var(--cyan) 18%, transparent);
 }
 
 .timeline h3 {
@@ -2200,12 +2454,22 @@
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 1.65rem;
   background:
-    radial-gradient(circle at var(--lx, 50%) var(--ly, 42%), color-mix(in srgb, var(--violet) 17%, transparent), transparent 16rem),
+    radial-gradient(circle at var(--lx, 50%) var(--ly, 42%), color-mix(in srgb, var(--violet) 20%, transparent), transparent 17rem),
     linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
     rgba(255, 255, 255, 0.052);
   background-size: auto, 42px 42px, 42px 42px, auto;
   box-shadow: inset 0 0 80px color-mix(in srgb, var(--violet) 8%, transparent);
+  transition:
+    border-color 300ms var(--ease-soft),
+    box-shadow 300ms var(--ease-soft);
+}
+
+.labLayer:hover .labPreview {
+  border-color: color-mix(in srgb, var(--violet) 26%, rgba(255, 255, 255, 0.12));
+  box-shadow:
+    inset 0 0 92px color-mix(in srgb, var(--violet) 11%, transparent),
+    0 0 70px color-mix(in srgb, var(--violet) 7%, transparent);
 }
 
 .labPreview::before,
@@ -2290,6 +2554,10 @@
     rgba(255, 255, 255, 0.052);
   animation: moduleIn 620ms ease both;
   animation-delay: calc(var(--item) * 90ms);
+  transition:
+    border-color 260ms var(--ease-soft),
+    background 260ms var(--ease-soft),
+    transform 260ms var(--ease-soft);
 }
 
 .labModules article::before {
@@ -2299,6 +2567,20 @@
   border-radius: 999px;
   background: linear-gradient(90deg, var(--cyan), var(--violet));
   content: "";
+  transition: transform 320ms var(--ease-soft), opacity 260ms ease;
+}
+
+.labModules article:hover {
+  border-color: color-mix(in srgb, var(--cyan) 26%, rgba(255, 255, 255, 0.12));
+  background:
+    radial-gradient(circle at var(--lx, 50%) var(--ly, 35%), color-mix(in srgb, var(--cyan) 14%, transparent), transparent 10rem),
+    rgba(255, 255, 255, 0.066);
+  transform: translateY(-4px);
+}
+
+.labModules article:hover::before {
+  transform: scaleX(0.72);
+  opacity: 0.88;
 }
 
 .labModules span {
@@ -2332,10 +2614,22 @@
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: clamp(1.4rem, 3vw, 2.2rem);
   background:
-    radial-gradient(circle at var(--px) var(--py), color-mix(in srgb, var(--cyan) 16%, transparent), transparent 22rem),
+    radial-gradient(circle at var(--lx, 50%) var(--ly, 45%), color-mix(in srgb, var(--cyan) 18%, transparent), transparent 22rem),
+    radial-gradient(circle at var(--px) var(--py), color-mix(in srgb, var(--cyan) 12%, transparent), transparent 22rem),
     linear-gradient(135deg, rgba(255, 255, 255, 0.08), transparent 45%, color-mix(in srgb, var(--violet) 9%, transparent)),
     rgba(4, 8, 18, 0.64);
   text-align: center;
+  box-shadow: 0 36px 130px rgba(0, 0, 0, 0.28);
+  transition:
+    border-color 300ms var(--ease-soft),
+    box-shadow 300ms var(--ease-soft);
+}
+
+.finalCta:hover {
+  border-color: color-mix(in srgb, var(--cyan) 24%, rgba(255, 255, 255, 0.14));
+  box-shadow:
+    0 42px 140px rgba(0, 0, 0, 0.34),
+    0 0 90px color-mix(in srgb, var(--cyan) 8%, transparent);
 }
 
 .finalCta::after {
@@ -2615,6 +2909,32 @@
   }
 }
 
+@keyframes frameSweep {
+  0% {
+    transform: translateX(-125%) skewX(-14deg);
+    opacity: 0;
+  }
+  18% {
+    opacity: 0.64;
+  }
+  100% {
+    transform: translateX(245%) skewX(-14deg);
+    opacity: 0;
+  }
+}
+
+@keyframes visualScan {
+  0%,
+  100% {
+    opacity: 0.48;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 0.72;
+    transform: translateY(-4px);
+  }
+}
+
 @keyframes stackNodeIn {
   from {
     transform: translateY(9px);
@@ -2782,8 +3102,21 @@
   }
 
   .heroStage {
-    min-height: 36rem;
+    min-height: 35.25rem;
     border-radius: 1.35rem;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.12),
+      0 34px 110px rgba(0, 0, 0, 0.42);
+  }
+
+  .heroStage::after,
+  .activeProjectFrame::before,
+  .productFrame::before {
+    opacity: 0.42;
+  }
+
+  .activeProjectFrame::after {
+    display: none;
   }
 
   .stageHeader {
@@ -2862,6 +3195,7 @@
     left: 0.75rem;
     grid-template-columns: auto minmax(0, 1fr) auto;
     gap: 0.42rem;
+    background: rgba(3, 8, 18, 0.62);
   }
 
   .roundControl {
@@ -2930,7 +3264,7 @@
   }
 
   .productStories {
-    gap: 3rem;
+    gap: 2.65rem;
   }
 
   .productStories::before,
@@ -2954,6 +3288,7 @@
     left: auto;
     width: auto;
     margin-top: 0.75rem;
+    transform: none !important;
   }
 
   .projectStory:nth-child(even) .storySignal {
@@ -2968,6 +3303,7 @@
   .projectStory .productFrame,
   .projectStory:nth-child(even) .productFrame {
     grid-template-columns: 1fr;
+    transform: none;
   }
 
   .productScreen {
@@ -3064,6 +3400,12 @@
     grid-template-columns: 3.8rem minmax(0, 1fr);
   }
 
+  .timeline article:hover div,
+  .capabilityMap article:hover,
+  .labModules article:hover {
+    transform: none;
+  }
+
   .labLayer {
     grid-template-columns: 1fr;
   }
@@ -3102,7 +3444,17 @@
   }
 
   .heroStage,
-  .productFrame {
+  .activeProjectFrame,
+  .productFrame,
+  .capabilityMap article,
+  .timeline article div,
+  .labModules article,
+  .stackProjectTrace a {
     transform: none;
+  }
+
+  .activeProjectFrame::after,
+  .visualMockupShell::after {
+    display: none;
   }
 }

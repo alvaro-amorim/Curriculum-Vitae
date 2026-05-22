@@ -1,6 +1,6 @@
 "use client";
 
-import type { CSSProperties, PointerEvent, UIEvent } from "react";
+import type { CSSProperties, KeyboardEvent, PointerEvent, UIEvent } from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import Image from "next/image";
@@ -71,7 +71,7 @@ const copy = {
     stackEyebrow: "motor técnico",
     stackTitle: "Stack como sistema de capacidades conectadas.",
     stackIntro: "Os módulos mostram evidência prática por domínio, sem transformar skills em uma lista de barras.",
-    stackConnection: "conexão com projetos",
+    stackConnection: "projetos relacionados",
     timelineEyebrow: "trilha técnica",
     timelineTitle: "Formação e certificações como evolução do sistema.",
     timelineIntro: "A linha mostra base acadêmica e certificações como camadas que sustentam produto, dados, segurança e IA.",
@@ -167,14 +167,22 @@ function handlePointer(event: PointerEvent<HTMLElement>) {
   event.currentTarget.style.setProperty("--my", ((y - 0.5) * 2).toFixed(3));
 }
 
+function setLocalPointer(element: HTMLElement, x: number, y: number) {
+  element.style.setProperty("--lx", `${(x * 100).toFixed(2)}%`);
+  element.style.setProperty("--ly", `${(y * 100).toFixed(2)}%`);
+  element.style.setProperty("--rx", ((x - 0.5) * 8).toFixed(2));
+  element.style.setProperty("--ry", ((0.5 - y) * 8).toFixed(2));
+}
+
+function resetLocalPointer(element: HTMLElement) {
+  setLocalPointer(element, 0.5, 0.5);
+}
+
 function handleLocalPointer(event: PointerEvent<HTMLElement>) {
   const rect = event.currentTarget.getBoundingClientRect();
-  const x = (event.clientX - rect.left) / rect.width;
-  const y = (event.clientY - rect.top) / rect.height;
-  event.currentTarget.style.setProperty("--lx", `${(x * 100).toFixed(2)}%`);
-  event.currentTarget.style.setProperty("--ly", `${(y * 100).toFixed(2)}%`);
-  event.currentTarget.style.setProperty("--rx", ((x - 0.5) * 8).toFixed(2));
-  event.currentTarget.style.setProperty("--ry", ((0.5 - y) * 8).toFixed(2));
+  const x = Math.min(1, Math.max(0, (event.clientX - rect.left) / rect.width));
+  const y = Math.min(1, Math.max(0, (event.clientY - rect.top) / rect.height));
+  setLocalPointer(event.currentTarget, x, y);
 }
 
 function handleScroll(event: UIEvent<HTMLElement>) {
@@ -522,6 +530,7 @@ function ProductFrame({ project, locale, featured = false }: { project: Project;
       data-visual-layout={project.visuals?.layout}
       data-visual-status={project.visuals?.status ?? "pending"}
       onPointerMove={handleLocalPointer}
+      onPointerLeave={(event) => resetLocalPointer(event.currentTarget)}
       style={getProjectTone(project, 0)}
     >
       <ProjectVisualSurface
@@ -589,6 +598,7 @@ function ProjectVisualFrame({ locale, project, projectIndex }: { locale: Locale;
       data-visual-status={project.visuals?.status ?? "pending"}
       key={project.slug}
       onPointerMove={handleLocalPointer}
+      onPointerLeave={(event) => resetLocalPointer(event.currentTarget)}
       style={getProjectTone(project, projectIndex)}
     >
       <ProjectVisualSurface
@@ -599,7 +609,7 @@ function ProjectVisualFrame({ locale, project, projectIndex }: { locale: Locale;
         pendingLabel={t.imagePending}
         project={project}
       />
-      <div className={styles.activeProjectMeta}>
+      <div className={styles.activeProjectMeta} aria-live="polite">
         <p>{t.activeProject}</p>
         <h2>{project.title[locale]}</h2>
         <span>{project.shortDescription[locale]}</span>
@@ -624,6 +634,8 @@ function ProjectStory({ index, locale, project, total }: { index: number; locale
       className={styles.projectStory}
       data-candidate-reveal
       data-visual-layout={project.visuals?.layout}
+      onPointerMove={handleLocalPointer}
+      onPointerLeave={(event) => resetLocalPointer(event.currentTarget)}
       style={{ ...getProjectTone(project, index), "--item": index } as StyleVars}
     >
       <div className={styles.storyMarker} aria-hidden="true">
@@ -698,8 +710,32 @@ function ShowcaseControls({
 }) {
   const t = copy[locale];
 
+  function handleKeyDown(event: KeyboardEvent<HTMLDivElement>) {
+    if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+
+    if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      onPrevious();
+    }
+
+    if (event.key === "ArrowRight") {
+      event.preventDefault();
+      onNext();
+    }
+
+    if (event.key === "Home") {
+      event.preventDefault();
+      onSelect(0);
+    }
+
+    if (event.key === "End") {
+      event.preventDefault();
+      onSelect(projectsList.length - 1);
+    }
+  }
+
   return (
-    <div className={styles.showcaseControls} aria-label={t.carouselLabel}>
+    <div className={styles.showcaseControls} aria-label={t.carouselLabel} onKeyDown={handleKeyDown}>
       <button aria-label={t.previousProject} className={styles.roundControl} data-carousel-previous type="button" onClick={onPrevious}>
         <span aria-hidden="true">←</span>
       </button>
@@ -754,6 +790,11 @@ function HeroStage({
   const t = copy[locale];
   const activeProject = projectsList[activeIndex] ?? projectsList[0];
 
+  function handleStagePointerLeave(event: PointerEvent<HTMLDivElement>) {
+    resetLocalPointer(event.currentTarget);
+    onPauseChange(false);
+  }
+
   return (
     <div
       className={styles.heroStage}
@@ -762,9 +803,10 @@ function HeroStage({
       onBlurCapture={() => onPauseChange(false)}
       onFocusCapture={() => onPauseChange(true)}
       onPointerEnter={() => onPauseChange(true)}
-      onPointerLeave={() => onPauseChange(false)}
+      onPointerLeave={handleStagePointerLeave}
       onPointerMove={handleLocalPointer}
       style={getProjectTone(activeProject, activeIndex)}
+      data-autoplay={autoplayRunning ? "running" : "paused"}
     >
       <LivingCanvas />
       <div className={styles.stageGrid} aria-hidden="true" />
@@ -813,7 +855,12 @@ function StackSystem({ locale, projectsList }: { locale: Locale; projectsList: P
   const t = copy[locale];
 
   return (
-    <div className={styles.stackSystem} data-candidate-reveal>
+    <div
+      className={styles.stackSystem}
+      data-candidate-reveal
+      onPointerMove={handleLocalPointer}
+      onPointerLeave={(event) => resetLocalPointer(event.currentTarget)}
+    >
       <div className={styles.stackOrbit} aria-hidden="true">
         <span />
         <span />
@@ -867,7 +914,12 @@ function Timeline({ locale }: { locale: Locale }) {
   ];
 
   return (
-    <div className={styles.timelineStage} data-candidate-reveal>
+    <div
+      className={styles.timelineStage}
+      data-candidate-reveal
+      onPointerMove={handleLocalPointer}
+      onPointerLeave={(event) => resetLocalPointer(event.currentTarget)}
+    >
       <div className={styles.timelineConstellation} aria-hidden="true">
         <span />
         <span />
@@ -890,7 +942,12 @@ function Timeline({ locale }: { locale: Locale }) {
 
 function LabLayer({ locale }: { locale: Locale }) {
   return (
-    <div className={styles.labLayer} data-candidate-reveal>
+    <div
+      className={styles.labLayer}
+      data-candidate-reveal
+      onPointerMove={handleLocalPointer}
+      onPointerLeave={(event) => resetLocalPointer(event.currentTarget)}
+    >
       <div className={styles.labPreview} aria-hidden="true">
         <span />
         <span />
@@ -1018,7 +1075,13 @@ export function VisualFinalCandidate() {
         <LabLayer locale={locale} />
       </section>
 
-      <section className={styles.finalCta} data-section="final" data-candidate-reveal>
+      <section
+        className={styles.finalCta}
+        data-section="final"
+        data-candidate-reveal
+        onPointerMove={handleLocalPointer}
+        onPointerLeave={(event) => resetLocalPointer(event.currentTarget)}
+      >
         <p>Portfolio OS</p>
         <h2>{t.finalTitle}</h2>
         <span>{t.finalSubtitle}</span>
