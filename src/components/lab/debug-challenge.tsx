@@ -68,7 +68,7 @@ export function DebugChallenge({ locale, onComplete }: DebugChallengeProps) {
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <Badge>{locale === "pt" ? "Depuração" : "Debugging"}</Badge>
-          <h2 className="mt-3 text-2xl font-semibold text-[var(--text)]">{locale === "pt" ? "Debug Challenge" : "Debug Challenge"}</h2>
+          <h2 className="mt-3 text-2xl font-semibold text-[var(--text)]">{locale === "pt" ? "Desafio de depuração" : "Debug Challenge"}</h2>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--muted)]">
             {locale === "pt"
               ? "Escolha a correção mais segura para cada trecho. O código é apenas exibido; nada é executado."

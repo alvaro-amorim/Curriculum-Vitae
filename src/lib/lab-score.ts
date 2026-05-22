@@ -3,6 +3,7 @@ import type { LabGameId } from "@/types/portfolio";
 export type LabScoreState = Record<LabGameId, number | null>;
 
 export const initialLabScores: LabScoreState = {
+  runtime: null,
   debug: null,
   architecture: null,
   latency: null,

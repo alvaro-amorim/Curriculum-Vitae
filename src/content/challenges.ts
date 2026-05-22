@@ -220,7 +220,7 @@ export const debugChallenges: DebugChallengeItem[] = [
 export const architectureChallenge: ArchitectureChallenge = {
   id: "saas-architecture",
   title: {
-    pt: "Architecture Builder",
+    pt: "Construtor de arquitetura",
     en: "Architecture Builder",
   },
   scenario: {
@@ -377,7 +377,7 @@ export const architectureChallenge: ArchitectureChallenge = {
 export const latencyChallenge: LatencyChallenge = {
   id: "api-latency",
   title: {
-    pt: "API Latency Game",
+    pt: "Laboratório de latência de API",
     en: "API Latency Game",
   },
   scenario: {
