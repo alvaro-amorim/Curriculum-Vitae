@@ -1842,26 +1842,29 @@
   top: 50%;
   left: clamp(0.55rem, 1.4vw, 1.1rem);
   z-index: 2;
-  gap: 0.72rem;
+  gap: 0.86rem;
   transform: translateY(-50%);
-  opacity: 0.58;
+  opacity: 0.46;
   pointer-events: none;
 }
 
 .narrativeRail span {
   display: inline-flex;
+  width: 0.46rem;
+  height: 0.46rem;
   align-items: center;
-  gap: 0.55rem;
-  color: rgba(248, 251, 255, 0.42);
+  justify-content: center;
+  overflow: hidden;
+  color: transparent;
   font-family: var(--font-mono);
-  font-size: 0.62rem;
+  font-size: 0;
   font-weight: 840;
-  letter-spacing: 0.08em;
+  letter-spacing: 0;
 }
 
 .narrativeRail span::before {
-  width: 0.42rem;
-  height: 0.42rem;
+  width: 0.38rem;
+  height: 0.38rem;
   border: 1px solid color-mix(in srgb, var(--cyan) 42%, transparent);
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.08);
@@ -3070,39 +3073,41 @@
 
   .hero {
     min-height: auto;
-    padding: 1rem 0 3rem;
+    gap: 1rem;
+    padding: 0.75rem 0 2.4rem;
   }
 
   .heroCopy h1 {
-    max-width: 11.4ch;
-    margin-top: 0.78rem;
-    font-size: clamp(2.55rem, 11.4vw, 3.65rem);
+    max-width: 10.8ch;
+    margin-top: 0.62rem;
+    font-size: clamp(2.22rem, 9.8vw, 3.08rem);
   }
 
   .heroCopy > span {
-    margin-top: 0.9rem;
-    font-size: 0.93rem;
-    line-height: 1.52;
+    margin-top: 0.72rem;
+    font-size: 0.9rem;
+    line-height: 1.46;
   }
 
   .actions {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 0.62rem;
-    margin-top: 1.05rem;
+    gap: 0.56rem;
+    margin-top: 0.86rem;
   }
 
-  .actions .primary {
-    grid-column: 1 / -1;
+  .heroCopy .actions .primary {
+    grid-column: auto;
   }
 
   .actions a {
-    min-height: 2.72rem;
-    padding: 0.72rem 0.84rem;
+    min-height: 2.56rem;
+    padding: 0.66rem 0.78rem;
+    font-size: 0.86rem;
   }
 
   .heroStage {
-    min-height: 35.25rem;
+    min-height: 32rem;
     border-radius: 1.35rem;
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.12),
@@ -3130,9 +3135,9 @@
   }
 
   .activeProjectFrame {
-    top: 4.8rem;
+    top: 4.45rem;
     right: 0.75rem;
-    bottom: 6.8rem;
+    bottom: 6.15rem;
     left: 0.75rem;
     min-height: 0;
     border-radius: 1.05rem;
@@ -3153,7 +3158,7 @@
   .activeStackOrbit {
     top: auto;
     right: 0.8rem;
-    bottom: 3.9rem;
+    bottom: 3.55rem;
     left: 0.8rem;
     width: auto;
     height: 2.7rem;
@@ -3185,7 +3190,7 @@
 
   .showcaseProgress {
     right: 0.75rem;
-    bottom: 5.92rem;
+    bottom: 5.36rem;
     left: 0.75rem;
   }
 
