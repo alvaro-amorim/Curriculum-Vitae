@@ -78,8 +78,8 @@ const copy = {
     labEyebrow: "camada futura",
     labTitle: "Developer Lab preparado para interação.",
     labIntro: "Os jogos aparecem como módulos planejados do mesmo sistema, sem vender protótipo como experiência final.",
-    finalTitle: "Pronto para transformar essa direção na home oficial?",
-    finalSubtitle: "Esta rota é uma candidata visual isolada. A home principal continua preservada até aprovação humana.",
+    finalTitle: "Vamos transformar produto em entrega real?",
+    finalSubtitle: "Explore projetos, currículo e GitHub em uma experiência viva para entender como eu construo produtos web, SaaS e IA.",
   },
   en: {
     bootLabel: "Portfolio OS",
@@ -127,8 +127,8 @@ const copy = {
     labEyebrow: "future layer",
     labTitle: "Developer Lab prepared for interaction.",
     labIntro: "The games appear as planned modules of the same system without selling a prototype as the final experience.",
-    finalTitle: "Ready to turn this direction into the official home?",
-    finalSubtitle: "This route is an isolated visual candidate. The main home remains preserved until human approval.",
+    finalTitle: "Ready to turn product ideas into real delivery?",
+    finalSubtitle: "Explore projects, resume and GitHub in a living experience built around web products, SaaS and AI.",
   },
 } as const;
 

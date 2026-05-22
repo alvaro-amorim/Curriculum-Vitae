@@ -1,36 +1,23 @@
 import type { Metadata } from "next";
 
-import { InteractiveTerminal } from "@/components/lab/interactive-terminal";
-import { SkillRadar } from "@/components/lab/skill-radar";
-import { HomeOverview } from "@/components/resume/home-overview";
-import { ProjectsPreview } from "@/components/resume/projects-preview";
+import { VisualFinalCandidate } from "@/components/visual-final-candidate/visual-final-candidate";
 
 export const metadata: Metadata = {
   title: {
-    absolute: "Portfolio OS — Álvaro Amorim",
+    absolute: "Álvaro Amorim — Portfolio OS",
   },
-  description: "Portfólio profissional de Álvaro Amorim com currículo, case studies, terminal interativo e Developer Lab.",
+  description:
+    "Portfólio premium de Álvaro Amorim, Desenvolvedor Full Stack criando produtos web, SaaS, automações e integrações com IA.",
   alternates: {
     canonical: "/",
   },
   openGraph: {
     title: "Álvaro Amorim — Portfolio OS",
-    description: "Portfólio profissional com currículo, projetos, APIs em modo local/mock e desafios técnicos interativos.",
+    description: "Experiência interativa com projetos, stacks, currículo e Developer Lab em formato de vitrine viva de produto.",
     url: "/",
   },
 };
 
 export default function HomePage() {
-  return (
-    <>
-      <HomeOverview />
-      <section className="mx-auto grid max-w-6xl gap-6 px-4 pb-10 lg:grid-cols-[1.08fr_0.92fr]">
-        <InteractiveTerminal />
-        <SkillRadar />
-      </section>
-      <section className="mx-auto max-w-6xl px-4 pb-12">
-        <ProjectsPreview featuredOnly limit={3} showLinks={false} />
-      </section>
-    </>
-  );
+  return <VisualFinalCandidate />;
 }
