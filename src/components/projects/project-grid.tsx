@@ -2,24 +2,27 @@
 
 import { useMemo, useState } from "react";
 
-import { Button } from "@/components/ui/button";
 import { usePortfolioUi } from "@/components/layout/app-shell";
 import { cn } from "@/lib/cn";
 import type { Project } from "@/types/portfolio";
 
-import { ProjectCard } from "./project-card";
+import { formatProjectCategory, ProjectCard } from "./project-card";
+import styles from "./project-experience.module.css";
 
 type ProjectGridProps = {
   projects: Project[];
 };
 
 export function ProjectGrid({ projects }: ProjectGridProps) {
-  const { t } = usePortfolioUi();
+  const { locale, t } = usePortfolioUi();
   const [activeCategory, setActiveCategory] = useState<string>("all");
 
   const categories = useMemo(
-    () => Array.from(new Set(projects.flatMap((project) => project.category))).sort((a, b) => a.localeCompare(b)),
-    [projects],
+    () =>
+      Array.from(new Set(projects.flatMap((project) => project.category))).sort((a, b) =>
+        formatProjectCategory(a, locale).localeCompare(formatProjectCategory(b, locale), locale),
+      ),
+    [locale, projects],
   );
 
   const visibleProjects = useMemo(
@@ -28,32 +31,32 @@ export function ProjectGrid({ projects }: ProjectGridProps) {
   );
 
   return (
-    <div className="grid gap-5">
-      <div className="flex flex-wrap gap-2" aria-label={t.projectsPage.filtersLabel}>
-        <Button
-          className={cn(activeCategory === "all" && "border-[var(--accent)]")}
+    <div>
+      <div className={styles.filters} aria-label={t.projectsPage.filtersLabel}>
+        <button
+          aria-pressed={activeCategory === "all"}
+          className={cn(styles.filterButton, activeCategory === "all" && styles.filterButtonActive)}
           onClick={() => setActiveCategory("all")}
-          size="sm"
-          variant={activeCategory === "all" ? "primary" : "secondary"}
+          type="button"
         >
           {t.projectsPage.allCategories}
-        </Button>
+        </button>
         {categories.map((category) => (
-          <Button
-            className={cn(activeCategory === category && "border-[var(--accent)]")}
+          <button
+            aria-pressed={activeCategory === category}
+            className={cn(styles.filterButton, activeCategory === category && styles.filterButtonActive)}
             key={category}
             onClick={() => setActiveCategory(category)}
-            size="sm"
-            variant={activeCategory === category ? "primary" : "secondary"}
+            type="button"
           >
-            {category}
-          </Button>
+            {formatProjectCategory(category, locale)}
+          </button>
         ))}
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
-        {visibleProjects.map((project) => (
-          <ProjectCard key={project.slug} project={project} />
+      <div className={styles.projectScenes}>
+        {visibleProjects.map((project, index) => (
+          <ProjectCard index={index} key={project.slug} project={project} />
         ))}
       </div>
     </div>

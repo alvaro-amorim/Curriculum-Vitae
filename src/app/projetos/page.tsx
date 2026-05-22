@@ -6,13 +6,13 @@ export const metadata: Metadata = {
   title: {
     absolute: "Projetos — Álvaro Amorim",
   },
-  description: "Case studies dos projetos de Álvaro Amorim com contexto, solução, stack, desafios técnicos e links reais.",
+  description: "Estudos visuais dos projetos de Álvaro Amorim com contexto, solução, stack, desafios técnicos e links reais.",
   alternates: {
     canonical: "/projetos",
   },
   openGraph: {
     title: "Projetos — Álvaro Amorim",
-    description: "Case studies com contexto, solução, stack, desafios técnicos e links reais.",
+    description: "Estudos visuais com contexto, solução, stack, desafios técnicos e links reais.",
     url: "/projetos",
   },
 };

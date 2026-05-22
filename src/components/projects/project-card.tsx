@@ -1,58 +1,91 @@
 "use client";
 
 import Link from "next/link";
+import type { PointerEvent } from "react";
 
-import { Badge } from "@/components/ui/badge";
-import { buttonClassName } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { usePortfolioUi } from "@/components/layout/app-shell";
 import type { Project } from "@/types/portfolio";
+
+import styles from "./project-experience.module.css";
+import { ProjectVisualFrame, projectAccentStyle } from "./project-visual-frame";
 
 type ProjectCardProps = {
   project: Project;
   compact?: boolean;
+  index?: number;
 };
 
-export function ProjectCard({ project, compact = false }: ProjectCardProps) {
+const categoryLabels: Record<string, string> = {
+  Catálogo: "Catalog",
+  Dados: "Data",
+  Entretenimento: "Entertainment",
+  IA: "AI",
+  Institucional: "Institutional",
+  Métricas: "Metrics",
+};
+
+const techLabels: Record<string, string> = {
+  "APIs de IA": "AI APIs",
+};
+
+export function formatProjectCategory(category: string, locale: "pt" | "en") {
+  return locale === "en" ? (categoryLabels[category] ?? category) : category;
+}
+
+export function formatProjectTech(tech: string, locale: "pt" | "en") {
+  return locale === "en" ? (techLabels[tech] ?? tech) : tech;
+}
+
+function handlePointer(event: PointerEvent<HTMLElement>) {
+  const rect = event.currentTarget.getBoundingClientRect();
+  const x = Math.min(1, Math.max(0, (event.clientX - rect.left) / rect.width));
+  const y = Math.min(1, Math.max(0, (event.clientY - rect.top) / rect.height));
+  event.currentTarget.style.setProperty("--lx", `${(x * 100).toFixed(2)}%`);
+  event.currentTarget.style.setProperty("--ly", `${(y * 100).toFixed(2)}%`);
+}
+
+export function ProjectCard({ project, compact = false, index = 0 }: ProjectCardProps) {
   const { locale, t } = usePortfolioUi();
+  const viewCase = locale === "pt" ? "Ver estudo" : t.projectsPage.viewCase;
 
   return (
-    <Card className="flex h-full flex-col justify-between">
-      <div>
-        <div className="flex flex-wrap items-start justify-between gap-3">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--accent)]">{project.subtitle[locale]}</p>
-            <h3 className="mt-2 text-xl font-semibold">{project.title[locale]}</h3>
-          </div>
-          <Badge>{project.status[locale]}</Badge>
-        </div>
-        <p className="mt-4 text-sm leading-6 text-[var(--muted)]">{project.shortDescription[locale]}</p>
-      </div>
-
-      <div className="mt-5 grid gap-4">
-        <div className="flex flex-wrap gap-2">
-          {project.category.map((category) => (
-            <Badge key={category}>{category}</Badge>
+    <article
+      className={styles.scene}
+      onPointerMove={handlePointer}
+      style={projectAccentStyle(project)}
+      tabIndex={-1}
+    >
+      <div className={styles.sceneInfo}>
+        <span className={styles.sceneNumber}>{String(index + 1).padStart(2, "0")}</span>
+        <p className={styles.sceneKicker}>{project.subtitle[locale]}</p>
+        <h3 className={styles.sceneTitle}>{project.title[locale]}</h3>
+        <p className={styles.sceneText}>{project.shortDescription[locale]}</p>
+        <div className={styles.categoryList}>
+          {project.category.slice(0, 3).map((category) => (
+            <span className={styles.categoryPill} key={category}>
+              {formatProjectCategory(category, locale)}
+            </span>
           ))}
         </div>
         {!compact ? (
-          <div className="flex flex-wrap gap-2">
+          <div className={styles.techRail}>
             {project.stack.slice(0, 5).map((tech) => (
-              <span className="rounded-lg border border-[var(--border)] bg-[var(--surface-muted)] px-2.5 py-1 text-xs text-[var(--muted)]" key={tech}>
-                {tech}
+              <span className={styles.techNode} key={tech}>
+                {formatProjectTech(tech, locale)}
               </span>
             ))}
           </div>
         ) : null}
-        <div className="flex flex-wrap gap-2">
-          <Link className={buttonClassName("primary", "sm")} href={`/projetos/${project.slug}`}>
-            {t.projectsPage.viewCase}
+        <div className={styles.sceneActions}>
+          <Link className={styles.actionPrimary} href={`/projetos/${project.slug}`}>
+            {viewCase}
           </Link>
-          <a className={buttonClassName("ghost", "sm")} href={project.links.website} rel="noreferrer" target="_blank">
+          <a className={styles.actionGhost} href={project.links.website} rel="noreferrer" target="_blank">
             {t.actions.open}
           </a>
         </div>
       </div>
-    </Card>
+      <ProjectVisualFrame index={index} locale={locale} mode="compact" project={project} />
+    </article>
   );
 }

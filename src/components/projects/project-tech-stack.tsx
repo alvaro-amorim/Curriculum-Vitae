@@ -1,14 +1,23 @@
-import { Badge } from "@/components/ui/badge";
+"use client";
+
+import { usePortfolioUi } from "@/components/layout/app-shell";
+
+import { formatProjectTech } from "./project-card";
+import styles from "./project-experience.module.css";
 
 type ProjectTechStackProps = {
   stack: string[];
 };
 
 export function ProjectTechStack({ stack }: ProjectTechStackProps) {
+  const { locale } = usePortfolioUi();
+
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className={styles.stackConstellation}>
       {stack.map((tech) => (
-        <Badge key={tech}>{tech}</Badge>
+        <span className={styles.techNode} key={tech}>
+          {formatProjectTech(tech, locale)}
+        </span>
       ))}
     </div>
   );

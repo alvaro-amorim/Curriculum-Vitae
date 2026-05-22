@@ -28,14 +28,14 @@ export async function generateMetadata({ params }: ProjectPageProps): Promise<Me
 
   return {
     title: {
-      absolute: `${project.title.pt} | Case Study — Álvaro Amorim`,
+      absolute: `${project.title.pt} | Estudo de projeto — Álvaro Amorim`,
     },
     description: project.shortDescription.pt,
     alternates: {
       canonical: `/projetos/${project.slug}`,
     },
     openGraph: {
-      title: `${project.title.pt} — Case Study`,
+      title: `${project.title.pt} — Estudo de projeto`,
       description: project.shortDescription.pt,
       type: "article",
       url: `/projetos/${project.slug}`,

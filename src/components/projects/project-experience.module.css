@@ -1,0 +1,984 @@
+.experience {
+  --px: 52%;
+  --py: 24%;
+  --bg: #02040a;
+  --accent-a: #7dd3fc;
+  --accent-b: #3b82f6;
+  --accent-c: #c084fc;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: calc(100vh - 4rem);
+  padding: clamp(2rem, 5vw, 5.5rem) clamp(1rem, 4vw, 3rem) clamp(3rem, 7vw, 6rem);
+  background:
+    radial-gradient(circle at var(--px) var(--py), color-mix(in srgb, var(--accent-a) 16%, transparent), transparent 28rem),
+    radial-gradient(circle at 82% 18%, color-mix(in srgb, var(--accent-c) 12%, transparent), transparent 34rem),
+    linear-gradient(180deg, color-mix(in srgb, var(--bg) 88%, #02040a) 0%, var(--bg) 44%, color-mix(in srgb, var(--bg) 82%, #050816) 100%);
+}
+
+.experience::before,
+.experience::after {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  content: "";
+  pointer-events: none;
+}
+
+.experience::before {
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+  background-size: 86px 86px;
+  mask-image: radial-gradient(circle at 54% 32%, black 0 42%, transparent 78%);
+}
+
+.experience::after {
+  background:
+    linear-gradient(112deg, transparent 0 32%, color-mix(in srgb, var(--accent-a) 9%, transparent) 48%, transparent 63%),
+    radial-gradient(circle at 22% 18%, rgba(255, 255, 255, 0.08), transparent 16rem),
+    radial-gradient(circle at 78% 72%, color-mix(in srgb, var(--accent-c) 10%, transparent), transparent 28rem);
+  mix-blend-mode: screen;
+  opacity: 0.9;
+}
+
+.shell {
+  width: min(100%, 82rem);
+  margin: 0 auto;
+}
+
+.hero,
+.caseHero {
+  display: grid;
+  align-items: center;
+  gap: clamp(1.5rem, 4vw, 4rem);
+  min-height: min(48rem, calc(100vh - 7rem));
+}
+
+.hero {
+  grid-template-columns: minmax(0, 0.86fr) minmax(26rem, 1.14fr);
+}
+
+.caseHero {
+  grid-template-columns: minmax(0, 0.78fr) minmax(28rem, 1.22fr);
+  min-height: min(50rem, calc(100vh - 7rem));
+}
+
+.eyebrow,
+.frameKicker,
+.sceneKicker,
+.metaLabel,
+.flowLabel,
+.assetLabel {
+  color: var(--accent-a);
+  font-family: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: clamp(0.74rem, 0.8vw, 0.86rem);
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.heroTitle,
+.caseTitle {
+  max-width: 11ch;
+  margin: 0.85rem 0 0;
+  color: #f8fbff;
+  font-size: clamp(3.25rem, 7.3vw, 7.8rem);
+  font-weight: 900;
+  line-height: 0.86;
+  letter-spacing: 0;
+}
+
+.caseTitle {
+  max-width: 9ch;
+  font-size: clamp(3rem, 6.5vw, 7rem);
+}
+
+.heroText,
+.caseLead,
+.sectionIntro,
+.sceneText,
+.flowText {
+  color: color-mix(in srgb, #edf6ff 72%, transparent);
+  font-size: clamp(1rem, 1.4vw, 1.16rem);
+  font-weight: 650;
+  line-height: 1.72;
+}
+
+.heroText,
+.caseLead {
+  max-width: 43rem;
+  margin: 1.4rem 0 0;
+}
+
+.heroActions,
+.caseActions,
+.sceneActions,
+.finalActions,
+.navActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.actionPrimary,
+.actionSecondary,
+.actionGhost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.9rem;
+  padding: 0.78rem 1.18rem;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  color: #f8fbff;
+  font-size: 0.92rem;
+  font-weight: 850;
+  text-decoration: none;
+  transition:
+    transform 220ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 220ms cubic-bezier(0.16, 1, 0.3, 1),
+    background 220ms cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.actionPrimary {
+  border-color: color-mix(in srgb, var(--accent-a) 50%, transparent);
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--accent-a) 44%, #111827), color-mix(in srgb, var(--accent-b) 42%, #0f172a)),
+    rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 18px 54px color-mix(in srgb, var(--accent-a) 20%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+.actionSecondary,
+.actionGhost {
+  background: rgba(255, 255, 255, 0.055);
+}
+
+.actionGhost {
+  color: color-mix(in srgb, #f8fbff 70%, transparent);
+}
+
+.actionPrimary:hover,
+.actionSecondary:hover,
+.actionGhost:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--accent-a) 58%, rgba(255, 255, 255, 0.18));
+  box-shadow: 0 20px 70px color-mix(in srgb, var(--accent-a) 18%, transparent);
+}
+
+.actionPrimary:focus-visible,
+.actionSecondary:focus-visible,
+.actionGhost:focus-visible,
+.filterButton:focus-visible,
+.scene:focus-within {
+  outline: 2px solid color-mix(in srgb, var(--accent-a) 78%, white);
+  outline-offset: 4px;
+}
+
+.heroStage,
+.caseStage {
+  position: relative;
+  min-width: 0;
+  transform:
+    perspective(1100px)
+    rotateX(calc(var(--ry, 0) * 0.45deg))
+    rotateY(calc(var(--rx, 0) * 0.55deg));
+  transform-style: preserve-3d;
+}
+
+.heroStage::before,
+.caseStage::before,
+.scene::before,
+.visualFrame::before {
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: radial-gradient(circle at var(--lx, 50%) var(--ly, 50%), color-mix(in srgb, var(--accent-a) 28%, transparent), transparent 34%);
+  content: "";
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 260ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.heroStage:hover::before,
+.caseStage:hover::before,
+.scene:hover::before,
+.visualFrame:hover::before {
+  opacity: 1;
+}
+
+.stagePlate,
+.casePlate {
+  position: absolute;
+  inset: clamp(1rem, 3vw, 2.2rem) clamp(0.7rem, 2vw, 1.7rem) auto auto;
+  z-index: 5;
+  max-width: min(25rem, 58%);
+  padding: 1.15rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 1.35rem;
+  background: color-mix(in srgb, #06111f 88%, transparent);
+  box-shadow:
+    0 24px 80px rgba(0, 0, 0, 0.32),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.casePlate {
+  inset: auto clamp(1rem, 3vw, 2rem) clamp(1rem, 3vw, 2rem) auto;
+}
+
+.stagePlate h2,
+.casePlate h2 {
+  margin: 0.35rem 0 0;
+  color: #fff;
+  font-size: clamp(1.75rem, 3.2vw, 3.2rem);
+  font-weight: 900;
+  line-height: 0.92;
+  letter-spacing: 0;
+}
+
+.stagePlate p,
+.casePlate p {
+  margin: 0.75rem 0 0;
+  color: color-mix(in srgb, #edf6ff 72%, transparent);
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1.55;
+}
+
+.statusPill,
+.categoryPill,
+.techNode,
+.filterButton {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid color-mix(in srgb, var(--accent-a) 28%, rgba(255, 255, 255, 0.12));
+  border-radius: 999px;
+  background: color-mix(in srgb, #06111f 78%, transparent);
+  color: color-mix(in srgb, #f8fbff 82%, transparent);
+  font-size: 0.76rem;
+  font-weight: 850;
+}
+
+.statusPill {
+  padding: 0.43rem 0.68rem;
+  color: var(--accent-a);
+}
+
+.categoryList,
+.techRail,
+.caseMetaGrid,
+.miniGallery,
+.stackConstellation {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.categoryList,
+.techRail {
+  margin-top: 1rem;
+}
+
+.categoryPill,
+.techNode {
+  padding: 0.42rem 0.64rem;
+}
+
+.techNode {
+  position: relative;
+}
+
+.techNode::before {
+  width: 0.36rem;
+  height: 0.36rem;
+  margin-right: 0.42rem;
+  border-radius: 999px;
+  background: var(--accent-a);
+  box-shadow: 0 0 16px color-mix(in srgb, var(--accent-a) 72%, transparent);
+  content: "";
+}
+
+.visualFrame {
+  position: relative;
+  overflow: hidden;
+  min-height: clamp(24rem, 52vw, 42rem);
+  border: 1px solid color-mix(in srgb, var(--accent-a) 28%, rgba(255, 255, 255, 0.14));
+  border-radius: clamp(1.45rem, 3vw, 2.25rem);
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--accent-a) 16%, transparent), transparent 40%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.025)),
+    color-mix(in srgb, #07111f 86%, var(--accent-b));
+  box-shadow:
+    0 42px 120px rgba(0, 0, 0, 0.38),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+
+.visualFrame.large {
+  min-height: clamp(28rem, 56vw, 46rem);
+}
+
+.visualFrame.compact {
+  min-height: clamp(18rem, 34vw, 27rem);
+}
+
+.visualFrame img {
+  object-fit: cover;
+}
+
+.frameChrome {
+  position: absolute;
+  inset: 1rem;
+  border: 1px solid color-mix(in srgb, var(--accent-a) 28%, rgba(255, 255, 255, 0.12));
+  border-radius: 1.2rem;
+  pointer-events: none;
+}
+
+.frameChrome::before {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.52);
+  box-shadow:
+    0.85rem 0 rgba(255, 255, 255, 0.42),
+    1.7rem 0 rgba(255, 255, 255, 0.32);
+  content: "";
+}
+
+.blueprint {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.blueprint::before,
+.blueprint::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+}
+
+.blueprint::before {
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+    radial-gradient(circle at 44% 44%, color-mix(in srgb, var(--accent-a) 22%, transparent), transparent 22rem);
+  background-size: 44px 44px, 44px 44px, auto;
+}
+
+.blueprint::after {
+  background:
+    linear-gradient(90deg, transparent 0 16%, color-mix(in srgb, var(--accent-a) 32%, transparent) 16.2% 48%, transparent 48.4%),
+    linear-gradient(180deg, transparent 0 58%, color-mix(in srgb, var(--accent-c) 22%, transparent) 58.4% 74%, transparent 74.4%);
+  opacity: 0.5;
+  transform: translate3d(calc((var(--lx, 50%) - 50%) * 0.08), 0, 0);
+}
+
+.blueprintPanel,
+.blueprintPanelAlt,
+.blueprintLine,
+.blueprintLineAlt,
+.blueprintSignal,
+.blueprintOrbit {
+  position: absolute;
+  border: 1px solid color-mix(in srgb, var(--accent-a) 35%, rgba(255, 255, 255, 0.12));
+  border-radius: 1.2rem;
+  background: color-mix(in srgb, var(--accent-a) 12%, transparent);
+}
+
+.blueprintPanel {
+  right: 12%;
+  bottom: 17%;
+  width: 46%;
+  height: 22%;
+}
+
+.blueprintPanelAlt {
+  top: 28%;
+  left: 9%;
+  width: 54%;
+  height: 18%;
+  border-color: color-mix(in srgb, var(--accent-c) 36%, rgba(255, 255, 255, 0.1));
+}
+
+.blueprintLine,
+.blueprintLineAlt {
+  left: 17%;
+  height: 3px;
+  border: 0;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent-a) 58%, transparent);
+}
+
+.blueprintLine {
+  top: 23%;
+  width: 43%;
+}
+
+.blueprintLineAlt {
+  top: 29%;
+  width: 31%;
+}
+
+.blueprintSignal {
+  right: 15%;
+  top: 34%;
+  width: 22%;
+  height: 3px;
+  border: 0;
+  background: color-mix(in srgb, var(--accent-c) 62%, transparent);
+  box-shadow: 0 2rem 0 color-mix(in srgb, var(--accent-c) 48%, transparent);
+}
+
+.blueprintOrbit {
+  right: 9%;
+  bottom: 10%;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 999px;
+  background: transparent;
+  box-shadow:
+    -3rem -2.2rem 0 -0.28rem color-mix(in srgb, var(--accent-a) 48%, transparent),
+    -7rem 1.2rem 0 -0.2rem color-mix(in srgb, var(--accent-c) 48%, transparent);
+}
+
+.frameContent {
+  position: absolute;
+  right: clamp(1.4rem, 4vw, 3rem);
+  bottom: clamp(1.35rem, 4vw, 3rem);
+  left: clamp(1.4rem, 4vw, 3rem);
+  z-index: 3;
+}
+
+.frameTitle {
+  max-width: 10ch;
+  margin: 0.65rem 0 0;
+  color: #fff;
+  font-size: clamp(2.6rem, 5.3vw, 6.4rem);
+  font-weight: 950;
+  line-height: 0.82;
+  letter-spacing: 0;
+}
+
+.frameHint {
+  max-width: 38rem;
+  margin: 0.65rem 0 0;
+  color: color-mix(in srgb, #f8fbff 72%, transparent);
+  font-family: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.83rem;
+  font-weight: 760;
+  line-height: 1.55;
+}
+
+.framePending {
+  position: absolute;
+  top: 1.55rem;
+  right: clamp(1.25rem, 3vw, 2rem);
+  z-index: 4;
+  color: color-mix(in srgb, var(--accent-a) 80%, white);
+  font-family: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: clamp(0.72rem, 0.82vw, 0.84rem);
+  font-weight: 900;
+  letter-spacing: 0.06em;
+}
+
+.sections {
+  display: grid;
+  gap: clamp(4rem, 9vw, 7rem);
+  margin-top: clamp(2rem, 6vw, 5rem);
+}
+
+.sectionHeader {
+  display: grid;
+  grid-template-columns: minmax(0, 0.75fr) minmax(19rem, 0.52fr);
+  align-items: end;
+  gap: clamp(1rem, 4vw, 3rem);
+  margin-bottom: clamp(1.5rem, 4vw, 3rem);
+}
+
+.sectionTitle {
+  max-width: 12ch;
+  margin: 0.6rem 0 0;
+  color: #fff;
+  font-size: clamp(2.5rem, 5.5vw, 6rem);
+  font-weight: 950;
+  line-height: 0.9;
+  letter-spacing: 0;
+}
+
+.projectScenes {
+  display: grid;
+  gap: clamp(1.25rem, 3vw, 2rem);
+  margin-top: 1.4rem;
+}
+
+.scene {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 0.58fr) minmax(26rem, 0.84fr);
+  align-items: stretch;
+  gap: clamp(1rem, 3vw, 2.5rem);
+  overflow: hidden;
+  padding: clamp(1rem, 2.2vw, 1.6rem);
+  border: 1px solid color-mix(in srgb, var(--accent-a) 18%, rgba(255, 255, 255, 0.12));
+  border-radius: clamp(1.4rem, 3vw, 2.2rem);
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--accent-a) 12%, transparent), transparent 46%),
+    rgba(255, 255, 255, 0.045);
+  box-shadow:
+    0 30px 100px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.scene:nth-child(even) {
+  grid-template-columns: minmax(26rem, 0.84fr) minmax(0, 0.58fr);
+}
+
+.scene:nth-child(even) .sceneInfo {
+  order: 2;
+}
+
+.sceneInfo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  padding: clamp(1rem, 3vw, 2.3rem);
+}
+
+.sceneNumber {
+  color: color-mix(in srgb, var(--accent-a) 80%, #fff);
+  font-family: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.86rem;
+  font-weight: 900;
+}
+
+.sceneTitle {
+  max-width: 9ch;
+  margin: 0.8rem 0 0;
+  color: #fff;
+  font-size: clamp(2.2rem, 4.6vw, 5.4rem);
+  font-weight: 950;
+  line-height: 0.88;
+  letter-spacing: 0;
+}
+
+.sceneText {
+  margin: 1rem 0 0;
+  font-size: clamp(0.98rem, 1.15vw, 1.08rem);
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin: 1.4rem 0 0;
+}
+
+.filterButton {
+  min-height: 2.2rem;
+  padding: 0.45rem 0.72rem;
+  cursor: pointer;
+  transition:
+    transform 180ms cubic-bezier(0.16, 1, 0.3, 1),
+    background 180ms cubic-bezier(0.16, 1, 0.3, 1),
+    color 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.filterButton:hover,
+.filterButtonActive {
+  transform: translateY(-1px);
+  background: color-mix(in srgb, var(--accent-a) 18%, rgba(255, 255, 255, 0.07));
+  color: #fff;
+}
+
+.caseMeta {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1.6rem;
+}
+
+.metaCard {
+  padding: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.metaCard p:last-child {
+  margin: 0.45rem 0 0;
+  color: #fff;
+  font-weight: 800;
+}
+
+.flowGrid,
+.moduleGrid,
+.assetGrid,
+.navigationGrid {
+  display: grid;
+  gap: 1rem;
+}
+
+.flowGrid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.moduleGrid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.assetGrid {
+  grid-template-columns: minmax(0, 1.1fr) minmax(19rem, 0.7fr);
+}
+
+.flowCard,
+.moduleCard,
+.assetPanel,
+.nextCard {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(1.25rem, 2vw, 1.8rem);
+  border: 1px solid color-mix(in srgb, var(--accent-a) 18%, rgba(255, 255, 255, 0.12));
+  border-radius: 1.35rem;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--accent-a) 10%, transparent), transparent 58%),
+    rgba(255, 255, 255, 0.045);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.flowCard::before,
+.moduleCard::before,
+.assetPanel::before,
+.nextCard::before {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 0 38%, rgba(255, 255, 255, 0.08) 48%, transparent 60%);
+  content: "";
+  opacity: 0;
+  transform: translateX(-25%);
+  transition:
+    opacity 220ms ease,
+    transform 620ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.flowCard:hover::before,
+.moduleCard:hover::before,
+.assetPanel:hover::before,
+.nextCard:hover::before {
+  opacity: 1;
+  transform: translateX(20%);
+}
+
+.flowCard h2,
+.moduleCard h2,
+.assetPanel h2,
+.nextCard h2 {
+  margin: 0.7rem 0 0;
+  color: #fff;
+  font-size: clamp(1.25rem, 2.2vw, 2rem);
+  font-weight: 900;
+}
+
+.flowText,
+.moduleCard li,
+.assetPanel p,
+.nextCard p {
+  color: color-mix(in srgb, #edf6ff 70%, transparent);
+  font-weight: 650;
+  line-height: 1.65;
+}
+
+.moduleCard ul {
+  display: grid;
+  gap: 0.72rem;
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.moduleCard li {
+  position: relative;
+  padding-left: 1.2rem;
+}
+
+.moduleCard li::before {
+  position: absolute;
+  top: 0.62rem;
+  left: 0;
+  width: 0.42rem;
+  height: 0.42rem;
+  border-radius: 999px;
+  background: var(--accent-a);
+  box-shadow: 0 0 14px color-mix(in srgb, var(--accent-a) 70%, transparent);
+  content: "";
+}
+
+.sectionBlock {
+  scroll-margin-top: 6rem;
+}
+
+.honestResult {
+  display: grid;
+  grid-template-columns: minmax(0, 0.72fr) minmax(19rem, 0.5fr);
+  gap: clamp(1rem, 3vw, 2rem);
+  align-items: stretch;
+}
+
+.assetPanel {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.assetPanel ul {
+  display: grid;
+  gap: 0.72rem;
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.assetPanel li {
+  position: relative;
+  padding-left: 1.2rem;
+  color: color-mix(in srgb, #edf6ff 70%, transparent);
+  font-weight: 650;
+  line-height: 1.65;
+}
+
+.assetPanel li::before {
+  position: absolute;
+  top: 0.62rem;
+  left: 0;
+  width: 0.42rem;
+  height: 0.42rem;
+  border-radius: 999px;
+  background: var(--accent-a);
+  box-shadow: 0 0 14px color-mix(in srgb, var(--accent-a) 70%, transparent);
+  content: "";
+}
+
+.miniGallery {
+  margin-top: 1.5rem;
+}
+
+.miniAsset {
+  min-width: 6.4rem;
+  min-height: 4.3rem;
+  border: 1px solid color-mix(in srgb, var(--accent-a) 24%, rgba(255, 255, 255, 0.12));
+  border-radius: 0.9rem;
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    color-mix(in srgb, var(--accent-a) 10%, rgba(255, 255, 255, 0.04));
+  background-size: 18px 18px;
+}
+
+.navigationGrid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.nextCard {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 16rem;
+  color: inherit;
+  text-decoration: none;
+}
+
+.nextCard:hover {
+  border-color: color-mix(in srgb, var(--accent-a) 44%, rgba(255, 255, 255, 0.14));
+}
+
+.reveal {
+  animation: revealIn 620ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: var(--delay, 0ms);
+}
+
+@keyframes revealIn {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .experience *,
+  .experience *::before,
+  .experience *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .heroStage,
+  .caseStage {
+    transform: none;
+  }
+}
+
+@media (max-width: 980px) {
+  .experience {
+    padding: 1.2rem 0.9rem 4rem;
+  }
+
+  .hero,
+  .caseHero,
+  .sectionHeader,
+  .scene,
+  .scene:nth-child(even),
+  .flowGrid,
+  .moduleGrid,
+  .assetGrid,
+  .honestResult,
+  .navigationGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero,
+  .caseHero {
+    min-height: auto;
+    padding-top: 1.4rem;
+  }
+
+  .heroTitle,
+  .caseTitle {
+    font-size: clamp(3.05rem, 15vw, 5.4rem);
+  }
+
+  .sectionTitle {
+    font-size: clamp(2.75rem, 12vw, 4.4rem);
+  }
+
+  .scene:nth-child(even) .sceneInfo {
+    order: 0;
+  }
+
+  .stagePlate,
+  .casePlate {
+    position: relative;
+    inset: auto;
+    max-width: none;
+    margin: -2.2rem 1rem 0;
+  }
+
+  .visualFrame,
+  .visualFrame.large {
+    min-height: 30rem;
+  }
+
+  .visualFrame.compact {
+    min-height: 23rem;
+  }
+
+  .frameTitle {
+    font-size: clamp(2.5rem, 13vw, 4rem);
+  }
+
+  .framePending {
+    right: 1.2rem;
+    left: 4.2rem;
+    text-align: left;
+  }
+
+  .filters {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    margin-right: -0.9rem;
+    margin-left: -0.9rem;
+    padding: 0 0.9rem 0.25rem;
+  }
+
+  .filterButton {
+    flex: 0 0 auto;
+  }
+}
+
+@media (max-width: 560px) {
+  .experience {
+    padding-right: 0.75rem;
+    padding-left: 0.75rem;
+  }
+
+  .heroTitle,
+  .caseTitle {
+    max-width: 9ch;
+    font-size: clamp(2.8rem, 14vw, 4.6rem);
+  }
+
+  .heroText,
+  .caseLead,
+  .sectionIntro {
+    font-size: 0.98rem;
+  }
+
+  .heroActions,
+  .caseActions,
+  .sceneActions,
+  .finalActions,
+  .navActions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .heroActions .actionGhost,
+  .caseActions .actionGhost,
+  .sceneActions .actionGhost,
+  .finalActions .actionGhost,
+  .navActions .actionGhost {
+    grid-column: 1 / -1;
+  }
+
+  .actionPrimary,
+  .actionSecondary,
+  .actionGhost {
+    min-height: 3.05rem;
+    padding-right: 0.8rem;
+    padding-left: 0.8rem;
+    font-size: 0.86rem;
+    text-align: center;
+  }
+
+  .scene,
+  .flowCard,
+  .moduleCard,
+  .assetPanel,
+  .nextCard {
+    border-radius: 1.2rem;
+  }
+
+  .visualFrame,
+  .visualFrame.large {
+    min-height: 27rem;
+    border-radius: 1.25rem;
+  }
+
+  .visualFrame.compact {
+    min-height: 21rem;
+  }
+
+  .frameContent {
+    right: 1.1rem;
+    bottom: 1.1rem;
+    left: 1.1rem;
+  }
+
+  .stagePlate h2,
+  .casePlate h2,
+  .sceneTitle {
+    font-size: clamp(2.1rem, 12vw, 3.4rem);
+  }
+}
