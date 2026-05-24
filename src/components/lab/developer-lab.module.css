@@ -67,6 +67,11 @@
   text-transform: uppercase;
 }
 
+.panelLabel,
+.gameStatus {
+  text-transform: none;
+}
+
 .heroTitle {
   max-width: 10ch;
   margin: 0.9rem 0 0;
@@ -352,7 +357,10 @@
   min-height: clamp(22rem, 44vw, 34rem);
   border-radius: 1.65rem;
   cursor: pointer;
-  touch-action: manipulation;
+  touch-action: none;
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease;
 }
 
 .runnerStage::after {
@@ -365,6 +373,33 @@
     linear-gradient(90deg, transparent, rgba(103, 232, 249, 0.14), transparent);
   mix-blend-mode: screen;
   opacity: 0.8;
+}
+
+.runnerStageDanger {
+  border-color: rgba(251, 191, 36, 0.48);
+  box-shadow:
+    0 28px 95px rgba(251, 191, 36, 0.1),
+    inset 0 0 0 1px rgba(251, 191, 36, 0.08);
+}
+
+.runnerStageDanger .pipelineTrack {
+  border-block-color: rgba(251, 191, 36, 0.46);
+}
+
+.runnerStagePaused .pipelineTrack {
+  opacity: 0.55;
+  animation-play-state: paused;
+}
+
+.runnerStageHit {
+  border-color: rgba(248, 113, 113, 0.58);
+  animation: stage-hit 520ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.runnerStageHit .runnerAvatar {
+  box-shadow:
+    0 0 58px rgba(248, 113, 113, 0.36),
+    inset 0 1px 0 rgba(255, 255, 255, 0.26);
 }
 
 .runnerHud {
@@ -494,6 +529,36 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.14);
 }
 
+.obstacleToneBug {
+  border-color: rgba(248, 113, 113, 0.58);
+  background: linear-gradient(135deg, rgba(127, 29, 29, 0.74), rgba(49, 12, 21, 0.78));
+}
+
+.obstacleToneNetwork {
+  border-color: rgba(251, 191, 36, 0.58);
+  background: linear-gradient(135deg, rgba(113, 63, 18, 0.76), rgba(49, 28, 12, 0.8));
+  color: #fef3c7;
+}
+
+.obstacleToneBuild {
+  border-color: rgba(167, 139, 250, 0.58);
+  background: linear-gradient(135deg, rgba(76, 29, 149, 0.76), rgba(30, 27, 75, 0.8));
+  color: #ede9fe;
+}
+
+.obstacleToneMemory {
+  border-color: rgba(52, 211, 153, 0.52);
+  background: linear-gradient(135deg, rgba(6, 78, 59, 0.74), rgba(5, 46, 22, 0.78));
+  color: #d1fae5;
+}
+
+.obstacleToneType,
+.obstacleToneRate {
+  border-color: rgba(103, 232, 249, 0.52);
+  background: linear-gradient(135deg, rgba(21, 94, 117, 0.76), rgba(8, 47, 73, 0.8));
+  color: #cffafe;
+}
+
 .collectPulse {
   position: absolute;
   left: 14%;
@@ -595,6 +660,11 @@
     box-shadow 220ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+.runnerAction:active,
+.laneControl:active {
+  transform: translateY(1px) scale(0.99);
+}
+
 .runnerAction {
   padding: 0.75rem 1rem;
 }
@@ -658,6 +728,25 @@
   100% {
     opacity: 0;
     transform: translateY(-1.2rem);
+  }
+}
+
+@keyframes stage-hit {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  18% {
+    transform: translateX(-0.22rem);
+  }
+
+  36% {
+    transform: translateX(0.2rem);
+  }
+
+  54% {
+    transform: translateX(-0.1rem);
   }
 }
 
@@ -849,7 +938,13 @@
   .actionGhost,
   .gameTab,
   .runnerAction,
+  .laneControl,
+  .runnerStage,
   .moduleCard {
     transition: none;
+  }
+
+  .runnerStageHit {
+    animation: none;
   }
 }

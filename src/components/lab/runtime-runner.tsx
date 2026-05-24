@@ -1,6 +1,6 @@
 "use client";
 
-import type { CSSProperties, KeyboardEvent } from "react";
+import type { CSSProperties, KeyboardEvent, MouseEvent, PointerEvent } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { clampScore } from "@/lib/lab-score";
@@ -13,8 +13,10 @@ type RunnerStatus = "idle" | "running" | "paused" | "gameOver";
 type Obstacle = {
   id: number;
   label: string;
+  tone: "bug" | "network" | "build" | "memory" | "type" | "rate";
   x: number;
   width: number;
+  hitHeight: number;
 };
 
 type RunnerFrame = {
@@ -28,6 +30,7 @@ type RunnerFrame = {
   cleared: number;
   spawnIn: number;
   pulse: number;
+  pulseKind: "clear" | "milestone" | null;
 };
 
 type RuntimeRunnerProps = {
@@ -39,7 +42,25 @@ type StyleVars = CSSProperties & Record<`--${string}`, string | number>;
 
 const BEST_SCORE_KEY = "alvaro-dev-runtime-runner-best-v1";
 
-const obstacleLabels = ["BUG", "404", "TIMEOUT", "MERGE CONFLICT", "BUILD FAIL", "MEMORY LEAK"];
+const obstacleConfigs: Omit<Obstacle, "id" | "x">[] = [
+  { label: "BUG", tone: "bug", width: 10, hitHeight: 0.38 },
+  { label: "404", tone: "network", width: 9, hitHeight: 0.34 },
+  { label: "TIMEOUT", tone: "network", width: 12, hitHeight: 0.42 },
+  { label: "BUILD FAIL", tone: "build", width: 14, hitHeight: 0.46 },
+  { label: "MERGE CONFLICT", tone: "build", width: 18, hitHeight: 0.5 },
+  { label: "MEMORY LEAK", tone: "memory", width: 16, hitHeight: 0.45 },
+  { label: "TYPE ERROR", tone: "type", width: 14, hitHeight: 0.42 },
+  { label: "RATE LIMIT", tone: "rate", width: 13, hitHeight: 0.4 },
+];
+
+const obstacleToneClasses: Record<Obstacle["tone"], string> = {
+  bug: styles.obstacleToneBug,
+  network: styles.obstacleToneNetwork,
+  build: styles.obstacleToneBuild,
+  memory: styles.obstacleToneMemory,
+  type: styles.obstacleToneType,
+  rate: styles.obstacleToneRate,
+};
 
 const copy = {
   pt: {
@@ -72,7 +93,10 @@ const copy = {
       "Colisão encerra a rodada e salva o melhor score local.",
     ],
     reduced: "Modo reduced motion: animações decorativas reduzidas e velocidade mais controlada.",
-    pulse: "+18 erro evitado",
+    pulses: {
+      clear: "+18 erro evitado",
+      milestone: "checkpoint +100",
+    },
   },
   en: {
     status: {
@@ -104,7 +128,10 @@ const copy = {
       "Collision ends the run and saves the local best score.",
     ],
     reduced: "Reduced motion mode: decorative animation is reduced and speed is more controlled.",
-    pulse: "+18 error avoided",
+    pulses: {
+      clear: "+18 error avoided",
+      milestone: "checkpoint +100",
+    },
   },
 } as const;
 
@@ -120,17 +147,17 @@ function createInitialFrame(): RunnerFrame {
     cleared: 0,
     spawnIn: 1.05,
     pulse: 0,
+    pulseKind: null,
   };
 }
 
 function createObstacle(id: number): Obstacle {
-  const label = obstacleLabels[id % obstacleLabels.length];
+  const config = obstacleConfigs[id % obstacleConfigs.length];
 
   return {
     id,
-    label,
+    ...config,
     x: 104,
-    width: label.length > 10 ? 17 : 11,
   };
 }
 
@@ -154,6 +181,7 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
   const statusRef = useRef<RunnerStatus>("idle");
   const obstacleIdRef = useRef(0);
   const completedRef = useRef(false);
+  const lastPointerActionRef = useRef(0);
 
   useEffect(() => {
     statusRef.current = status;
@@ -171,6 +199,12 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
   }, []);
 
   const speedLabel = useMemo(() => `${Math.round(frame.speed)}x`, [frame.speed]);
+  const isDanger = useMemo(
+    () =>
+      status === "running" &&
+      frame.obstacles.some((obstacle) => obstacle.x < 34 && obstacle.x + obstacle.width > 7 && frame.runnerY < obstacle.hitHeight + 0.16),
+    [frame.obstacles, frame.runnerY, status],
+  );
 
   const commitFrame = useCallback((next: RunnerFrame) => {
     stateRef.current = next;
@@ -181,14 +215,15 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
     const firstObstacle = createObstacle(0);
     const next = {
       ...createInitialFrame(),
-      obstacles: [{ ...firstObstacle, x: 58 }],
-      spawnIn: 1.15,
+      obstacles: [{ ...firstObstacle, x: 70 }],
+      speed: reducedMotion ? 22 : 25,
+      spawnIn: 1.28,
     };
     completedRef.current = false;
     obstacleIdRef.current = 1;
     commitFrame(next);
     setStatus("running");
-  }, [commitFrame]);
+  }, [commitFrame, reducedMotion]);
 
   const finishRun = useCallback(
     (next: RunnerFrame) => {
@@ -220,16 +255,40 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
     }
 
     const current = stateRef.current;
-    if (current.runnerY > 0.04) {
+    if (current.runnerY > 0.14) {
       return;
     }
 
     commitFrame({
       ...current,
-      runnerY: 0.02,
-      velocity: reducedMotion ? 0.92 : 1.12,
+      runnerY: Math.max(current.runnerY, 0.03),
+      velocity: reducedMotion ? 1.02 : 1.28,
     });
   }, [commitFrame, reducedMotion, startRun]);
+
+  const handleStagePointerDown = useCallback(
+    (event: PointerEvent<HTMLDivElement>) => {
+      if (event.pointerType === "touch") {
+        event.preventDefault();
+      }
+
+      lastPointerActionRef.current = performance.now();
+      jump();
+    },
+    [jump],
+  );
+
+  const handleStageClick = useCallback(
+    (event: MouseEvent<HTMLDivElement>) => {
+      if (performance.now() - lastPointerActionRef.current < 260) {
+        event.preventDefault();
+        return;
+      }
+
+      jump();
+    },
+    [jump],
+  );
 
   const togglePause = useCallback(() => {
     setStatus((current) => {
@@ -274,7 +333,7 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
       lastTime = now;
 
       const current = stateRef.current;
-      const gravity = reducedMotion ? 2.3 : 2.75;
+      const gravity = reducedMotion ? 2.45 : 3.08;
       let runnerY = current.runnerY + current.velocity * delta;
       let velocity = current.velocity - gravity * delta;
 
@@ -284,7 +343,7 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
       }
 
       const elapsed = current.elapsed + delta;
-      const speed = Math.min(reducedMotion ? 42 : 56, (reducedMotion ? 22 : 28) + elapsed * (reducedMotion ? 0.9 : 1.24));
+      const speed = Math.min(reducedMotion ? 42 : 58, (reducedMotion ? 22 : 25) + elapsed * (reducedMotion ? 0.92 : 1.42));
       const moved = current.obstacles.map((obstacle) => ({
         ...obstacle,
         x: obstacle.x - speed * delta,
@@ -297,18 +356,20 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
       if (spawnIn <= 0) {
         obstacleIdRef.current += 1;
         obstacles.push(createObstacle(obstacleIdRef.current));
-        const cadence = Math.max(reducedMotion ? 1.1 : 0.72, 1.32 - elapsed * 0.015);
-        spawnIn = cadence + Math.random() * 0.28;
+        const cadence = Math.max(reducedMotion ? 1.12 : 0.74, 1.42 - elapsed * 0.018);
+        spawnIn = cadence + Math.random() * 0.32;
       }
 
       const collision = obstacles.some((obstacle) => {
         const hitsRunnerX = obstacle.x < 22 && obstacle.x + obstacle.width > 11;
-        return hitsRunnerX && runnerY < 0.42;
+        return hitsRunnerX && runnerY < obstacle.hitHeight;
       });
 
       const cleared = current.cleared + clearedNow;
       const runScore = Math.floor(elapsed * 9 + cleared * 18);
       const apiScore = clampScore(runScore / 6);
+      const crossedMilestone = Math.floor(runScore / 100) > Math.floor(current.runScore / 100);
+      const shouldPulse = clearedNow > 0 || crossedMilestone;
       const next = {
         elapsed,
         runScore,
@@ -319,7 +380,8 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
         obstacles,
         cleared,
         spawnIn,
-        pulse: clearedNow > 0 ? current.pulse + 1 : current.pulse,
+        pulse: shouldPulse ? current.pulse + 1 : current.pulse,
+        pulseKind: crossedMilestone ? "milestone" : clearedNow > 0 ? "clear" : current.pulseKind,
       };
 
       if (collision) {
@@ -365,9 +427,15 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
       <div className={styles.runnerGrid}>
         <div
           aria-label={t.jump}
-          className={styles.runnerStage}
-          onClick={jump}
+          className={[
+            styles.runnerStage,
+            isDanger ? styles.runnerStageDanger : "",
+            status === "paused" ? styles.runnerStagePaused : "",
+            status === "gameOver" ? styles.runnerStageHit : "",
+          ].join(" ")}
+          onClick={handleStageClick}
           onKeyDown={handleKeyDown}
+          onPointerDown={handleStagePointerDown}
           role="button"
           tabIndex={0}
         >
@@ -402,7 +470,7 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
           {frame.obstacles.map((obstacle) => (
             <span
               aria-hidden="true"
-              className={styles.obstacle}
+              className={`${styles.obstacle} ${obstacleToneClasses[obstacle.tone]}`}
               key={obstacle.id}
               style={{ "--x": obstacle.x, "--w": obstacle.width } as StyleVars}
             >
@@ -410,9 +478,9 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
             </span>
           ))}
 
-          {frame.pulse > 0 ? (
+          {frame.pulse > 0 && frame.pulseKind ? (
             <span className={styles.collectPulse} key={frame.pulse}>
-              {t.pulse}
+              {t.pulses[frame.pulseKind]}
             </span>
           ) : null}
 
