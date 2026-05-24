@@ -164,7 +164,9 @@
 .gameTab:focus-visible,
 .runnerAction:focus-visible,
 .runnerStage:focus-visible,
-.laneControl:focus-visible {
+.laneControl:focus-visible,
+.mazeStage:focus-visible,
+.mazeDirection:focus-visible {
   outline: 2px solid color-mix(in srgb, var(--lab-accent-a) 78%, white);
   outline-offset: 4px;
 }
@@ -684,6 +686,290 @@
   width: 100%;
 }
 
+.mazeLayout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(17rem, 0.34fr);
+  gap: 1rem;
+}
+
+.mazeStage {
+  position: relative;
+  overflow: hidden;
+  min-height: clamp(25rem, 48vw, 39rem);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 1.65rem;
+  padding: clamp(0.8rem, 2vw, 1.15rem);
+  background:
+    radial-gradient(circle at 72% 20%, rgba(103, 232, 249, 0.18), transparent 16rem),
+    radial-gradient(circle at 20% 72%, rgba(52, 211, 153, 0.12), transparent 14rem),
+    linear-gradient(145deg, rgba(6, 15, 30, 0.9), rgba(3, 6, 14, 0.92));
+  box-shadow:
+    0 24px 90px rgba(0, 0, 0, 0.38),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  touch-action: none;
+}
+
+.mazeStage::before {
+  position: absolute;
+  inset: 0;
+  content: "";
+  pointer-events: none;
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(120deg, transparent 0 42%, rgba(103, 232, 249, 0.12) 52%, transparent 62%);
+  background-size: 56px 56px, 56px 56px, auto;
+  opacity: 0.82;
+}
+
+.mazeStageDanger {
+  border-color: rgba(251, 191, 36, 0.5);
+  box-shadow:
+    0 28px 100px rgba(251, 191, 36, 0.1),
+    inset 0 0 0 1px rgba(251, 191, 36, 0.08);
+}
+
+.mazeHud {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.mazeHud div {
+  min-width: 0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.mazeHud span,
+.mazeMeta {
+  color: rgba(237, 246, 255, 0.66);
+  font-size: 0.72rem;
+  font-weight: 850;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.mazeHud strong {
+  display: block;
+  margin-top: 0.28rem;
+  color: #fff;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: clamp(1.2rem, 2.4vw, 2rem);
+  line-height: 1;
+}
+
+.mazeMeta {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin: 0.8rem 0;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.mazeMeta span {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  padding: 0.4rem 0.62rem;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.mazeGrid {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: repeat(var(--maze-columns), minmax(0, 1fr));
+  gap: clamp(0.2rem, 0.8vw, 0.42rem);
+  width: 100%;
+  padding: clamp(0.45rem, 1.2vw, 0.85rem);
+  border: 1px solid rgba(103, 232, 249, 0.18);
+  border-radius: 1.35rem;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(103, 232, 249, 0.08), transparent 62%),
+    rgba(0, 0, 0, 0.22);
+}
+
+.mazeCell {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  min-height: clamp(2.45rem, 5.5vw, 4.35rem);
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.8rem;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.mazeWall {
+  border-color: rgba(15, 23, 42, 0.86);
+  background:
+    linear-gradient(135deg, rgba(15, 23, 42, 0.94), rgba(2, 6, 23, 0.96)),
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0 1px, transparent 1px 7px);
+}
+
+.mazeStart {
+  border-color: rgba(103, 232, 249, 0.3);
+  background: rgba(103, 232, 249, 0.08);
+}
+
+.mazeGoal {
+  border-color: rgba(52, 211, 153, 0.56);
+  background:
+    radial-gradient(circle at 50% 50%, rgba(52, 211, 153, 0.24), transparent 60%),
+    rgba(6, 78, 59, 0.42);
+  box-shadow: inset 0 0 34px rgba(52, 211, 153, 0.16);
+}
+
+.mazePatch {
+  border-color: rgba(103, 232, 249, 0.4);
+  background:
+    radial-gradient(circle at 50% 50%, rgba(103, 232, 249, 0.22), transparent 58%),
+    rgba(8, 47, 73, 0.42);
+}
+
+.mazePatchCollected {
+  border-color: rgba(52, 211, 153, 0.2);
+  background: rgba(52, 211, 153, 0.08);
+  opacity: 0.56;
+}
+
+.mazeHazard {
+  box-shadow: inset 0 0 30px rgba(248, 113, 113, 0.1);
+}
+
+.mazeHazardBug {
+  border-color: rgba(248, 113, 113, 0.58);
+  background: rgba(127, 29, 29, 0.48);
+}
+
+.mazeHazardDeadlock {
+  border-color: rgba(167, 139, 250, 0.58);
+  background: rgba(76, 29, 149, 0.46);
+}
+
+.mazeHazardMemory {
+  border-color: rgba(251, 191, 36, 0.56);
+  background: rgba(113, 63, 18, 0.46);
+}
+
+.mazeHazardRoute {
+  border-color: rgba(244, 114, 182, 0.54);
+  background: rgba(131, 24, 67, 0.42);
+}
+
+.mazeCellLabel {
+  position: relative;
+  z-index: 1;
+  max-width: 92%;
+  color: rgba(248, 251, 255, 0.78);
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: clamp(0.48rem, 0.78vw, 0.66rem);
+  font-weight: 900;
+  line-height: 1.08;
+  overflow-wrap: anywhere;
+  text-align: center;
+}
+
+.mazePlayer {
+  position: absolute;
+  inset: 22%;
+  z-index: 3;
+  border: 1px solid rgba(103, 232, 249, 0.72);
+  border-radius: 0.55rem;
+  background:
+    radial-gradient(circle at 50% 36%, #f8fbff 0 0.18rem, transparent 0.2rem),
+    linear-gradient(135deg, rgba(103, 232, 249, 0.7), rgba(52, 211, 153, 0.45));
+  box-shadow:
+    0 0 28px rgba(103, 232, 249, 0.36),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28);
+}
+
+.mazeOverlay {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: linear-gradient(180deg, rgba(2, 6, 23, 0.2), rgba(2, 6, 23, 0.72));
+  pointer-events: none;
+}
+
+.mazeFeedback {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 9;
+  color: var(--lab-accent-c);
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.8rem;
+  font-weight: 900;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  animation: score-pulse 560ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.mazeFeedbackHit {
+  color: #fecaca;
+}
+
+.mazeSide {
+  display: grid;
+  align-content: start;
+  gap: 1rem;
+}
+
+.mazeActions {
+  display: grid;
+  gap: 0.65rem;
+  margin-top: 0.85rem;
+}
+
+.mazeDpad {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.55rem;
+  width: min(100%, 12rem);
+  margin-top: 0.85rem;
+  touch-action: none;
+}
+
+.mazeDirection {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3rem;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 0.95rem;
+  background: rgba(255, 255, 255, 0.06);
+  color: #f8fbff;
+  font-size: 1.35rem;
+  font-weight: 900;
+  transition:
+    transform 180ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 180ms cubic-bezier(0.16, 1, 0.3, 1),
+    background 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mazeDirection:first-child,
+.mazeDirection:last-child {
+  grid-column: 2;
+}
+
+.mazeDirection:hover {
+  transform: translateY(-1px);
+  border-color: rgba(103, 232, 249, 0.5);
+  background: rgba(103, 232, 249, 0.12);
+}
+
 .moduleGrid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -784,6 +1070,7 @@
 @media (max-width: 980px) {
   .hero,
   .runnerGrid,
+  .mazeLayout,
   .sectionHeader {
     grid-template-columns: 1fr;
   }
@@ -921,6 +1208,47 @@
     display: grid;
   }
 
+  .mazeStage {
+    min-height: auto;
+    border-radius: 1.25rem;
+    padding: 0.65rem;
+  }
+
+  .mazeHud {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .mazeHud div {
+    padding: 0.62rem;
+  }
+
+  .mazeMeta {
+    gap: 0.4rem;
+  }
+
+  .mazeMeta span {
+    padding: 0.34rem 0.52rem;
+  }
+
+  .mazeGrid {
+    gap: 0.22rem;
+    padding: 0.42rem;
+    border-radius: 1rem;
+  }
+
+  .mazeCell {
+    min-height: clamp(2.05rem, 10vw, 2.85rem);
+    border-radius: 0.55rem;
+  }
+
+  .mazeCellLabel {
+    font-size: clamp(0.42rem, 1.75vw, 0.52rem);
+  }
+
+  .mazeDpad {
+    width: 100%;
+  }
+
   .moduleGrid {
     grid-template-columns: 1fr;
   }
@@ -929,7 +1257,8 @@
 @media (prefers-reduced-motion: reduce) {
   .systemCore,
   .pipelineTrack,
-  .collectPulse {
+  .collectPulse,
+  .mazeFeedback {
     animation: none;
   }
 
@@ -939,7 +1268,10 @@
   .gameTab,
   .runnerAction,
   .laneControl,
+  .mazeDirection,
   .runnerStage,
+  .mazeStage,
+  .mazeCell,
   .moduleCard {
     transition: none;
   }
