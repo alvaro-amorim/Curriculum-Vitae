@@ -7,6 +7,7 @@ import { usePortfolioUi } from "@/components/layout/app-shell";
 import { ApiLatencyGame } from "@/components/lab/api-latency-game";
 import { ArchitectureBuilder } from "@/components/lab/architecture-builder";
 import { BugMaze } from "@/components/lab/bug-maze";
+import { DebugArena } from "@/components/lab/debug-arena";
 import { DebugChallenge } from "@/components/lab/debug-challenge";
 import { RuntimeRunner } from "@/components/lab/runtime-runner";
 import { labPageCopy } from "@/content/challenges";
@@ -16,7 +17,7 @@ import type { LabGameId } from "@/types/portfolio";
 import styles from "./developer-lab.module.css";
 
 type ScoreStatus = "idle" | "syncing" | "synced" | "failed";
-type FoundationGameId = Exclude<LabGameId, "runtime" | "bug-maze">;
+type FoundationGameId = Exclude<LabGameId, "runtime" | "bug-maze" | "debug-arena">;
 
 const foundationModules: {
   id: FoundationGameId;
@@ -63,16 +64,18 @@ const labCopy = {
     eyebrow: "Developer Arcade",
     title: "Jogos reais para raciocínio de runtime.",
     description:
-      "O Lab agora separa o arcade jogável dos módulos de treino. Runtime Runner e Bug Maze são jogos reais com loop, estado, score, teclado e toque.",
+      "O Lab agora separa o arcade jogável dos módulos de treino. Runtime Runner, Bug Maze e Debug Arena são jogos reais com estado, score, teclado e toque.",
     primary: "Jogar Runtime Runner",
     mazePrimary: "Jogar Bug Maze",
+    arenaPrimary: "Jogar Debug Arena",
     secondary: "Ver projetos",
     tertiary: "Abrir currículo",
     panelLabel: "arcade jogável",
-    panelTitle: "Runtime + Maze",
-    panelText: "Desvie de falhas em uma pipeline acelerada e navegue por um labirinto de debug até o deploy seguro.",
+    panelTitle: "Runtime + Maze + Arena",
+    panelText: "Desvie de falhas, navegue pelo labirinto de debug e escolha patches antes do build cair.",
     runtimeCardText: "Desvie de bugs, 404, timeout e falhas de build enquanto a pipeline acelera.",
     mazeCardText: "Colete patches, evite incidentes e encontre o deploy seguro no grid de execução.",
+    arenaCardText: "Analise bugs reais de web/API e escolha o patch mais seguro sob pressão.",
     session: "score da sessão",
     arcadeStatus: "Arcade em construção",
     trainingEyebrow: "módulos de treino",
@@ -88,16 +91,18 @@ const labCopy = {
     eyebrow: "Developer Arcade",
     title: "Real games for runtime reasoning.",
     description:
-      "The Lab now separates the playable arcade from training modules. Runtime Runner and Bug Maze are real games with loop, state, score, keyboard, and touch input.",
+      "The Lab now separates the playable arcade from training modules. Runtime Runner, Bug Maze, and Debug Arena are real games with state, score, keyboard, and touch input.",
     primary: "Play Runtime Runner",
     mazePrimary: "Play Bug Maze",
+    arenaPrimary: "Play Debug Arena",
     secondary: "View projects",
     tertiary: "Open resume",
     panelLabel: "playable arcade",
-    panelTitle: "Runtime + Maze",
-    panelText: "Avoid failures in an accelerating pipeline and navigate a debug maze toward the safe deploy.",
+    panelTitle: "Runtime + Maze + Arena",
+    panelText: "Avoid failures, navigate the debug maze, and choose patches before the build falls.",
     runtimeCardText: "Avoid bugs, 404, timeout, and build failures while the pipeline speeds up.",
     mazeCardText: "Collect patches, avoid incidents, and find the safe deploy in the execution grid.",
+    arenaCardText: "Analyze real web/API bugs and choose the safest patch under pressure.",
     session: "session score",
     arcadeStatus: "Arcade in progress",
     trainingEyebrow: "training modules",
@@ -113,14 +118,14 @@ const labCopy = {
 
 const roadmap = {
   pt: [
+    ["Debug Arena", "Terceiro jogo real: arena de patches com timer, risco, streak e review técnico."],
     ["Bug Maze", "Segundo jogo real: mapa de debug em grid com patches, incidentes e deploy seguro."],
-    ["Debug Arena", "Editor visual com falhas surgindo antes do build."],
     ["Latency Lab", "Simulação visual de API, cache, debounce e índice."],
     ["Runtime Runner", "Primeiro jogo real já jogável nesta fase."],
   ],
   en: [
+    ["Debug Arena", "Third real game: patch arena with timer, risk, streak, and technical review."],
     ["Bug Maze", "Second real game: debug grid with patches, incidents, and safe deploy."],
-    ["Debug Arena", "Visual editor with failures appearing before the build."],
     ["Latency Lab", "Visual simulation for API, cache, debounce, and indexing."],
     ["Runtime Runner", "First real game already playable in this phase."],
   ],
@@ -134,6 +139,7 @@ export function DeveloperLab() {
   const [scoreStatus, setScoreStatus] = useState<Record<LabGameId, ScoreStatus>>({
     runtime: "idle",
     "bug-maze": "idle",
+    "debug-arena": "idle",
     debug: "idle",
     architecture: "idle",
     latency: "idle",
@@ -210,6 +216,9 @@ export function DeveloperLab() {
               <a className={styles.actionSecondary} href="#bug-maze-title">
                 {copy.mazePrimary}
               </a>
+              <a className={styles.actionSecondary} href="#debug-arena-title">
+                {copy.arenaPrimary}
+              </a>
               <Link className={styles.actionSecondary} href="/projetos">
                 {copy.secondary}
               </Link>
@@ -250,6 +259,13 @@ export function DeveloperLab() {
                 {statusLabel("bug-maze")} {apiStatusLabel("bug-maze")}
               </span>
             </div>
+            <div className={styles.gameTab} aria-label="Debug Arena">
+              <span className={styles.gameTabTitle}>Debug Arena</span>
+              <span className={styles.gameTabDescription}>{copy.arenaCardText}</span>
+              <span className={styles.gameTabStatus}>
+                {statusLabel("debug-arena")} {apiStatusLabel("debug-arena")}
+              </span>
+            </div>
           </div>
         </aside>
 
@@ -259,6 +275,10 @@ export function DeveloperLab() {
 
         <section className={styles.gameShell}>
           <BugMaze locale={locale} onComplete={(score) => handleComplete("bug-maze", score)} />
+        </section>
+
+        <section className={styles.gameShell}>
+          <DebugArena locale={locale} onComplete={(score) => handleComplete("debug-arena", score)} />
         </section>
 
         <section className={styles.trainingShell}>
@@ -313,7 +333,7 @@ export function DeveloperLab() {
           <div className={styles.moduleGrid}>
             {roadmap[locale].map(([title, description]) => (
               <article className={styles.moduleCard} key={title}>
-                <p className={styles.moduleMeta}>{title === "Runtime Runner" || title === "Bug Maze" ? copy.playable : copy.pending}</p>
+                <p className={styles.moduleMeta}>{title === "Runtime Runner" || title === "Bug Maze" || title === "Debug Arena" ? copy.playable : copy.pending}</p>
                 <h3>{title}</h3>
                 <p className={styles.moduleText}>{description}</p>
               </article>
