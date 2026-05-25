@@ -729,6 +729,28 @@
     inset 0 0 0 1px rgba(251, 191, 36, 0.08);
 }
 
+.mazeStageWon {
+  border-color: rgba(52, 211, 153, 0.54);
+  box-shadow:
+    0 30px 105px rgba(52, 211, 153, 0.12),
+    inset 0 0 0 1px rgba(52, 211, 153, 0.1);
+}
+
+.mazeStageFailed {
+  border-color: rgba(248, 113, 113, 0.56);
+  box-shadow:
+    0 30px 105px rgba(248, 113, 113, 0.12),
+    inset 0 0 0 1px rgba(248, 113, 113, 0.1);
+}
+
+.mazeStageHitFlash {
+  animation: maze-stage-hit 420ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mazeStageBlocked {
+  animation: maze-stage-blocked 280ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
 .mazeHud {
   position: relative;
   z-index: 2;
@@ -774,11 +796,34 @@
   text-transform: none;
 }
 
-.mazeMeta span {
+.mazeMeta > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.42rem;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 999px;
   padding: 0.4rem 0.62rem;
   background: rgba(255, 255, 255, 0.045);
+}
+
+.mazeIncidentPips {
+  display: inline-flex;
+  gap: 0.2rem;
+}
+
+.mazeIncidentPips span {
+  width: 0.42rem;
+  height: 0.42rem;
+  padding: 0;
+  border: 1px solid rgba(248, 251, 255, 0.2);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.mazeIncidentPips .mazeIncidentPipActive {
+  border-color: rgba(248, 113, 113, 0.62);
+  background: rgba(248, 113, 113, 0.78);
+  box-shadow: 0 0 18px rgba(248, 113, 113, 0.28);
 }
 
 .mazeGrid {
@@ -828,11 +873,36 @@
   box-shadow: inset 0 0 34px rgba(52, 211, 153, 0.16);
 }
 
+.mazeGoal::after,
+.mazePatch::after,
+.mazeHazard::after,
+.mazeTrail::after {
+  position: absolute;
+  inset: 18%;
+  border-radius: inherit;
+  content: "";
+  pointer-events: none;
+}
+
+.mazeGoal::after {
+  border: 1px solid rgba(52, 211, 153, 0.34);
+  box-shadow:
+    0 0 34px rgba(52, 211, 153, 0.2),
+    inset 0 0 20px rgba(52, 211, 153, 0.16);
+}
+
 .mazePatch {
   border-color: rgba(103, 232, 249, 0.4);
   background:
     radial-gradient(circle at 50% 50%, rgba(103, 232, 249, 0.22), transparent 58%),
     rgba(8, 47, 73, 0.42);
+}
+
+.mazePatch::after {
+  inset: 32%;
+  border: 1px solid rgba(103, 232, 249, 0.36);
+  background: rgba(103, 232, 249, 0.14);
+  box-shadow: 0 0 26px rgba(103, 232, 249, 0.18);
 }
 
 .mazePatchCollected {
@@ -843,6 +913,13 @@
 
 .mazeHazard {
   box-shadow: inset 0 0 30px rgba(248, 113, 113, 0.1);
+}
+
+.mazeHazard::after {
+  inset: 12%;
+  border: 1px solid rgba(248, 251, 255, 0.08);
+  background: linear-gradient(135deg, transparent 0 45%, rgba(255, 255, 255, 0.12) 46% 54%, transparent 55%);
+  opacity: 0.72;
 }
 
 .mazeHazardBug {
@@ -878,6 +955,20 @@
   text-align: center;
 }
 
+.mazeTrail {
+  border-color: rgba(103, 232, 249, 0.22);
+  background:
+    radial-gradient(circle at 50% 50%, rgba(103, 232, 249, 0.14), transparent 58%),
+    rgba(103, 232, 249, 0.035);
+}
+
+.mazeTrail::after {
+  inset: 34%;
+  border-radius: 50%;
+  background: rgba(103, 232, 249, 0.26);
+  box-shadow: 0 0 22px rgba(103, 232, 249, 0.2);
+}
+
 .mazePlayer {
   position: absolute;
   inset: 22%;
@@ -890,6 +981,7 @@
   box-shadow:
     0 0 28px rgba(103, 232, 249, 0.36),
     inset 0 1px 0 rgba(255, 255, 255, 0.28);
+  animation: maze-player-step 180ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .mazeOverlay {
@@ -919,6 +1011,14 @@
 
 .mazeFeedbackHit {
   color: #fecaca;
+}
+
+.mazeFeedbackGood {
+  color: #bbf7d0;
+}
+
+.mazeFeedbackBlocked {
+  color: #fde68a;
 }
 
 .mazeSide {
@@ -1036,6 +1136,87 @@
   }
 }
 
+@keyframes maze-player-step {
+  0% {
+    opacity: 0.82;
+    transform: scale(0.72);
+  }
+
+  58% {
+    transform: scale(1.08);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes maze-stage-hit {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  18% {
+    transform: translateX(-0.18rem);
+  }
+
+  38% {
+    transform: translateX(0.16rem);
+  }
+
+  62% {
+    transform: translateX(-0.08rem);
+  }
+}
+
+@keyframes maze-stage-blocked {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  45% {
+    transform: translateY(0.12rem);
+  }
+}
+
+@keyframes maze-goal-pulse {
+  0%,
+  100% {
+    opacity: 0.72;
+    transform: scale(0.92);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+}
+
+@keyframes maze-patch-pulse {
+  0%,
+  100% {
+    transform: scale(0.86) rotate(0deg);
+  }
+
+  50% {
+    transform: scale(1.08) rotate(45deg);
+  }
+}
+
+@keyframes maze-hazard-warn {
+  0%,
+  100% {
+    opacity: 0.46;
+  }
+
+  50% {
+    opacity: 0.82;
+  }
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .systemCore {
     animation: core-breathe 5.6s ease-in-out infinite;
@@ -1043,6 +1224,18 @@
 
   .pipelineTrack {
     animation: rail-flow 12s linear infinite;
+  }
+
+  .mazeGoal::after {
+    animation: maze-goal-pulse 2.8s ease-in-out infinite;
+  }
+
+  .mazePatch::after {
+    animation: maze-patch-pulse 2.4s ease-in-out infinite;
+  }
+
+  .mazeHazard::after {
+    animation: maze-hazard-warn 1.5s ease-in-out infinite;
   }
 }
 
@@ -1226,7 +1419,7 @@
     gap: 0.4rem;
   }
 
-  .mazeMeta span {
+  .mazeMeta > span {
     padding: 0.34rem 0.52rem;
   }
 
@@ -1277,6 +1470,15 @@
   }
 
   .runnerStageHit {
+    animation: none;
+  }
+
+  .mazePlayer,
+  .mazeStageHitFlash,
+  .mazeStageBlocked,
+  .mazeGoal::after,
+  .mazePatch::after,
+  .mazeHazard::after {
     animation: none;
   }
 }

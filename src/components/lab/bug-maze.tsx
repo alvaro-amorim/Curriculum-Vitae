@@ -12,6 +12,7 @@ type MazeStatus = "idle" | "running" | "won" | "failed";
 type Direction = "up" | "down" | "left" | "right";
 type CellKind = "wall" | "path" | "start" | "goal" | "patch" | "hazard";
 type HazardKind = "bug" | "deadlock" | "memory" | "route";
+type FeedbackKind = "blocked" | "patch" | "hit" | "win" | "fail";
 
 type MazeCell = {
   x: number;
@@ -46,6 +47,8 @@ type BugMazeProps = {
 type StyleVars = CSSProperties & Record<`--${string}`, string | number>;
 
 const BEST_SCORE_KEY = "alvaro-dev-bug-maze-best-v1";
+const FAILURE_LIMIT = 3;
+const TRAIL_LIMIT = 5;
 
 const mazeDefinitions: MazeDefinition[] = [
   {
@@ -70,11 +73,26 @@ const mazeDefinitions: MazeDefinition[] = [
     },
     rows: [
       "#########",
-      "#S..P..G#",
-      "#.###.#.#",
+      "#S..P#..#",
+      "#.###.#G#",
       "#...M.#.#",
       "###.#...#",
       "#R..P.B.#",
+      "#########",
+    ],
+  },
+  {
+    name: {
+      pt: "Rollback quente",
+      en: "Hot rollback",
+    },
+    rows: [
+      "#########",
+      "#S#..P.G#",
+      "#.#.###.#",
+      "#...B...#",
+      "###.#.#.#",
+      "#P..M.R.#",
       "#########",
     ],
   },
@@ -132,6 +150,8 @@ const copy = {
     blocked: "parede de execu\u00e7\u00e3o",
     patch: "+patch aplicado",
     hit: "incidente detectado",
+    win: "deploy liberado",
+    fail: "limite de incidentes",
     controlsTitle: "Controles",
     rulesTitle: "Regras",
     rules: [
@@ -176,6 +196,8 @@ const copy = {
     blocked: "execution wall",
     patch: "+patch applied",
     hit: "incident detected",
+    win: "deploy cleared",
+    fail: "incident limit",
     controlsTitle: "Controls",
     rulesTitle: "Rules",
     rules: [
@@ -272,13 +294,14 @@ export function BugMaze({ locale, onComplete }: BugMazeProps) {
   const maze = useMemo(() => parseMaze(mazeDefinitions[layoutIndex]), [layoutIndex]);
   const [status, setStatus] = useState<MazeStatus>("idle");
   const [position, setPosition] = useState<Position>(() => parseMaze(mazeDefinitions[0]).start);
+  const [trail, setTrail] = useState<string[]>([]);
   const [collectedPatches, setCollectedPatches] = useState<Set<string>>(() => new Set());
   const [moves, setMoves] = useState(0);
   const [elapsed, setElapsed] = useState(0);
   const [hits, setHits] = useState(0);
   const [bestScore, setBestScore] = useState(0);
   const [finalScore, setFinalScore] = useState<number | null>(null);
-  const [feedback, setFeedback] = useState<{ id: number; kind: "blocked" | "patch" | "hit" } | null>(null);
+  const [feedback, setFeedback] = useState<{ id: number; kind: FeedbackKind } | null>(null);
   const [reducedMotion, setReducedMotion] = useState(false);
 
   useEffect(() => {
@@ -317,7 +340,7 @@ export function BugMaze({ locale, onComplete }: BugMazeProps) {
     [collectedPatches.size, elapsed, finalScore, hits, maze.patches.length, moves, status],
   );
 
-  const triggerFeedback = useCallback((kind: "blocked" | "patch" | "hit") => {
+  const triggerFeedback = useCallback((kind: FeedbackKind) => {
     setFeedback({ id: Date.now(), kind });
   }, []);
 
@@ -326,6 +349,7 @@ export function BugMaze({ locale, onComplete }: BugMazeProps) {
       const nextMaze = parseMaze(mazeDefinitions[nextLayout]);
       setLayoutIndex(nextLayout);
       setPosition(nextMaze.start);
+      setTrail([]);
       setCollectedPatches(new Set());
       setMoves(0);
       setElapsed(0);
@@ -345,6 +369,7 @@ export function BugMaze({ locale, onComplete }: BugMazeProps) {
       });
       setFinalScore(score);
       setStatus(nextStatus);
+      triggerFeedback(nextStatus === "won" ? "win" : "fail");
       setBestScore((current) => {
         const best = Math.max(current, score);
         window.localStorage.setItem(BEST_SCORE_KEY, String(best));
@@ -352,7 +377,7 @@ export function BugMaze({ locale, onComplete }: BugMazeProps) {
       });
       onComplete(score);
     },
-    [onComplete],
+    [onComplete, triggerFeedback],
   );
 
   const move = useCallback(
@@ -378,9 +403,11 @@ export function BugMaze({ locale, onComplete }: BugMazeProps) {
       const nextMoves = moves + 1;
       let nextHits = hits;
       const nextCollected = new Set(collectedPatches);
+      const currentKey = cellKey(position);
 
       setPosition(nextPosition);
       setMoves(nextMoves);
+      setTrail((current) => [currentKey, ...current.filter((key) => key !== currentKey)].slice(0, TRAIL_LIMIT));
 
       if (nextCell.kind === "patch" && !nextCollected.has(cellKey(nextPosition))) {
         nextCollected.add(cellKey(nextPosition));
@@ -404,7 +431,7 @@ export function BugMaze({ locale, onComplete }: BugMazeProps) {
 
       if (nextCell.kind === "goal") {
         finishGame("won", snapshot);
-      } else if (nextHits >= 3) {
+      } else if (nextHits >= FAILURE_LIMIT) {
         finishGame("failed", snapshot);
       }
     },
@@ -467,7 +494,14 @@ export function BugMaze({ locale, onComplete }: BugMazeProps) {
       <div className={styles.mazeLayout}>
         <div
           aria-label={`${t.eyebrow}: ${mazeDefinitions[layoutIndex].name[locale]}`}
-          className={`${styles.mazeStage} ${hits >= 2 && status === "running" ? styles.mazeStageDanger : ""}`}
+          className={[
+            styles.mazeStage,
+            hits >= FAILURE_LIMIT - 1 && status === "running" ? styles.mazeStageDanger : "",
+            status === "won" ? styles.mazeStageWon : "",
+            status === "failed" ? styles.mazeStageFailed : "",
+            feedback?.kind === "hit" || feedback?.kind === "fail" ? styles.mazeStageHitFlash : "",
+            feedback?.kind === "blocked" ? styles.mazeStageBlocked : "",
+          ].join(" ")}
           onKeyDown={handleBoardKeyDown}
           role="group"
           tabIndex={0}
@@ -497,7 +531,12 @@ export function BugMaze({ locale, onComplete }: BugMazeProps) {
               {t.patches}: {collectedPatches.size}/{maze.patches.length}
             </span>
             <span>
-              {t.incidents}: {hits}/3
+              {t.incidents}: {hits}/{FAILURE_LIMIT}
+              <span className={styles.mazeIncidentPips} aria-hidden="true">
+                {Array.from({ length: FAILURE_LIMIT }, (_, index) => (
+                  <span className={index < hits ? styles.mazeIncidentPipActive : ""} key={index} />
+                ))}
+              </span>
             </span>
           </div>
 
@@ -505,6 +544,7 @@ export function BugMaze({ locale, onComplete }: BugMazeProps) {
             {maze.cells.map((cell) => {
               const key = cellKey(cell);
               const hasPlayer = position.x === cell.x && position.y === cell.y;
+              const isTrail = trail.includes(key) && !hasPlayer;
               const patchCollected = cell.kind === "patch" && collectedPatches.has(key);
               const classNames = [
                 styles.mazeCell,
@@ -514,14 +554,15 @@ export function BugMaze({ locale, onComplete }: BugMazeProps) {
                 cell.kind === "start" ? styles.mazeStart : "",
                 cell.kind === "hazard" && cell.hazard ? `${styles.mazeHazard} ${hazardClassNames[cell.hazard]}` : "",
                 patchCollected ? styles.mazePatchCollected : "",
+                isTrail ? styles.mazeTrail : "",
               ].join(" ");
 
               return (
                 <span className={classNames} key={key}>
-                  {cell.kind === "goal" ? <span className={styles.mazeCellLabel}>DEPLOY</span> : null}
+                  {cell.kind === "goal" ? <span className={styles.mazeCellLabel}>SAFE DEPLOY</span> : null}
                   {cell.kind === "patch" && !patchCollected ? <span className={styles.mazeCellLabel}>PATCH</span> : null}
                   {cell.kind === "hazard" && cell.hazard ? <span className={styles.mazeCellLabel}>{hazardLabels[cell.hazard]}</span> : null}
-                  {hasPlayer ? <span className={styles.mazePlayer} /> : null}
+                  {hasPlayer ? <span className={styles.mazePlayer} key={`${key}-${moves}`} /> : null}
                 </span>
               );
             })}
@@ -538,7 +579,16 @@ export function BugMaze({ locale, onComplete }: BugMazeProps) {
           ) : null}
 
           {feedback ? (
-            <span className={`${styles.mazeFeedback} ${feedback.kind === "hit" ? styles.mazeFeedbackHit : ""}`} key={feedback.id}>
+            <span
+              aria-live="polite"
+              className={[
+                styles.mazeFeedback,
+                feedback.kind === "hit" || feedback.kind === "fail" ? styles.mazeFeedbackHit : "",
+                feedback.kind === "win" || feedback.kind === "patch" ? styles.mazeFeedbackGood : "",
+                feedback.kind === "blocked" ? styles.mazeFeedbackBlocked : "",
+              ].join(" ")}
+              key={feedback.id}
+            >
               {feedbackLabel}
             </span>
           ) : null}
