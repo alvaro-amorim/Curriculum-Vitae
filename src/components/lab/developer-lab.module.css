@@ -300,6 +300,14 @@
   margin-top: 1.1rem;
 }
 
+.scorePanel .gameTabs {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.trainingShell .gameTabs {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
 .gameTab {
   width: 100%;
   border: 1px solid rgba(255, 255, 255, 0.12);
@@ -2406,6 +2414,11 @@
   .moduleGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .scorePanel .gameTabs,
+  .trainingShell .gameTabs {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 640px) {
@@ -2475,6 +2488,10 @@
   .runnerHud {
     display: grid;
     grid-template-columns: 1fr 1fr;
+  }
+
+  .scorePanel .gameTabs {
+    grid-template-columns: 1fr;
   }
 
   .stageMessage {

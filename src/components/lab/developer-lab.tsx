@@ -73,14 +73,14 @@ const labCopy = {
     secondary: "Ver projetos",
     tertiary: "Abrir currículo",
     panelLabel: "arcade jogável",
-    panelTitle: "Runtime + Maze + Arena + Latency",
+    panelTitle: "4 jogos reais ativos",
     panelText: "Desvie de falhas, navegue pelo labirinto, escolha patches e estabilize uma pipeline de performance simulada.",
     runtimeCardText: "Desvie de bugs, 404, timeout e falhas de build enquanto a pipeline acelera.",
     mazeCardText: "Colete patches, evite incidentes e encontre o deploy seguro no grid de execução.",
     arenaCardText: "Analise bugs reais de web/API e escolha o patch mais seguro sob pressão.",
     latencyCardText: "Reduza p95, erro e load com decisões de cache, índice, fila e payload sem chamar API externa.",
     session: "score da sessão",
-    arcadeStatus: "Arcade em construção",
+    arcadeStatus: "Arcade completo",
     trainingEyebrow: "módulos de treino",
     trainingTitle: "Módulos de base rebaixados para treino.",
     trainingText:
@@ -102,14 +102,14 @@ const labCopy = {
     secondary: "View projects",
     tertiary: "Open resume",
     panelLabel: "playable arcade",
-    panelTitle: "Runtime + Maze + Arena + Latency",
+    panelTitle: "4 real games active",
     panelText: "Avoid failures, navigate the maze, choose patches, and stabilize a simulated performance pipeline.",
     runtimeCardText: "Avoid bugs, 404, timeout, and build failures while the pipeline speeds up.",
     mazeCardText: "Collect patches, avoid incidents, and find the safe deploy in the execution grid.",
     arenaCardText: "Analyze real web/API bugs and choose the safest patch under pressure.",
     latencyCardText: "Reduce p95, errors, and load with cache, index, queue, and payload decisions without calling an external API.",
     session: "session score",
-    arcadeStatus: "Arcade in progress",
+    arcadeStatus: "Arcade complete",
     trainingEyebrow: "training modules",
     trainingTitle: "Foundation modules moved to training.",
     trainingText:
@@ -123,16 +123,16 @@ const labCopy = {
 
 const roadmap = {
   pt: [
-    ["Debug Arena", "Terceiro jogo real: arena de patches com timer, risco, streak e review técnico."],
+    ["Runtime Runner", "Primeiro jogo real: runner de pipeline com colisão, score, pause e dificuldade progressiva."],
     ["Bug Maze", "Segundo jogo real: mapa de debug em grid com patches, incidentes e deploy seguro."],
+    ["Debug Arena", "Terceiro jogo real: arena de patches com timer, risco, streak e review técnico."],
     ["Latency Lab", "Quarto jogo real: simulação de p95, erro, cache, budget e decisões de performance."],
-    ["Runtime Runner", "Primeiro jogo real já jogável nesta fase."],
   ],
   en: [
-    ["Debug Arena", "Third real game: patch arena with timer, risk, streak, and technical review."],
+    ["Runtime Runner", "First real game: pipeline runner with collision, score, pause, and progressive difficulty."],
     ["Bug Maze", "Second real game: debug grid with patches, incidents, and safe deploy."],
+    ["Debug Arena", "Third real game: patch arena with timer, risk, streak, and technical review."],
     ["Latency Lab", "Fourth real game: p95, error, cache, budget, and performance decision simulation."],
-    ["Runtime Runner", "First real game already playable in this phase."],
   ],
 } as const;
 
