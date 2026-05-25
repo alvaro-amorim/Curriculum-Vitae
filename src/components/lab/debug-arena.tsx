@@ -39,8 +39,10 @@ type ArenaResult = {
   earned: number;
   scoreAfter: number;
   stabilityAfter: number;
+  confidenceAfter: number;
   streakAfter: number;
   timedOut: boolean;
+  event: LocalizedText;
   feedback: LocalizedText;
   review: LocalizedText;
 };
@@ -48,6 +50,14 @@ type ArenaResult = {
 type DebugArenaProps = {
   locale: Locale;
   onComplete: (score: number) => void;
+};
+
+type ArenaImpact = {
+  id: number;
+  kind: FixKind;
+  label: LocalizedText;
+  delta: number;
+  confidence: number;
 };
 
 type StyleVars = CSSProperties & Record<`--${string}`, string | number>;
@@ -624,11 +634,16 @@ const copy = {
     restart: "Reiniciar arena",
     next: "Pr\u00f3ximo bug",
     finish: "Ver resumo",
-    choosePrefix: "Patch",
+    choosePrefix: "A\u00e7\u00e3o",
     score: "score",
     best: "melhor",
     streak: "streak",
     stability: "estabilidade",
+    confidence: "confian\u00e7a",
+    risk: "risco",
+    impact: "impacto",
+    impactIdle: "sistema aguardando patch",
+    combo: "combo",
     time: "tempo",
     round: "rodada",
     idleStatus: "aguardando triagem",
@@ -637,7 +652,7 @@ const copy = {
     completedStatus: "arena conclu\u00edda",
     failedStatus: "build derrubado",
     idleTitle: "Escolha o patch mais seguro.",
-    idleText: "Use 1/2/3, setas + Enter ou toque nos patches. Cada decis\u00e3o altera score, estabilidade e streak.",
+    idleText: "Use 1/2/3, setas + Enter ou toque nas a\u00e7\u00f5es. Cada decis\u00e3o altera score, estabilidade, confian\u00e7a e streak.",
     completedTitle: "Build protegido.",
     failedTitle: "Estabilidade esgotada.",
     timeout: "Tempo esgotado. O bug avan\u00e7ou para produ\u00e7\u00e3o.",
@@ -658,11 +673,16 @@ const copy = {
     restart: "Restart arena",
     next: "Next bug",
     finish: "View summary",
-    choosePrefix: "Patch",
+    choosePrefix: "Action",
     score: "score",
     best: "best",
     streak: "streak",
     stability: "stability",
+    confidence: "confidence",
+    risk: "risk",
+    impact: "impact",
+    impactIdle: "system waiting for patch",
+    combo: "combo",
     time: "time",
     round: "round",
     idleStatus: "waiting for triage",
@@ -671,7 +691,7 @@ const copy = {
     completedStatus: "arena completed",
     failedStatus: "build failed",
     idleTitle: "Choose the safest patch.",
-    idleText: "Use 1/2/3, arrows + Enter, or tap the patches. Each decision changes score, stability, and streak.",
+    idleText: "Use 1/2/3, arrows + Enter, or tap the actions. Each decision changes score, stability, confidence, and streak.",
     completedTitle: "Build protected.",
     failedTitle: "Stability depleted.",
     timeout: "Time expired. The bug advanced to production.",
@@ -686,10 +706,110 @@ const copy = {
   },
 } as const;
 
+const arenaEvents: Record<FixKind | "timeout", LocalizedText> = {
+  safe: {
+    pt: "patch aplicado",
+    en: "patch applied",
+  },
+  partial: {
+    pt: "risco contido parcialmente",
+    en: "risk partly contained",
+  },
+  danger: {
+    pt: "regress\u00e3o introduzida",
+    en: "regression introduced",
+  },
+  timeout: {
+    pt: "timeout escalou",
+    en: "timeout escalated",
+  },
+};
+
+const optionActions: Record<string, LocalizedText> = {
+  "schema-first": {
+    pt: "Aplicar contrato de entrada",
+    en: "Apply input contract",
+  },
+  "try-catch-only": {
+    pt: "Conter exce\u00e7\u00e3o",
+    en: "Contain exception",
+  },
+  "cast-any": {
+    pt: "Ignorar contrato",
+    en: "Bypass contract",
+  },
+  "derive-with-memo": {
+    pt: "Estabilizar render",
+    en: "Stabilize render",
+  },
+  "debounce-render": {
+    pt: "Amortecer sintoma",
+    en: "Dampen symptom",
+  },
+  "disable-eslint": {
+    pt: "Silenciar alerta",
+    en: "Silence alert",
+  },
+  "server-route": {
+    pt: "Mover segredo para server",
+    en: "Move secret server-side",
+  },
+  "rename-env": {
+    pt: "Renomear vari\u00e1vel",
+    en: "Rename variable",
+  },
+  "hide-in-localstorage": {
+    pt: "Persistir segredo no browser",
+    en: "Persist secret in browser",
+  },
+  "responsive-minmax": {
+    pt: "Liberar grid responsivo",
+    en: "Release responsive grid",
+  },
+  "overflow-hidden": {
+    pt: "Mascarar overflow",
+    en: "Mask overflow",
+  },
+  "scale-page": {
+    pt: "For\u00e7ar escala",
+    en: "Force scale",
+  },
+  "honest-fallback": {
+    pt: "Ativar fallback honesto",
+    en: "Enable honest fallback",
+  },
+  "remote-random": {
+    pt: "Usar imagem externa",
+    en: "Use external image",
+  },
+  "empty-alt": {
+    pt: "Ocultar aus\u00eancia",
+    en: "Hide absence",
+  },
+  "check-ok": {
+    pt: "Tratar status HTTP",
+    en: "Handle HTTP status",
+  },
+  "retry-forever": {
+    pt: "Repetir sem limite",
+    en: "Retry without limit",
+  },
+  "catch-empty": {
+    pt: "Silenciar falha",
+    en: "Silence failure",
+  },
+};
+
 const optionToneClasses: Record<FixKind, string> = {
   safe: styles.arenaOptionSafe,
   partial: styles.arenaOptionPartial,
   danger: styles.arenaOptionDanger,
+};
+
+const impactToneClasses: Record<FixKind, string> = {
+  safe: styles.arenaImpactSafe,
+  partial: styles.arenaImpactPartial,
+  danger: styles.arenaImpactDanger,
 };
 
 function readBestScore() {
@@ -712,15 +832,19 @@ export function DebugArena({ locale, onComplete }: DebugArenaProps) {
   const [roundIndex, setRoundIndex] = useState(0);
   const [score, setScore] = useState(0);
   const [stability, setStability] = useState(100);
+  const [confidence, setConfidence] = useState(72);
   const [streak, setStreak] = useState(0);
   const [bestScore, setBestScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(ROUND_TIME);
   const [focusedOption, setFocusedOption] = useState(0);
   const [result, setResult] = useState<ArenaResult | null>(null);
+  const [impactLog, setImpactLog] = useState<ArenaImpact[]>([]);
+  const [impactPulse, setImpactPulse] = useState(0);
   const [reducedMotion, setReducedMotion] = useState(false);
   const currentScenario = arenaScenarios[roundIndex];
   const roundCount = arenaScenarios.length;
   const progress = ((roundIndex + (status === "completed" || status === "failed" ? 1 : 0)) / roundCount) * 100;
+  const isCriticalTime = status === "playing" && timeLeft <= 8;
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- Browser preferences and localStorage are client-only.
@@ -751,9 +875,12 @@ export function DebugArena({ locale, onComplete }: DebugArenaProps) {
     setRoundIndex(0);
     setScore(0);
     setStability(100);
+    setConfidence(72);
     setStreak(0);
     setFocusedOption(0);
     setResult(null);
+    setImpactLog([]);
+    setImpactPulse(0);
     setTimeLeft(reducedMotion ? REDUCED_ROUND_TIME : ROUND_TIME);
   }, [reducedMotion]);
 
@@ -769,14 +896,20 @@ export function DebugArena({ locale, onComplete }: DebugArenaProps) {
       const earned = timedOut ? -12 : option.points + timeBonus + streakBonus;
       const nextScore = clampScore(score + earned);
       const nextStability = Math.max(0, Math.min(100, stability + (timedOut ? -22 : option.stability)));
+      const confidenceDelta = timedOut ? -22 : option.kind === "safe" ? 10 + Math.min(8, nextStreak * 2) : option.kind === "partial" ? -6 : -24;
+      const nextConfidence = Math.max(0, Math.min(100, confidence + confidenceDelta));
+      const resultKind = timedOut ? "danger" : option.kind;
+      const event = timedOut ? arenaEvents.timeout : arenaEvents[resultKind];
       const nextResult: ArenaResult = {
         optionId: option.id,
-        kind: timedOut ? "danger" : option.kind,
+        kind: resultKind,
         earned,
         scoreAfter: nextScore,
         stabilityAfter: nextStability,
+        confidenceAfter: nextConfidence,
         streakAfter: nextStreak,
         timedOut,
+        event,
         feedback: timedOut ? { pt: copy.pt.timeout, en: copy.en.timeout } : option.feedback,
         review: option.review,
       };
@@ -784,10 +917,24 @@ export function DebugArena({ locale, onComplete }: DebugArenaProps) {
       setResult(nextResult);
       setScore(nextScore);
       setStability(nextStability);
+      setConfidence(nextConfidence);
       setStreak(nextStreak);
+      setImpactLog((current) =>
+        [
+          {
+            id: Date.now(),
+            kind: resultKind,
+            label: event,
+            delta: earned,
+            confidence: nextConfidence,
+          },
+          ...current,
+        ].slice(0, 3),
+      );
+      setImpactPulse((current) => current + 1);
       setStatus("feedback");
     },
-    [score, stability, status, streak, timeLeft],
+    [confidence, score, stability, status, streak, timeLeft],
   );
 
   const handleTimeout = useCallback(() => {
@@ -929,6 +1076,7 @@ export function DebugArena({ locale, onComplete }: DebugArenaProps) {
             status === "feedback" && result ? styles[`arenaStage${result.kind[0].toUpperCase()}${result.kind.slice(1)}`] : "",
             status === "completed" ? styles.arenaStageCompleted : "",
             status === "failed" ? styles.arenaStageFailed : "",
+            isCriticalTime ? styles.arenaStageCritical : "",
           ].join(" ")}
           onKeyDown={handlePanelKeyDown}
           role="group"
@@ -937,7 +1085,9 @@ export function DebugArena({ locale, onComplete }: DebugArenaProps) {
           <div className={styles.arenaHud}>
             <div>
               <span>{t.score}</span>
-              <strong aria-live="polite">{score}</strong>
+              <strong aria-live="polite" className={impactPulse > 0 ? styles.arenaHudPulse : ""} key={`score-${impactPulse}`}>
+                {score}
+              </strong>
             </div>
             <div>
               <span>{t.best}</span>
@@ -945,11 +1095,14 @@ export function DebugArena({ locale, onComplete }: DebugArenaProps) {
             </div>
             <div>
               <span>{t.streak}</span>
-              <strong>{streak}</strong>
+              <strong>
+                {streak}
+                {streak > 1 ? <em className={styles.arenaComboChip}>{t.combo}</em> : null}
+              </strong>
             </div>
             <div>
               <span>{t.time}</span>
-              <strong>{timeLeft}s</strong>
+              <strong className={isCriticalTime ? styles.arenaTimeCritical : ""}>{timeLeft}s</strong>
             </div>
           </div>
 
@@ -990,7 +1143,33 @@ export function DebugArena({ locale, onComplete }: DebugArenaProps) {
                 <strong>{stability}</strong>
                 <i style={{ "--stability": `${stability}%` } as StyleVars} />
               </div>
+
+              <div className={styles.arenaSystemGrid}>
+                <div className={`${styles.arenaMiniMeter} ${styles.arenaRiskMeter}`} aria-label={`${t.risk}: ${100 - stability}`}>
+                  <span>{t.risk}</span>
+                  <strong>{100 - stability}</strong>
+                  <i style={{ "--meter": `${100 - stability}%` } as StyleVars} />
+                </div>
+                <div className={`${styles.arenaMiniMeter} ${styles.arenaConfidenceMeter}`} aria-label={`${t.confidence}: ${confidence}`}>
+                  <span>{t.confidence}</span>
+                  <strong>{confidence}</strong>
+                  <i style={{ "--meter": `${confidence}%` } as StyleVars} />
+                </div>
+              </div>
             </aside>
+          </div>
+
+          <div className={styles.arenaImpactRail} aria-live="polite">
+            <span className={styles.arenaImpactLabel}>{t.impact}</span>
+            {impactLog.length > 0 ? (
+              impactLog.map((impact) => (
+                <span className={[styles.arenaImpactItem, impactToneClasses[impact.kind]].join(" ")} key={impact.id}>
+                  {impact.label[locale]} / {signed(impact.delta)} / {t.confidence} {impact.confidence}
+                </span>
+              ))
+            ) : (
+              <span className={styles.arenaImpactEmpty}>{t.impactIdle}</span>
+            )}
           </div>
 
           {status === "idle" || status === "completed" || status === "failed" ? (
@@ -1030,6 +1209,7 @@ export function DebugArena({ locale, onComplete }: DebugArenaProps) {
             {currentScenario.options.map((option, index) => {
               const isFocused = focusedOption === index;
               const isSelected = result?.optionId === option.id;
+              const actionLabel = optionActions[option.id] ?? option.label;
 
               return (
                 <button
@@ -1049,8 +1229,11 @@ export function DebugArena({ locale, onComplete }: DebugArenaProps) {
                   <span className={styles.arenaOptionMeta}>
                     {t.choosePrefix} {index + 1} / {t[option.kind]}
                   </span>
-                  <strong>{option.label[locale]}</strong>
-                  <span id={`debug-arena-option-${option.id}`}>{option.detail[locale]}</span>
+                  <strong>{actionLabel[locale]}</strong>
+                  <span>{option.label[locale]}</span>
+                  <span className={styles.arenaOptionDetail} id={`debug-arena-option-${option.id}`}>
+                    {option.detail[locale]}
+                  </span>
                 </button>
               );
             })}
@@ -1059,12 +1242,13 @@ export function DebugArena({ locale, onComplete }: DebugArenaProps) {
           {status === "feedback" && result ? (
             <div className={[styles.arenaFeedback, styles[`arenaFeedback${result.kind[0].toUpperCase()}${result.kind.slice(1)}`]].join(" ")}>
               <p className={styles.gameStatus}>
-                {result.timedOut ? t.timeout : result.feedback[locale]} / {signed(result.earned)}
+                {result.event[locale]} / {result.timedOut ? t.timeout : result.feedback[locale]} / {signed(result.earned)}
               </p>
-              <h3>{resultOption?.label[locale]}</h3>
+              <h3>{resultOption ? (optionActions[resultOption.id] ?? resultOption.label)[locale] : result.feedback[locale]}</h3>
               <p>{result.review[locale]}</p>
               <p>
-                {t.score}: {result.scoreAfter} / {t.stability}: {result.stabilityAfter} / {t.streak}: {result.streakAfter}
+                {t.score}: {result.scoreAfter} / {t.stability}: {result.stabilityAfter} / {t.confidence}: {result.confidenceAfter} / {t.streak}:{" "}
+                {result.streakAfter}
               </p>
               <button className={`${styles.runnerAction} ${styles.runnerActionPrimary}`} onClick={advanceRound} type="button">
                 {roundIndex >= roundCount - 1 || result.stabilityAfter <= 0 ? t.finish : t.next}

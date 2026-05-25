@@ -31,7 +31,7 @@ const foundationModules: {
       en: "Debug Challenge",
     },
     description: {
-      pt: "Treino de depuração em JavaScript, React e chamadas HTTP. Útil como foundation, não como mini-game final.",
+      pt: "Treino de depuração em JavaScript, React e chamadas HTTP. Útil como base, não como jogo final.",
       en: "Debugging training in JavaScript, React, and HTTP calls. Useful as foundation, not as a final mini-game.",
     },
   },
@@ -79,7 +79,7 @@ const labCopy = {
     session: "score da sessão",
     arcadeStatus: "Arcade em construção",
     trainingEyebrow: "módulos de treino",
-    trainingTitle: "Foundation modules rebaixados para treino.",
+    trainingTitle: "Módulos de base rebaixados para treino.",
     trainingText:
       "Os desafios antigos continuam úteis para raciocínio técnico, mas não são vendidos como jogos finais. Eles ficam como módulos de base do Developer Lab.",
     roadmapEyebrow: "próximos jogos",

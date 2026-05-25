@@ -1135,6 +1135,13 @@
     inset 0 0 0 1px rgba(248, 113, 113, 0.1);
 }
 
+.arenaStageCritical {
+  border-color: rgba(251, 191, 36, 0.58);
+  box-shadow:
+    0 28px 105px rgba(251, 191, 36, 0.12),
+    inset 0 0 0 1px rgba(251, 191, 36, 0.12);
+}
+
 .arenaHud {
   position: relative;
   z-index: 2;
@@ -1167,6 +1174,32 @@
   font-family: var(--font-mono), ui-monospace, monospace;
   font-size: clamp(1.2rem, 2.4vw, 2rem);
   line-height: 1;
+}
+
+.arenaHudPulse {
+  animation: arena-score-pulse 320ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.arenaComboChip {
+  display: inline-grid;
+  margin-left: 0.45rem;
+  transform: translateY(-0.16rem);
+  border: 1px solid rgba(103, 232, 249, 0.28);
+  border-radius: 999px;
+  padding: 0.18rem 0.42rem;
+  background: rgba(103, 232, 249, 0.1);
+  color: var(--lab-accent-a);
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.58rem;
+  font-style: normal;
+  font-weight: 900;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.arenaTimeCritical {
+  color: #fbbf24;
+  text-shadow: 0 0 18px rgba(251, 191, 36, 0.34);
 }
 
 .arenaProgress {
@@ -1337,6 +1370,118 @@
   transition: width 240ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+.arenaSystemGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.55rem;
+  margin-top: 0.8rem;
+}
+
+.arenaMiniMeter {
+  display: grid;
+  gap: 0.38rem;
+  min-width: 0;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 0.95rem;
+  padding: 0.72rem;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.arenaMiniMeter span {
+  color: rgba(237, 246, 255, 0.62);
+  font-size: 0.66rem;
+  font-weight: 850;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.arenaMiniMeter strong {
+  color: #fff;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.arenaMiniMeter i {
+  display: block;
+  height: 0.34rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.arenaMiniMeter i::before {
+  display: block;
+  width: var(--meter, 0%);
+  height: 100%;
+  border-radius: inherit;
+  content: "";
+  transition: width 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.arenaRiskMeter i::before {
+  background: linear-gradient(90deg, rgba(251, 191, 36, 0.76), rgba(248, 113, 113, 0.78));
+}
+
+.arenaConfidenceMeter i::before {
+  background: linear-gradient(90deg, rgba(103, 232, 249, 0.74), rgba(52, 211, 153, 0.78));
+}
+
+.arenaImpactRail {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  align-items: center;
+  margin-top: 0.85rem;
+}
+
+.arenaImpactLabel,
+.arenaImpactEmpty,
+.arenaImpactItem {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  padding: 0.38rem 0.6rem;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.68rem;
+  font-weight: 850;
+  line-height: 1.15;
+}
+
+.arenaImpactLabel {
+  border-color: rgba(103, 232, 249, 0.24);
+  background: rgba(103, 232, 249, 0.08);
+  color: var(--lab-accent-a);
+  text-transform: uppercase;
+}
+
+.arenaImpactEmpty {
+  color: rgba(237, 246, 255, 0.56);
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.arenaImpactItem {
+  color: rgba(248, 251, 255, 0.88);
+  background: rgba(255, 255, 255, 0.045);
+  animation: arena-impact-enter 260ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.arenaImpactSafe {
+  border-color: rgba(52, 211, 153, 0.3);
+  background: rgba(52, 211, 153, 0.08);
+}
+
+.arenaImpactPartial {
+  border-color: rgba(251, 191, 36, 0.3);
+  background: rgba(251, 191, 36, 0.08);
+}
+
+.arenaImpactDanger {
+  border-color: rgba(248, 113, 113, 0.34);
+  background: rgba(248, 113, 113, 0.09);
+}
+
 .arenaOverlay {
   position: absolute;
   inset: 0;
@@ -1406,11 +1551,17 @@
   line-height: 1.25;
 }
 
-.arenaOption span:last-child {
+.arenaOption > span:not(.arenaOptionMeta) {
   color: rgba(237, 246, 255, 0.66);
   font-size: 0.78rem;
   font-weight: 650;
-  line-height: 1.5;
+  line-height: 1.42;
+}
+
+.arenaOptionDetail {
+  border-left: 2px solid rgba(103, 232, 249, 0.26);
+  padding-left: 0.58rem;
+  color: rgba(237, 246, 255, 0.54) !important;
 }
 
 .arenaOptionFocused,
@@ -1633,6 +1784,35 @@
   }
 
   100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes arena-score-pulse {
+  0% {
+    transform: translateY(0);
+    text-shadow: none;
+  }
+
+  45% {
+    transform: translateY(-0.08rem);
+    text-shadow: 0 0 22px rgba(103, 232, 249, 0.42);
+  }
+
+  100% {
+    transform: translateY(0);
+    text-shadow: none;
+  }
+}
+
+@keyframes arena-impact-enter {
+  from {
+    opacity: 0;
+    transform: translateY(0.32rem);
+  }
+
+  to {
     opacity: 1;
     transform: translateY(0);
   }
@@ -1902,6 +2082,26 @@
     gap: 0.75rem;
   }
 
+  .arenaSystemGrid {
+    gap: 0.42rem;
+  }
+
+  .arenaMiniMeter {
+    padding: 0.58rem;
+  }
+
+  .arenaImpactRail {
+    gap: 0.34rem;
+    margin-top: 0.65rem;
+  }
+
+  .arenaImpactLabel,
+  .arenaImpactEmpty,
+  .arenaImpactItem {
+    padding: 0.34rem 0.48rem;
+    font-size: 0.6rem;
+  }
+
   .arenaEditorHeader {
     display: grid;
   }
@@ -1921,6 +2121,10 @@
 
   .arenaOption {
     padding: 0.78rem;
+  }
+
+  .arenaOption strong {
+    font-size: 0.9rem;
   }
 
   .moduleGrid {
@@ -1962,6 +2166,8 @@
   .mazeGoal::after,
   .mazePatch::after,
   .mazeHazard::after,
+  .arenaHudPulse,
+  .arenaImpactItem,
   .arenaFeedback,
   .arenaStage::after {
     animation: none;
