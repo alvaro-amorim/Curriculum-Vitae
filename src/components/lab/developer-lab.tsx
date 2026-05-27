@@ -31,16 +31,6 @@ const BugMaze = dynamic(() => import("@/components/lab/bug-maze").then((module) 
   ssr: false,
 });
 
-const DebugArena = dynamic(() => import("@/components/lab/debug-arena").then((module) => module.DebugArena), {
-  loading: GameLoading,
-  ssr: false,
-});
-
-const LatencyLab = dynamic(() => import("@/components/lab/latency-lab").then((module) => module.LatencyLab), {
-  loading: GameLoading,
-  ssr: false,
-});
-
 const foundationModules: {
   id: FoundationGameId;
   title: Record<"pt" | "en", string>;
@@ -84,59 +74,61 @@ const foundationModules: {
 const labCopy = {
   pt: {
     eyebrow: "Developer Arcade",
-    title: "Jogos reais para raciocínio de runtime.",
+    title: "Arcade em reset para mais ação.",
     description:
-      "O Lab agora separa o arcade jogável dos módulos de treino. Runtime Runner, Bug Maze, Debug Arena e Latency Lab são jogos reais com estado, score, teclado e toque.",
+      "A vitrine principal agora foca nos jogos que realmente ficam no arcade final: Runtime Runner e Bug Maze jogáveis, Code Snake e Stack Tetris em preparação.",
     primary: "Jogar Runtime Runner",
     mazePrimary: "Jogar Bug Maze",
-    arenaPrimary: "Jogar Debug Arena",
-    latencyPrimary: "Jogar Latency Lab",
     secondary: "Ver projetos",
     tertiary: "Abrir currículo",
-    panelLabel: "arcade jogável",
-    panelTitle: "4 jogos reais ativos",
-    panelText: "Desvie de falhas, navegue pelo labirinto, escolha patches e estabilize uma pipeline de performance simulada.",
-    runtimeCardText: "Desvie de bugs, 404, timeout e falhas de build enquanto a pipeline acelera.",
-    mazeCardText: "Colete patches, evite incidentes e encontre o deploy seguro no grid de execução.",
-    arenaCardText: "Analise bugs reais de web/API e escolha o patch mais seguro sob pressão.",
-    latencyCardText: "Reduza p95, erro e load com decisões de cache, índice, fila e payload sem chamar API externa.",
+    panelLabel: "arcade em reconstrução",
+    panelTitle: "2 jogos ativos + 2 slots futuros",
+    panelText: "O reset corta o que parecia quiz ou dashboard e concentra a ação nos jogos de reflexo, caminho, código e stack.",
+    runtimeCardText: "Runner de pipeline com pulo mais previsível, obstáculos mais justos e feedback de colisão.",
+    mazeCardText: "Labirinto técnico com D-pad mais confortável, grid legível e feedback mais forte.",
+    snakeCardText: "Próximo jogo: coleta de tokens de código em ritmo arcade, sem implementação nesta fase.",
+    tetrisCardText: "Próximo jogo: composição de stack em peças técnicas, ainda reservado para fase própria.",
     session: "score da sessão",
-    arcadeStatus: "Arcade completo",
+    arcadeStatus: "Arcade reset",
+    futureStatus: "em preparação",
     trainingEyebrow: "módulos de treino",
-    trainingTitle: "Módulos de base rebaixados para treino.",
+    trainingTitle: "Treinos e experimentos ficam fora da vitrine final.",
     trainingText:
-      "Os desafios antigos continuam úteis para raciocínio técnico, mas não são vendidos como jogos finais. Eles ficam como módulos de base do Developer Lab.",
-    roadmapEyebrow: "arcade completo",
-    roadmapTitle: "Quatro jogos reais publicados no Developer Arcade.",
+      "Debug Arena, Latency Lab e os desafios foundation continuam úteis como treino/arquivo, mas não são vendidos como jogos principais do arcade final.",
+    archivedTitle: "Experimentos arquivados",
+    archivedText: "Mantidos temporariamente por compatibilidade e histórico, sem destaque como jogo final.",
+    roadmapEyebrow: "direção final",
+    roadmapTitle: "Quatro slots do Developer Arcade final.",
     pending: "planejado",
     playable: "jogável",
   },
   en: {
     eyebrow: "Developer Arcade",
-    title: "Real games for runtime reasoning.",
+    title: "Arcade reset for stronger action.",
     description:
-      "The Lab now separates the playable arcade from training modules. Runtime Runner, Bug Maze, Debug Arena, and Latency Lab are real games with state, score, keyboard, and touch input.",
+      "The main showcase now focuses on the games that belong in the final arcade: Runtime Runner and Bug Maze playable, Code Snake and Stack Tetris in preparation.",
     primary: "Play Runtime Runner",
     mazePrimary: "Play Bug Maze",
-    arenaPrimary: "Play Debug Arena",
-    latencyPrimary: "Play Latency Lab",
     secondary: "View projects",
     tertiary: "Open resume",
-    panelLabel: "playable arcade",
-    panelTitle: "4 real games active",
-    panelText: "Avoid failures, navigate the maze, choose patches, and stabilize a simulated performance pipeline.",
-    runtimeCardText: "Avoid bugs, 404, timeout, and build failures while the pipeline speeds up.",
-    mazeCardText: "Collect patches, avoid incidents, and find the safe deploy in the execution grid.",
-    arenaCardText: "Analyze real web/API bugs and choose the safest patch under pressure.",
-    latencyCardText: "Reduce p95, errors, and load with cache, index, queue, and payload decisions without calling an external API.",
+    panelLabel: "arcade rebuild",
+    panelTitle: "2 active games + 2 future slots",
+    panelText: "The reset removes what felt like quiz or dashboard and focuses action on reflex, pathfinding, code, and stack games.",
+    runtimeCardText: "Pipeline runner with a more predictable jump, fairer obstacles, and stronger collision feedback.",
+    mazeCardText: "Technical maze with a more comfortable D-pad, clearer grid, and stronger feedback.",
+    snakeCardText: "Next game: collect code tokens in an arcade loop, not implemented in this phase.",
+    tetrisCardText: "Next game: compose a technical stack with pieces, reserved for its own phase.",
     session: "session score",
-    arcadeStatus: "Arcade complete",
+    arcadeStatus: "Arcade reset",
+    futureStatus: "in preparation",
     trainingEyebrow: "training modules",
-    trainingTitle: "Foundation modules moved to training.",
+    trainingTitle: "Training and experiments stay out of the final showcase.",
     trainingText:
-      "The older challenges remain useful for technical reasoning, but they are not presented as final games. They now live as foundation modules in Developer Lab.",
-    roadmapEyebrow: "complete arcade",
-    roadmapTitle: "Four real games published in Developer Arcade.",
+      "Debug Arena, Latency Lab, and foundation challenges remain useful as training/archive material, but they are not presented as final arcade games.",
+    archivedTitle: "Archived experiments",
+    archivedText: "Kept temporarily for compatibility and history, without being highlighted as final games.",
+    roadmapEyebrow: "final direction",
+    roadmapTitle: "Four slots for the final Developer Arcade.",
     pending: "planned",
     playable: "playable",
   },
@@ -144,18 +136,46 @@ const labCopy = {
 
 const roadmap = {
   pt: [
-    ["Runtime Runner", "Primeiro jogo real: runner de pipeline com colisão, score, pause e dificuldade progressiva."],
-    ["Bug Maze", "Segundo jogo real: mapa de debug em grid com patches, incidentes e deploy seguro."],
-    ["Debug Arena", "Terceiro jogo real: arena de patches com timer, risco, streak e review técnico."],
-    ["Latency Lab", "Quarto jogo real: simulação de p95, erro, cache, budget e decisões de performance."],
+    ["Runtime Runner", "Jogo ativo: runner de pipeline com salto, colisão, score, pause e dificuldade progressiva."],
+    ["Bug Maze", "Jogo ativo: mapa de debug em grid com patches, incidentes e deploy seguro."],
+    ["Code Snake", "Slot futuro: snake de programação com coleta de tokens e risco de regressão."],
+    ["Stack Tetris", "Slot futuro: montagem de stack técnica com peças, pressão e score."],
   ],
   en: [
-    ["Runtime Runner", "First real game: pipeline runner with collision, score, pause, and progressive difficulty."],
-    ["Bug Maze", "Second real game: debug grid with patches, incidents, and safe deploy."],
-    ["Debug Arena", "Third real game: patch arena with timer, risk, streak, and technical review."],
-    ["Latency Lab", "Fourth real game: p95, error, cache, budget, and performance decision simulation."],
+    ["Runtime Runner", "Active game: pipeline runner with jump, collision, score, pause, and progressive difficulty."],
+    ["Bug Maze", "Active game: debug grid with patches, incidents, and safe deploy."],
+    ["Code Snake", "Future slot: programming snake with code token collection and regression risk."],
+    ["Stack Tetris", "Future slot: technical stack assembly with pieces, pressure, and score."],
   ],
 } as const;
+
+const futureSlots = [
+  {
+    title: "Code Snake",
+    descriptionKey: "snakeCardText",
+  },
+  {
+    title: "Stack Tetris",
+    descriptionKey: "tetrisCardText",
+  },
+] as const;
+
+const archivedExperiments = [
+  {
+    title: "Debug Arena",
+    text: {
+      pt: "Rebaixado: bom como treino de decisão técnica, mas ainda parecido com teste/quiz.",
+      en: "Demoted: useful technical decision training, but still too close to a test/quiz.",
+    },
+  },
+  {
+    title: "Latency Lab",
+    text: {
+      pt: "Rebaixado: útil como simulação de performance, mas ainda próximo de dashboard/formulário.",
+      en: "Demoted: useful performance simulation, but still too close to a dashboard/form.",
+    },
+  },
+] as const;
 
 export function DeveloperLab() {
   const { locale, t } = usePortfolioUi();
@@ -243,12 +263,6 @@ export function DeveloperLab() {
               <a className={styles.actionSecondary} href="#bug-maze-title">
                 {copy.mazePrimary}
               </a>
-              <a className={styles.actionSecondary} href="#debug-arena-title">
-                {copy.arenaPrimary}
-              </a>
-              <a className={styles.actionSecondary} href="#latency-lab-title">
-                {copy.latencyPrimary}
-              </a>
               <Link className={styles.actionSecondary} href="/projetos">
                 {copy.secondary}
               </Link>
@@ -289,19 +303,15 @@ export function DeveloperLab() {
                 {statusLabel("bug-maze")} {apiStatusLabel("bug-maze")}
               </span>
             </div>
-            <div className={styles.gameTab} aria-label="Debug Arena">
-              <span className={styles.gameTabTitle}>Debug Arena</span>
-              <span className={styles.gameTabDescription}>{copy.arenaCardText}</span>
-              <span className={styles.gameTabStatus}>
-                {statusLabel("debug-arena")} {apiStatusLabel("debug-arena")}
-              </span>
+            <div className={`${styles.gameTab} ${styles.futureGameTab}`} aria-label="Code Snake">
+              <span className={styles.gameTabTitle}>Code Snake</span>
+              <span className={styles.gameTabDescription}>{copy.snakeCardText}</span>
+              <span className={styles.gameTabStatus}>{copy.futureStatus}</span>
             </div>
-            <div className={styles.gameTab} aria-label="Latency Lab">
-              <span className={styles.gameTabTitle}>Latency Lab</span>
-              <span className={styles.gameTabDescription}>{copy.latencyCardText}</span>
-              <span className={styles.gameTabStatus}>
-                {statusLabel("latency-lab")} {apiStatusLabel("latency-lab")}
-              </span>
+            <div className={`${styles.gameTab} ${styles.futureGameTab}`} aria-label="Stack Tetris">
+              <span className={styles.gameTabTitle}>Stack Tetris</span>
+              <span className={styles.gameTabDescription}>{copy.tetrisCardText}</span>
+              <span className={styles.gameTabStatus}>{copy.futureStatus}</span>
             </div>
           </div>
         </aside>
@@ -314,12 +324,30 @@ export function DeveloperLab() {
           <BugMaze locale={locale} onComplete={(score) => handleComplete("bug-maze", score)} />
         </section>
 
-        <section className={styles.gameShell}>
-          <DebugArena locale={locale} onComplete={(score) => handleComplete("debug-arena", score)} />
-        </section>
+        <section className={styles.trainingShell} aria-labelledby="future-arcade-title">
+          <div className={styles.sectionHeader}>
+            <div>
+              <p className={styles.eyebrow}>{copy.roadmapEyebrow}</p>
+              <h2 className={styles.sectionTitle} id="future-arcade-title">
+                {locale === "pt" ? "Próximos jogos do arcade." : "Next arcade games."}
+              </h2>
+            </div>
+            <p className={styles.trainingNote}>
+              {locale === "pt"
+                ? "Os slots futuros aparecem para orientar a navegação, mas não iniciam gameplay nem enviam score nesta fase."
+                : "Future slots are visible to guide the product direction, but they do not start gameplay or submit scores in this phase."}
+            </p>
+          </div>
 
-        <section className={styles.gameShell}>
-          <LatencyLab locale={locale} onComplete={(score) => handleComplete("latency-lab", score)} />
+          <div className={styles.moduleGrid}>
+            {futureSlots.map((slot) => (
+              <article className={`${styles.moduleCard} ${styles.futureModuleCard}`} key={slot.title}>
+                <p className={styles.moduleMeta}>{copy.futureStatus}</p>
+                <h3>{slot.title}</h3>
+                <p className={styles.moduleText}>{copy[slot.descriptionKey]}</p>
+              </article>
+            ))}
+          </div>
         </section>
 
         <section className={styles.trainingShell}>
@@ -356,6 +384,16 @@ export function DeveloperLab() {
             ) : null}
             {activeTraining === "latency" ? <ApiLatencyGame locale={locale} onComplete={(score) => handleComplete("latency", score)} /> : null}
           </div>
+
+          <div className={`${styles.moduleGrid} ${styles.archiveGrid}`} aria-label={copy.archivedTitle}>
+            {archivedExperiments.map((experiment) => (
+              <article className={`${styles.moduleCard} ${styles.archivedModuleCard}`} key={experiment.title}>
+                <p className={styles.moduleMeta}>{copy.archivedTitle}</p>
+                <h3>{experiment.title}</h3>
+                <p className={styles.moduleText}>{experiment.text[locale]}</p>
+              </article>
+            ))}
+          </div>
         </section>
 
         <section className={styles.trainingShell}>
@@ -366,8 +404,8 @@ export function DeveloperLab() {
             </div>
             <p className={styles.trainingNote}>
               {locale === "pt"
-                ? "O roadmap principal agora está completo: os próximos avanços devem ser polish de jogabilidade, balanceamento e revisão visual humana."
-                : "The main roadmap is now complete: next steps should focus on gameplay polish, balancing, and human visual review."}
+                ? "O arcade final ainda não está fechado: Code Snake e Stack Tetris devem ser implementados em fases próprias depois deste reset."
+                : "The final arcade is not closed yet: Code Snake and Stack Tetris must be implemented in their own phases after this reset."}
             </p>
           </div>
 
@@ -375,7 +413,7 @@ export function DeveloperLab() {
             {roadmap[locale].map(([title, description]) => (
               <article className={styles.moduleCard} key={title}>
                 <p className={styles.moduleMeta}>
-                  {title === "Runtime Runner" || title === "Bug Maze" || title === "Debug Arena" || title === "Latency Lab" ? copy.playable : copy.pending}
+                  {title === "Runtime Runner" || title === "Bug Maze" ? copy.playable : copy.pending}
                 </p>
                 <h3>{title}</h3>
                 <p className={styles.moduleText}>{description}</p>

@@ -6,10 +6,10 @@ O projeto deixou de ser apenas um currículo digital e passou a funcionar como u
 
 ## Estado Atual
 
-Checkpoint publicado antes da R1-E.9:
+Checkpoint publicado antes da R1-E.9.3.2:
 
 ```txt
-5f94f83 feat: finalize developer arcade release gate
+1d8cf1b feat: polish premium ui theme and transitions
 ```
 
 Estado real do produto após a revisão humana que abriu a R1-E.9.3.0:
@@ -18,7 +18,7 @@ Estado real do produto após a revisão humana que abriu a R1-E.9.3.0:
 - `/visual-final-candidate` continua preservada temporariamente como rota de comparação.
 - `/projetos` foi elevado para hub premium de projetos.
 - `/projetos/[slug]` foi elevado para case study visual premium.
-- `/lab` contém uma versão publicada do Developer Arcade, mas a direção final foi revisada antes do fechamento.
+- `/lab` está em reset local para mostrar Runtime Runner e Bug Maze como jogos jogáveis e Code Snake/Stack Tetris como slots futuros.
 - Runtime Runner e Bug Maze continuam como bases de jogos reais, ainda exigindo mais ação, diversão e polimento.
 - Debug Arena e Latency Lab não devem continuar como jogos finais principais: ainda parecem quiz/teste e dashboard/formulário em uso real.
 - Os módulos antigos de quiz/foundation continuam úteis como treino, mas não devem ser vendidos como jogos finais.
@@ -28,6 +28,7 @@ Estado real do produto após a revisão humana que abriu a R1-E.9.3.0:
 - SEO básico, metadata por rota, sitemap e robots estão implementados.
 - R1-E.9 ainda não está fechada.
 - R1-E.9.1 e R1-E.9.2 foram hardening local sem checkpoint.
+- R1-E.9.3.1.1/R1-E.9.3.1.2 foram checkpointadas em `1d8cf1b` com navbar premium, tema claro real, transições, currículo polido e contraste light.
 - O projeto ainda não deve ser tratado como fechamento final enquanto R1-E.9.3, revisão humana e mídia real dos projetos estiverem pendentes.
 
 ## Rotas Principais
@@ -64,28 +65,17 @@ Estado atual:
 - Code Snake ainda não existe.
 - Stack Tetris ainda não existe.
 
-Enquanto a R1-E.9.3.2 não for implementada, o `/lab` ainda pode exibir elementos antigos. Isso é estado pendente, não direção final.
+Na R1-E.9.3.2, o `/lab` deve parar de vender Debug Arena, Latency Lab e quiz/foundation como jogos principais. Eles podem permanecer como compatibilidade, treino ou arquivo temporário até a limpeza definitiva.
 
 ## Interface, Motion e Navegação
 
-A home premium foi aprovada como direção, mas a revisão humana apontou problemas reais que ainda precisam de uma etapa própria:
-
-- A navbar/topbar atual parece separada da experiência premium e faz algumas páginas parecerem outro site.
-- A home precisa de navegação direta e minimalista para projetos, Lab, currículo, contato/download e seções internas.
-- Motion e transições ainda precisam de sincronização mais madura.
-- Textos, espaçamentos, z-index e sobreposições precisam de polish maior.
-- Mobile precisa continuar sendo tratado como experiência própria.
-
-A etapa de implementação em andamento local é:
+A home premium foi aprovada como direção e a navegação global já recebeu um checkpoint de polish:
 
 ```txt
-R1-E.9.3.1 — Premium Interface, Motion & Navigation Polish
-R1-E.9.3.1.1 — Premium UI, Theme & Transition Polish
+1d8cf1b feat: polish premium ui theme and transitions
 ```
 
-Essa etapa moderniza a navegação global e cria uma navegação direta na home sem poluir a primeira dobra. Ela ainda precisa de QA visual e revisão humana antes de checkpoint.
-
-A subfase R1-E.9.3.1.1 aprofunda o polish de UI sem iniciar Arcade Reset: controla escalas tipográficas, adiciona transições leves entre rotas, torna o tema claro uma experiência real, anima troca de tema/idioma, aplica lazy/defer seguro e refina `/curriculo` para continuar sóbrio, mas visualmente alinhado ao restante do Portfolio OS.
+Esse checkpoint consolidou navbar/topbar premium, navegação direta da home, tema claro real, transições entre páginas/tema/idioma, lazy/defer seguro e `/curriculo` mais alinhado ao Portfolio OS. A etapa atual não reabre esse escopo salvo regressão visual.
 
 ## Projetos e Case Studies
 
@@ -250,9 +240,9 @@ NEXT_PUBLIC_APP_URL=https://curriculum-vitae-babr.vercel.app
 
 ## Próximos Passos Reais
 
-- Concluir a R1-E.9.3.1.1 local com QA visual e revisão humana antes de qualquer checkpoint.
-- Validar navbar global, navegação direta da home, tema claro real, troca PT/EN animada, page transitions, currículo polido e lazy/defer seguro.
-- Depois, iniciar R1-E.9.3.2 para rebaixar Debug Arena/Latency Lab/quiz da vitrine principal e melhorar Runtime Runner/Bug Maze.
+- Concluir a R1-E.9.3.2 local com QA visual e revisão humana antes de qualquer checkpoint.
+- Rebaixar Debug Arena, Latency Lab e quiz/foundation da vitrine principal do Lab.
+- Melhorar Runtime Runner e Bug Maze como jogos de ação simples, legíveis e menos frustrantes.
 - Só então implementar Code Snake e Stack Tetris.
 - Criar checkpoint somente após validação técnica, QA visual e revisão humana.
 - Iniciar R1-F apenas depois do replanejamento visual/arcade estar estabilizado.

@@ -730,13 +730,12 @@ Regras permanentes:
 A fase em execução local é:
 
 ```txt
-R1-E.9.3.1 — Premium Interface, Motion & Navigation Polish
-R1-E.9.3.1.1 — Premium UI, Theme & Transition Polish
+R1-E.9.3.2 — Arcade Reset & Runtime/Bug Maze Action Polish
 ```
 
-Essa fase moderniza a navbar global, cria navegação direta na home, sincroniza motion, corrige textos/sobreposições e refina mobile antes de continuar o Arcade. Ainda precisa de QA visual e revisão humana antes de checkpoint.
+Essa fase reorganiza a vitrine principal do Developer Arcade para Runtime Runner, Bug Maze, Code Snake e Stack Tetris. Debug Arena, Latency Lab e quiz/foundation deixam de ser vendidos como jogos finais e passam a treino, experimento arquivado ou compatibilidade temporária.
 
-A subfase R1-E.9.3.1.1 aprofunda tema claro, transições entre rotas, troca dark/light, troca PT/EN, tipografia, lazy/defer seguro e currículo, sem iniciar Arcade Reset, Code Snake, Stack Tetris ou Admin.
+Code Snake e Stack Tetris continuam futuros. A fase atual não implementa esses jogos; apenas prepara os slots e melhora ação/jogabilidade de Runtime Runner e Bug Maze.
 
 ### Roadmap R1-C Recomendado
 

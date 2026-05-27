@@ -41,6 +41,11 @@ type RuntimeRunnerProps = {
 type StyleVars = CSSProperties & Record<`--${string}`, string | number>;
 
 const BEST_SCORE_KEY = "alvaro-dev-runtime-runner-best-v1";
+const GROUND_EPSILON = 0.08;
+const JUMP_BUFFER_MS = 145;
+const COYOTE_TIME_MS = 95;
+const JUMP_VELOCITY = 1.74;
+const REDUCED_JUMP_VELOCITY = 1.38;
 
 const obstacleConfigs: Omit<Obstacle, "id" | "x">[] = [
   { label: "BUG", tone: "bug", width: 10, hitHeight: 0.22 },
@@ -140,12 +145,12 @@ function createInitialFrame(): RunnerFrame {
     elapsed: 0,
     runScore: 0,
     apiScore: 0,
-    speed: 20,
+    speed: 18.5,
     runnerY: 0,
     velocity: 0,
     obstacles: [],
     cleared: 0,
-    spawnIn: 1.05,
+    spawnIn: 1.18,
     pulse: 0,
     pulseKind: null,
   };
@@ -182,6 +187,8 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
   const obstacleIdRef = useRef(0);
   const completedRef = useRef(false);
   const lastPointerActionRef = useRef(0);
+  const lastGroundedAtRef = useRef(0);
+  const pendingJumpAtRef = useRef<number | null>(null);
 
   useEffect(() => {
     statusRef.current = status;
@@ -215,11 +222,13 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
     const next = {
       ...createInitialFrame(),
       obstacles: [],
-      speed: reducedMotion ? 17 : 20,
-      spawnIn: reducedMotion ? 1.35 : 1.15,
+      speed: reducedMotion ? 16.5 : 18.5,
+      spawnIn: reducedMotion ? 1.45 : 1.22,
     };
     completedRef.current = false;
     obstacleIdRef.current = 1;
+    lastGroundedAtRef.current = performance.now();
+    pendingJumpAtRef.current = null;
     commitFrame(next);
     setStatus("running");
   }, [commitFrame, reducedMotion]);
@@ -231,6 +240,7 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
       }
 
       completedRef.current = true;
+      pendingJumpAtRef.current = null;
       commitFrame(next);
       setStatus("gameOver");
       setBestScore((current) => {
@@ -244,8 +254,12 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
   );
 
   const jump = useCallback(() => {
+    const now = performance.now();
+    pendingJumpAtRef.current = now;
+
     if (statusRef.current === "idle" || statusRef.current === "gameOver") {
       startRun();
+      pendingJumpAtRef.current = now;
       return;
     }
 
@@ -254,14 +268,16 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
     }
 
     const current = stateRef.current;
-    if (current.runnerY > 0.2) {
+    const canJump = current.runnerY <= GROUND_EPSILON || now - lastGroundedAtRef.current <= COYOTE_TIME_MS;
+    if (!canJump) {
       return;
     }
 
+    pendingJumpAtRef.current = null;
     commitFrame({
       ...current,
       runnerY: Math.max(current.runnerY, 0.03),
-      velocity: reducedMotion ? 1.32 : 1.66,
+      velocity: reducedMotion ? REDUCED_JUMP_VELOCITY : JUMP_VELOCITY,
     });
   }, [commitFrame, reducedMotion, startRun]);
 
@@ -299,8 +315,8 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
 
   useEffect(() => {
     function handleWindowKeyDown(event: globalThis.KeyboardEvent) {
-      const target = event.target as HTMLElement | null;
-      if (target?.closest("input, textarea, select, [contenteditable='true']")) {
+      const target = event.target;
+      if (target instanceof HTMLElement && target.closest("input, textarea, select, [contenteditable='true']")) {
         return;
       }
 
@@ -339,10 +355,22 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
       if (runnerY <= 0) {
         runnerY = 0;
         velocity = 0;
+        lastGroundedAtRef.current = now;
+      }
+
+      const queuedJumpAt = pendingJumpAtRef.current;
+      if (
+        queuedJumpAt !== null &&
+        now - queuedJumpAt <= JUMP_BUFFER_MS &&
+        (runnerY <= GROUND_EPSILON || now - lastGroundedAtRef.current <= COYOTE_TIME_MS)
+      ) {
+        pendingJumpAtRef.current = null;
+        runnerY = Math.max(runnerY, 0.035);
+        velocity = reducedMotion ? REDUCED_JUMP_VELOCITY : JUMP_VELOCITY;
       }
 
       const elapsed = current.elapsed + delta;
-      const speed = Math.min(reducedMotion ? 34 : 44, (reducedMotion ? 17 : 20) + elapsed * (reducedMotion ? 0.54 : 0.78));
+      const speed = Math.min(reducedMotion ? 32 : 41, (reducedMotion ? 16.5 : 18.5) + elapsed * (reducedMotion ? 0.48 : 0.68));
       const moved = current.obstacles.map((obstacle) => ({
         ...obstacle,
         x: obstacle.x - speed * delta,
@@ -355,13 +383,13 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
       if (spawnIn <= 0) {
         obstacleIdRef.current += 1;
         obstacles.push(createObstacle(obstacleIdRef.current));
-        const cadence = Math.max(reducedMotion ? 1.28 : 1.02, 1.6 - elapsed * 0.014);
-        spawnIn = cadence + Math.random() * 0.48;
+        const cadence = Math.max(reducedMotion ? 1.34 : 1.16, 1.72 - elapsed * 0.012);
+        spawnIn = cadence + Math.random() * 0.42;
       }
 
       const collision = obstacles.some((obstacle) => {
-        const hitsRunnerX = obstacle.x < 18 && obstacle.x + obstacle.width > 13.5;
-        return elapsed > 1 && hitsRunnerX && runnerY < obstacle.hitHeight;
+        const hitsRunnerX = obstacle.x < 17.2 && obstacle.x + obstacle.width > 14.4;
+        return elapsed > 1 && hitsRunnerX && runnerY < obstacle.hitHeight * 0.88;
       });
 
       const cleared = current.cleared + clearedNow;
@@ -469,7 +497,9 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
           {frame.obstacles.map((obstacle) => (
             <span
               aria-hidden="true"
-              className={`${styles.obstacle} ${obstacleToneClasses[obstacle.tone]}`}
+              className={`${styles.obstacle} ${obstacleToneClasses[obstacle.tone]} ${
+                status === "running" && obstacle.x < 33 && obstacle.x > 13 ? styles.obstacleNear : ""
+              }`}
               key={obstacle.id}
               style={{ "--x": obstacle.x, "--w": obstacle.width } as StyleVars}
             >

@@ -48,7 +48,7 @@ type StyleVars = CSSProperties & Record<`--${string}`, string | number>;
 
 const BEST_SCORE_KEY = "alvaro-dev-bug-maze-best-v1";
 const FAILURE_LIMIT = 3;
-const TRAIL_LIMIT = 5;
+const TRAIL_LIMIT = 7;
 
 const mazeDefinitions: MazeDefinition[] = [
   {
@@ -124,7 +124,7 @@ const copy = {
     eyebrow: "Bug Maze",
     title: "Navegue at\u00e9 o deploy seguro.",
     subtitle:
-      "Um labirinto t\u00e9cnico com grid real, patches colet\u00e1veis, bugs, penalidade, vit\u00f3ria e score local.",
+      "Um labirinto técnico com grid real, patches visíveis, bugs agressivos, penalidade, vitória e score local.",
     start: "Iniciar labirinto",
     restart: "Reiniciar layout",
     nextLayout: "Trocar mapa",
@@ -142,7 +142,7 @@ const copy = {
     },
     idleTitle: "Leve o n\u00f3 de debug at\u00e9 o deploy.",
     idleText:
-      "Use setas, WASD ou os controles de toque. Colete patches para melhorar o score e evite tr\u00eas incidentes.",
+      "Use setas, WASD ou os controles de toque. O primeiro movimento já inicia a rodada; colete patches e evite três incidentes.",
     wonTitle: "Deploy seguro.",
     wonText: "O caminho foi validado e o score local foi registrado sem ranking real.",
     failedTitle: "Incidentes demais.",
@@ -171,7 +171,7 @@ const copy = {
   en: {
     eyebrow: "Bug Maze",
     title: "Navigate to the safe deploy.",
-    subtitle: "A technical maze with a real grid, collectible patches, bugs, penalty, win state, and local score.",
+    subtitle: "A technical maze with a real grid, visible patches, aggressive bugs, penalty, win state, and local score.",
     start: "Start maze",
     restart: "Restart layout",
     nextLayout: "Switch map",
@@ -188,7 +188,7 @@ const copy = {
       failed: "debug interrupted",
     },
     idleTitle: "Move the debug node to deploy.",
-    idleText: "Use arrows, WASD, or touch controls. Collect patches to improve score and avoid three incidents.",
+    idleText: "Use arrows, WASD, or touch controls. The first move starts the round; collect patches and avoid three incidents.",
     wonTitle: "Safe deploy.",
     wonText: "The route was validated and the local score was recorded without a real ranking.",
     failedTitle: "Too many incidents.",
@@ -382,17 +382,35 @@ export function BugMaze({ locale, onComplete }: BugMazeProps) {
 
   const move = useCallback(
     (direction: Direction) => {
+      let activePosition = position;
+      let activeMoves = moves;
+      let activeHits = hits;
+      let activeElapsed = elapsed;
+      let nextCollected = new Set(collectedPatches);
+
       if (status === "idle" || status === "won" || status === "failed") {
-        startGame();
-        return;
+        activePosition = maze.start;
+        activeMoves = 0;
+        activeHits = 0;
+        activeElapsed = 0;
+        nextCollected = new Set();
+        setPosition(maze.start);
+        setTrail([]);
+        setCollectedPatches(nextCollected);
+        setMoves(0);
+        setElapsed(0);
+        setHits(0);
+        setFinalScore(null);
+        setFeedback(null);
+        setStatus("running");
       }
 
-      if (status !== "running") {
+      if (status !== "running" && status !== "idle" && status !== "won" && status !== "failed") {
         return;
       }
 
       const delta = directionDelta[direction];
-      const nextPosition = { x: position.x + delta.x, y: position.y + delta.y };
+      const nextPosition = { x: activePosition.x + delta.x, y: activePosition.y + delta.y };
       const nextCell = maze.cells.find((cell) => cell.x === nextPosition.x && cell.y === nextPosition.y);
 
       if (!nextCell || nextCell.kind === "wall") {
@@ -400,10 +418,9 @@ export function BugMaze({ locale, onComplete }: BugMazeProps) {
         return;
       }
 
-      const nextMoves = moves + 1;
-      let nextHits = hits;
-      const nextCollected = new Set(collectedPatches);
-      const currentKey = cellKey(position);
+      const nextMoves = activeMoves + 1;
+      let nextHits = activeHits;
+      const currentKey = cellKey(activePosition);
 
       setPosition(nextPosition);
       setMoves(nextMoves);
@@ -422,7 +439,7 @@ export function BugMaze({ locale, onComplete }: BugMazeProps) {
       }
 
       const snapshot = {
-        elapsed,
+        elapsed: activeElapsed,
         hits: nextHits,
         moves: nextMoves,
         patchCount: nextCollected.size,
@@ -435,13 +452,13 @@ export function BugMaze({ locale, onComplete }: BugMazeProps) {
         finishGame("failed", snapshot);
       }
     },
-    [collectedPatches, elapsed, finishGame, hits, maze.cells, maze.patches.length, moves, position, startGame, status, triggerFeedback],
+    [collectedPatches, elapsed, finishGame, hits, maze.cells, maze.patches.length, maze.start, moves, position, status, triggerFeedback],
   );
 
   useEffect(() => {
     function handleWindowKeyDown(event: globalThis.KeyboardEvent) {
-      const target = event.target as HTMLElement | null;
-      if (target?.closest("input, textarea, select, [contenteditable='true']")) {
+      const target = event.target;
+      if (target instanceof HTMLElement && target.closest("input, textarea, select, [contenteditable='true']")) {
         return;
       }
 
