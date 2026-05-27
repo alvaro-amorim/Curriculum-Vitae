@@ -1,0 +1,436 @@
+.resumePage {
+  position: relative;
+  --resume-ink: var(--text);
+  --resume-muted: var(--muted);
+  --resume-soft: var(--muted-soft);
+  width: min(100% - 2rem, 72rem);
+  margin: 0 auto;
+  padding: clamp(7rem, 11vh, 8.5rem) 0 clamp(3rem, 7vw, 5rem);
+  color: var(--resume-ink);
+}
+
+:global([data-theme="light"]) .resumePage,
+:global(html[data-theme="light"]) .resumePage {
+  --resume-ink: rgba(15, 23, 42, 0.94);
+  --resume-muted: rgba(15, 23, 42, 0.7);
+  --resume-soft: rgba(15, 23, 42, 0.52);
+}
+
+@media (prefers-color-scheme: light) {
+  :global(html:not([data-theme="dark"])) .resumePage {
+    --resume-ink: rgba(15, 23, 42, 0.94);
+    --resume-muted: rgba(15, 23, 42, 0.7);
+    --resume-soft: rgba(15, 23, 42, 0.52);
+  }
+}
+
+.resumePage::before {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 16% 8%, color-mix(in srgb, var(--accent) 13%, transparent), transparent 24rem),
+    radial-gradient(circle at 88% 18%, color-mix(in srgb, var(--accent-cyan) 10%, transparent), transparent 24rem),
+    linear-gradient(180deg, color-mix(in srgb, var(--surface-strong) 30%, transparent), transparent 34rem);
+  opacity: 0.95;
+  content: "";
+}
+
+.resumeHeroGrid,
+.resumeTwoColumn {
+  display: grid;
+  gap: 1rem;
+}
+
+.resumeHeroGrid {
+  grid-template-columns: minmax(0, 1.35fr) minmax(18rem, 0.65fr);
+  align-items: stretch;
+}
+
+.resumeTwoColumn {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.resumeStack {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.resumeCard {
+  position: relative;
+  overflow: hidden;
+  border-color: color-mix(in srgb, var(--border) 82%, var(--accent-cyan) 18%);
+  border-radius: 1.35rem;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--surface-elevated) 92%, transparent), color-mix(in srgb, var(--surface) 72%, transparent)),
+    radial-gradient(circle at 0% 0%, color-mix(in srgb, var(--accent-cyan) 9%, transparent), transparent 18rem);
+  box-shadow:
+    var(--shadow-card),
+    inset 0 1px 0 color-mix(in srgb, white 9%, transparent);
+}
+
+.resumeCard::before {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background: linear-gradient(120deg, color-mix(in srgb, white 8%, transparent), transparent 36%);
+  opacity: 0.54;
+  content: "";
+}
+
+.resumeCard > * {
+  position: relative;
+  z-index: 1;
+}
+
+.profileCard {
+  min-height: 100%;
+}
+
+.profileHeader {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: clamp(1rem, 3vw, 1.35rem);
+  align-items: center;
+}
+
+.avatarShell {
+  position: relative;
+  width: clamp(5.25rem, 9vw, 6.6rem);
+  aspect-ratio: 1;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--border-strong) 72%, transparent);
+  border-radius: 1.35rem;
+  background: var(--surface-strong);
+  box-shadow: 0 18px 42px color-mix(in srgb, var(--accent) 16%, transparent);
+}
+
+.eyebrow {
+  margin: 0 0 0.55rem;
+  color: var(--accent-cyan);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.profileTitle {
+  max-width: 14ch;
+  margin: 0;
+  color: var(--resume-ink);
+  font-size: clamp(2.05rem, 4vw, 3.25rem);
+  font-weight: 780;
+  letter-spacing: -0.04em;
+  line-height: 0.98;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
+
+.profileSubtitle {
+  max-width: 48rem;
+  margin: 0.85rem 0 0;
+  color: var(--resume-muted);
+  font-size: clamp(0.95rem, 1.4vw, 1.05rem);
+  line-height: 1.65;
+}
+
+.badgeRail,
+.downloadRail {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.badgeRail {
+  margin-top: 1.25rem;
+}
+
+.downloadRail {
+  margin-top: 1.35rem;
+}
+
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.68rem;
+  margin: 0;
+  color: var(--resume-ink);
+  font-size: clamp(1.15rem, 1.7vw, 1.42rem);
+  font-weight: 740;
+  letter-spacing: -0.015em;
+}
+
+.sectionTitle::before {
+  width: 0.55rem;
+  height: 0.55rem;
+  border: 1px solid color-mix(in srgb, var(--accent-cyan) 56%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent-cyan) 22%, transparent);
+  box-shadow: 0 0 22px color-mix(in srgb, var(--accent-cyan) 20%, transparent);
+  content: "";
+}
+
+.summaryList,
+.timelineList,
+.certificationList,
+.linkList {
+  display: grid;
+  gap: 0.72rem;
+  margin: 1rem 0 0;
+  padding: 0;
+  color: var(--resume-muted);
+  font-size: 0.94rem;
+  line-height: 1.68;
+  list-style: none;
+}
+
+.summaryList li,
+.timelineList li {
+  position: relative;
+  padding-left: 1.05rem;
+}
+
+.summaryList li::before,
+.timelineList li::before {
+  position: absolute;
+  top: 0.72em;
+  left: 0;
+  width: 0.34rem;
+  height: 0.34rem;
+  border-radius: 999px;
+  background: var(--accent-cyan);
+  content: "";
+}
+
+.contactGrid,
+.itemGrid,
+.projectGrid {
+  display: grid;
+  gap: 0.72rem;
+  margin-top: 1rem;
+}
+
+.contactRow,
+.resumeItem,
+.projectCard {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--border) 88%, var(--accent) 12%);
+  border-radius: 1rem;
+  background: color-mix(in srgb, var(--surface-muted) 86%, transparent);
+  transition:
+    border-color 180ms var(--ease-standard),
+    background 180ms var(--ease-standard),
+    transform 180ms var(--ease-standard);
+}
+
+.contactRow {
+  display: flex;
+  gap: 0.78rem;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.78rem;
+}
+
+.contactRow:hover,
+.resumeItem:hover,
+.projectCard:hover {
+  border-color: color-mix(in srgb, var(--accent-cyan) 34%, var(--border));
+  background: color-mix(in srgb, var(--surface-strong) 70%, transparent);
+  transform: translateY(-1px);
+}
+
+.contactMain {
+  display: flex;
+  min-width: 0;
+  gap: 0.68rem;
+  align-items: center;
+}
+
+.contactIcon {
+  display: inline-grid;
+  flex: 0 0 auto;
+  width: 2.2rem;
+  height: 2.2rem;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--accent-cyan) 24%, transparent);
+  border-radius: 0.78rem;
+  background: color-mix(in srgb, var(--accent) 9%, transparent);
+  color: var(--accent-cyan);
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  font-weight: 850;
+}
+
+.contactLabel,
+.projectKicker {
+  display: block;
+  color: var(--resume-soft);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.contactValue {
+  display: block;
+  margin-top: 0.22rem;
+  overflow-wrap: anywhere;
+  color: var(--resume-ink);
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+
+.contactValue:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.contactActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin-top: 0.78rem;
+}
+
+.skillFilters,
+.skillCloud,
+.projectActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.52rem;
+}
+
+.skillFilters {
+  margin-top: 1rem;
+}
+
+.skillCloud {
+  margin-top: 0.95rem;
+}
+
+.skillPill {
+  border: 1px solid var(--border);
+  border-radius: 0.8rem;
+  background: color-mix(in srgb, var(--surface-muted) 82%, transparent);
+  padding: 0.66rem 0.82rem;
+  color: var(--resume-ink);
+  font-size: 0.9rem;
+}
+
+.resumeItem,
+.projectCard {
+  padding: 1rem;
+}
+
+.itemHeader {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.itemTitle,
+.projectTitle {
+  margin: 0;
+  color: var(--resume-ink);
+  font-size: 1rem;
+  font-weight: 720;
+  line-height: 1.35;
+}
+
+.itemMeta,
+.projectDescription {
+  margin: 0.35rem 0 0;
+  color: var(--resume-muted);
+  font-size: 0.9rem;
+  line-height: 1.58;
+}
+
+.projectGrid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.projectCard {
+  display: flex;
+  min-height: 13rem;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.projectStack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 0.92rem;
+}
+
+.projectActions {
+  margin-top: 1rem;
+}
+
+@media (max-width: 920px) {
+  .resumePage {
+    width: min(100% - 1rem, 45rem);
+    padding-top: 6.25rem;
+  }
+
+  .resumeHeroGrid,
+  .resumeTwoColumn,
+  .projectGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .resumePage {
+    width: min(100% - 0.85rem, 24rem);
+    padding-bottom: 3rem;
+  }
+
+  .resumeCard {
+    border-radius: 1.1rem;
+    padding: 1rem;
+  }
+
+  .profileHeader {
+    grid-template-columns: 1fr;
+  }
+
+  .profileTitle {
+    max-width: 100%;
+    font-size: clamp(1.72rem, 7.6vw, 2.22rem);
+    line-height: 1.04;
+  }
+
+  .contactRow {
+    align-items: flex-start;
+  }
+
+  .downloadRail,
+  .contactActions,
+  .projectActions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .contactRow,
+  .resumeItem,
+  .projectCard {
+    transition: none;
+  }
+
+  .contactRow:hover,
+  .resumeItem:hover,
+  .projectCard:hover {
+    transform: none;
+  }
+}

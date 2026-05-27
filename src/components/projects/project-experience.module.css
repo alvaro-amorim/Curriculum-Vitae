@@ -2,6 +2,10 @@
   --px: 52%;
   --py: 24%;
   --bg: #02040a;
+  --project-ink: #f8fbff;
+  --project-muted: color-mix(in srgb, #edf6ff 72%, transparent);
+  --project-panel: rgba(8, 14, 28, 0.82);
+  --project-panel-strong: rgba(8, 14, 28, 0.92);
   --accent-a: #7dd3fc;
   --accent-b: #3b82f6;
   --accent-c: #c084fc;
@@ -14,6 +18,29 @@
     radial-gradient(circle at var(--px) var(--py), color-mix(in srgb, var(--accent-a) 16%, transparent), transparent 28rem),
     radial-gradient(circle at 82% 18%, color-mix(in srgb, var(--accent-c) 12%, transparent), transparent 34rem),
     linear-gradient(180deg, color-mix(in srgb, var(--bg) 88%, #02040a) 0%, var(--bg) 44%, color-mix(in srgb, var(--bg) 82%, #050816) 100%);
+}
+
+:global([data-theme="light"]) .experience {
+  --bg: #eef4fb;
+  --project-ink: #0f172a;
+  --project-muted: rgba(15, 23, 42, 0.68);
+  --project-panel: rgba(255, 255, 255, 0.76);
+  --project-panel-strong: rgba(255, 255, 255, 0.92);
+  background:
+    radial-gradient(circle at var(--px) var(--py), color-mix(in srgb, var(--accent-a) 12%, transparent), transparent 28rem),
+    radial-gradient(circle at 82% 18%, color-mix(in srgb, var(--accent-c) 10%, transparent), transparent 34rem),
+    linear-gradient(180deg, #f8fbff 0%, #eef4fb 48%, #e8f0f8 100%);
+}
+
+:global([data-theme="light"]) .experience::before {
+  background:
+    linear-gradient(rgba(15, 23, 42, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(15, 23, 42, 0.04) 1px, transparent 1px);
+}
+
+:global([data-theme="light"]) .experience::after {
+  mix-blend-mode: multiply;
+  opacity: 0.56;
 }
 
 .experience::before,
@@ -80,18 +107,19 @@
 
 .heroTitle,
 .caseTitle {
-  max-width: 11ch;
+  max-width: 12ch;
   margin: 0.85rem 0 0;
-  color: #f8fbff;
-  font-size: clamp(3.25rem, 7.3vw, 7.8rem);
+  color: var(--project-ink, #f8fbff);
+  font-size: clamp(3rem, 6.2vw, 6.7rem);
   font-weight: 900;
-  line-height: 0.86;
+  line-height: 0.92;
   letter-spacing: 0;
+  text-wrap: balance;
 }
 
 .caseTitle {
-  max-width: 9ch;
-  font-size: clamp(3rem, 6.5vw, 7rem);
+  max-width: 11ch;
+  font-size: clamp(2.85rem, 5.8vw, 6.1rem);
 }
 
 .heroText,
@@ -99,7 +127,7 @@
 .sectionIntro,
 .sceneText,
 .flowText {
-  color: color-mix(in srgb, #edf6ff 72%, transparent);
+  color: var(--project-muted, color-mix(in srgb, #edf6ff 72%, transparent));
   font-size: clamp(1rem, 1.4vw, 1.16rem);
   font-weight: 650;
   line-height: 1.72;
@@ -126,6 +154,7 @@
 .actionSecondary,
 .actionGhost {
   display: inline-flex;
+  min-width: 0;
   align-items: center;
   justify-content: center;
   min-height: 2.9rem;
@@ -136,6 +165,7 @@
   font-size: 0.92rem;
   font-weight: 850;
   text-decoration: none;
+  white-space: normal;
   transition:
     transform 220ms cubic-bezier(0.16, 1, 0.3, 1),
     border-color 220ms cubic-bezier(0.16, 1, 0.3, 1),
@@ -459,15 +489,17 @@
 .frameTitle {
   max-width: 10ch;
   margin: 0.65rem 0 0;
-  color: #fff;
-  font-size: clamp(2.6rem, 5.3vw, 6.4rem);
+  color: var(--project-ink);
+  font-size: clamp(2.35rem, 4.8vw, 5.4rem);
   font-weight: 950;
-  line-height: 0.82;
+  line-height: 0.9;
   letter-spacing: 0;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
 }
 
 .frameHint {
-  max-width: 38rem;
+  max-width: 18rem;
   margin: 0.65rem 0 0;
   color: color-mix(in srgb, #f8fbff 72%, transparent);
   font-family: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -505,10 +537,10 @@
 .sectionTitle {
   max-width: 12ch;
   margin: 0.6rem 0 0;
-  color: #fff;
-  font-size: clamp(2.5rem, 5.5vw, 6rem);
+  color: var(--project-ink);
+  font-size: clamp(2.25rem, 4.8vw, 5.15rem);
   font-weight: 950;
-  line-height: 0.9;
+  line-height: 0.94;
   letter-spacing: 0;
 }
 
@@ -562,11 +594,13 @@
 .sceneTitle {
   max-width: 9ch;
   margin: 0.8rem 0 0;
-  color: #fff;
-  font-size: clamp(2.2rem, 4.6vw, 5.4rem);
+  color: var(--project-ink);
+  font-size: clamp(2rem, 4vw, 4.5rem);
   font-weight: 950;
-  line-height: 0.88;
+  line-height: 0.94;
   letter-spacing: 0;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
 }
 
 .sceneText {
@@ -797,6 +831,68 @@
   border-color: color-mix(in srgb, var(--accent-a) 44%, rgba(255, 255, 255, 0.14));
 }
 
+:global([data-theme="light"]) .actionPrimary,
+:global([data-theme="light"]) .actionSecondary,
+:global([data-theme="light"]) .actionGhost {
+  color: var(--project-ink);
+}
+
+:global([data-theme="light"]) .actionSecondary,
+:global([data-theme="light"]) .actionGhost,
+:global([data-theme="light"]) .filterButton {
+  border-color: rgba(15, 23, 42, 0.13);
+  background: rgba(255, 255, 255, 0.72);
+}
+
+:global([data-theme="light"]) .actionPrimary {
+  color: #fff;
+}
+
+:global([data-theme="light"]) .stagePlate,
+:global([data-theme="light"]) .casePlate,
+:global([data-theme="light"]) .scene,
+:global([data-theme="light"]) .flowCard,
+:global([data-theme="light"]) .moduleCard,
+:global([data-theme="light"]) .assetPanel,
+:global([data-theme="light"]) .nextCard,
+:global([data-theme="light"]) .visualFrame {
+  border-color: rgba(15, 23, 42, 0.13);
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(248, 251, 255, 0.72)),
+    var(--project-panel);
+  box-shadow:
+    0 24px 70px rgba(15, 23, 42, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.86);
+}
+
+:global([data-theme="light"]) .stagePlate h2,
+:global([data-theme="light"]) .casePlate h2,
+:global([data-theme="light"]) .sceneTitle,
+:global([data-theme="light"]) .flowCard h2,
+:global([data-theme="light"]) .moduleCard h2,
+:global([data-theme="light"]) .assetPanel h2,
+:global([data-theme="light"]) .nextCard h2 {
+  color: var(--project-ink);
+}
+
+:global([data-theme="light"]) .stagePlate p,
+:global([data-theme="light"]) .casePlate p,
+:global([data-theme="light"]) .moduleCard li,
+:global([data-theme="light"]) .assetPanel p,
+:global([data-theme="light"]) .assetPanel li,
+:global([data-theme="light"]) .nextCard p {
+  color: var(--project-muted);
+}
+
+:global([data-theme="light"]) .frameHint {
+  color: color-mix(in srgb, var(--project-muted) 88%, var(--project-ink));
+}
+
+:global([data-theme="light"]) .framePending,
+:global([data-theme="light"]) .sceneNumber {
+  color: color-mix(in srgb, var(--accent-a) 72%, var(--project-ink));
+}
+
 .reveal {
   animation: revealIn 620ms cubic-bezier(0.16, 1, 0.3, 1) both;
   animation-delay: var(--delay, 0ms);
@@ -856,11 +952,13 @@
 
   .heroTitle,
   .caseTitle {
-    font-size: clamp(3.05rem, 15vw, 5.4rem);
+    font-size: clamp(2.65rem, 11.5vw, 4.15rem);
+    line-height: 0.94;
   }
 
   .sectionTitle {
-    font-size: clamp(2.75rem, 12vw, 4.4rem);
+    font-size: clamp(2.2rem, 9.2vw, 3.45rem);
+    line-height: 0.98;
   }
 
   .scene:nth-child(even) .sceneInfo {
@@ -888,6 +986,10 @@
     font-size: clamp(2.5rem, 13vw, 4rem);
   }
 
+  .frameHint {
+    max-width: min(100%, 27rem);
+  }
+
   .framePending {
     right: 1.2rem;
     left: 4.2rem;
@@ -913,16 +1015,23 @@
     padding-left: 0.75rem;
   }
 
+  .shell {
+    width: min(100%, 24rem);
+  }
+
   .heroTitle,
   .caseTitle {
-    max-width: 9ch;
-    font-size: clamp(2.8rem, 14vw, 4.6rem);
+    max-width: 12ch;
+    font-size: clamp(2.05rem, 8.9vw, 2.72rem);
+    line-height: 1;
   }
 
   .heroText,
   .caseLead,
   .sectionIntro {
+    max-width: min(100%, 21rem);
     font-size: 0.98rem;
+    overflow-wrap: anywhere;
   }
 
   .heroActions,
@@ -931,7 +1040,7 @@
   .finalActions,
   .navActions {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
   }
 
   .heroActions .actionGhost,
@@ -945,6 +1054,7 @@
   .actionPrimary,
   .actionSecondary,
   .actionGhost {
+    width: 100%;
     min-height: 3.05rem;
     padding-right: 0.8rem;
     padding-left: 0.8rem;

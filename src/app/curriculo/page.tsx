@@ -7,6 +7,7 @@ import { ProfileCard } from "@/components/resume/profile-card";
 import { ProjectsPreview } from "@/components/resume/projects-preview";
 import { ResumeSummary } from "@/components/resume/resume-summary";
 import { SkillsSection } from "@/components/resume/skills-section";
+import styles from "@/components/resume/resume.module.css";
 
 export const metadata: Metadata = {
   title: {
@@ -25,18 +26,22 @@ export const metadata: Metadata = {
 
 export default function ResumePage() {
   return (
-    <main className="mx-auto grid max-w-6xl gap-6 px-4 py-8 md:py-10">
-      <div className="grid gap-6 lg:grid-cols-[1.35fr_0.65fr]">
+    <main className={styles.resumePage}>
+      <div className={styles.resumeHeroGrid}>
         <ProfileCard />
         <ContactCard />
       </div>
-      <ResumeSummary />
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className={styles.resumeStack}>
+        <ResumeSummary />
+      </div>
+      <div className={`${styles.resumeTwoColumn} ${styles.resumeStack}`}>
         <SkillsSection />
         <EducationSection />
       </div>
-      <ExperienceSection />
-      <ProjectsPreview />
+      <div className={styles.resumeStack}>
+        <ExperienceSection />
+        <ProjectsPreview />
+      </div>
     </main>
   );
 }

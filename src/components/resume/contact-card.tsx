@@ -7,7 +7,10 @@ import { buttonClassName, Button } from "@/components/ui/button";
 import { usePortfolioUi } from "@/components/layout/app-shell";
 import { Card } from "@/components/ui/card";
 
+import styles from "./resume.module.css";
+
 type ContactRowProps = {
+  icon: string;
   label: string;
   value: string;
   href?: string;
@@ -27,7 +30,7 @@ async function copyToClipboard(value: string) {
   }
 }
 
-function ContactRow({ label, value, href, canCopy = false }: ContactRowProps) {
+function ContactRow({ icon, label, value, href, canCopy = false }: ContactRowProps) {
   const { t } = usePortfolioUi();
   const [copied, setCopied] = useState(false);
 
@@ -38,16 +41,21 @@ function ContactRow({ label, value, href, canCopy = false }: ContactRowProps) {
   }
 
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[var(--border)] bg-[var(--surface-muted)] p-3">
-      <div className="min-w-0">
-        <span className="block text-xs font-medium uppercase tracking-[0.12em] text-[var(--muted-soft)]">{label}</span>
-        {href ? (
-          <a className="mt-1 block truncate text-sm text-[var(--text)] underline-offset-4 hover:underline" href={href} rel="noreferrer" target="_blank">
-            {value}
-          </a>
-        ) : (
-          <span className="mt-1 block text-sm text-[var(--text)]">{value}</span>
-        )}
+    <div className={styles.contactRow}>
+      <div className={styles.contactMain}>
+        <span aria-hidden="true" className={styles.contactIcon}>
+          {icon}
+        </span>
+        <div className="min-w-0">
+          <span className={styles.contactLabel}>{label}</span>
+          {href ? (
+            <a className={styles.contactValue} href={href} rel="noreferrer" target="_blank">
+              {value}
+            </a>
+          ) : (
+            <span className={styles.contactValue}>{value}</span>
+          )}
+        </div>
       </div>
       {canCopy ? (
         <Button onClick={handleCopy} size="sm" variant="secondary">
@@ -62,13 +70,13 @@ export function ContactCard() {
   const { locale, t } = usePortfolioUi();
 
   return (
-    <Card className="h-full">
-      <h2 className="text-lg font-semibold">{t.resume.contact}</h2>
-      <div className="mt-4 grid gap-3">
-        <ContactRow label={t.resume.location} value={`${profile.location}, ${profile.country[locale]}`} />
-        <ContactRow canCopy label={t.resume.phone} value={profile.phone} />
-        <ContactRow canCopy label={t.resume.email} value={profile.email} />
-        <div className="flex flex-wrap gap-2 pt-1">
+    <Card className={`${styles.resumeCard} h-full`}>
+      <h2 className={styles.sectionTitle}>{t.resume.contact}</h2>
+      <div className={styles.contactGrid}>
+        <ContactRow icon="LOC" label={t.resume.location} value={`${profile.location}, ${profile.country[locale]}`} />
+        <ContactRow canCopy icon="TEL" label={t.resume.phone} value={profile.phone} />
+        <ContactRow canCopy icon="@" label={t.resume.email} value={profile.email} />
+        <div className={styles.contactActions}>
           <a className={buttonClassName("secondary", "sm")} href={profile.github} rel="noreferrer" target="_blank">
             {t.actions.viewGithub}
           </a>

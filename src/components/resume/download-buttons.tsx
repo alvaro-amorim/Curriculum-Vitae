@@ -4,6 +4,8 @@ import { downloads } from "@/content/downloads";
 import { buttonClassName, Button } from "@/components/ui/button";
 import { usePortfolioUi } from "@/components/layout/app-shell";
 
+import styles from "./resume.module.css";
+
 export function DownloadButtons() {
   const { locale, t } = usePortfolioUi();
   const files = downloads[locale];
@@ -33,7 +35,7 @@ export function DownloadButtons() {
   }
 
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className={styles.downloadRail}>
       <a className={buttonClassName("primary")} download={files.pdf.fileName} href={files.pdf.href}>
         {t.actions.downloadPdf}
       </a>

@@ -9,6 +9,8 @@ import { usePortfolioUi } from "@/components/layout/app-shell";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 
+import styles from "./resume.module.css";
+
 type ProjectsPreviewProps = {
   showLinks?: boolean;
   featuredOnly?: boolean;
@@ -22,29 +24,29 @@ export function ProjectsPreview({ showLinks = true, featuredOnly = false, limit 
     .slice(0, limit ?? projects.length);
 
   return (
-    <Card>
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-lg font-semibold">{t.resume.projects}</h2>
+    <Card className={styles.resumeCard}>
+      <div className={styles.itemHeader}>
+        <h2 className={styles.sectionTitle}>{t.resume.projects}</h2>
         <Link className={buttonClassName("ghost", "sm")} href="/projetos">
           {t.actions.viewProjects}
         </Link>
       </div>
 
-      <div className="mt-4 grid gap-4 md:grid-cols-2">
+      <div className={styles.projectGrid}>
         {visibleProjects.map((project) => (
-          <article className="interactive-surface flex min-h-48 flex-col justify-between rounded-xl border border-[var(--border)] bg-[var(--surface-muted)] p-4" key={project.slug}>
+          <article className={`interactive-surface ${styles.projectCard}`} key={project.slug}>
             <div>
-              <h3 className="font-semibold">{project.title[locale]}</h3>
-              <p className="mt-1 text-xs font-semibold uppercase tracking-[0.14em] text-[var(--accent)]">{project.subtitle[locale]}</p>
-              <p className="mt-2 text-sm leading-6 text-[var(--muted)]">{project.shortDescription[locale]}</p>
+              <h3 className={styles.projectTitle}>{project.title[locale]}</h3>
+              <p className={styles.projectKicker}>{project.subtitle[locale]}</p>
+              <p className={styles.projectDescription}>{project.shortDescription[locale]}</p>
             </div>
-            <div className="mt-4 flex flex-col gap-3">
-              <div className="flex flex-wrap gap-2">
+            <div>
+              <div className={styles.projectStack}>
                 {project.stack.slice(0, 5).map((tech) => (
                   <Badge key={tech}>{tech}</Badge>
                 ))}
               </div>
-              <div className="flex flex-wrap gap-2">
+              <div className={styles.projectActions}>
                 <Link className={buttonClassName("primary", "sm")} href={`/projetos/${project.slug}`}>
                   {t.projectsPage.viewCase}
                 </Link>
@@ -64,8 +66,8 @@ export function ProjectsPreview({ showLinks = true, featuredOnly = false, limit 
 
       {showLinks ? (
         <div className="mt-6">
-          <h3 className="text-sm font-semibold uppercase tracking-[0.14em] text-[var(--muted-soft)]">{t.resume.links}</h3>
-          <ul className="mt-3 grid gap-2 text-sm text-[var(--muted)]">
+          <h3 className={styles.projectKicker}>{t.resume.links}</h3>
+          <ul className={styles.linkList}>
             {[...profileLinks, ...projectLinks].map((link) => (
               <li className="flex flex-wrap gap-2" key={link.href}>
                 <span className="text-[var(--text)]">{link.label[locale]}:</span>

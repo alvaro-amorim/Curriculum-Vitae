@@ -56,49 +56,132 @@ Apesar disso, a versão atual ainda demonstra mais domínio de HTML/CSS/JS vanil
 
 ## Estado Atual Real
 
-As fases 1 a 6 já foram implementadas e publicadas como **fundação técnica** do projeto:
+Atualização R1-E.9.3.0 — Arcade Replan, Navigation Strategy & Cleanup Plan.
 
-- Fase 1: base Next.js com App Router, TypeScript, Tailwind, conteúdo estruturado e rota `/curriculo`.
-- Fase 2: área de projetos e case studies em `/projetos` e `/projetos/[slug]`.
-- Fase 3: terminal client-side, command palette e skill matrix.
-- Fase 4: APIs em modo local/mock com validação e respostas padronizadas.
-- Fase 5: primeira versão do Developer Lab.
-- Fase 6: metadata, sitemap, robots, not-found, README e deploy readiness.
+Checkpoint publicado antes desta fase:
 
-Estado real após auditoria:
+```txt
+5f94f83 feat: finalize developer arcade release gate
+```
 
-- Fundação Next.js funcional.
-- Deploy/Vercel corrigido para preset Next.js.
-- Rotas principais funcionando: `/`, `/curriculo`, `/projetos`, `/projetos/[slug]`, `/lab`, `/api/health`.
-- APIs mock/local funcionando como base técnica.
-- SEO básico, sitemap e robots funcionando.
-- Conteúdo profissional preservado e estruturado.
-- Downloads PDF/DOCX preservados em `public/resume`.
-- O HTML estático antigo e os PDFs/DOCX legados da raiz foram removidos do repositório porque já existem em backup externo.
-- A versão ativa é o app Next.js em `src/app`.
-- Downloads ativos permanecem em `public/resume/` e a imagem ativa permanece em `public/profile/`.
+Estado real do produto após revisão humana em vídeo:
 
-Porém:
+- A home oficial `/` já usa a experiência visual premium aprovada.
+- `/visual-final-candidate` continua preservada temporariamente como rota de comparação.
+- `/projetos` está concluída como hub premium de projetos.
+- `/projetos/[slug]` está concluída como experiência premium de case studies.
+- `/lab` contém uma versão publicada do Developer Arcade, mas a direção final dos jogos foi revisada.
+- Runtime Runner / Bug Runner e Bug Maze melhoraram, mas ainda precisam ficar mais divertidos, responsivos e com mais ação.
+- Debug Arena ainda parece quiz/teste estilizado.
+- Latency Lab ainda parece dashboard/formulário.
+- Quiz/foundation challenge não deve ser tratado como jogo final.
+- Existem falhas de motion, animações iniciais, posicionamento de texto, eventuais sobreposições e sensação amadora em alguns pontos.
+- A navbar/topbar atual não mantém a identidade premium da home e pode fazer o usuário sentir que mudou de site ao navegar.
+- A home premium precisa de navegação direta e minimalista para rotas e seções importantes.
+- `/curriculo` continua preservada para leitura objetiva e downloads.
+- Downloads PDF/DOCX continuam em `public/resume/`.
+- A imagem ativa continua em `public/profile/`.
+- Metadata, sitemap, robots, not-found e fundamentos de SEO estão implementados.
+- `/api/score` é mock/local, não persistente, com validação para os jogos do Developer Arcade.
+- A revisão humana bloqueou o checkpoint R1-E.9 e também a checkpointagem da R1-E.9.1/R1-E.9.2.
+- O projeto não deve ser tratado como fechamento final até a R1-E.9.3 redefinir e implementar a nova direção.
 
-- O resultado atual **não está aprovado como experiência final**.
-- O projeto atual **não deve ser tratado como pronto para apresentação premium**.
-- A home atual não impressiona nos primeiros segundos.
-- O visual atual está genérico e conservador.
-- O Developer Lab atual é funcional, mas **não é gamificado de verdade**.
-- A skill matrix atual é uma lista filtrável com barras, não um radar visual memorável.
-- O terminal atual funciona, mas ainda parece um formulário estilizado.
-- A próxima etapa obrigatória é uma fase de resgate criativo/visual.
+Direção final desejada do Developer Arcade:
 
-Conclusão: a fundação técnica está concluída; a experiência visual e interativa foi reprovada para o objetivo original.
+1. Runtime Runner / Bug Runner.
+2. Bug Maze.
+3. Code Snake.
+4. Stack Tetris.
 
-Atualização pós-R1:
+Decisão sobre módulos existentes:
 
-- As tentativas R1.1, R1.1B e a última versão cinematográfica da primeira dobra foram reprovadas visualmente pelo usuário.
-- A reprovação não invalida a fundação técnica, mas invalida a direção visual dessas tentativas.
-- O projeto continua funcional tecnicamente, com deploy/Vercel estabilizado, rotas principais funcionando e downloads preservados.
-- A experiência visual ainda **não está aprovada**.
-- Nenhum checkpoint visual deve ser criado sem aprovação visual humana explícita.
-- A próxima direção oficial passa a ser a fase **R1-C — Portfolio OS Premium Rebuild**.
+- Debug Arena deve ser rebaixado para módulo de treino, experimento arquivado ou removido da vitrine principal.
+- Latency Lab deve ser rebaixado para módulo de treino, experimento arquivado ou removido da vitrine principal.
+- Quiz/foundation challenge permanece como treino/foundation, não como jogo final.
+- O código desses módulos pode permanecer temporariamente até a fase de limpeza, mas a UI principal não deve vendê-los como jogos finais.
+
+O que ainda não existe e não deve ser marcado como concluído:
+
+- Supabase ativo.
+- Banco de dados real.
+- Ranking real.
+- Analytics persistente real.
+- Admin dashboard.
+- Autenticação.
+- Requests externos nos jogos.
+- Provider/LLM dinâmico nos jogos.
+- Screenshots reais dos projetos.
+- Admin de imagens dos projetos.
+- Deploy manual nesta fase.
+
+Fase futura obrigatória:
+
+- R1-F — Project Assets Admin / Project Media Manager.
+- Essa fase deve criar uma página admin protegida para cadastrar ou subir imagens reais dos projetos.
+- O admin deve editar thumbnail, hero image e galeria conectados à estrutura `visuals`.
+- O armazenamento real deve ser definido em fase própria, provavelmente Supabase Storage/Auth ou solução equivalente.
+- Enquanto R1-F não existir, os placeholders de projeto continuam honestos.
+- Supabase ainda não está ativo.
+- Não criar screenshots falsos.
+
+Estado de produção na R1-E.9:
+
+- URL pública usada para leitura: `https://curriculum-vitae-babr.vercel.app/`.
+- Rotas principais, `/api/health`, `sitemap.xml`, `robots.txt` e PDF PT responderam com HTTP 200 em produção.
+- Metadata e canonical de produção apontam para `https://curriculum-vitae-babr.vercel.app`.
+- A home de produção ainda não reflete a correção local R1-E.9 do teaser do Developer Lab; essa divergência deve ser resolvida pelo checkpoint/push e pelo deploy automático posterior.
+- A sincronização exata com o commit publicado deve ser confirmada por Vercel quando necessário, porque o app não expõe o hash em runtime.
+
+Próximo passo oficial:
+
+- Concluir a R1-E.9.3.1 — Premium Interface, Motion & Navigation Polish, em execução local sem checkpoint.
+- Validar a navbar/topbar global premium em `/`, `/projetos`, cases, `/lab` e `/curriculo`.
+- Validar a navegação direta e minimalista na home sem competir com o hero.
+- Sincronizar motion/transições, corrigir textos mal posicionados, z-index, espaçamentos, sobreposições e mobile.
+- Executar a subfase R1-E.9.3.1.1 — Premium UI, Theme & Transition Polish para tema claro real, transições entre rotas, animação de tema/idioma, lazy/defer seguro e currículo visualmente alinhado ao Portfolio OS.
+- Depois executar R1-E.9.3.2 para rebaixar Debug Arena/Latency Lab/quiz da vitrine principal e melhorar Runtime Runner/Bug Maze antes de criar Code Snake e Stack Tetris.
+- Criar checkpoint somente com validação técnica, QA visual e revisão humana.
+
+Plano oficial pós-revisão:
+
+```txt
+R1-E.9.3.0 — Arcade Replan, Navigation Strategy & Cleanup Plan
+R1-E.9.3.1 — Premium Interface, Motion & Navigation Polish
+R1-E.9.3.1.1 — Premium UI, Theme & Transition Polish
+R1-E.9.3.2 — Arcade Reset & Runtime/Bug Maze Action Polish
+R1-E.9.4   — Code Snake
+R1-E.9.5   — Stack Tetris
+R1-E.9.6   — Developer Arcade Final QA
+R1-F.0     — Project Assets Admin Planning
+R1-F.1     — Protected Admin Shell
+R1-F.2     — Project Media Manager
+R1-F.3     — Storage/Persistence Integration
+```
+
+Estratégia de navbar/navegação global:
+
+- A navegação global deve parecer parte da experiência premium, não um header comum de dashboard.
+- Deve ter estado ativo claro, transições suaves, versão mobile própria e respeito a `prefers-reduced-motion`.
+- Não pode ocupar espaço demais, esconder conteúdo ou causar sobreposição.
+- Deve preservar identidade visual entre home, projetos, cases, Lab e currículo.
+
+Estratégia de navegação direta na home:
+
+- Criar uma solução minimalista como nav flutuante, section rail, magnetic nav pills, command dock visual ou progress/section navigator.
+- A navegação deve levar diretamente para projetos, Lab, currículo, contato/download e seções internas relevantes.
+- Não pode poluir a primeira dobra nem competir com o palco visual aprovado.
+
+Fase futura obrigatória R1-F:
+
+- Ainda não existe `/admin`.
+- Ainda não existe autenticação/proteção de admin.
+- Ainda não existe upload/cadastro de imagens reais dos projetos.
+- Ainda não existe storage real.
+- R1-F deve planejar e implementar Project Assets Admin / Project Media Manager em fases próprias.
+- O escopo futuro inclui `/admin`, proteção, upload/cadastro de thumbnail, hero image, galeria, alt PT/EN, integração com `visuals`, e armazenamento real, provavelmente Supabase Storage/Auth ou alternativa aprovada.
+- Até lá, os placeholders de projetos continuam honestos e nenhum screenshot falso deve ser criado.
+
+As seções históricas abaixo explicam o diagnóstico e as decisões que levaram ao estado atual. Quando houver divergência, o bloco **Estado Atual Real** prevalece.
 
 ---
 
@@ -495,7 +578,7 @@ Uma entrega visual só pode ser considerada pronta se todos os itens abaixo fore
 - Screenshots são gerados e anexados ou listados no relatório.
 - Não há mistura indevida de PT/EN.
 - Não há erro de acentuação, ortografia ou encoding.
-- Não há `Ã`, `�` ou qualquer mojibake no HTML/DOM visível.
+- Não há mojibake no HTML/DOM visível.
 - Não há overflow horizontal.
 - Não há console errors nem page errors.
 - O usuário aprova visualmente de forma explícita.
@@ -528,7 +611,7 @@ Não fazer:
 - Não usar foto cortada, esmagada, grande demais ou mal posicionada no mobile.
 - Não esconder CTA principal abaixo da dobra.
 - Não misturar textos PT/EN.
-- Não aceitar `Ã`, `�` ou qualquer mojibake.
+- Não aceitar mojibake.
 - Não chamar checklist, quiz ou formulário com score de mini-game final.
 - Não usar animação decorativa como substituta de bom layout.
 - Não usar CSS gigante desorganizado sem tokens, seções e responsabilidade clara.
@@ -581,249 +664,53 @@ Anti-patterns proibidos daqui para frente:
 - Não usar apenas fade, hover simples ou glow como prova de motion premium.
 - Não criar scroll sem narrativa.
 - Não misturar PT com EN fora dos termos técnicos aceitos.
-- Não aceitar erro de acentuação, `Ã`, `�` ou qualquer mojibake.
+- Não aceitar erro de acentuação ou mojibake.
 - Não aplicar a candidata visual na home oficial antes de aprovação visual humana.
 
 ### R1-E — Roadmap Oficial de Fechamento Visual Premium
 
-A fase R1-E é o roadmap oficial aprovado para transformar a direção preservada em `/visual-final-candidate` em uma experiência ultra premium pronta para virar a home oficial.
-
-Estado atual real:
-
-- Checkpoint publicado: `7a67287 feat: preserve visual final candidate direction`.
-- `/visual-final-candidate` é a direção visual preservada e aprovada como base.
-- `/visual-final-candidate` ainda **não é a home oficial**.
-- A home oficial `/` continua na versão antiga.
-- Os protótipos antigos `/visual-prototype` e `/visual-exploration` foram removidos.
-- A primeira dobra ainda precisa evoluir muito antes de virar oficial.
-
-Decisão oficial:
-
-- R1-E é o roadmap oficial até o fechamento visual do projeto.
-- O objetivo é transformar a candidata visual em uma experiência ultra premium.
-- O foco inicial é a primeira dobra viva, interativa e orientada a projetos.
-- Build passar não significa pronto.
-- Aprovação visual humana continua obrigatória antes de qualquer avanço crítico.
-
-Regra de escopo:
-
-- R1-E.1 deve trabalhar somente em `/visual-final-candidate`.
-- A home oficial `/` só pode ser substituída na R1-E.6.
-- R1-E.6 só pode acontecer depois de aprovação visual humana explícita.
-
-Prioridade absoluta da R1-E:
-
-- A primeira dobra deve ser a melhor parte do site.
-- Ela deve ter carrossel vivo de projetos.
-- O projeto ativo deve ter frame visual grande.
-- A stack deve estar conectada ao projeto ativo.
-- A experiência deve ter animações e transições premium.
-- O palco deve reagir ao mouse com tracking, spotlight, parallax, profundidade ou canvas.
-- O carrossel deve ter autoplay pausável e controles manuais.
-- O mobile deve ser desenhado como experiência própria.
-- PT/EN devem permanecer corretos e separados.
-- `prefers-reduced-motion` deve ser respeitado.
-- Deve existir espaço real para screenshots, mockups e imagens dos projetos.
-- Enquanto as imagens reais não existirem, o fallback deve ser premium, honesto e não enganoso.
-
-#### R1-E.0 — Cleanup & Documentation Sync
-
-Status: executado e publicado.
-
-Objetivo:
-
-- Remover protótipos visuais legados/reprovados.
-- Preservar `/visual-final-candidate`.
-- Atualizar documentação de estado real.
-- Manter a home oficial `/` intacta.
-
-Critérios:
-
-- `/visual-final-candidate` preservada.
-- `/visual-prototype` e `/visual-exploration` removidos.
-- `public/resume/` e `public/profile/` intactos.
-- Nenhuma aplicação da candidata na home oficial.
-
-#### R1-E.1 — First Fold Living Showcase
-
-Objetivo:
-
-- Trabalhar somente em `/visual-final-candidate`.
-- Transformar a primeira dobra em uma vitrine viva de produto.
-- Criar carrossel visual/interativo de projetos.
-- Mostrar projeto ativo com imagem real ou placeholder premium.
-- Mostrar stack animada e conectada ao projeto ativo.
-- Adicionar mouse tracking, spotlight, parallax e transições cinematográficas.
-- Implementar autoplay pausável e controles manuais.
-- Criar mobile premium, não desktop espremido.
-
-Não fazer:
-
-- Não aplicar nada na home oficial `/`.
-- Não alterar `/curriculo`, `/projetos`, `/lab` ou `/api`.
-- Não criar screenshots falsos.
-- Não transformar a primeira dobra em dashboard, grid de cards ou terminal parado.
-
-Critérios de aceite:
-
-- A primeira dobra comunica valor em até 5 segundos.
-- Projetos são percebidos como vitrine visual, não lista.
-- O projeto ativo domina a composição de forma premium.
-- Stack, movimento e interação estão ligados ao projeto ativo.
-- Mobile funciona como composição própria.
-- PT/EN, acentuação, encoding e reduced motion passam.
-- Screenshots e validação visual humana são obrigatórios antes de avançar.
-
-#### R1-E.2 — Cinematic Loading System
-
-Objetivo:
-
-- Elevar o loading para uma abertura memorável do Portfolio OS.
-- Criar boot visual com duração controlada.
-- Montar visualmente o palco, os projetos e o sistema.
-- Fazer a transição loading -> hero parecer contínua.
-- Simplificar ou pular a experiência em `prefers-reduced-motion`.
-
-Critérios:
-
-- Não usar spinner genérico.
-- Não bloquear navegação recorrente de forma irritante.
-- Não causar layout shift relevante.
-- Não animar texto de forma que prejudique nitidez.
-
-#### R1-E.3 — Project Visual Asset System
-
-Objetivo:
-
-- Definir campos definitivos para imagens dos projetos.
-- Preparar a estrutura para screenshots, mockups, vídeos e galerias reais.
-
-Modelo recomendado:
-
-```ts
-visuals: {
-  thumbnail: string | null;
-  heroImage: string | null;
-  mockupImage: string | null;
-  gallery: string[];
-  video?: string | null;
-  background?: string | null;
-  alt: LocalizedText;
-  status: "pending" | "available";
-}
-```
-
-Diretório futuro recomendado:
-
-```txt
-public/projects/<slug>/
-```
-
-Critérios:
-
-- Nunca inventar screenshot falso.
-- Fallback premium deve dizer claramente que a imagem está em preparação.
-- Diferenciar thumbnail, hero image, mockup image, gallery, video e background.
-- Manter PT/EN correto nos textos alternativos.
-
-#### R1-E.4 — Premium Scroll Narrative
-
-Objetivo:
-
-- Criar narrativa contínua abaixo da primeira dobra.
-- Integrar projetos, stacks, formação/certificações, experiência e CTA final.
-- Evitar blocos soltos, listas comuns e cards genéricos.
-
-Critérios:
-
-- O scroll deve parecer progressão visual.
-- Não usar scroll-jacking agressivo.
-- Stacks devem se conectar aos projetos.
-- Formação e certificações devem parecer trilha técnica, não currículo cru.
-
-#### R1-E.5 — Motion/Interaction Refinement
-
-Objetivo:
-
-- Refinar mouse tracking, spotlight, tilt, parallax, hover, focus e transitions.
-- Avaliar `motion`, GSAP, Canvas ou SVG avançado se houver ganho real.
-- Garantir nitidez de texto e separação entre camadas visuais e camadas textuais.
-- Garantir fallback completo para `prefers-reduced-motion`.
-
-Critérios:
-
-- Movimento precisa ter propósito.
-- Interações precisam reforçar hierarquia e produto.
-- Texto não deve ser animado com scale, blur ou perspectiva pesada.
-- Performance e acessibilidade continuam gates obrigatórios.
-
-#### R1-E.6 — Apply Candidate to Official Home
-
-Objetivo:
-
-- Substituir `/` pela experiência aprovada.
-- Executar somente depois de aprovação visual humana da candidata.
-- Preservar rotas internas, downloads, sitemap, robots e Vercel.
-
-Critérios:
-
-- `/` passa a servir a experiência aprovada.
-- `/visual-final-candidate` pode ser preservada temporariamente para comparação ou arquivada em fase posterior.
-- `/curriculo`, `/projetos`, `/lab`, `/api/health` e downloads continuam funcionando.
-- Vercel precisa servir a versão correta.
-
-#### R1-E.7 — Projects and Case Studies Premium
-
-Objetivo:
-
-- Evoluir `/projetos` e `/projetos/[slug]`.
-- Adicionar screenshots reais, galerias, arquitetura, decisões técnicas e resultados honestos.
-- Transformar case studies em storytelling visual premium.
-
-Critérios:
-
-- Não inventar métricas.
-- Não inventar screenshots.
-- Não exagerar impacto profissional.
-- Cada case deve explicar contexto, solução, stack, desafios e evidências reais.
-
-#### R1-E.8 — Developer Lab Real Games
-
-Objetivo:
-
-- Substituir quiz/checklist por jogos reais.
-- Evoluir Runtime/Bug Runner, Bug Maze, Debug Arena e Latency Lab.
-
-Critérios:
-
-- Jogos devem ter regras, estado, pontuação e feedback visual.
-- Jogos devem ser jogáveis, não formulários disfarçados.
-- Supabase só entra se for aprovado em fase posterior.
-- Sem ranking real, banco ou persistência antes de aprovação explícita.
-
-#### R1-E.9 — Final QA, Deploy and Release Gate
-
-Objetivo:
-
-- Fechar a experiência com validação técnica, visual, acessível e pública.
-
-Validações obrigatórias:
-
-- `npm run lint`.
-- `npm run typecheck`.
-- `npm run build`.
-- `npm run validate:foundation`.
-- Playwright, Browser MCP ou Chrome/CDP com screenshots.
-- Desktop/mobile.
-- Dark/light.
-- PT/EN.
-- Encoding e busca por `Ã` e `�`.
-- Console errors, console warnings relevantes e page errors.
-- Lighthouse.
-- Acessibilidade.
-- Downloads PDF/DOCX.
-- Vercel production.
-- Aprovação visual humana final.
+A R1-E deixou de ser apenas plano e virou histórico de entregas publicadas, mas a revisão humana da R1-E.9.3.0 bloqueou o fechamento final. O objetivo original foi atingido parcialmente: home, projetos e cases chegaram a uma direção premium, porém o Developer Arcade e a navegação global precisam de replanejamento antes do encerramento.
+
+Status publicado:
+
+- R1-E.0: cleanup e preservação da candidata visual.
+- R1-E.1: first fold living showcase.
+- R1-E.2: cinematic loading system.
+- R1-E.3: project visual asset foundation.
+- R1-E.4: premium scroll narrative.
+- R1-E.5: motion/interaction refinement.
+- R1-E.5.1: final visual polish e readiness.
+- R1-E.6: aplicação da candidata na home oficial `/`.
+- R1-E.7: projetos e case studies premium.
+- R1-E.8.0/R1-E.8.1: Developer Arcade foundation e Runtime Runner.
+- R1-E.8.1.1: polish do Runtime Runner.
+- R1-E.8.2: Bug Maze.
+- R1-E.8.2.1: polish do Bug Maze.
+- R1-E.8.3: Debug Arena.
+- R1-E.8.3.1: polish do Debug Arena.
+- R1-E.8.4: Latency Lab.
+- R1-E.8.5: release gate do Developer Arcade.
+
+Estado revisado antes do fechamento R1-E.9:
+
+- Home oficial `/` validada como experiência premium.
+- `/visual-final-candidate` preservada temporariamente como comparação.
+- `/projetos` e `/projetos/[slug]` validados como experiência premium.
+- `/lab` não validado como arcade final.
+- Jogos finais desejados: Runtime Runner, Bug Maze, Code Snake e Stack Tetris.
+- Debug Arena, Latency Lab e quiz/foundation challenge não devem ser vendidos como jogos finais.
+- `/curriculo` e downloads preservados.
+- `/api/score` permanece mock/local não persistente. O contrato atual ainda aceita `runtime`, `bug-maze`, `debug-arena` e `latency-lab`; contratos futuros devem acompanhar Code Snake e Stack Tetris em fases próprias.
+- Sitemap, robots, metadata, links, idiomas, tema, acessibilidade, reduced motion e mobile validados.
+- Produção deve ser validada por leitura quando disponível, sem deploy manual nesta fase.
+
+Regras permanentes:
+
+- Não inventar screenshots, métricas, clientes, ranking, analytics ou persistência.
+- Não iniciar Supabase sem fase explícita.
+- Não tratar módulos de treino como jogos finais.
+- Não remover `/visual-final-candidate` sem decisão posterior.
+- Não declarar paridade de produção com commit sem evidência observável.
 
 ### Critérios Globais de Aceite da R1-E
 
@@ -840,13 +727,16 @@ Validações obrigatórias:
 
 ### Próximo Passo Oficial
 
-O próximo passo oficial é:
+A fase em execução local é:
 
 ```txt
-R1-E.1 — First Fold Living Showcase
+R1-E.9.3.1 — Premium Interface, Motion & Navigation Polish
+R1-E.9.3.1.1 — Premium UI, Theme & Transition Polish
 ```
 
-Essa fase deve ocorrer somente em `/visual-final-candidate`.
+Essa fase moderniza a navbar global, cria navegação direta na home, sincroniza motion, corrige textos/sobreposições e refina mobile antes de continuar o Arcade. Ainda precisa de QA visual e revisão humana antes de checkpoint.
+
+A subfase R1-E.9.3.1.1 aprofunda tema claro, transições entre rotas, troca dark/light, troca PT/EN, tipografia, lazy/defer seguro e currículo, sem iniciar Arcade Reset, Code Snake, Stack Tetris ou Admin.
 
 ### Roadmap R1-C Recomendado
 
@@ -986,7 +876,7 @@ Para qualquer fase visual a partir da R1-C:
 - Console errors e page errors devem ser inspecionados.
 - Overflow horizontal deve ser verificado.
 - Strings misturadas PT/EN devem ser procuradas.
-- Mojibake deve ser procurado com `Ã` e `�`.
+- Mojibake deve ser procurado por sequências quebradas típicas e caracteres de substituição Unicode.
 
 Se a ferramenta visual falhar, isso deve ser relatado. A entrega visual não deve ser tratada como aprovada apenas por validação textual ou build verde.
 

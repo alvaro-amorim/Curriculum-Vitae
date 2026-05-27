@@ -7,6 +7,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { usePortfolioUi } from "@/components/layout/app-shell";
+import { downloads } from "@/content/downloads";
 import { certificationGroup, education } from "@/content/education";
 import { profile } from "@/content/profile";
 import { projects } from "@/content/projects";
@@ -17,7 +18,7 @@ import styles from "./visual-final-candidate.module.css";
 
 type StyleVars = CSSProperties & Record<`--${string}`, string | number>;
 
-const BOOT_DURATION = 4450;
+const BOOT_DURATION = 2850;
 const SHOWCASE_INTERVAL = 6400;
 const ACTIVE_STACK_LIMIT = 5;
 const SESSION_KEY = "portfolio-visual-final-candidate-v3";
@@ -65,7 +66,7 @@ const copy = {
     projectsEyebrow: "vitrine de produto",
     projectsTitle: "Projetos com espaço real para screenshots.",
     projectsIntro:
-      "A candidata prioriza áreas visuais grandes para receber imagens, vídeos ou mockups reais. Enquanto isso, os frames mostram uma blueprint intencional, sem simular screenshots falsos.",
+      "A experiência prioriza áreas visuais grandes para receber imagens, vídeos ou mockups reais. Enquanto isso, os frames mostram uma blueprint intencional, sem simular screenshots falsos.",
     projectScene: "cena de produto",
     projectFlow: "fluxo visual",
     stackEyebrow: "motor técnico",
@@ -75,11 +76,17 @@ const copy = {
     timelineEyebrow: "trilha técnica",
     timelineTitle: "Formação e certificações como evolução do sistema.",
     timelineIntro: "A linha mostra base acadêmica e certificações como camadas que sustentam produto, dados, segurança e IA.",
-    labEyebrow: "camada futura",
-    labTitle: "Developer Lab preparado para interação.",
-    labIntro: "Os jogos aparecem como módulos planejados do mesmo sistema, sem vender protótipo como experiência final.",
+    labEyebrow: "arcade completo",
+    labTitle: "Developer Lab com quatro jogos reais.",
+    labIntro: "O arcade reúne jogos com estado, pontuação, feedback e controles próprios, sem vender treino ou checklist como experiência final.",
     finalTitle: "Vamos transformar produto em entrega real?",
     finalSubtitle: "Explore projetos, currículo e GitHub em uma experiência viva para entender como eu construo produtos web, SaaS e IA.",
+    directNav: "navegação direta",
+    directProjects: "Projetos",
+    directLab: "Lab",
+    directResume: "Currículo",
+    directContact: "Contato",
+    directDownload: "PDF",
   },
   en: {
     bootLabel: "Portfolio OS",
@@ -114,7 +121,7 @@ const copy = {
     projectsEyebrow: "product showcase",
     projectsTitle: "Projects with real space for screenshots.",
     projectsIntro:
-      "The candidate prioritizes large visual areas ready for real images, videos or mockups. Until then, the frames show an intentional blueprint without simulating fake screenshots.",
+      "The experience prioritizes large visual areas ready for real images, videos or mockups. Until then, the frames show an intentional blueprint without simulating fake screenshots.",
     projectScene: "product scene",
     projectFlow: "visual flow",
     stackEyebrow: "technical engine",
@@ -124,26 +131,32 @@ const copy = {
     timelineEyebrow: "technical track",
     timelineTitle: "Education and certifications as system evolution.",
     timelineIntro: "The line shows education and certifications as layers supporting product, data, security and AI.",
-    labEyebrow: "future layer",
-    labTitle: "Developer Lab prepared for interaction.",
-    labIntro: "The games appear as planned modules of the same system without selling a prototype as the final experience.",
+    labEyebrow: "complete arcade",
+    labTitle: "Developer Lab with four real games.",
+    labIntro: "The arcade brings together games with state, score, feedback and dedicated controls without selling training modules or checklists as the final experience.",
     finalTitle: "Ready to turn product ideas into real delivery?",
     finalSubtitle: "Explore projects, resume and GitHub in a living experience built around web products, SaaS and AI.",
+    directNav: "direct navigation",
+    directProjects: "Projects",
+    directLab: "Lab",
+    directResume: "Resume",
+    directContact: "Contact",
+    directDownload: "PDF",
   },
 } as const;
 
 const labModules = {
   pt: [
-    ["Runtime Runner", "protótipo visual", "Runner técnico com colisão, pontuação e feedback."],
-    ["Bug Maze", "planejado", "Mapa de bugs, testes e tomada de decisão."],
-    ["Debug Arena", "planejado", "Arena para investigar falhas antes da compilação."],
-    ["Latency Lab", "fundação", "Simulação visual de API, cache e tempo de resposta."],
+    ["Runtime Runner", "jogável", "Runner técnico com colisão, pontuação e feedback."],
+    ["Bug Maze", "jogável", "Labirinto com patches, hazards, vitória e incidentes."],
+    ["Debug Arena", "jogável", "Arena de decisões técnicas com score, streak e feedback."],
+    ["Latency Lab", "jogável", "Simulação local de API, cache, budget e métricas de performance."],
   ],
   en: [
-    ["Runtime Runner", "visual prototype", "Technical runner with collision, score and feedback."],
-    ["Bug Maze", "planned", "Map of bugs, tests and decision making."],
-    ["Debug Arena", "planned", "Arena to investigate failures before the build."],
-    ["Latency Lab", "foundation", "Visual simulation of API, cache and response time."],
+    ["Runtime Runner", "playable", "Technical runner with collision, score and feedback."],
+    ["Bug Maze", "playable", "Maze with patches, hazards, win state and incidents."],
+    ["Debug Arena", "playable", "Technical decision arena with score, streak and feedback."],
+    ["Latency Lab", "playable", "Local API, cache, budget and performance metrics simulation."],
   ],
 } as const;
 
@@ -689,6 +702,24 @@ function NarrativeRail({ locale }: { locale: Locale }) {
   );
 }
 
+function HomeQuickNav({ locale }: { locale: Locale }) {
+  const t = copy[locale];
+  const activeDownload = downloads[locale].pdf;
+
+  return (
+    <nav className={styles.quickNav} aria-label={t.directNav} data-home-quick-nav="true">
+      <span className={styles.quickNavLabel}>{t.directNav}</span>
+      <Link href="/projetos">{t.directProjects}</Link>
+      <Link href="/lab">{t.directLab}</Link>
+      <Link href="/curriculo">{t.directResume}</Link>
+      <a href="#home-contact">{t.directContact}</a>
+      <a href={activeDownload.href} download={activeDownload.fileName}>
+        {t.directDownload}
+      </a>
+    </nav>
+  );
+}
+
 function ShowcaseControls({
   activeIndex,
   autoplayRunning,
@@ -1040,7 +1071,11 @@ export function VisualFinalCandidate() {
             <Link className={styles.secondary} href="/curriculo">
               {t.secondary}
             </Link>
+            <Link className={styles.ghost} href="/lab">
+              {t.tertiary}
+            </Link>
           </div>
+          <HomeQuickNav locale={locale} />
         </div>
         <HeroStage
           activeIndex={activeProjectIndex}
@@ -1055,22 +1090,22 @@ export function VisualFinalCandidate() {
         />
       </section>
 
-      <section className={styles.narrative} data-section="projects">
+      <section className={styles.narrative} data-section="projects" id="home-projects">
         <SectionHeading eyebrow={t.projectsEyebrow} intro={t.projectsIntro} title={t.projectsTitle} />
         <ProductStories locale={locale} projectsList={featuredProjects} />
       </section>
 
-      <section className={styles.narrative} data-section="stack">
+      <section className={styles.narrative} data-section="stack" id="home-stack">
         <SectionHeading eyebrow={t.stackEyebrow} intro={t.stackIntro} title={t.stackTitle} />
         <StackSystem locale={locale} projectsList={featuredProjects} />
       </section>
 
-      <section className={styles.narrative} data-section="timeline">
+      <section className={styles.narrative} data-section="timeline" id="home-timeline">
         <SectionHeading eyebrow={t.timelineEyebrow} intro={t.timelineIntro} title={t.timelineTitle} />
         <Timeline locale={locale} />
       </section>
 
-      <section className={styles.narrative} data-section="lab">
+      <section className={styles.narrative} data-section="lab" id="home-lab">
         <SectionHeading eyebrow={t.labEyebrow} intro={t.labIntro} title={t.labTitle} />
         <LabLayer locale={locale} />
       </section>
@@ -1079,6 +1114,7 @@ export function VisualFinalCandidate() {
         className={styles.finalCta}
         data-section="final"
         data-candidate-reveal
+        id="home-contact"
         onPointerMove={handleLocalPointer}
         onPointerLeave={(event) => resetLocalPointer(event.currentTarget)}
       >

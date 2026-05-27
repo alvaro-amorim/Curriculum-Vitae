@@ -9,6 +9,8 @@ import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/cn";
 import type { SkillCategory } from "@/types/portfolio";
 
+import styles from "./resume.module.css";
+
 type FilterKey = SkillCategory | "all";
 
 export function SkillsSection() {
@@ -29,10 +31,10 @@ export function SkillsSection() {
   );
 
   return (
-    <Card>
-      <div className="flex flex-col gap-4">
-        <h2 className="text-lg font-semibold">{t.resume.skills}</h2>
-        <div className="flex flex-wrap gap-2" aria-label={t.resume.skills}>
+    <Card className={styles.resumeCard}>
+      <div>
+        <h2 className={styles.sectionTitle}>{t.resume.skills}</h2>
+        <div className={styles.skillFilters} aria-label={t.resume.skills}>
           {filters.map((filter) => (
             <Button
               className={cn(activeFilter === filter.key && "border-[var(--accent)] text-[var(--text)]")}
@@ -45,9 +47,9 @@ export function SkillsSection() {
             </Button>
           ))}
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className={styles.skillCloud}>
           {visibleSkills.map((skill) => (
-            <span className="rounded-lg border border-[var(--border)] bg-[var(--surface-muted)] px-3 py-2 text-sm text-[var(--text)]" key={skill.name}>
+            <span className={styles.skillPill} key={skill.name}>
               {skill.name}
             </span>
           ))}

@@ -43,14 +43,14 @@ type StyleVars = CSSProperties & Record<`--${string}`, string | number>;
 const BEST_SCORE_KEY = "alvaro-dev-runtime-runner-best-v1";
 
 const obstacleConfigs: Omit<Obstacle, "id" | "x">[] = [
-  { label: "BUG", tone: "bug", width: 10, hitHeight: 0.38 },
-  { label: "404", tone: "network", width: 9, hitHeight: 0.34 },
-  { label: "TIMEOUT", tone: "network", width: 12, hitHeight: 0.42 },
-  { label: "BUILD FAIL", tone: "build", width: 14, hitHeight: 0.46 },
-  { label: "MERGE CONFLICT", tone: "build", width: 18, hitHeight: 0.5 },
-  { label: "MEMORY LEAK", tone: "memory", width: 16, hitHeight: 0.45 },
-  { label: "TYPE ERROR", tone: "type", width: 14, hitHeight: 0.42 },
-  { label: "RATE LIMIT", tone: "rate", width: 13, hitHeight: 0.4 },
+  { label: "BUG", tone: "bug", width: 10, hitHeight: 0.22 },
+  { label: "404", tone: "network", width: 9, hitHeight: 0.19 },
+  { label: "TIMEOUT", tone: "network", width: 12, hitHeight: 0.24 },
+  { label: "BUILD FAIL", tone: "build", width: 14, hitHeight: 0.27 },
+  { label: "MERGE CONFLICT", tone: "build", width: 18, hitHeight: 0.3 },
+  { label: "MEMORY LEAK", tone: "memory", width: 16, hitHeight: 0.27 },
+  { label: "TYPE ERROR", tone: "type", width: 14, hitHeight: 0.24 },
+  { label: "RATE LIMIT", tone: "rate", width: 13, hitHeight: 0.23 },
 ];
 
 const obstacleToneClasses: Record<Obstacle["tone"], string> = {
@@ -140,7 +140,7 @@ function createInitialFrame(): RunnerFrame {
     elapsed: 0,
     runScore: 0,
     apiScore: 0,
-    speed: 28,
+    speed: 20,
     runnerY: 0,
     velocity: 0,
     obstacles: [],
@@ -212,12 +212,11 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
   }, []);
 
   const startRun = useCallback(() => {
-    const firstObstacle = createObstacle(0);
     const next = {
       ...createInitialFrame(),
-      obstacles: [{ ...firstObstacle, x: 70 }],
-      speed: reducedMotion ? 22 : 25,
-      spawnIn: 1.28,
+      obstacles: [],
+      speed: reducedMotion ? 17 : 20,
+      spawnIn: reducedMotion ? 1.35 : 1.15,
     };
     completedRef.current = false;
     obstacleIdRef.current = 1;
@@ -255,14 +254,14 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
     }
 
     const current = stateRef.current;
-    if (current.runnerY > 0.14) {
+    if (current.runnerY > 0.2) {
       return;
     }
 
     commitFrame({
       ...current,
       runnerY: Math.max(current.runnerY, 0.03),
-      velocity: reducedMotion ? 1.02 : 1.28,
+      velocity: reducedMotion ? 1.32 : 1.66,
     });
   }, [commitFrame, reducedMotion, startRun]);
 
@@ -333,7 +332,7 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
       lastTime = now;
 
       const current = stateRef.current;
-      const gravity = reducedMotion ? 2.45 : 3.08;
+      const gravity = reducedMotion ? 2.28 : 2.82;
       let runnerY = current.runnerY + current.velocity * delta;
       let velocity = current.velocity - gravity * delta;
 
@@ -343,7 +342,7 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
       }
 
       const elapsed = current.elapsed + delta;
-      const speed = Math.min(reducedMotion ? 42 : 58, (reducedMotion ? 22 : 25) + elapsed * (reducedMotion ? 0.92 : 1.42));
+      const speed = Math.min(reducedMotion ? 34 : 44, (reducedMotion ? 17 : 20) + elapsed * (reducedMotion ? 0.54 : 0.78));
       const moved = current.obstacles.map((obstacle) => ({
         ...obstacle,
         x: obstacle.x - speed * delta,
@@ -356,17 +355,17 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
       if (spawnIn <= 0) {
         obstacleIdRef.current += 1;
         obstacles.push(createObstacle(obstacleIdRef.current));
-        const cadence = Math.max(reducedMotion ? 1.12 : 0.74, 1.42 - elapsed * 0.018);
-        spawnIn = cadence + Math.random() * 0.32;
+        const cadence = Math.max(reducedMotion ? 1.28 : 1.02, 1.6 - elapsed * 0.014);
+        spawnIn = cadence + Math.random() * 0.48;
       }
 
       const collision = obstacles.some((obstacle) => {
-        const hitsRunnerX = obstacle.x < 22 && obstacle.x + obstacle.width > 11;
-        return hitsRunnerX && runnerY < obstacle.hitHeight;
+        const hitsRunnerX = obstacle.x < 18 && obstacle.x + obstacle.width > 13.5;
+        return elapsed > 1 && hitsRunnerX && runnerY < obstacle.hitHeight;
       });
 
       const cleared = current.cleared + clearedNow;
-      const runScore = Math.floor(elapsed * 9 + cleared * 18);
+      const runScore = Math.floor(elapsed * 8 + cleared * 22);
       const apiScore = clampScore(runScore / 6);
       const crossedMilestone = Math.floor(runScore / 100) > Math.floor(current.runScore / 100);
       const shouldPulse = clearedNow > 0 || crossedMilestone;

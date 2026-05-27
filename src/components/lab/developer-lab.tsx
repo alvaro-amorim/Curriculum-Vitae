@@ -1,16 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { useCallback, useMemo, useState } from "react";
 
 import { usePortfolioUi } from "@/components/layout/app-shell";
 import { ApiLatencyGame } from "@/components/lab/api-latency-game";
 import { ArchitectureBuilder } from "@/components/lab/architecture-builder";
-import { BugMaze } from "@/components/lab/bug-maze";
-import { DebugArena } from "@/components/lab/debug-arena";
 import { DebugChallenge } from "@/components/lab/debug-challenge";
-import { LatencyLab } from "@/components/lab/latency-lab";
-import { RuntimeRunner } from "@/components/lab/runtime-runner";
 import { labPageCopy } from "@/content/challenges";
 import { calculateSessionScore, initialLabScores, submitLabScore } from "@/lib/lab-score";
 import type { LabGameId } from "@/types/portfolio";
@@ -19,6 +16,30 @@ import styles from "./developer-lab.module.css";
 
 type ScoreStatus = "idle" | "syncing" | "synced" | "failed";
 type FoundationGameId = Exclude<LabGameId, "runtime" | "bug-maze" | "debug-arena" | "latency-lab">;
+
+function GameLoading() {
+  return <div aria-hidden="true" className={styles.gameLoading} />;
+}
+
+const RuntimeRunner = dynamic(() => import("@/components/lab/runtime-runner").then((module) => module.RuntimeRunner), {
+  loading: GameLoading,
+  ssr: false,
+});
+
+const BugMaze = dynamic(() => import("@/components/lab/bug-maze").then((module) => module.BugMaze), {
+  loading: GameLoading,
+  ssr: false,
+});
+
+const DebugArena = dynamic(() => import("@/components/lab/debug-arena").then((module) => module.DebugArena), {
+  loading: GameLoading,
+  ssr: false,
+});
+
+const LatencyLab = dynamic(() => import("@/components/lab/latency-lab").then((module) => module.LatencyLab), {
+  loading: GameLoading,
+  ssr: false,
+});
 
 const foundationModules: {
   id: FoundationGameId;

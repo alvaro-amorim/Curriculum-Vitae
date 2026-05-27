@@ -7,6 +7,9 @@ html {
   overflow-x: clip;
   background: var(--bg);
   scroll-behavior: auto;
+  transition:
+    background-color 520ms var(--ease-emphasized),
+    color 420ms var(--ease-standard);
 }
 
 body {
@@ -18,6 +21,9 @@ body {
   font-family: var(--font-sans);
   letter-spacing: 0;
   text-rendering: optimizeLegibility;
+  transition:
+    background 520ms var(--ease-emphasized),
+    color 420ms var(--ease-standard);
 }
 
 a,
@@ -61,4 +67,11 @@ samp {
 .site-container {
   width: min(var(--container-lg), calc(100% - (var(--container-padding) * 2)));
   margin-inline: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html,
+  body {
+    transition-duration: 1ms !important;
+  }
 }

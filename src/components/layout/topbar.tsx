@@ -1,48 +1,86 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 import { downloads } from "@/content/downloads";
 import { profile } from "@/content/profile";
-import { buttonClassName, Button } from "@/components/ui/button";
 
 import { usePortfolioUi } from "./app-shell";
+import styles from "./topbar.module.css";
 
-export function Topbar() {
+type TopbarProps = {
+  onNavigateStart?: () => void;
+};
+
+function isActiveRoute(pathname: string, href: string) {
+  if (href === "/") {
+    return pathname === "/";
+  }
+
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
+
+export function Topbar({ onNavigateStart }: TopbarProps) {
   const { locale, t, toggleLocale, toggleTheme } = usePortfolioUi();
+  const pathname = usePathname();
   const activeDownload = downloads[locale].pdf;
+  const navItems = [
+    { href: "/", label: t.nav.home, shortLabel: "Home" },
+    { href: "/projetos", label: t.nav.projects, shortLabel: locale === "pt" ? "Projetos" : "Projects" },
+    { href: "/lab", label: t.nav.lab, shortLabel: "Lab" },
+    { href: "/curriculo", label: t.nav.resume, shortLabel: "CV" },
+  ];
 
   return (
-    <header className="sticky top-0 z-40 border-b border-[var(--border)] bg-[color-mix(in_srgb,var(--bg)_82%,transparent)] backdrop-blur-xl">
-      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-3">
-        <Link className="min-w-0" href="/">
-          <span className="block text-sm font-semibold text-[var(--text)]">{t.home.eyebrow}</span>
-          <span className="block truncate text-xs text-[var(--muted)]">{profile.shortName} • {t.home.subtitle}</span>
+    <header className={styles.topbar} data-topbar="global">
+      <div className={styles.inner}>
+        <Link className={styles.brand} href="/" onClick={() => (pathname === "/" ? undefined : onNavigateStart?.())}>
+          <span className={styles.brandTitle}>Álvaro.dev Portfolio OS</span>
+          <span className={styles.brandSubtitle}>
+            {profile.shortName} · {t.home.subtitle}
+          </span>
         </Link>
 
-        <nav className="flex flex-wrap items-center justify-end gap-2" aria-label={t.nav.mainNavigation}>
-          <Link className={buttonClassName("ghost", "sm")} href="/">
-            {t.nav.home}
-          </Link>
-          <Link className={buttonClassName("secondary", "sm")} href="/curriculo">
-            {t.nav.resume}
-          </Link>
-          <Link className={buttonClassName("ghost", "sm")} href="/projetos">
-            {t.nav.projects}
-          </Link>
-          <Link className={buttonClassName("ghost", "sm")} href="/lab">
-            {t.nav.lab}
-          </Link>
-          <a className={buttonClassName("primary", "sm")} href={activeDownload.href} download={activeDownload.fileName}>
-            {t.actions.downloadPdf}
-          </a>
-          <Button aria-label={t.nav.theme} onClick={toggleTheme} size="sm" variant="secondary">
-            {t.nav.theme}
-          </Button>
-          <Button aria-label={locale === "pt" ? "Alternar idioma" : "Switch language"} onClick={toggleLocale} size="sm" variant="secondary">
-            {locale === "pt" ? "EN" : "PT"}
-          </Button>
+        <nav className={styles.nav} aria-label={t.nav.mainNavigation}>
+          {navItems.map((item) => {
+            const active = isActiveRoute(pathname, item.href);
+
+            return (
+              <Link
+                aria-current={active ? "page" : undefined}
+                className={`${styles.navLink} ${active ? styles.active : ""}`}
+                href={item.href}
+                key={item.href}
+                onClick={() => (active ? undefined : onNavigateStart?.())}
+              >
+                <span aria-hidden="true" className={styles.navSignal} />
+                <span className={styles.navFull}>{item.label}</span>
+                <span className={styles.navShort}>{item.shortLabel}</span>
+              </Link>
+            );
+          })}
         </nav>
+
+        <div className={styles.utilities}>
+          <a className={`${styles.control} ${styles.download}`} href={activeDownload.href} download={activeDownload.fileName}>
+            <span className={styles.fullLabel}>{t.actions.downloadPdf}</span>
+            <span className={styles.shortLabel}>PDF</span>
+          </a>
+          <button aria-label={t.nav.theme} className={styles.control} data-theme-control="toggle" onClick={toggleTheme} type="button">
+            <span className={styles.fullLabel}>{t.nav.theme}</span>
+            <span className={styles.shortLabel}>T</span>
+          </button>
+          <button
+            aria-label={locale === "pt" ? "Alternar idioma" : "Switch language"}
+            className={`${styles.control} ${styles.locale}`}
+            data-locale-control={locale}
+            onClick={toggleLocale}
+            type="button"
+          >
+            {locale === "pt" ? "EN" : "PT"}
+          </button>
+        </div>
       </div>
     </header>
   );

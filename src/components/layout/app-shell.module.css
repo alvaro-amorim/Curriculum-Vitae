@@ -1,0 +1,107 @@
+.appShell {
+  position: relative;
+  min-height: 100vh;
+  overflow-x: clip;
+  background: var(--bg-gradient);
+  color: var(--text);
+  transition:
+    background 520ms var(--ease-emphasized),
+    color 420ms var(--ease-standard);
+}
+
+.pageFrame {
+  min-height: calc(100vh - 4.5rem);
+  animation: pageEnter 420ms var(--ease-emphasized) both;
+}
+
+.transitionVeil {
+  position: fixed;
+  inset: 0;
+  z-index: 175;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(8px) scale(1.01);
+  background:
+    radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--accent-cyan) 20%, transparent), transparent 22rem),
+    linear-gradient(110deg, transparent 0 35%, color-mix(in srgb, var(--accent) 16%, transparent) 48%, transparent 62%);
+  mix-blend-mode: screen;
+}
+
+.transitionVeil[data-active="true"] {
+  animation: veilSweep 560ms var(--ease-emphasized) both;
+}
+
+.transitionVeil[data-kind="theme"] {
+  background:
+    radial-gradient(circle at 78% 0%, color-mix(in srgb, var(--accent-amber) 20%, transparent), transparent 24rem),
+    radial-gradient(circle at 18% 14%, color-mix(in srgb, var(--accent-cyan) 18%, transparent), transparent 22rem);
+}
+
+.transitionVeil[data-kind="locale"] {
+  background:
+    radial-gradient(circle at 50% 12%, color-mix(in srgb, var(--accent-violet) 20%, transparent), transparent 22rem),
+    linear-gradient(90deg, transparent, color-mix(in srgb, var(--accent-cyan) 12%, transparent), transparent);
+}
+
+.appShell[data-transition-kind="theme"] .pageFrame,
+.appShell[data-transition-kind="locale"] .pageFrame {
+  animation: contentPulse 520ms var(--ease-emphasized) both;
+}
+
+@keyframes pageEnter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+    filter: saturate(0.92);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: saturate(1);
+  }
+}
+
+@keyframes veilSweep {
+  0% {
+    opacity: 0;
+    transform: translateY(8px) scale(1.02);
+  }
+
+  38% {
+    opacity: 0.92;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(-8px) scale(1);
+  }
+}
+
+@keyframes contentPulse {
+  0% {
+    opacity: 0.82;
+    transform: translateY(4px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .appShell,
+  .pageFrame,
+  .transitionVeil,
+  .appShell[data-transition-kind="theme"] .pageFrame,
+  .appShell[data-transition-kind="locale"] .pageFrame {
+    animation: none !important;
+    transition-duration: 1ms !important;
+    transform: none !important;
+  }
+
+  .transitionVeil {
+    display: none;
+  }
+}

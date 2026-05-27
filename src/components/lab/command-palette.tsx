@@ -230,7 +230,7 @@ export function CommandPalette() {
       <Button
         aria-keyshortcuts="Control+K Meta+K"
         aria-label={t.lab.commandPalette.title}
-        className="fixed right-4 bottom-4 z-50 min-h-10 rounded-full px-4 shadow-[var(--shadow-soft)]"
+        className="fixed right-4 bottom-4 z-[170] min-h-10 rounded-full px-4 shadow-[var(--shadow-soft)] max-sm:!hidden sm:!inline-flex"
         onClick={openPalette}
         size="sm"
         variant="secondary"
@@ -240,7 +240,7 @@ export function CommandPalette() {
 
       {isOpen ? (
         <div
-          className="fixed inset-0 z-[70] bg-black/55 px-3 py-5 backdrop-blur-sm sm:px-6"
+          className="fixed inset-0 z-[230] bg-black/55 px-3 py-5 backdrop-blur-sm sm:px-6"
           onMouseDown={(event) => {
             if (event.target === event.currentTarget) {
               closePalette();

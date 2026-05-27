@@ -5,34 +5,36 @@ import { usePortfolioUi } from "@/components/layout/app-shell";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 
+import styles from "./resume.module.css";
+
 export function EducationSection() {
   const { locale, t } = usePortfolioUi();
 
   return (
-    <Card>
-      <h2 className="text-lg font-semibold">{t.resume.education} & {t.resume.certifications}</h2>
-      <div className="mt-4 grid gap-4">
+    <Card className={styles.resumeCard}>
+      <h2 className={styles.sectionTitle}>{t.resume.education} & {t.resume.certifications}</h2>
+      <div className={styles.itemGrid}>
         {education.map((item) => (
-          <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-muted)] p-4" key={item.title.pt}>
-            <div className="flex flex-wrap items-start justify-between gap-3">
+          <div className={styles.resumeItem} key={item.title.pt}>
+            <div className={styles.itemHeader}>
               <div>
-                <h3 className="font-semibold">{item.title[locale]}</h3>
-                <p className="mt-1 text-sm text-[var(--muted)]">{item.institution[locale]}</p>
+                <h3 className={styles.itemTitle}>{item.title[locale]}</h3>
+                <p className={styles.itemMeta}>{item.institution[locale]}</p>
               </div>
               <Badge>{item.period}</Badge>
             </div>
           </div>
         ))}
 
-        <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-muted)] p-4">
-          <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className={styles.resumeItem}>
+          <div className={styles.itemHeader}>
             <div>
-              <h3 className="font-semibold">{certificationGroup.title[locale]}</h3>
-              <p className="mt-1 text-sm text-[var(--muted)]">{certificationGroup.meta[locale]}</p>
+              <h3 className={styles.itemTitle}>{certificationGroup.title[locale]}</h3>
+              <p className={styles.itemMeta}>{certificationGroup.meta[locale]}</p>
             </div>
             <Badge>{certificationGroup.badge[locale]}</Badge>
           </div>
-          <ul className="mt-3 grid gap-2 text-sm leading-6 text-[var(--muted)]">
+          <ul className={styles.certificationList}>
             {certificationGroup.items.map((item) => (
               <li key={item.pt}>{item[locale]}</li>
             ))}
