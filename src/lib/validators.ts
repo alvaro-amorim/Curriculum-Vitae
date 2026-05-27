@@ -47,7 +47,7 @@ export const TerminalPayloadSchema = z
 
 export const ScorePayloadSchema = z
   .object({
-    game: z.enum(["runtime", "bug-maze", "debug-arena", "latency-lab", "debug", "architecture", "latency", "terminal", "portfolio"], {
+    game: z.enum(["runtime", "bug-maze", "code-snake", "debug-arena", "latency-lab", "debug", "architecture", "latency", "terminal", "portfolio"], {
       error: "Jogo inválido.",
     }),
     score: z.number().finite().min(0, "Score mínimo é 0.").max(100, "Score máximo é 100."),

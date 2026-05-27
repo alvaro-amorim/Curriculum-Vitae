@@ -1,7 +1,7 @@
 "use client";
 
 import type { CSSProperties, KeyboardEvent } from "react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { clampScore } from "@/lib/lab-score";
 import type { Locale } from "@/types/portfolio";
@@ -303,6 +303,7 @@ export function BugMaze({ locale, onComplete }: BugMazeProps) {
   const [finalScore, setFinalScore] = useState<number | null>(null);
   const [feedback, setFeedback] = useState<{ id: number; kind: FeedbackKind } | null>(null);
   const [reducedMotion, setReducedMotion] = useState(false);
+  const rootRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- Browser preferences and localStorage are client-only.
@@ -462,6 +463,12 @@ export function BugMaze({ locale, onComplete }: BugMazeProps) {
         return;
       }
 
+      const activeElement = document.activeElement;
+      const isFocusedInside = activeElement instanceof HTMLElement && rootRef.current?.contains(activeElement);
+      if (!isFocusedInside && status === "idle") {
+        return;
+      }
+
       const direction = keyToDirection(event.key);
 
       if (direction) {
@@ -477,7 +484,7 @@ export function BugMaze({ locale, onComplete }: BugMazeProps) {
 
     window.addEventListener("keydown", handleWindowKeyDown);
     return () => window.removeEventListener("keydown", handleWindowKeyDown);
-  }, [move, startGame]);
+  }, [move, startGame, status]);
 
   function handleBoardKeyDown(event: KeyboardEvent<HTMLDivElement>) {
     const direction = keyToDirection(event.key);
@@ -497,7 +504,7 @@ export function BugMaze({ locale, onComplete }: BugMazeProps) {
   const feedbackLabel = feedback ? t[feedback.kind] : "";
 
   return (
-    <section aria-labelledby="bug-maze-title">
+    <section aria-labelledby="bug-maze-title" ref={rootRef}>
       <div className={styles.sectionHeader}>
         <div>
           <p className={styles.eyebrow}>{t.eyebrow}</p>

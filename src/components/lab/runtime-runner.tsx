@@ -184,6 +184,7 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
   const [reducedMotion, setReducedMotion] = useState(false);
   const stateRef = useRef<RunnerFrame>(createInitialFrame());
   const statusRef = useRef<RunnerStatus>("idle");
+  const rootRef = useRef<HTMLElement | null>(null);
   const obstacleIdRef = useRef(0);
   const completedRef = useRef(false);
   const lastPointerActionRef = useRef(0);
@@ -320,6 +321,12 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
         return;
       }
 
+      const activeElement = document.activeElement;
+      const isFocusedInside = activeElement instanceof HTMLElement && rootRef.current?.contains(activeElement);
+      if (!isFocusedInside && statusRef.current !== "running" && statusRef.current !== "paused") {
+        return;
+      }
+
       if (event.code === "Space" || event.code === "ArrowUp") {
         event.preventDefault();
         jump();
@@ -440,7 +447,7 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
   const primaryLabel = status === "idle" ? t.start : status === "gameOver" ? t.restart : t.jump;
 
   return (
-    <section aria-labelledby="runtime-runner-title">
+    <section aria-labelledby="runtime-runner-title" ref={rootRef}>
       <div className={styles.sectionHeader}>
         <div>
           <p className={styles.eyebrow}>Runtime Runner</p>

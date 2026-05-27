@@ -73,6 +73,7 @@
 
 :global(#runtime-runner-title),
 :global(#bug-maze-title),
+:global(#code-snake-title),
 :global(#future-arcade-title),
 :global(#debug-arena-title),
 :global(#latency-lab-title) {
@@ -199,6 +200,7 @@
 .actionGhost:hover,
 .gameTab:hover,
 .runnerAction:hover,
+.snakeDirection:hover,
 .arenaOption:hover,
 .latencyAction:hover,
 .moduleCard:hover {
@@ -216,6 +218,8 @@
 .laneControl:focus-visible,
 .mazeStage:focus-visible,
 .mazeDirection:focus-visible,
+.snakeStage:focus-visible,
+.snakeDirection:focus-visible,
 .arenaStage:focus-visible,
 .arenaOption:focus-visible,
 .latencyStage:focus-visible,
@@ -230,6 +234,7 @@
 .trainingShell,
 .moduleCard,
 .runnerStage,
+.snakeStage,
 .arenaStage,
 .latencyStage {
   border: 1px solid rgba(255, 255, 255, 0.12);
@@ -248,6 +253,7 @@
 :global([data-theme="light"]) .trainingShell,
 :global([data-theme="light"]) .moduleCard,
 :global([data-theme="light"]) .runnerStage,
+:global([data-theme="light"]) .snakeStage,
 :global([data-theme="light"]) .arenaStage,
 :global([data-theme="light"]) .latencyStage {
   border-color: rgba(15, 23, 42, 0.13);
@@ -435,6 +441,7 @@
 :global([data-theme="light"]) .runnerAction,
 :global([data-theme="light"]) .laneControl,
 :global([data-theme="light"]) .mazeDirection,
+:global([data-theme="light"]) .snakeDirection,
 :global([data-theme="light"]) .arenaOption,
 :global([data-theme="light"]) .latencyAction {
   border-color: rgba(15, 23, 42, 0.14);
@@ -458,6 +465,7 @@
 :global([data-theme="light"]) .trainingNote,
 :global([data-theme="light"]) .runnerPanel p,
 :global([data-theme="light"]) .runnerPanel li,
+:global([data-theme="light"]) .snakeMeta,
 :global([data-theme="light"]) .arenaOption > span:not(.arenaOptionMeta),
 :global([data-theme="light"]) .arenaOptionDetail,
 :global([data-theme="light"]) .latencyAction > span:not(.latencyActionMeta),
@@ -480,11 +488,13 @@
 :global([data-theme="light"]) .arenaBugPanel h3,
 :global([data-theme="light"]) .latencyIncidentPanel h3,
 :global([data-theme="light"]) .latencyMetric strong,
-:global([data-theme="light"]) .runnerHud strong {
+:global([data-theme="light"]) .runnerHud strong,
+:global([data-theme="light"]) .snakeHud strong {
   color: var(--lab-ink);
 }
 
-:global([data-theme="light"]) .runnerHud span {
+:global([data-theme="light"]) .runnerHud span,
+:global([data-theme="light"]) .snakeHud span {
   color: color-mix(in srgb, var(--lab-muted) 86%, var(--lab-ink));
 }
 
@@ -1263,6 +1273,450 @@
   transform: translateY(-1px);
   border-color: rgba(103, 232, 249, 0.5);
   background: rgba(103, 232, 249, 0.12);
+}
+
+.snakeLayout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(17rem, 0.34fr);
+  gap: 1rem;
+}
+
+.snakeStage {
+  position: relative;
+  overflow: hidden;
+  min-height: clamp(28rem, 54vw, 42rem);
+  border-radius: 1.65rem;
+  padding: clamp(0.8rem, 2vw, 1.15rem);
+  background:
+    radial-gradient(circle at 70% 18%, rgba(52, 211, 153, 0.2), transparent 17rem),
+    radial-gradient(circle at 18% 74%, rgba(103, 232, 249, 0.13), transparent 16rem),
+    linear-gradient(145deg, rgba(5, 18, 28, 0.92), rgba(2, 7, 14, 0.94));
+  touch-action: none;
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.snakeStage::before {
+  position: absolute;
+  inset: 0;
+  content: "";
+  pointer-events: none;
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(120deg, transparent 0 38%, rgba(52, 211, 153, 0.12) 50%, transparent 63%);
+  background-size: 58px 58px, 58px 58px, auto;
+  opacity: 0.82;
+}
+
+.snakeStageDanger {
+  border-color: rgba(251, 191, 36, 0.5);
+  box-shadow:
+    0 28px 100px rgba(251, 191, 36, 0.1),
+    inset 0 0 0 1px rgba(251, 191, 36, 0.08);
+}
+
+.snakeStageCollect {
+  border-color: rgba(52, 211, 153, 0.56);
+  box-shadow:
+    0 26px 96px rgba(52, 211, 153, 0.12),
+    inset 0 0 0 1px rgba(52, 211, 153, 0.1);
+}
+
+.snakeStagePaused {
+  border-color: rgba(103, 232, 249, 0.34);
+}
+
+.snakeStagePaused .snakeGrid {
+  opacity: 0.62;
+}
+
+.snakeStageHit {
+  border-color: rgba(248, 113, 113, 0.58);
+  animation: stage-hit 520ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.snakeHud {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.snakeHud div {
+  min-width: 0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.snakeHud span,
+.snakeMeta {
+  color: rgba(237, 246, 255, 0.66);
+  font-size: 0.72rem;
+  font-weight: 850;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.snakeHud strong {
+  display: block;
+  margin-top: 0.28rem;
+  color: #fff;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: clamp(1.2rem, 2.4vw, 2rem);
+  line-height: 1;
+}
+
+.snakeScorePulse {
+  animation: snake-score-pop 520ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.snakeMeta {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin: 0.8rem 0;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.snakeMeta > span {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  padding: 0.4rem 0.62rem;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.snakeComboBadge {
+  border-color: rgba(52, 211, 153, 0.32);
+  color: #bbf7d0;
+  background: rgba(22, 163, 74, 0.12);
+}
+
+.snakeDangerBadge {
+  border-color: rgba(251, 191, 36, 0.34);
+  color: #fde68a;
+  background: rgba(251, 191, 36, 0.12);
+}
+
+.snakeGrid {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: repeat(var(--snake-size), minmax(0, 1fr));
+  gap: clamp(0.12rem, 0.48vw, 0.28rem);
+  width: min(100%, 42rem);
+  margin: 0 auto;
+  padding: clamp(0.42rem, 1vw, 0.76rem);
+  border: 1px solid rgba(52, 211, 153, 0.2);
+  border-radius: 1.35rem;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(52, 211, 153, 0.08), transparent 62%),
+    rgba(0, 0, 0, 0.22);
+}
+
+.snakeCell {
+  position: relative;
+  display: grid;
+  min-width: 0;
+  aspect-ratio: 1;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.48rem;
+  background: rgba(255, 255, 255, 0.042);
+}
+
+.snakeHead,
+.snakeBody {
+  border-color: rgba(103, 232, 249, 0.46);
+  background:
+    radial-gradient(circle at 52% 45%, rgba(103, 232, 249, 0.2), transparent 58%),
+    rgba(8, 47, 73, 0.46);
+  box-shadow: inset 0 0 24px rgba(103, 232, 249, 0.12);
+}
+
+.snakeHead {
+  border-color: rgba(52, 211, 153, 0.72);
+  background:
+    radial-gradient(circle at 50% 40%, rgba(248, 251, 255, 0.38), transparent 0.34rem),
+    linear-gradient(135deg, rgba(52, 211, 153, 0.6), rgba(103, 232, 249, 0.34));
+  box-shadow:
+    0 0 34px rgba(52, 211, 153, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.24);
+  transform: scale(1.03);
+}
+
+.snakeHeadCore,
+.snakeBodyCore {
+  width: 48%;
+  aspect-ratio: 1;
+  border-radius: 0.32rem;
+  background: rgba(248, 251, 255, 0.62);
+  box-shadow: 0 0 18px rgba(103, 232, 249, 0.22);
+}
+
+.snakeBodyCore {
+  width: 42%;
+  border-radius: 50%;
+  background: rgba(103, 232, 249, 0.42);
+}
+
+.snakeToken {
+  border-color: rgba(52, 211, 153, 0.52);
+  background:
+    radial-gradient(circle at 50% 50%, rgba(52, 211, 153, 0.22), transparent 58%),
+    rgba(6, 78, 59, 0.42);
+  box-shadow:
+    0 0 22px rgba(52, 211, 153, 0.18),
+    inset 0 0 18px rgba(52, 211, 153, 0.12);
+}
+
+.snakeHazard {
+  border-color: rgba(248, 113, 113, 0.58);
+  background:
+    linear-gradient(135deg, rgba(127, 29, 29, 0.52), rgba(49, 12, 21, 0.48)),
+    rgba(248, 113, 113, 0.08);
+  box-shadow: inset 0 0 30px rgba(248, 113, 113, 0.12);
+}
+
+.snakeHazardNear {
+  border-color: rgba(251, 191, 36, 0.72);
+  box-shadow:
+    0 0 22px rgba(251, 191, 36, 0.16),
+    inset 0 0 24px rgba(251, 191, 36, 0.14);
+}
+
+.snakeHazardNear::after {
+  position: absolute;
+  right: 0.18rem;
+  top: 0.14rem;
+  z-index: 3;
+  content: "!";
+  color: #fde68a;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.58rem;
+  font-weight: 950;
+  line-height: 1;
+}
+
+.snakeCellLabel {
+  position: relative;
+  z-index: 2;
+  max-width: 94%;
+  color: rgba(248, 251, 255, 0.86);
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: clamp(0.44rem, 0.7vw, 0.58rem);
+  font-weight: 920;
+  line-height: 1.05;
+  overflow-wrap: anywhere;
+  text-align: center;
+}
+
+.snakeOverlay {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: linear-gradient(180deg, rgba(2, 6, 23, 0.16), rgba(2, 6, 23, 0.72));
+  pointer-events: none;
+}
+
+.snakeCrashReason {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  margin: 0.75rem auto 0;
+  border: 1px solid rgba(248, 113, 113, 0.24);
+  border-radius: 999px;
+  padding: 0.42rem 0.68rem;
+  color: #fecaca;
+  background: rgba(127, 29, 29, 0.18);
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.74rem;
+  font-weight: 900;
+}
+
+.snakeFeedback {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 9;
+  color: var(--lab-accent-a);
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.8rem;
+  font-weight: 900;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  animation: score-pulse 560ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.snakeFeedbackGood {
+  color: #bbf7d0;
+}
+
+.snakeFeedbackHit {
+  color: #fecaca;
+}
+
+.snakeSide {
+  display: grid;
+  align-content: start;
+  gap: 1rem;
+}
+
+.snakeActions {
+  display: grid;
+  gap: 0.65rem;
+  margin-top: 0.85rem;
+}
+
+.snakeDpad {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.65rem;
+  width: min(100%, 14rem);
+  margin-top: 0.85rem;
+  touch-action: none;
+}
+
+.snakeDirection {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3.65rem;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 0.95rem;
+  background: rgba(255, 255, 255, 0.06);
+  color: #f8fbff;
+  font-size: 1.35rem;
+  font-weight: 900;
+  touch-action: manipulation;
+  user-select: none;
+  transition:
+    transform 180ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 180ms cubic-bezier(0.16, 1, 0.3, 1),
+    background 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.snakeDirection:first-child,
+.snakeDirection:last-child {
+  grid-column: 2;
+}
+
+.snakeDirection:nth-child(1) {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.snakeDirection:nth-child(2) {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.snakeDirection:nth-child(3) {
+  grid-column: 3;
+  grid-row: 2;
+}
+
+.snakeDirection:nth-child(4) {
+  grid-column: 2;
+  grid-row: 3;
+}
+
+.snakeDirection:hover {
+  transform: translateY(-1px);
+  border-color: rgba(52, 211, 153, 0.5);
+  background: rgba(52, 211, 153, 0.12);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .snakeStageCollect .snakeGrid {
+    animation: snake-grid-collect 520ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .snakeToken {
+    animation: snake-token-breathe 1200ms ease-in-out infinite;
+  }
+
+  .snakeHazardNear {
+    animation: snake-near-hazard 760ms ease-in-out infinite;
+  }
+}
+
+:global([data-theme="light"]) .snakeStage {
+  background:
+    radial-gradient(circle at 70% 18%, rgba(4, 120, 87, 0.12), transparent 17rem),
+    radial-gradient(circle at 18% 74%, rgba(8, 145, 178, 0.1), transparent 16rem),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(236, 246, 255, 0.82));
+}
+
+:global([data-theme="light"]) .snakeGrid {
+  border-color: rgba(4, 120, 87, 0.18);
+  background:
+    radial-gradient(circle at 50% 50%, rgba(4, 120, 87, 0.08), transparent 62%),
+    rgba(255, 255, 255, 0.58);
+}
+
+:global([data-theme="light"]) .snakeCell {
+  border-color: rgba(15, 23, 42, 0.09);
+  background: rgba(255, 255, 255, 0.68);
+}
+
+:global([data-theme="light"]) .snakeToken {
+  border-color: rgba(4, 120, 87, 0.34);
+  background:
+    radial-gradient(circle at 50% 50%, rgba(4, 120, 87, 0.14), transparent 58%),
+    rgba(209, 250, 229, 0.74);
+}
+
+:global([data-theme="light"]) .snakeHazard {
+  border-color: rgba(185, 28, 28, 0.34);
+  background:
+    linear-gradient(135deg, rgba(254, 226, 226, 0.84), rgba(255, 241, 242, 0.7)),
+    rgba(248, 113, 113, 0.08);
+}
+
+:global([data-theme="light"]) .snakeCellLabel {
+  color: #0f172a;
+}
+
+:global([data-theme="light"]) .snakeComboBadge {
+  border-color: rgba(4, 120, 87, 0.3);
+  color: #047857;
+  background: rgba(209, 250, 229, 0.72);
+}
+
+:global([data-theme="light"]) .snakeDangerBadge {
+  border-color: rgba(180, 83, 9, 0.28);
+  color: #92400e;
+  background: rgba(254, 243, 199, 0.78);
+}
+
+:global([data-theme="light"]) .snakeHazardNear::after {
+  color: #92400e;
+}
+
+:global([data-theme="light"]) .snakeCrashReason {
+  border-color: rgba(185, 28, 28, 0.22);
+  color: #991b1b;
+  background: rgba(254, 226, 226, 0.72);
+}
+
+:global([data-theme="light"]) .snakeOverlay {
+  background: linear-gradient(180deg, rgba(248, 251, 255, 0.28), rgba(226, 232, 240, 0.78));
 }
 
 .arenaLayout {
@@ -2315,6 +2769,57 @@
   }
 }
 
+@keyframes snake-score-pop {
+  0% {
+    transform: scale(0.94);
+  }
+
+  45% {
+    color: #bbf7d0;
+    text-shadow: 0 0 18px rgba(52, 211, 153, 0.34);
+    transform: scale(1.12);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes snake-grid-collect {
+  0%,
+  100% {
+    box-shadow: none;
+  }
+
+  45% {
+    box-shadow:
+      0 0 0 1px rgba(52, 211, 153, 0.24),
+      0 0 34px rgba(52, 211, 153, 0.18);
+  }
+}
+
+@keyframes snake-token-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes snake-near-hazard {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.04);
+  }
+}
+
 @keyframes stage-hit {
   0%,
   100% {
@@ -2576,6 +3081,7 @@
   .hero,
   .runnerGrid,
   .mazeLayout,
+  .snakeLayout,
   .arenaLayout,
   .arenaBody,
   .latencyLayout,
@@ -2679,6 +3185,7 @@
 
   :global(#runtime-runner-title),
   :global(#bug-maze-title),
+  :global(#code-snake-title),
   :global(#future-arcade-title),
   :global(#debug-arena-title),
   :global(#latency-lab-title) {
@@ -2789,6 +3296,53 @@
 
   .mazeDirection {
     min-height: 3.75rem;
+  }
+
+  .snakeStage {
+    min-height: auto;
+    border-radius: 1.25rem;
+    padding: 0.65rem;
+  }
+
+  .snakeHud {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .snakeHud div {
+    padding: 0.62rem;
+  }
+
+  .snakeMeta {
+    gap: 0.4rem;
+  }
+
+  .snakeMeta > span {
+    padding: 0.34rem 0.52rem;
+  }
+
+  .snakeGrid {
+    gap: 0.14rem;
+    padding: 0.36rem;
+    border-radius: 1rem;
+  }
+
+  .snakeCell {
+    border-radius: 0.34rem;
+  }
+
+  .snakeCellLabel {
+    font-size: clamp(0.36rem, 1.5vw, 0.48rem);
+  }
+
+  .snakeDpad {
+    width: 100%;
+    max-width: 18rem;
+    margin-right: auto;
+    margin-left: auto;
+  }
+
+  .snakeDirection {
+    min-height: 4rem;
   }
 
   .arenaStage {
@@ -2961,6 +3515,11 @@
   .pipelineTrack,
   .collectPulse,
   .mazeFeedback,
+  .snakeFeedback,
+  .snakeScorePulse,
+  .snakeToken,
+  .snakeHazardNear,
+  .snakeStageCollect .snakeGrid,
   .gameLoading {
     animation: none;
   }
@@ -2972,13 +3531,16 @@
   .runnerAction,
   .laneControl,
   .mazeDirection,
+  .snakeDirection,
   .arenaOption,
   .latencyAction,
   .runnerStage,
   .mazeStage,
+  .snakeStage,
   .arenaStage,
   .latencyStage,
   .mazeCell,
+  .snakeCell,
   .moduleCard {
     transition: none;
   }
@@ -2990,6 +3552,7 @@
   .mazePlayer,
   .mazeStageHitFlash,
   .mazeStageBlocked,
+  .snakeStageHit,
   .mazeGoal::after,
   .mazePatch::after,
   .mazeHazard::after,

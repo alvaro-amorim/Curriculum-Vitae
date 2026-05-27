@@ -5,6 +5,7 @@ export type LabScoreState = Record<LabGameId, number | null>;
 export const initialLabScores: LabScoreState = {
   runtime: null,
   "bug-maze": null,
+  "code-snake": null,
   "debug-arena": null,
   "latency-lab": null,
   debug: null,

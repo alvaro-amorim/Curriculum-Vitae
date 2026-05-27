@@ -97,7 +97,15 @@ export type CertificationGroup = {
   items: LocalizedText[];
 };
 
-export type LabGameId = "runtime" | "bug-maze" | "debug-arena" | "latency-lab" | "debug" | "architecture" | "latency";
+export type LabGameId =
+  | "runtime"
+  | "bug-maze"
+  | "code-snake"
+  | "debug-arena"
+  | "latency-lab"
+  | "debug"
+  | "architecture"
+  | "latency";
 
 export type LabPageCopy = {
   title: LocalizedText;
