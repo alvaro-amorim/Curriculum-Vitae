@@ -101,6 +101,7 @@ export type LabGameId =
   | "runtime"
   | "bug-maze"
   | "code-snake"
+  | "stack-tetris"
   | "debug-arena"
   | "latency-lab"
   | "debug"

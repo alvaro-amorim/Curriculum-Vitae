@@ -6,6 +6,7 @@ export const initialLabScores: LabScoreState = {
   runtime: null,
   "bug-maze": null,
   "code-snake": null,
+  "stack-tetris": null,
   "debug-arena": null,
   "latency-lab": null,
   debug: null,

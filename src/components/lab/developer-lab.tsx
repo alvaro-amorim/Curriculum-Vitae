@@ -15,7 +15,7 @@ import type { LabGameId } from "@/types/portfolio";
 import styles from "./developer-lab.module.css";
 
 type ScoreStatus = "idle" | "syncing" | "synced" | "failed";
-type FoundationGameId = Exclude<LabGameId, "runtime" | "bug-maze" | "code-snake" | "debug-arena" | "latency-lab">;
+type FoundationGameId = Exclude<LabGameId, "runtime" | "bug-maze" | "code-snake" | "stack-tetris" | "debug-arena" | "latency-lab">;
 
 function GameLoading() {
   return <div aria-hidden="true" className={styles.gameLoading} />;
@@ -32,6 +32,11 @@ const BugMaze = dynamic(() => import("@/components/lab/bug-maze").then((module) 
 });
 
 const CodeSnake = dynamic(() => import("@/components/lab/code-snake").then((module) => module.CodeSnake), {
+  loading: GameLoading,
+  ssr: false,
+});
+
+const StackTetris = dynamic(() => import("@/components/lab/stack-tetris").then((module) => module.StackTetris), {
   loading: GameLoading,
   ssr: false,
 });
@@ -79,23 +84,24 @@ const foundationModules: {
 const labCopy = {
   pt: {
     eyebrow: "Developer Arcade",
-    title: "Arcade em reset para mais ação.",
+    title: "Arcade final em quatro jogos.",
     description:
-      "A vitrine principal agora foca nos jogos do arcade final: Runtime Runner, Bug Maze e Code Snake jogáveis, com Stack Tetris em preparação.",
+      "A vitrine principal agora reúne Runtime Runner, Bug Maze, Code Snake e Stack Tetris como jogos jogáveis do Developer Arcade.",
     primary: "Jogar Runtime Runner",
     mazePrimary: "Jogar Bug Maze",
     snakePrimary: "Jogar Code Snake",
+    tetrisPrimary: "Jogar Stack Tetris",
     secondary: "Ver projetos",
     tertiary: "Abrir currículo",
-    panelLabel: "arcade em reconstrução",
-    panelTitle: "3 jogos ativos + 1 slot futuro",
-    panelText: "O reset corta o que parecia quiz ou dashboard e concentra a ação nos jogos de reflexo, caminho, código e stack.",
+    panelLabel: "arcade jogável",
+    panelTitle: "4 jogos ativos",
+    panelText: "A experiência final concentra ação em reflexo, caminho, código vivo e montagem de stack.",
     runtimeCardText: "Runner de pipeline com pulo mais previsível, obstáculos mais justos e feedback de colisão.",
     mazeCardText: "Labirinto técnico com D-pad mais confortável, grid legível e feedback mais forte.",
     snakeCardText: "Snake de programação com coleta de tokens, perigos de bug, crescimento, colisão e score local.",
-    tetrisCardText: "Próximo jogo: composição de stack em peças técnicas, ainda reservado para fase própria.",
+    tetrisCardText: "Puzzle de build com módulos em queda, linhas compiladas, level progressivo e score local.",
     session: "score da sessão",
-    arcadeStatus: "Arcade em evolução",
+    arcadeStatus: "Arcade final jogável",
     futureStatus: "em preparação",
     trainingEyebrow: "módulos de treino",
     trainingTitle: "Treinos e experimentos ficam fora da vitrine final.",
@@ -110,23 +116,24 @@ const labCopy = {
   },
   en: {
     eyebrow: "Developer Arcade",
-    title: "Arcade reset for stronger action.",
+    title: "Final arcade in four games.",
     description:
-      "The main showcase now focuses on the final arcade games: Runtime Runner, Bug Maze, and Code Snake playable, with Stack Tetris in preparation.",
+      "The main showcase now brings Runtime Runner, Bug Maze, Code Snake, and Stack Tetris together as playable Developer Arcade games.",
     primary: "Play Runtime Runner",
     mazePrimary: "Play Bug Maze",
     snakePrimary: "Play Code Snake",
+    tetrisPrimary: "Play Stack Tetris",
     secondary: "View projects",
     tertiary: "Open resume",
-    panelLabel: "arcade rebuild",
-    panelTitle: "3 active games + 1 future slot",
-    panelText: "The reset removes what felt like quiz or dashboard and focuses action on reflex, pathfinding, code, and stack games.",
+    panelLabel: "playable arcade",
+    panelTitle: "4 active games",
+    panelText: "The final experience focuses action on reflex, pathfinding, living code, and stack assembly.",
     runtimeCardText: "Pipeline runner with a more predictable jump, fairer obstacles, and stronger collision feedback.",
     mazeCardText: "Technical maze with a more comfortable D-pad, clearer grid, and stronger feedback.",
     snakeCardText: "Programming snake with code tokens, bug hazards, growth, collision, and local score.",
-    tetrisCardText: "Next game: compose a technical stack with pieces, reserved for its own phase.",
+    tetrisCardText: "Build puzzle with falling modules, compiled lines, progressive level, and local score.",
     session: "session score",
-    arcadeStatus: "Arcade evolving",
+    arcadeStatus: "Playable final arcade",
     futureStatus: "in preparation",
     trainingEyebrow: "training modules",
     trainingTitle: "Training and experiments stay out of the final showcase.",
@@ -146,22 +153,15 @@ const roadmap = {
     ["Runtime Runner", "Jogo ativo: runner de pipeline com salto, colisão, score, pause e dificuldade progressiva."],
     ["Bug Maze", "Jogo ativo: mapa de debug em grid com patches, incidentes e deploy seguro."],
     ["Code Snake", "Jogo ativo: snake de programação com coleta de tokens, bugs perigosos e score local."],
-    ["Stack Tetris", "Slot futuro: montagem de stack técnica com peças, pressão e score."],
+    ["Stack Tetris", "Jogo ativo: montagem de stack técnica com peças em queda, linhas compiladas e score local."],
   ],
   en: [
     ["Runtime Runner", "Active game: pipeline runner with jump, collision, score, pause, and progressive difficulty."],
     ["Bug Maze", "Active game: debug grid with patches, incidents, and safe deploy."],
     ["Code Snake", "Active game: programming snake with code token collection, bug hazards, and local score."],
-    ["Stack Tetris", "Future slot: technical stack assembly with pieces, pressure, and score."],
+    ["Stack Tetris", "Active game: technical stack assembly with falling modules, compiled lines, and local score."],
   ],
 } as const;
-
-const futureSlots = [
-  {
-    title: "Stack Tetris",
-    descriptionKey: "tetrisCardText",
-  },
-] as const;
 
 const archivedExperiments = [
   {
@@ -189,6 +189,7 @@ export function DeveloperLab() {
     runtime: "idle",
     "bug-maze": "idle",
     "code-snake": "idle",
+    "stack-tetris": "idle",
     "debug-arena": "idle",
     "latency-lab": "idle",
     debug: "idle",
@@ -270,6 +271,9 @@ export function DeveloperLab() {
               <a className={styles.actionSecondary} href="#code-snake-title">
                 {copy.snakePrimary}
               </a>
+              <a className={styles.actionSecondary} href="#stack-tetris-title">
+                {copy.tetrisPrimary}
+              </a>
               <Link className={styles.actionSecondary} href="/projetos">
                 {copy.secondary}
               </Link>
@@ -317,10 +321,12 @@ export function DeveloperLab() {
                 {statusLabel("code-snake")} {apiStatusLabel("code-snake")}
               </span>
             </div>
-            <div className={`${styles.gameTab} ${styles.futureGameTab}`} aria-label="Stack Tetris">
+            <div className={styles.gameTab} aria-label="Stack Tetris">
               <span className={styles.gameTabTitle}>Stack Tetris</span>
               <span className={styles.gameTabDescription}>{copy.tetrisCardText}</span>
-              <span className={styles.gameTabStatus}>{copy.futureStatus}</span>
+              <span className={styles.gameTabStatus}>
+                {statusLabel("stack-tetris")} {apiStatusLabel("stack-tetris")}
+              </span>
             </div>
           </div>
         </aside>
@@ -337,30 +343,8 @@ export function DeveloperLab() {
           <CodeSnake locale={locale} onComplete={(score) => handleComplete("code-snake", score)} />
         </section>
 
-        <section className={styles.trainingShell} aria-labelledby="future-arcade-title">
-          <div className={styles.sectionHeader}>
-            <div>
-              <p className={styles.eyebrow}>{copy.roadmapEyebrow}</p>
-              <h2 className={styles.sectionTitle} id="future-arcade-title">
-                {locale === "pt" ? "Próximos jogos do arcade." : "Next arcade games."}
-              </h2>
-            </div>
-            <p className={styles.trainingNote}>
-              {locale === "pt"
-                ? "O slot futuro aparece para orientar a navegação, mas não inicia gameplay nem envia score nesta fase."
-                : "The future slot is visible to guide the product direction, but it does not start gameplay or submit scores in this phase."}
-            </p>
-          </div>
-
-          <div className={styles.moduleGrid}>
-            {futureSlots.map((slot) => (
-              <article className={`${styles.moduleCard} ${styles.futureModuleCard}`} key={slot.title}>
-                <p className={styles.moduleMeta}>{copy.futureStatus}</p>
-                <h3>{slot.title}</h3>
-                <p className={styles.moduleText}>{copy[slot.descriptionKey]}</p>
-              </article>
-            ))}
-          </div>
+        <section className={styles.gameShell}>
+          <StackTetris locale={locale} onComplete={(score) => handleComplete("stack-tetris", score)} />
         </section>
 
         <section className={styles.trainingShell}>
@@ -417,8 +401,8 @@ export function DeveloperLab() {
             </div>
             <p className={styles.trainingNote}>
               {locale === "pt"
-                ? "O arcade final ainda não está fechado: Stack Tetris deve ser implementado em fase própria depois do Code Snake."
-                : "The final arcade is not closed yet: Stack Tetris must be implemented in its own phase after Code Snake."}
+                ? "O arcade final agora reúne quatro jogos jogáveis, com Debug Arena e Latency Lab mantidos apenas como experimentos arquivados."
+                : "The final arcade now brings four playable games together, with Debug Arena and Latency Lab kept only as archived experiments."}
             </p>
           </div>
 
@@ -426,7 +410,7 @@ export function DeveloperLab() {
             {roadmap[locale].map(([title, description]) => (
               <article className={styles.moduleCard} key={title}>
                 <p className={styles.moduleMeta}>
-                  {title === "Runtime Runner" || title === "Bug Maze" || title === "Code Snake" ? copy.playable : copy.pending}
+                  {title === "Runtime Runner" || title === "Bug Maze" || title === "Code Snake" || title === "Stack Tetris" ? copy.playable : copy.pending}
                 </p>
                 <h3>{title}</h3>
                 <p className={styles.moduleText}>{description}</p>

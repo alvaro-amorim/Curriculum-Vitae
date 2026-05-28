@@ -74,7 +74,7 @@
 :global(#runtime-runner-title),
 :global(#bug-maze-title),
 :global(#code-snake-title),
-:global(#future-arcade-title),
+:global(#stack-tetris-title),
 :global(#debug-arena-title),
 :global(#latency-lab-title) {
   scroll-margin-top: 7.5rem;
@@ -201,6 +201,7 @@
 .gameTab:hover,
 .runnerAction:hover,
 .snakeDirection:hover,
+.tetrisControl:hover,
 .arenaOption:hover,
 .latencyAction:hover,
 .moduleCard:hover {
@@ -220,6 +221,8 @@
 .mazeDirection:focus-visible,
 .snakeStage:focus-visible,
 .snakeDirection:focus-visible,
+.tetrisStage:focus-visible,
+.tetrisControl:focus-visible,
 .arenaStage:focus-visible,
 .arenaOption:focus-visible,
 .latencyStage:focus-visible,
@@ -235,6 +238,7 @@
 .moduleCard,
 .runnerStage,
 .snakeStage,
+.tetrisStage,
 .arenaStage,
 .latencyStage {
   border: 1px solid rgba(255, 255, 255, 0.12);
@@ -254,6 +258,7 @@
 :global([data-theme="light"]) .moduleCard,
 :global([data-theme="light"]) .runnerStage,
 :global([data-theme="light"]) .snakeStage,
+:global([data-theme="light"]) .tetrisStage,
 :global([data-theme="light"]) .arenaStage,
 :global([data-theme="light"]) .latencyStage {
   border-color: rgba(15, 23, 42, 0.13);
@@ -442,6 +447,7 @@
 :global([data-theme="light"]) .laneControl,
 :global([data-theme="light"]) .mazeDirection,
 :global([data-theme="light"]) .snakeDirection,
+:global([data-theme="light"]) .tetrisControl,
 :global([data-theme="light"]) .arenaOption,
 :global([data-theme="light"]) .latencyAction {
   border-color: rgba(15, 23, 42, 0.14);
@@ -466,6 +472,7 @@
 :global([data-theme="light"]) .runnerPanel p,
 :global([data-theme="light"]) .runnerPanel li,
 :global([data-theme="light"]) .snakeMeta,
+:global([data-theme="light"]) .tetrisMeta,
 :global([data-theme="light"]) .arenaOption > span:not(.arenaOptionMeta),
 :global([data-theme="light"]) .arenaOptionDetail,
 :global([data-theme="light"]) .latencyAction > span:not(.latencyActionMeta),
@@ -489,12 +496,14 @@
 :global([data-theme="light"]) .latencyIncidentPanel h3,
 :global([data-theme="light"]) .latencyMetric strong,
 :global([data-theme="light"]) .runnerHud strong,
-:global([data-theme="light"]) .snakeHud strong {
+:global([data-theme="light"]) .snakeHud strong,
+:global([data-theme="light"]) .tetrisHud strong {
   color: var(--lab-ink);
 }
 
 :global([data-theme="light"]) .runnerHud span,
-:global([data-theme="light"]) .snakeHud span {
+:global([data-theme="light"]) .snakeHud span,
+:global([data-theme="light"]) .tetrisHud span {
   color: color-mix(in srgb, var(--lab-muted) 86%, var(--lab-ink));
 }
 
@@ -1719,6 +1728,512 @@
   background: linear-gradient(180deg, rgba(248, 251, 255, 0.28), rgba(226, 232, 240, 0.78));
 }
 
+.tetrisLayout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(17rem, 0.34fr);
+  gap: 1rem;
+}
+
+.tetrisStage {
+  position: relative;
+  overflow: hidden;
+  min-height: clamp(32rem, 58vw, 46rem);
+  border-radius: 1.65rem;
+  padding: clamp(0.8rem, 2vw, 1.15rem);
+  background:
+    radial-gradient(circle at 72% 16%, rgba(139, 92, 246, 0.2), transparent 17rem),
+    radial-gradient(circle at 18% 78%, rgba(52, 211, 153, 0.13), transparent 16rem),
+    linear-gradient(145deg, rgba(8, 12, 26, 0.93), rgba(3, 7, 17, 0.95));
+  touch-action: none;
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.tetrisStage::before {
+  position: absolute;
+  inset: 0;
+  content: "";
+  pointer-events: none;
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.028) 1px, transparent 1px),
+    linear-gradient(120deg, transparent 0 38%, rgba(139, 92, 246, 0.12) 50%, transparent 64%);
+  background-size: 60px 60px, 60px 60px, auto;
+  opacity: 0.82;
+}
+
+.tetrisStageClear {
+  border-color: rgba(52, 211, 153, 0.58);
+  box-shadow:
+    0 28px 100px rgba(52, 211, 153, 0.12),
+    inset 0 0 0 1px rgba(52, 211, 153, 0.11);
+}
+
+.tetrisStagePaused {
+  border-color: rgba(103, 232, 249, 0.34);
+}
+
+.tetrisStagePaused .tetrisGrid {
+  opacity: 0.64;
+}
+
+.tetrisStageHit {
+  border-color: rgba(248, 113, 113, 0.6);
+  animation: stage-hit 520ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tetrisHud {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.tetrisHud div {
+  min-width: 0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.tetrisHud span,
+.tetrisMeta {
+  color: rgba(237, 246, 255, 0.66);
+  font-size: 0.72rem;
+  font-weight: 850;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.tetrisHud strong {
+  display: block;
+  margin-top: 0.28rem;
+  color: #fff;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: clamp(1.2rem, 2.4vw, 2rem);
+  line-height: 1;
+}
+
+.tetrisScorePulse {
+  animation: tetris-score-pop 520ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tetrisMeta {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin: 0.8rem 0;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.tetrisMeta > span {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  padding: 0.4rem 0.62rem;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.tetrisClearBadge,
+.tetrisComboBadge,
+.tetrisDropBadge,
+.tetrisLevelBadge {
+  border-color: rgba(52, 211, 153, 0.32);
+  color: #bbf7d0;
+  background: rgba(22, 163, 74, 0.12);
+}
+
+.tetrisComboBadge {
+  border-color: rgba(139, 92, 246, 0.36);
+  color: #ddd6fe;
+  background: rgba(139, 92, 246, 0.13);
+}
+
+.tetrisDropBadge {
+  border-color: rgba(103, 232, 249, 0.34);
+  color: #cffafe;
+  background: rgba(8, 145, 178, 0.13);
+}
+
+.tetrisLevelBadge {
+  border-color: rgba(250, 204, 21, 0.36);
+  color: #fef08a;
+  background: rgba(202, 138, 4, 0.14);
+}
+
+.tetrisGrid {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: repeat(var(--tetris-width), minmax(0, 1fr));
+  gap: clamp(0.12rem, 0.42vw, 0.24rem);
+  width: min(100%, 31rem);
+  margin: 0 auto;
+  padding: clamp(0.4rem, 1vw, 0.72rem);
+  border: 1px solid rgba(139, 92, 246, 0.28);
+  border-radius: 1.25rem;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.08), transparent 62%),
+    rgba(0, 0, 0, 0.22);
+}
+
+.tetrisCell,
+.tetrisPreviewCell {
+  position: relative;
+  display: grid;
+  min-width: 0;
+  aspect-ratio: 1;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 0.32rem;
+  background: rgba(255, 255, 255, 0.042);
+}
+
+.tetrisFilled,
+.tetrisActive,
+.tetrisPreviewCell.tetrisActive {
+  border-color: color-mix(in srgb, var(--piece-color, #67e8f9) 64%, rgba(255, 255, 255, 0.16));
+  background:
+    radial-gradient(circle at 42% 32%, rgba(248, 251, 255, 0.28), transparent 0.4rem),
+    linear-gradient(135deg, color-mix(in srgb, var(--piece-color, #67e8f9) 58%, #111827), color-mix(in srgb, var(--piece-color, #67e8f9) 26%, #020617));
+  box-shadow:
+    0 0 22px color-mix(in srgb, var(--piece-color, #67e8f9) 24%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.tetrisFilled[data-kind="locked"] {
+  filter: saturate(0.82);
+  opacity: 0.88;
+}
+
+.tetrisActive {
+  z-index: 2;
+  transform: translateY(-1px) scale(1.03);
+}
+
+.tetrisActive::after {
+  position: absolute;
+  inset: 0.18rem;
+  border: 1px solid rgba(248, 251, 255, 0.22);
+  border-radius: inherit;
+  content: "";
+  pointer-events: none;
+}
+
+.tetrisGhost {
+  border-style: dashed;
+  border-color: color-mix(in srgb, var(--piece-color, #67e8f9) 46%, rgba(255, 255, 255, 0.18));
+  background: color-mix(in srgb, var(--piece-color, #67e8f9) 10%, transparent);
+}
+
+.tetrisCell[data-module="UI"],
+.tetrisPreviewCell[data-module="UI"] {
+  --piece-color: #67e8f9;
+}
+
+.tetrisCell[data-module="API"],
+.tetrisPreviewCell[data-module="API"] {
+  --piece-color: #38bdf8;
+}
+
+.tetrisCell[data-module="DB"],
+.tetrisPreviewCell[data-module="DB"] {
+  --piece-color: #34d399;
+}
+
+.tetrisCell[data-module="CACHE"],
+.tetrisPreviewCell[data-module="CACHE"] {
+  --piece-color: #a78bfa;
+}
+
+.tetrisCell[data-module="TEST"],
+.tetrisPreviewCell[data-module="TEST"] {
+  --piece-color: #facc15;
+}
+
+.tetrisCell[data-module="CI"],
+.tetrisPreviewCell[data-module="CI"] {
+  --piece-color: #fb7185;
+}
+
+.tetrisCell[data-module="AUTH"],
+.tetrisPreviewCell[data-module="AUTH"] {
+  --piece-color: #f97316;
+}
+
+.tetrisCellLabel {
+  position: relative;
+  z-index: 2;
+  max-width: 94%;
+  color: rgba(248, 251, 255, 0.9);
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: clamp(0.36rem, 0.62vw, 0.52rem);
+  font-weight: 920;
+  line-height: 1.05;
+  overflow-wrap: anywhere;
+  text-align: center;
+}
+
+.tetrisFeedback {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 9;
+  color: var(--lab-accent-a);
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.82rem;
+  font-weight: 900;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  animation: tetris-feedback-pop 560ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.tetrisFeedbackGood {
+  color: #bbf7d0;
+}
+
+.tetrisFeedbackHit {
+  color: #fecaca;
+}
+
+.tetrisOverlay {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: linear-gradient(180deg, rgba(2, 6, 23, 0.16), rgba(2, 6, 23, 0.74));
+  pointer-events: none;
+}
+
+.tetrisStageHit .stageMessageInner {
+  border-color: rgba(248, 113, 113, 0.34);
+  box-shadow:
+    0 28px 90px rgba(127, 29, 29, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.tetrisLineBurst {
+  position: absolute;
+  left: 50%;
+  top: 54%;
+  z-index: 7;
+  display: grid;
+  width: min(58%, 25rem);
+  gap: 0.26rem;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+
+.tetrisLineBurst span {
+  display: block;
+  height: 0.18rem;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, rgba(52, 211, 153, 0.78), rgba(103, 232, 249, 0.7), transparent);
+  box-shadow: 0 0 20px rgba(52, 211, 153, 0.22);
+  animation: tetris-line-burst 620ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.tetrisLineBurst span:nth-child(2) {
+  animation-delay: 50ms;
+}
+
+.tetrisLineBurst span:nth-child(3) {
+  animation-delay: 100ms;
+}
+
+.tetrisSide {
+  display: grid;
+  align-content: start;
+  gap: 1rem;
+}
+
+.tetrisActions {
+  display: grid;
+  gap: 0.65rem;
+  margin-top: 0.85rem;
+}
+
+.tetrisPreviewGrid {
+  display: grid;
+  grid-template-columns: repeat(var(--tetris-preview), minmax(0, 1fr));
+  gap: 0.18rem;
+  width: min(100%, 9rem);
+  margin-top: 0.8rem;
+  padding: 0.46rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.tetrisNextKind {
+  width: fit-content;
+  margin: 0.5rem 0 0;
+  border: 1px solid rgba(103, 232, 249, 0.24);
+  border-radius: 999px;
+  padding: 0.28rem 0.5rem;
+  color: var(--lab-accent-a);
+  background: rgba(103, 232, 249, 0.08);
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  line-height: 1;
+}
+
+.tetrisPreviewCell {
+  border-radius: 0.28rem;
+}
+
+.tetrisControls {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.65rem;
+  margin-top: 0.85rem;
+  touch-action: none;
+}
+
+.tetrisControl {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 0.12rem;
+  min-height: 3.55rem;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 0.95rem;
+  background: rgba(255, 255, 255, 0.06);
+  color: #f8fbff;
+  font-size: 1.22rem;
+  font-weight: 900;
+  touch-action: manipulation;
+  user-select: none;
+  transition:
+    transform 180ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 180ms cubic-bezier(0.16, 1, 0.3, 1),
+    background 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tetrisControlIcon {
+  font-size: 1.24rem;
+  line-height: 1;
+}
+
+.tetrisControlHint {
+  color: rgba(237, 246, 255, 0.58);
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.62rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.tetrisDropControl {
+  grid-column: 1 / -1;
+  min-height: 3.35rem;
+  font-size: 0.86rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.tetrisControl:hover {
+  transform: translateY(-1px);
+  border-color: rgba(139, 92, 246, 0.5);
+  background: rgba(139, 92, 246, 0.12);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .tetrisStageClear .tetrisGrid {
+    animation: tetris-line-clear 520ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .tetrisActive {
+    animation: tetris-piece-enter 280ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+}
+
+:global([data-theme="light"]) .tetrisStage {
+  background:
+    radial-gradient(circle at 72% 16%, rgba(109, 40, 217, 0.12), transparent 17rem),
+    radial-gradient(circle at 18% 78%, rgba(4, 120, 87, 0.1), transparent 16rem),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(239, 246, 255, 0.82));
+}
+
+:global([data-theme="light"]) .tetrisGrid {
+  border-color: rgba(109, 40, 217, 0.18);
+  background:
+    radial-gradient(circle at 50% 50%, rgba(109, 40, 217, 0.07), transparent 62%),
+    rgba(255, 255, 255, 0.58);
+}
+
+:global([data-theme="light"]) .tetrisCell,
+:global([data-theme="light"]) .tetrisPreviewCell {
+  border-color: rgba(15, 23, 42, 0.09);
+  background: rgba(255, 255, 255, 0.68);
+}
+
+:global([data-theme="light"]) .tetrisFilled,
+:global([data-theme="light"]) .tetrisActive,
+:global([data-theme="light"]) .tetrisPreviewCell.tetrisActive {
+  color: #0f172a;
+  background:
+    radial-gradient(circle at 42% 32%, rgba(255, 255, 255, 0.55), transparent 0.4rem),
+    linear-gradient(135deg, color-mix(in srgb, var(--piece-color, #0891b2) 40%, white), color-mix(in srgb, var(--piece-color, #0891b2) 18%, #e2e8f0));
+  box-shadow:
+    0 0 18px color-mix(in srgb, var(--piece-color, #0891b2) 16%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.72);
+}
+
+:global([data-theme="light"]) .tetrisGhost {
+  background: color-mix(in srgb, var(--piece-color, #0891b2) 8%, transparent);
+}
+
+:global([data-theme="light"]) .tetrisCellLabel {
+  color: #0f172a;
+}
+
+:global([data-theme="light"]) .tetrisOverlay {
+  background: linear-gradient(180deg, rgba(248, 251, 255, 0.3), rgba(226, 232, 240, 0.78));
+}
+
+:global([data-theme="light"]) .tetrisClearBadge {
+  border-color: rgba(4, 120, 87, 0.3);
+  color: #047857;
+  background: rgba(209, 250, 229, 0.72);
+}
+
+:global([data-theme="light"]) .tetrisComboBadge {
+  border-color: rgba(109, 40, 217, 0.24);
+  color: #5b21b6;
+  background: rgba(237, 233, 254, 0.76);
+}
+
+:global([data-theme="light"]) .tetrisDropBadge,
+:global([data-theme="light"]) .tetrisNextKind {
+  border-color: rgba(8, 145, 178, 0.24);
+  color: #0e7490;
+  background: rgba(207, 250, 254, 0.72);
+}
+
+:global([data-theme="light"]) .tetrisLevelBadge {
+  border-color: rgba(180, 83, 9, 0.24);
+  color: #92400e;
+  background: rgba(254, 243, 199, 0.78);
+}
+
+:global([data-theme="light"]) .tetrisControlHint {
+  color: rgba(15, 23, 42, 0.54);
+}
+
 .arenaLayout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(18rem, 0.38fr);
@@ -2820,6 +3335,79 @@
   }
 }
 
+@keyframes tetris-score-pop {
+  0% {
+    transform: scale(0.94);
+  }
+
+  45% {
+    color: #bbf7d0;
+    text-shadow: 0 0 18px rgba(52, 211, 153, 0.34);
+    transform: scale(1.12);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes tetris-line-clear {
+  0%,
+  100% {
+    box-shadow: none;
+  }
+
+  45% {
+    box-shadow:
+      0 0 0 1px rgba(52, 211, 153, 0.25),
+      0 0 36px rgba(52, 211, 153, 0.2);
+  }
+}
+
+@keyframes tetris-line-burst {
+  0% {
+    opacity: 0;
+    transform: scaleX(0.28);
+  }
+
+  35% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: scaleX(1);
+  }
+}
+
+@keyframes tetris-piece-enter {
+  from {
+    opacity: 0.82;
+    transform: translateY(-0.18rem) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(-1px) scale(1.03);
+  }
+}
+
+@keyframes tetris-feedback-pop {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, calc(-50% + 0.5rem));
+  }
+
+  22% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-50%, calc(-50% - 1.2rem));
+  }
+}
+
 @keyframes stage-hit {
   0%,
   100% {
@@ -3082,6 +3670,7 @@
   .runnerGrid,
   .mazeLayout,
   .snakeLayout,
+  .tetrisLayout,
   .arenaLayout,
   .arenaBody,
   .latencyLayout,
@@ -3186,7 +3775,7 @@
   :global(#runtime-runner-title),
   :global(#bug-maze-title),
   :global(#code-snake-title),
-  :global(#future-arcade-title),
+  :global(#stack-tetris-title),
   :global(#debug-arena-title),
   :global(#latency-lab-title) {
     scroll-margin-top: 15rem;
@@ -3343,6 +3932,58 @@
 
   .snakeDirection {
     min-height: 4rem;
+  }
+
+  .tetrisStage {
+    min-height: auto;
+    border-radius: 1.25rem;
+    padding: 0.65rem;
+  }
+
+  .tetrisHud {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .tetrisHud div {
+    padding: 0.62rem;
+  }
+
+  .tetrisMeta {
+    gap: 0.4rem;
+  }
+
+  .tetrisMeta > span {
+    padding: 0.34rem 0.52rem;
+  }
+
+  .tetrisGrid {
+    gap: 0.09rem;
+    padding: 0.32rem;
+    border-radius: 1rem;
+  }
+
+  .tetrisCell {
+    border-radius: 0.2rem;
+  }
+
+  .tetrisCellLabel {
+    font-size: clamp(0.28rem, 1.24vw, 0.4rem);
+  }
+
+  .tetrisControls {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    width: 100%;
+    max-width: 18rem;
+    margin-right: auto;
+    margin-left: auto;
+  }
+
+  .tetrisControl {
+    min-height: 3.85rem;
+  }
+
+  .tetrisDropControl {
+    min-height: 3.65rem;
   }
 
   .arenaStage {
@@ -3520,6 +4161,11 @@
   .snakeToken,
   .snakeHazardNear,
   .snakeStageCollect .snakeGrid,
+  .tetrisFeedback,
+  .tetrisScorePulse,
+  .tetrisStageClear .tetrisGrid,
+  .tetrisActive,
+  .tetrisLineBurst span,
   .gameLoading {
     animation: none;
   }
@@ -3532,15 +4178,18 @@
   .laneControl,
   .mazeDirection,
   .snakeDirection,
+  .tetrisControl,
   .arenaOption,
   .latencyAction,
   .runnerStage,
   .mazeStage,
   .snakeStage,
+  .tetrisStage,
   .arenaStage,
   .latencyStage,
   .mazeCell,
   .snakeCell,
+  .tetrisCell,
   .moduleCard {
     transition: none;
   }
@@ -3553,6 +4202,7 @@
   .mazeStageHitFlash,
   .mazeStageBlocked,
   .snakeStageHit,
+  .tetrisStageHit,
   .mazeGoal::after,
   .mazePatch::after,
   .mazeHazard::after,

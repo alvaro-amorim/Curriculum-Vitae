@@ -61,7 +61,7 @@ Atualização R1-E.9.4/R1-E.9.4.1 — Code Snake e Action Polish.
 Checkpoint publicado antes desta fase:
 
 ```txt
-4ececc9 feat: reset developer arcade direction
+9bcf7a3 feat: add developer arcade code snake
 ```
 
 Estado real do produto após revisão humana em vídeo:
@@ -71,9 +71,8 @@ Estado real do produto após revisão humana em vídeo:
 - `/projetos` está concluída como hub premium de projetos.
 - `/projetos/[slug]` está concluída como experiência premium de case studies.
 - `/lab` foi reorganizado para a direção final do Developer Arcade.
-- Runtime Runner / Bug Runner e Bug Maze estão preservados como jogos principais jogáveis.
-- Code Snake está em implementação/polish local na R1-E.9.4/R1-E.9.4.1 como terceiro jogo final.
-- Stack Tetris permanece futuro para a R1-E.9.5.
+- Runtime Runner / Bug Runner, Bug Maze e Code Snake estão preservados como jogos principais jogáveis.
+- Stack Tetris está em implementação/polish local na R1-E.9.5/R1-E.9.5.1 como quarto jogo final.
 - Debug Arena e Latency Lab foram rebaixados da vitrine principal por parecerem quiz/teste e dashboard/formulário em uso real.
 - Quiz/foundation challenge não deve ser tratado como jogo final.
 - A navbar/topbar premium, o tema claro real, as transições e o currículo polido foram checkpointados antes desta fase.
@@ -83,7 +82,7 @@ Estado real do produto após revisão humana em vídeo:
 - Metadata, sitemap, robots, not-found e fundamentos de SEO estão implementados.
 - `/api/score` é mock/local, não persistente, com validação para os jogos do Developer Arcade.
 - A revisão humana bloqueou o checkpoint R1-E.9 e também a checkpointagem da R1-E.9.1/R1-E.9.2.
-- O projeto não deve ser tratado como fechamento final até Code Snake, Stack Tetris e QA final do Developer Arcade serem validados e checkpointados.
+- O projeto não deve ser tratado como fechamento final até Stack Tetris e QA final do Developer Arcade serem validados e checkpointados.
 
 Direção final desejada do Developer Arcade:
 
@@ -133,10 +132,9 @@ Estado de produção na R1-E.9:
 
 Próximo passo oficial:
 
-- Concluir a R1-E.9.4/R1-E.9.4.1 — Code Snake e Action Polish, em execução local sem checkpoint.
-- Validar Code Snake como jogo real em desktop, mobile, tema claro, tema escuro e reduced motion.
-- Manter Runtime Runner e Bug Maze preservados.
-- Manter Stack Tetris como futuro até a R1-E.9.5.
+- Concluir a R1-E.9.5/R1-E.9.5.1 — Stack Tetris e Action Polish, em execução local sem checkpoint.
+- Validar Stack Tetris como jogo real em desktop, mobile, tema claro, tema escuro, reduced motion e controles mobile.
+- Manter Runtime Runner, Bug Maze e Code Snake preservados.
 - Criar checkpoint somente com validação técnica, QA visual e revisão humana.
 
 Plano oficial pós-revisão:
@@ -149,6 +147,7 @@ R1-E.9.3.2 — Arcade Reset & Runtime/Bug Maze Action Polish
 R1-E.9.4   — Code Snake
 R1-E.9.4.1 — Code Snake Action Polish
 R1-E.9.5   — Stack Tetris
+R1-E.9.5.1 — Stack Tetris Action Polish
 R1-E.9.6   — Developer Arcade Final QA
 R1-F.0     — Project Assets Admin Planning
 R1-F.1     — Protected Admin Shell
@@ -690,6 +689,7 @@ Status publicado:
 - R1-E.8.5: release gate do Developer Arcade.
 - R1-E.9.3.1.1/R1-E.9.3.1.2: navbar premium, tema claro real, transições, currículo polido e contraste light.
 - R1-E.9.3.2: reset da direção do Arcade com Runtime Runner/Bug Maze jogáveis, Code Snake/Stack Tetris futuros e Debug Arena/Latency Lab rebaixados.
+- R1-E.9.4/R1-E.9.4.1: Code Snake implementado e polido como terceiro jogo final.
 
 Estado revisado antes do fechamento R1-E.9:
 
@@ -698,11 +698,11 @@ Estado revisado antes do fechamento R1-E.9:
 - `/projetos` e `/projetos/[slug]` validados como experiência premium.
 - `/lab` ainda não validado como arcade final completo.
 - Jogos finais desejados: Runtime Runner, Bug Maze, Code Snake e Stack Tetris.
-- Code Snake está em implementação/polish local na R1-E.9.4/R1-E.9.4.1.
-- Stack Tetris ainda é futuro.
+- Runtime Runner, Bug Maze e Code Snake estão implementados como jogos finais.
+- Stack Tetris está em implementação/polish local na R1-E.9.5/R1-E.9.5.1.
 - Debug Arena, Latency Lab e quiz/foundation challenge não devem ser vendidos como jogos finais.
 - `/curriculo` e downloads preservados.
-- `/api/score` permanece mock/local não persistente. O contrato atual deve aceitar `runtime`, `bug-maze` e `code-snake`; `debug-arena` e `latency-lab` ficam como compatibilidade temporária. `stack-tetris` só deve ser aceito quando for implementado.
+- `/api/score` permanece mock/local não persistente. O contrato atual deve aceitar `runtime`, `bug-maze`, `code-snake` e `stack-tetris`; `debug-arena` e `latency-lab` ficam como compatibilidade temporária.
 - Sitemap, robots, metadata, links, idiomas, tema, acessibilidade, reduced motion e mobile validados.
 - Produção deve ser validada por leitura quando disponível, sem deploy manual nesta fase.
 
@@ -732,12 +732,12 @@ Regras permanentes:
 A fase em execução local é:
 
 ```txt
-R1-E.9.4/R1-E.9.4.1 — Code Snake e Action Polish
+R1-E.9.5/R1-E.9.5.1 — Stack Tetris e Action Polish
 ```
 
-Essa fase implementa e refina Code Snake como terceiro jogo real do Developer Arcade, preservando Runtime Runner e Bug Maze.
+Essa fase implementa e refina Stack Tetris como quarto jogo real do Developer Arcade, preservando Runtime Runner, Bug Maze e Code Snake.
 
-Stack Tetris continua futuro. A fase atual não implementa Stack Tetris, Admin, Supabase, ranking real, analytics real ou persistência real.
+A fase atual não implementa Admin, Supabase, ranking real, analytics real ou persistência real.
 
 ### Roadmap R1-C Recomendado
 
