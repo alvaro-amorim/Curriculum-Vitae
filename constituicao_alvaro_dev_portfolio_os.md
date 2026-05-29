@@ -56,12 +56,12 @@ Apesar disso, a versão atual ainda demonstra mais domínio de HTML/CSS/JS vanil
 
 ## Estado Atual Real
 
-Atualização R1-E.9.6 — Developer Arcade Final QA.
+Atualização R1-F.0 — Project Assets Admin Planning.
 
 Checkpoint publicado antes desta fase:
 
 ```txt
-73b3d69 feat: add developer arcade stack tetris
+69cc377 docs: finalize developer arcade qa
 ```
 
 Estado real do produto após revisão humana em vídeo:
@@ -71,7 +71,7 @@ Estado real do produto após revisão humana em vídeo:
 - `/projetos` está concluída como hub premium de projetos.
 - `/projetos/[slug]` está concluída como experiência premium de case studies.
 - `/lab` foi reorganizado para a direção final do Developer Arcade.
-- Runtime Runner / Bug Runner, Bug Maze, Code Snake e Stack Tetris estão preservados como jogos principais jogáveis.
+- Runtime Runner, Bug Maze, Code Snake e Stack Tetris estão preservados como jogos principais jogáveis.
 - Debug Arena e Latency Lab foram rebaixados da vitrine principal por parecerem quiz/teste e dashboard/formulário em uso real.
 - Quiz/foundation challenge não deve ser tratado como jogo final.
 - A navbar/topbar premium, o tema claro real, as transições e o currículo polido foram checkpointados antes desta fase.
@@ -111,11 +111,12 @@ O que ainda não existe e não deve ser marcado como concluído:
 - Admin de imagens dos projetos.
 - Deploy manual nesta fase.
 
-Fase futura obrigatória:
+Fase obrigatória em planejamento:
 
 - R1-F — Project Assets Admin / Project Media Manager.
-- Essa fase deve criar uma página admin protegida para cadastrar ou subir imagens reais dos projetos.
-- O admin deve editar thumbnail, hero image e galeria conectados à estrutura `visuals`.
+- R1-F.0 é apenas auditoria e planejamento técnico; não cria `/admin`, upload, autenticação, banco ou storage.
+- A implementação futura deve criar uma página admin protegida para cadastrar ou subir imagens reais dos projetos.
+- O admin futuro deve editar thumbnail, hero image e galeria conectados à estrutura `visuals`.
 - O armazenamento real deve ser definido em fase própria, provavelmente Supabase Storage/Auth ou solução equivalente.
 - Enquanto R1-F não existir, os placeholders de projeto continuam honestos.
 - Supabase ainda não está ativo.
@@ -131,10 +132,10 @@ Estado de produção na R1-E.9:
 
 Próximo passo oficial:
 
-- Concluir a R1-E.9.6 — Developer Arcade Final QA, em execução local sem checkpoint.
-- Validar os quatro jogos finais em desktop, mobile, tema claro, tema escuro, PT/EN, reduced motion, score/API e acessibilidade.
+- Executar R1-F.0 — Project Assets Admin Planning como auditoria e plano, sem implementação.
+- Mapear modelo `visuals`, placeholders, segurança, persistência, variáveis de ambiente e UX do `/admin`.
 - Manter Runtime Runner, Bug Maze, Code Snake e Stack Tetris preservados.
-- Criar checkpoint somente com validação técnica, QA visual e revisão humana.
+- Criar checkpoint documental somente após revisão do plano.
 
 Plano oficial pós-revisão:
 
@@ -150,8 +151,11 @@ R1-E.9.5.1 — Stack Tetris Action Polish
 R1-E.9.6   — Developer Arcade Final QA
 R1-F.0     — Project Assets Admin Planning
 R1-F.1     — Protected Admin Shell
-R1-F.2     — Project Media Manager
-R1-F.3     — Storage/Persistence Integration
+R1-F.2     — Project Media Data Model
+R1-F.3     — Upload & Storage Integration
+R1-F.4     — Project Media Manager UI
+R1-F.5     — Public Rendering Integration
+R1-F.6     — Admin QA & Security Gate
 ```
 
 Estratégia de navbar/navegação global:
@@ -173,7 +177,7 @@ Fase futura obrigatória R1-F:
 - Ainda não existe autenticação/proteção de admin.
 - Ainda não existe upload/cadastro de imagens reais dos projetos.
 - Ainda não existe storage real.
-- R1-F deve planejar e implementar Project Assets Admin / Project Media Manager em fases próprias.
+- R1-F.0 documenta o plano; R1-F.1 em diante deve implementar Project Assets Admin / Project Media Manager em fases próprias.
 - O escopo futuro inclui `/admin`, proteção, upload/cadastro de thumbnail, hero image, galeria, alt PT/EN, integração com `visuals`, e armazenamento real, provavelmente Supabase Storage/Auth ou alternativa aprovada.
 - Até lá, os placeholders de projetos continuam honestos e nenhum screenshot falso deve ser criado.
 
@@ -731,10 +735,10 @@ Regras permanentes:
 A fase em execução local é:
 
 ```txt
-R1-E.9.6 — Developer Arcade Final QA
+R1-F.0 — Project Assets Admin Planning
 ```
 
-Essa fase valida o Developer Arcade completo como produto com Runtime Runner, Bug Maze, Code Snake e Stack Tetris preservados como jogos finais.
+Essa fase audita o modelo atual de projetos/imagens e define o plano técnico do futuro Project Assets Admin, sem criar `/admin`, upload, autenticação, storage ou banco.
 
 A fase atual não implementa Admin, Supabase, ranking real, analytics real ou persistência real.
 

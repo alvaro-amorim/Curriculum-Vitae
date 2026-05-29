@@ -6,10 +6,10 @@ O projeto deixou de ser apenas um currículo digital e passou a funcionar como u
 
 ## Estado Atual
 
-Checkpoint publicado antes da R1-E.9.6:
+Checkpoint publicado antes da R1-F.0:
 
 ```txt
-73b3d69 feat: add developer arcade stack tetris
+69cc377 docs: finalize developer arcade qa
 ```
 
 Estado real do produto após a revisão humana que abriu a R1-E.9.3.0:
@@ -26,14 +26,14 @@ Estado real do produto após a revisão humana que abriu a R1-E.9.3.0:
 - PDFs e DOCX continuam em `public/resume/`.
 - A imagem de perfil continua em `public/profile/`.
 - SEO básico, metadata por rota, sitemap e robots estão implementados.
-- R1-E.9 ainda não está fechada.
+- R1-E.9.6 foi checkpointada em `69cc377` com QA final documental do Developer Arcade.
 - R1-E.9.1 e R1-E.9.2 foram hardening local sem checkpoint.
 - R1-E.9.3.1.1/R1-E.9.3.1.2 foram checkpointadas em `1d8cf1b` com navbar premium, tema claro real, transições, currículo polido e contraste light.
 - R1-E.9.3.2 foi checkpointada em `4ececc9` com o reset da direção do Arcade.
 - R1-E.9.4/R1-E.9.4.1 foram checkpointadas em `9bcf7a3` com Code Snake como terceiro jogo final.
 - R1-E.9.5/R1-E.9.5.1 foram checkpointadas em `73b3d69` com Stack Tetris como quarto jogo final.
-- R1-E.9.6 está em execução local sem checkpoint para QA final do Developer Arcade.
-- O projeto ainda não deve ser tratado como fechamento final enquanto R1-E.9.6, revisão humana e mídia real dos projetos estiverem pendentes.
+- R1-F.0 está em execução local sem checkpoint para planejar o Admin de Imagens.
+- O projeto ainda não deve ser tratado como fechamento final enquanto Admin de Imagens, storage real e mídia real dos projetos estiverem pendentes.
 
 ## Rotas Principais
 
@@ -183,9 +183,9 @@ Não marcar como concluído:
 - Admin de imagens dos projetos.
 - Deploy manual nesta fase.
 
-## Fase Futura Obrigatória: R1-F
+## Fase Obrigatória em Planejamento: R1-F
 
-R1-F — Project Assets Admin / Project Media Manager ainda não existe.
+R1-F — Project Assets Admin / Project Media Manager ainda não existe como implementação. A R1-F.0 é apenas auditoria e planejamento técnico para essa área.
 
 Escopo previsto:
 
@@ -199,7 +199,17 @@ Escopo previsto:
 
 Supabase ainda não está ativo neste projeto.
 
-R1-F não deve ser implementada antes do replanejamento visual e de arcade estar estabilizado.
+R1-F.0 não cria `/admin`, storage, banco, autenticação ou upload. A implementação deve começar somente em R1-F.1 ou fase posterior aprovada.
+
+Roadmap proposto:
+
+- R1-F.0 — Project Assets Admin Planning: auditoria, plano técnico, segurança e UX, sem implementação.
+- R1-F.1 — Protected Admin Shell: criar `/admin` protegido e layout base, ainda sem upload real.
+- R1-F.2 — Project Media Data Model: decidir persistência e manter fallback para `projects.ts`/placeholders.
+- R1-F.3 — Upload & Storage Integration: integrar Supabase Storage/Auth ou alternativa aprovada.
+- R1-F.4 — Project Media Manager UI: editor por projeto para thumbnail, hero, galeria, alt PT/EN e status.
+- R1-F.5 — Public Rendering Integration: consumir imagens reais quando existirem e manter placeholders quando não existirem.
+- R1-F.6 — Admin QA & Security Gate: validar auth, upload, permissões, produção e documentação.
 
 ## Plano Atual de Fases
 
@@ -215,8 +225,11 @@ R1-E.9.5.1 — Stack Tetris Action Polish
 R1-E.9.6   — Developer Arcade Final QA
 R1-F.0     — Project Assets Admin Planning
 R1-F.1     — Protected Admin Shell
-R1-F.2     — Project Media Manager
-R1-F.3     — Storage/Persistence Integration
+R1-F.2     — Project Media Data Model
+R1-F.3     — Upload & Storage Integration
+R1-F.4     — Project Media Manager UI
+R1-F.5     — Public Rendering Integration
+R1-F.6     — Admin QA & Security Gate
 ```
 
 Nenhuma dessas fases futuras deve ser marcada como concluída até implementação, validação e checkpoint próprios.
@@ -246,10 +259,10 @@ NEXT_PUBLIC_APP_URL=https://curriculum-vitae-babr.vercel.app
 
 ## Próximos Passos Reais
 
-- Concluir a R1-E.9.6 local com QA final dos quatro jogos, score/API, mobile, tema claro/escuro, PT/EN, reduced motion e acessibilidade.
+- Planejar R1-F.0 sem implementar `/admin`, Supabase, storage, banco ou autenticação.
 - Preservar Runtime Runner, Bug Maze, Code Snake e Stack Tetris como jogos principais.
-- Criar checkpoint da R1-E.9.6 somente após validação técnica, QA visual e revisão humana.
-- Iniciar R1-F apenas depois do replanejamento visual/arcade estar estabilizado.
+- Criar checkpoint documental da R1-F.0 somente após revisão do plano.
+- Iniciar R1-F.1 apenas depois do planejamento técnico ser aprovado.
 - Decidir quando remover ou arquivar `/visual-final-candidate`.
 - Adicionar screenshots reais dos projetos quando houver assets próprios.
 - Planejar Supabase, ranking real ou analytics real somente em fase futura explícita.
