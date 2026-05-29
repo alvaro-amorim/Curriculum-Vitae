@@ -87,6 +87,7 @@ const copy = {
     best: "melhor",
     speed: "velocidade",
     cleared: "erros evitados",
+    near: "quase colisão",
     idleTitle: "Desvie dos erros antes do build cair.",
     idleText: "Pressione Space ou ArrowUp, toque no palco ou use o botão para saltar sobre bugs, 404, timeout e falhas de build.",
     gameOverTitle: "Pipeline quebrado.",
@@ -94,7 +95,7 @@ const copy = {
     rulesTitle: "Regras",
     rules: [
       "Space ou ArrowUp fazem o runtime saltar.",
-      "Toque no palco funciona no mobile.",
+      "Toque no palco ou swipe up funciona no mobile.",
       "A velocidade aumenta com o tempo.",
       "Colisão encerra a rodada e salva o melhor score local.",
     ],
@@ -122,6 +123,7 @@ const copy = {
     best: "best",
     speed: "speed",
     cleared: "errors avoided",
+    near: "near miss",
     idleTitle: "Avoid errors before the build fails.",
     idleText: "Press Space or ArrowUp, tap the stage, or use the button to jump over bugs, 404, timeout, and build failures.",
     gameOverTitle: "Pipeline failed.",
@@ -129,7 +131,7 @@ const copy = {
     rulesTitle: "Rules",
     rules: [
       "Space or ArrowUp make the runtime jump.",
-      "Tapping the stage works on mobile.",
+      "Tapping the stage or swiping up works on mobile.",
       "Speed increases over time.",
       "Collision ends the run and saves the local best score.",
     ],
@@ -499,6 +501,7 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
           aria-label={t.jump}
           className={[
             styles.runnerStage,
+            frame.runnerY > 0 ? styles.runnerStageAir : "",
             isDanger ? styles.runnerStageDanger : "",
             status === "paused" ? styles.runnerStagePaused : "",
             status === "gameOver" ? styles.runnerStageHit : "",
@@ -514,7 +517,9 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
           <div className={styles.runnerHud}>
             <div>
               <span>{t.score}</span>
-              <strong aria-live="polite">{frame.runScore}</strong>
+              <strong aria-live="polite" className={frame.pulse > 0 ? styles.runnerScorePulse : undefined} key={`runner-score-${frame.pulse}`}>
+                {frame.runScore}
+              </strong>
             </div>
             <div>
               <span>{t.best}</span>
@@ -557,6 +562,8 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
               {t.pulses[frame.pulseKind]}
             </span>
           ) : null}
+
+          {isDanger ? <span className={styles.runnerDangerCue}>{t.near}</span> : null}
 
           {showIntro ? (
             <div className={styles.stageMessage}>

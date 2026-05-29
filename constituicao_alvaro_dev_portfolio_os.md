@@ -56,12 +56,12 @@ Apesar disso, a versão atual ainda demonstra mais domínio de HTML/CSS/JS vanil
 
 ## Estado Atual Real
 
-Atualização R1-E.10.3/R1-E.10.3.1 — Bug Maze Expansion, Mobile Gesture Controls & Lab Density Calibration.
+Atualização R1-E.10.4 — Snake/Runner/Tetris Polish & Lab Archive Cleanup.
 
 Checkpoint publicado antes desta fase:
 
 ```txt
-4fc0581 feat: add arcade hub and game focus mode
+fce20dd feat: expand bug maze and tune arcade density
 ```
 
 Estado real do produto após revisão humana em vídeo:
@@ -83,7 +83,8 @@ Estado real do produto após revisão humana em vídeo:
 - R1-F.0 foi checkpointada como planejamento do Admin de Imagens, mas `/admin`, Supabase, storage, banco e upload ainda não existem.
 - R1-E.10.1 foi checkpointada com clean UI pass, Smart Navbar funcional, scroll root real e remoção da faixa residual.
 - R1-E.10.2 foi checkpointada com Arcade Hub, um jogo ativo por vez e Game Focus Mode desktop/mobile.
-- A fase atual expande o Bug Maze, adiciona controles mobile por swipe nos quatro jogos finais e calibra a densidade visual do Lab em 100% de zoom, antes da R1-F.1.
+- R1-E.10.3/R1-E.10.3.1 foi checkpointada com Bug Maze expandido, controles mobile por swipe nos quatro jogos finais e densidade visual calibrada em 100% de zoom.
+- A fase atual adiciona paredes on/off no Code Snake, polish visual leve em Runtime Runner/Stack Tetris e remove treinos/experimentos da UI principal do Lab, antes da R1-F.1.
 
 Direção final desejada do Developer Arcade:
 
@@ -134,14 +135,15 @@ Estado de produção na R1-E.9:
 
 Próximo passo oficial:
 
-- Executar R1-E.10.3/R1-E.10.3.1 — Bug Maze Expansion, Mobile Gesture Controls & Lab Density Calibration sem alterar `/curriculo`, salvo bug crítico.
-- Expandir Bug Maze com maze maior, coletáveis vivos, Safe Deploy bloqueado, vírus perseguidores e 3 vidas.
-- Adicionar swipe mobile aos quatro jogos finais, mantendo botões e D-pads existentes.
-- Reduzir escala visual do Lab via CSS real, sem `zoom` global ou `transform: scale()` global.
+- Executar R1-E.10.4 — Snake/Runner/Tetris Polish & Lab Archive Cleanup sem alterar `/curriculo`, salvo bug crítico.
+- Adicionar paredes on/off ao Code Snake, com paredes desligadas por padrão e wrap-around nas bordas.
+- Preservar swipe mobile nos quatro jogos finais, mantendo botões e D-pads existentes.
+- Polir visualmente Runtime Runner e Stack Tetris sem reescrever mecânica.
+- Remover da UI principal os cards/blocos antigos de treino, quiz/foundation, Debug Arena e Latency Lab.
 - Preservar Arcade Hub e Game Focus Mode sem reestruturar a página.
 - Adiar R1-F.1 Admin Shell até o polish público estar planejado e aprovado.
 - Manter Runtime Runner, Bug Maze, Code Snake e Stack Tetris preservados.
-- Criar checkpoint somente após revisão visual humana do Bug Maze expandido e dos gestos mobile.
+- Criar checkpoint somente após revisão visual humana do Code Snake walls toggle, polish leve e limpeza do Lab.
 
 Plano oficial pós-revisão:
 
@@ -763,10 +765,10 @@ Regras permanentes:
 A fase em execução local é:
 
 ```txt
-R1-E.10.3/R1-E.10.3.1 — Bug Maze Expansion, Mobile Gesture Controls & Lab Density Calibration
+R1-E.10.4 — Snake/Runner/Tetris Polish & Lab Archive Cleanup
 ```
 
-Essa fase expande o Bug Maze com maze maior, tokens, Safe Deploy bloqueado, vírus perseguidores, 3 vidas, adiciona swipe mobile aos quatro jogos finais e calibra a densidade visual do Lab sem zoom global. `/curriculo`, Snake walls on/off e Admin Shell permanecem fora desta fase.
+Essa fase adiciona paredes on/off ao Code Snake, com paredes desligadas por padrão e wrap-around nas bordas, preserva os gestos mobile, aplica polish visual leve em Runtime Runner/Stack Tetris e remove treinos/experimentos da UI principal do Lab. `/curriculo` e Admin Shell permanecem fora desta fase.
 
 A fase atual não implementa Admin, Supabase, ranking real, analytics real ou persistência real.
 

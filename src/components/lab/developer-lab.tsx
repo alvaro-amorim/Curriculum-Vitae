@@ -5,9 +5,6 @@ import dynamic from "next/dynamic";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { usePortfolioUi } from "@/components/layout/app-shell";
-import { ApiLatencyGame } from "@/components/lab/api-latency-game";
-import { ArchitectureBuilder } from "@/components/lab/architecture-builder";
-import { DebugChallenge } from "@/components/lab/debug-challenge";
 import { labPageCopy } from "@/content/challenges";
 import { calculateSessionScore, initialLabScores, submitLabScore } from "@/lib/lab-score";
 import type { LabGameId } from "@/types/portfolio";
@@ -16,7 +13,6 @@ import styles from "./developer-lab.module.css";
 
 type ScoreStatus = "idle" | "syncing" | "synced" | "failed";
 type ArcadeGameId = Extract<LabGameId, "runtime" | "bug-maze" | "code-snake" | "stack-tetris">;
-type FoundationGameId = Exclude<LabGameId, "runtime" | "bug-maze" | "code-snake" | "stack-tetris" | "debug-arena" | "latency-lab">;
 
 function GameLoading() {
   return <div aria-hidden="true" className={styles.gameLoading} />;
@@ -41,46 +37,6 @@ const StackTetris = dynamic(() => import("@/components/lab/stack-tetris").then((
   loading: GameLoading,
   ssr: false,
 });
-
-const foundationModules: {
-  id: FoundationGameId;
-  title: Record<"pt" | "en", string>;
-  description: Record<"pt" | "en", string>;
-}[] = [
-  {
-    id: "debug",
-    title: {
-      pt: "Desafio de depuração",
-      en: "Debug Challenge",
-    },
-    description: {
-      pt: "Treino de depuração em JavaScript, React e chamadas HTTP. Útil como base, não como jogo final.",
-      en: "Debugging training in JavaScript, React, and HTTP calls. Useful as foundation, not as a final mini-game.",
-    },
-  },
-  {
-    id: "architecture",
-    title: {
-      pt: "Construtor de arquitetura",
-      en: "Architecture Builder",
-    },
-    description: {
-      pt: "Treino de escolhas seguras para SaaS, API, banco, autenticação e IA.",
-      en: "Training for safe choices around SaaS, API, database, authentication, and AI.",
-    },
-  },
-  {
-    id: "latency",
-    title: {
-      pt: "Laboratório de latência de API",
-      en: "API Latency Lab",
-    },
-    description: {
-      pt: "Treino de performance para reduzir latência, payload e carga desnecessária.",
-      en: "Performance training to reduce latency, payload, and unnecessary load.",
-    },
-  },
-];
 
 const labCopy = {
   pt: {
@@ -110,7 +66,7 @@ const labCopy = {
     panelText: "Reflexo, caminho, código vivo e montagem de stack em uma vitrine enxuta.",
     runtimeCardText: "Runner de pipeline com pulo, colisão e score.",
     mazeCardText: "Maze dev com tokens, vírus, 3 vidas e Safe Deploy bloqueado.",
-    snakeCardText: "Snake de programação com tokens e bugs.",
+    snakeCardText: "Snake de programação com wrap-around, paredes opcionais, tokens e bugs.",
     tetrisCardText: "Puzzle de build com módulos e linhas compiladas.",
     runtimeControls: "Space / ArrowUp / toque",
     mazeControls: "Setas / WASD / swipe / D-pad",
@@ -119,12 +75,8 @@ const labCopy = {
     session: "score da sessão",
     arcadeStatus: "Arcade final jogável",
     futureStatus: "em preparação",
-    trainingEyebrow: "módulos de treino",
-    trainingTitle: "Treinos e experimentos ficam fora da vitrine final.",
-    trainingText:
-      "Debug Arena, Latency Lab e os desafios foundation continuam úteis como treino/arquivo, mas não são vendidos como jogos principais do arcade final.",
-    archivedTitle: "Experimentos arquivados",
-    archivedText: "Mantidos temporariamente por compatibilidade e histórico, sem destaque como jogo final.",
+    archivedNote:
+      "Treinos antigos, Debug Arena e Latency Lab seguem apenas no código/compatibilidade. A tela principal mostra somente os quatro jogos finais.",
     roadmapEyebrow: "direção final",
     roadmapTitle: "Quatro slots do Developer Arcade final.",
     pending: "planejado",
@@ -157,7 +109,7 @@ const labCopy = {
     panelText: "Reflex, pathfinding, living code, and stack assembly in a cleaner showcase.",
     runtimeCardText: "Pipeline runner with jump, collision, and score.",
     mazeCardText: "Dev maze with tokens, viruses, 3 lives, and locked Safe Deploy.",
-    snakeCardText: "Programming snake with tokens and bugs.",
+    snakeCardText: "Programming snake with wrap-around, optional walls, tokens, and bugs.",
     tetrisCardText: "Build puzzle with modules and compiled lines.",
     runtimeControls: "Space / ArrowUp / tap",
     mazeControls: "Arrows / WASD / swipe / D-pad",
@@ -166,12 +118,8 @@ const labCopy = {
     session: "session score",
     arcadeStatus: "Playable final arcade",
     futureStatus: "in preparation",
-    trainingEyebrow: "training modules",
-    trainingTitle: "Training and experiments stay out of the final showcase.",
-    trainingText:
-      "Debug Arena, Latency Lab, and foundation challenges remain useful as training/archive material, but they are not presented as final arcade games.",
-    archivedTitle: "Archived experiments",
-    archivedText: "Kept temporarily for compatibility and history, without being highlighted as final games.",
+    archivedNote:
+      "Legacy training, Debug Arena, and Latency Lab remain only in code/compatibility. The main screen shows the four final games only.",
     roadmapEyebrow: "final direction",
     roadmapTitle: "Four slots for the final Developer Arcade.",
     pending: "planned",
@@ -194,27 +142,9 @@ const roadmap = {
   ],
 } as const;
 
-const archivedExperiments = [
-  {
-    title: "Debug Arena",
-    text: {
-      pt: "Rebaixado: bom como treino de decisão técnica, mas ainda parecido com teste/quiz.",
-      en: "Demoted: useful technical decision training, but still too close to a test/quiz.",
-    },
-  },
-  {
-    title: "Latency Lab",
-    text: {
-      pt: "Rebaixado: útil como simulação de performance, mas ainda próximo de dashboard/formulário.",
-      en: "Demoted: useful performance simulation, but still too close to a dashboard/form.",
-    },
-  },
-] as const;
-
 export function DeveloperLab() {
   const { locale, t } = usePortfolioUi();
   const copy = labCopy[locale];
-  const [activeTraining, setActiveTraining] = useState<FoundationGameId>("debug");
   const [scores, setScores] = useState(initialLabScores);
   const [scoreStatus, setScoreStatus] = useState<Record<LabGameId, ScoreStatus>>({
     runtime: "idle",
@@ -515,59 +445,13 @@ export function DeveloperLab() {
         <section className={styles.trainingShell}>
           <div className={styles.sectionHeader}>
             <div>
-              <p className={styles.eyebrow}>{copy.trainingEyebrow}</p>
-              <h2 className={styles.sectionTitle}>{copy.trainingTitle}</h2>
-            </div>
-            <p className={styles.trainingNote}>{copy.trainingText}</p>
-          </div>
-
-          <div className={styles.gameTabs}>
-            {foundationModules.map((game) => (
-              <button
-                aria-pressed={activeTraining === game.id}
-                className={styles.gameTab}
-                key={game.id}
-                onClick={() => setActiveTraining(game.id)}
-                type="button"
-              >
-                <span className={styles.gameTabTitle}>{game.title[locale]}</span>
-                <span className={styles.gameTabDescription}>{game.description[locale]}</span>
-                <span className={styles.gameTabStatus}>
-                  {statusLabel(game.id)} {apiStatusLabel(game.id)}
-                </span>
-              </button>
-            ))}
-          </div>
-
-          <div className={styles.trainingContent}>
-            {activeTraining === "debug" ? <DebugChallenge locale={locale} onComplete={(score) => handleComplete("debug", score)} /> : null}
-            {activeTraining === "architecture" ? (
-              <ArchitectureBuilder locale={locale} onComplete={(score) => handleComplete("architecture", score)} />
-            ) : null}
-            {activeTraining === "latency" ? <ApiLatencyGame locale={locale} onComplete={(score) => handleComplete("latency", score)} /> : null}
-          </div>
-
-          <div className={`${styles.moduleGrid} ${styles.archiveGrid}`} aria-label={copy.archivedTitle}>
-            {archivedExperiments.map((experiment) => (
-              <article className={`${styles.moduleCard} ${styles.archivedModuleCard}`} key={experiment.title}>
-                <p className={styles.moduleMeta}>{copy.archivedTitle}</p>
-                <h3>{experiment.title}</h3>
-                <p className={styles.moduleText}>{experiment.text[locale]}</p>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section className={styles.trainingShell}>
-          <div className={styles.sectionHeader}>
-            <div>
               <p className={styles.eyebrow}>{copy.roadmapEyebrow}</p>
               <h2 className={styles.sectionTitle}>{copy.roadmapTitle}</h2>
             </div>
             <p className={styles.trainingNote}>
               {locale === "pt"
-                ? "O arcade final agora reúne quatro jogos jogáveis, com Debug Arena e Latency Lab mantidos apenas como experimentos arquivados."
-                : "The final arcade now brings four playable games together, with Debug Arena and Latency Lab kept only as archived experiments."}
+                ? "A UI principal agora fica concentrada nos quatro jogos finais. Treinos antigos permanecem fora da vitrine."
+                : "The main UI now stays focused on the four final games. Legacy training stays out of the showcase."}
             </p>
           </div>
 
@@ -582,6 +466,8 @@ export function DeveloperLab() {
               </article>
             ))}
           </div>
+
+          <p className={styles.archiveNote}>{copy.archivedNote}</p>
 
           <nav className={styles.backLinks} aria-label={labPageCopy.backLinksLabel[locale]}>
             <Link className={styles.actionSecondary} href="/">

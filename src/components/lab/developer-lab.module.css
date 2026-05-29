@@ -734,6 +734,8 @@
 :global([data-theme="light"]) .runnerPanel li,
 :global([data-theme="light"]) .snakeMeta,
 :global([data-theme="light"]) .tetrisMeta,
+:global([data-theme="light"]) .tetrisSwipeHint,
+:global([data-theme="light"]) .archiveNote,
 :global([data-theme="light"]) .arenaOption > span:not(.arenaOptionMeta),
 :global([data-theme="light"]) .arenaOptionDetail,
 :global([data-theme="light"]) .latencyAction > span:not(.latencyActionMeta),
@@ -841,6 +843,13 @@
     inset 0 0 0 1px rgba(251, 191, 36, 0.08);
 }
 
+.runnerStageAir {
+  border-color: rgba(52, 211, 153, 0.32);
+  box-shadow:
+    0 24px 82px rgba(52, 211, 153, 0.08),
+    inset 0 0 0 1px rgba(52, 211, 153, 0.08);
+}
+
 .runnerStageDanger .pipelineTrack {
   border-block-color: rgba(251, 191, 36, 0.46);
 }
@@ -878,6 +887,10 @@
   font-family: var(--font-mono), ui-monospace, monospace;
   font-size: clamp(1.12rem, 2.2vw, 1.9rem);
   line-height: 1;
+}
+
+.runnerScorePulse {
+  animation: snake-score-pop 420ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .runnerHud span {
@@ -1038,6 +1051,24 @@
   font-weight: 900;
   pointer-events: none;
   animation: score-pulse 500ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.runnerDangerCue {
+  position: absolute;
+  right: 1rem;
+  bottom: 15.2rem;
+  z-index: 6;
+  border: 1px solid rgba(251, 191, 36, 0.42);
+  border-radius: 999px;
+  padding: 0.34rem 0.52rem;
+  background: rgba(113, 63, 18, 0.18);
+  color: #fde68a;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.66rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  pointer-events: none;
 }
 
 .stageMessage {
@@ -1693,6 +1724,13 @@
     inset 0 0 0 1px rgba(52, 211, 153, 0.1);
 }
 
+.snakeStageWrap {
+  border-color: rgba(103, 232, 249, 0.56);
+  box-shadow:
+    0 26px 96px rgba(103, 232, 249, 0.12),
+    inset 0 0 0 1px rgba(103, 232, 249, 0.1);
+}
+
 .snakeStagePaused {
   border-color: rgba(103, 232, 249, 0.34);
 }
@@ -1710,7 +1748,7 @@
   position: relative;
   z-index: 2;
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 0.45rem;
 }
 
@@ -1775,6 +1813,12 @@
   border-color: rgba(251, 191, 36, 0.34);
   color: #fde68a;
   background: rgba(251, 191, 36, 0.12);
+}
+
+.snakeWrapBadge {
+  border-color: rgba(103, 232, 249, 0.34);
+  color: #cffafe;
+  background: rgba(8, 145, 178, 0.12);
 }
 
 .snakeGrid {
@@ -1952,6 +1996,29 @@
   margin-top: 0.58rem;
 }
 
+.snakeWallHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+}
+
+.snakeWallHeader span {
+  border: 1px solid rgba(103, 232, 249, 0.24);
+  border-radius: 999px;
+  padding: 0.24rem 0.44rem;
+  color: var(--lab-accent-a);
+  background: rgba(103, 232, 249, 0.08);
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.62rem;
+  font-weight: 900;
+}
+
+.snakeWallToggle {
+  width: 100%;
+  margin-top: 0.58rem;
+}
+
 .snakeDpad {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -2074,6 +2141,13 @@
   background: rgba(254, 243, 199, 0.78);
 }
 
+:global([data-theme="light"]) .snakeWrapBadge,
+:global([data-theme="light"]) .snakeWallHeader span {
+  border-color: rgba(8, 145, 178, 0.26);
+  color: #0e7490;
+  background: rgba(207, 250, 254, 0.72);
+}
+
 :global([data-theme="light"]) .snakeHazardNear::after {
   color: #92400e;
 }
@@ -2128,6 +2202,13 @@
   box-shadow:
     0 28px 100px rgba(52, 211, 153, 0.12),
     inset 0 0 0 1px rgba(52, 211, 153, 0.11);
+}
+
+.tetrisStageDrop {
+  border-color: rgba(103, 232, 249, 0.5);
+  box-shadow:
+    0 26px 96px rgba(103, 232, 249, 0.1),
+    inset 0 0 0 1px rgba(103, 232, 249, 0.1);
 }
 
 .tetrisStagePaused {
@@ -2428,12 +2509,20 @@
   display: grid;
   grid-template-columns: repeat(var(--tetris-preview), minmax(0, 1fr));
   gap: 0.14rem;
-  width: min(100%, 7.5rem);
+  width: min(100%, 8.2rem);
   margin-top: 0.58rem;
   padding: 0.34rem;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 0.75rem;
   background: rgba(255, 255, 255, 0.045);
+}
+
+.tetrisSwipeHint {
+  margin: 0.42rem 0 0;
+  color: rgba(237, 246, 255, 0.66);
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1.35;
 }
 
 .tetrisNextKind {
@@ -3611,6 +3700,18 @@
   margin-top: 1rem;
 }
 
+.archiveNote {
+  margin: 0.86rem 0 0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  padding: 0.52rem 0.72rem;
+  color: rgba(237, 246, 255, 0.62);
+  background: rgba(255, 255, 255, 0.04);
+  font-size: 0.76rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
 .archivedModuleCard {
   border-style: dashed;
   opacity: 0.82;
@@ -4668,15 +4769,18 @@
   .systemCore,
   .pipelineTrack,
   .collectPulse,
+  .runnerScorePulse,
   .mazeFeedback,
   .snakeFeedback,
   .snakeScorePulse,
   .snakeToken,
   .snakeHazardNear,
   .snakeStageCollect .snakeGrid,
+  .snakeStageWrap,
   .tetrisFeedback,
   .tetrisScorePulse,
   .tetrisStageClear .tetrisGrid,
+  .tetrisStageDrop,
   .tetrisActive,
   .tetrisLineBurst span,
   .focusLoading span::before,

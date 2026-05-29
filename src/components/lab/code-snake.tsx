@@ -12,7 +12,7 @@ type SnakeStatus = "idle" | "running" | "paused" | "gameOver";
 type Direction = "up" | "down" | "left" | "right";
 type TokenKind = "TOKEN" | "API" | "CACHE" | "FIX" | "TEST" | "TYPE";
 type HazardKind = "BUG" | "MEMORY LEAK" | "TYPE ERROR" | "TIMEOUT" | "NULL" | "500";
-type FeedbackKind = "collect" | "turn" | "hit" | "pause" | "start";
+type FeedbackKind = "collect" | "turn" | "hit" | "pause" | "start" | "wrap";
 
 type Position = {
   x: number;
@@ -49,6 +49,7 @@ type StyleVars = CSSProperties & Record<`--${string}`, string | number>;
 
 const GRID_SIZE = 13;
 const BEST_SCORE_KEY = "alvaro-dev-code-snake-best-v1";
+const WALLS_KEY = "alvaro-dev-code-snake-walls-v1";
 const SWIPE_THRESHOLD = 34;
 const tokenKinds: TokenKind[] = ["TOKEN", "API", "CACHE", "FIX", "TEST", "TYPE"];
 const hazardKinds: HazardKind[] = ["BUG", "MEMORY LEAK", "TYPE ERROR", "TIMEOUT", "NULL", "500"];
@@ -80,6 +81,11 @@ const copy = {
     score: "score",
     best: "melhor",
     length: "tamanho",
+    walls: "paredes",
+    wallsOn: "ON / desafio",
+    wallsOff: "OFF / wrap",
+    wallsToggle: "Alternar paredes",
+    wrapMode: "wrap ativo",
     tokens: "tokens",
     combo: "combo",
     speed: "cadência",
@@ -93,7 +99,7 @@ const copy = {
     },
     idleTitle: "Colete tokens sem quebrar a cadeia.",
     idleText:
-      "Use setas, WASD ou o D-pad. Space inicia/pausa, R reinicia. TOKEN, API, CACHE, FIX, TEST e TYPE aumentam score e tamanho.",
+      "Use setas, WASD, swipe ou o D-pad. Por padrão, as paredes ficam OFF: atravessar uma borda sai pela outra.",
     gameOverTitle: "Pipeline colidiu.",
     gameOverText: "A colisão salva o melhor score local e envia o resultado sem bloquear a interface.",
     controlsTitle: "Controles",
@@ -102,7 +108,8 @@ const copy = {
       "Setas ou WASD mudam a direção.",
       "Space inicia, pausa e retoma.",
       "Tokens fazem a snake crescer e aceleram aos poucos.",
-      "Parede, corpo ou bug encerram a rodada.",
+      "Com paredes OFF, bordas fazem wrap-around; com paredes ON, bater na parede encerra a rodada.",
+      "Corpo ou bug encerram a rodada em qualquer modo.",
     ],
     reduced: "Modo reduced motion: efeitos decorativos reduzidos, loop preservado.",
     feedback: {
@@ -111,6 +118,7 @@ const copy = {
       hit: "regressão introduzida",
       pause: "pipeline em hold",
       start: "pipeline online",
+      wrap: "borda atravessada",
     },
     crashLabels: {
       wall: "parede",
@@ -140,6 +148,11 @@ const copy = {
     score: "score",
     best: "best",
     length: "length",
+    walls: "walls",
+    wallsOn: "ON / challenge",
+    wallsOff: "OFF / wrap",
+    wallsToggle: "Toggle walls",
+    wrapMode: "wrap active",
     tokens: "tokens",
     combo: "combo",
     speed: "cadence",
@@ -153,7 +166,7 @@ const copy = {
     },
     idleTitle: "Collect tokens without breaking the chain.",
     idleText:
-      "Use arrows, WASD, or the D-pad. Space starts/pauses, R restarts. TOKEN, API, CACHE, FIX, TEST, and TYPE increase score and length.",
+      "Use arrows, WASD, swipe, or the D-pad. By default, walls are OFF: crossing one edge exits through the opposite edge.",
     gameOverTitle: "Pipeline collided.",
     gameOverText: "The collision saves the local best score and submits the result without blocking the interface.",
     controlsTitle: "Controls",
@@ -162,7 +175,8 @@ const copy = {
       "Arrow keys or WASD change direction.",
       "Space starts, pauses, and resumes.",
       "Tokens grow the snake and slowly increase speed.",
-      "Wall, body, or bug ends the round.",
+      "With walls OFF, edges wrap around; with walls ON, hitting a wall ends the round.",
+      "Body or bug ends the round in either mode.",
     ],
     reduced: "Reduced motion mode: decorative effects are reduced, the loop stays playable.",
     feedback: {
@@ -171,6 +185,7 @@ const copy = {
       hit: "regression introduced",
       pause: "pipeline on hold",
       start: "pipeline online",
+      wrap: "edge wrapped",
     },
     crashLabels: {
       wall: "wall",
@@ -201,6 +216,13 @@ function cellKey(position: Position) {
 
 function isInsideGrid(position: Position) {
   return position.x >= 0 && position.x < GRID_SIZE && position.y >= 0 && position.y < GRID_SIZE;
+}
+
+function wrapPosition(position: Position): Position {
+  return {
+    x: (position.x + GRID_SIZE) % GRID_SIZE,
+    y: (position.y + GRID_SIZE) % GRID_SIZE,
+  };
 }
 
 function createInitialFrame(): SnakeFrame {
@@ -236,6 +258,14 @@ function readBestScore() {
   const stored = window.localStorage.getItem(BEST_SCORE_KEY);
   const parsed = stored ? Number.parseInt(stored, 10) : 0;
   return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function readWallsEnabled() {
+  if (typeof window === "undefined") {
+    return false;
+  }
+
+  return window.localStorage.getItem(WALLS_KEY) === "true";
 }
 
 function randomFreeCell(occupied: Set<string>) {
@@ -301,6 +331,7 @@ export function CodeSnake({ locale, onComplete }: CodeSnakeProps) {
   const [status, setStatus] = useState<SnakeStatus>("idle");
   const [frame, setFrame] = useState<SnakeFrame>(() => createInitialFrame());
   const [bestScore, setBestScore] = useState(0);
+  const [wallsEnabled, setWallsEnabled] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
   const frameRef = useRef<SnakeFrame>(createInitialFrame());
   const statusRef = useRef<SnakeStatus>("idle");
@@ -318,12 +349,21 @@ export function CodeSnake({ locale, onComplete }: CodeSnakeProps) {
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- Browser preferences and localStorage are client-only.
     setBestScore(readBestScore());
+    setWallsEnabled(readWallsEnabled());
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
     setReducedMotion(media.matches);
 
     const handleChange = () => setReducedMotion(media.matches);
     media.addEventListener("change", handleChange);
     return () => media.removeEventListener("change", handleChange);
+  }, []);
+
+  const toggleWalls = useCallback(() => {
+    setWallsEnabled((current) => {
+      const next = !current;
+      window.localStorage.setItem(WALLS_KEY, String(next));
+      return next;
+    });
   }, []);
 
   const delay = useMemo(() => Math.max(reducedMotion ? 178 : 118, (reducedMotion ? 286 : 246) - frame.collected * 11), [frame.collected, reducedMotion]);
@@ -464,7 +504,9 @@ export function CodeSnake({ locale, onComplete }: CodeSnakeProps) {
     queuedDirectionRef.current = null;
 
     const delta = directionDelta[direction];
-    const nextHead = { x: current.snake[0].x + delta.x, y: current.snake[0].y + delta.y };
+    const rawHead = { x: current.snake[0].x + delta.x, y: current.snake[0].y + delta.y };
+    const wrapped = !wallsEnabled && !isInsideGrid(rawHead);
+    const nextHead = wallsEnabled ? rawHead : wrapPosition(rawHead);
 
     if (!isInsideGrid(nextHead)) {
       finishGame(current, "wall");
@@ -490,8 +532,8 @@ export function CodeSnake({ locale, onComplete }: CodeSnakeProps) {
     let nextScore = current.score;
     let nextCollected = current.collected;
     let nextCombo = current.combo > 0 && (current.moves + 1) % 10 === 0 ? current.combo - 1 : current.combo;
-    let nextFeedback: FeedbackKind | null = null;
-    let nextPulse = current.pulse;
+    let nextFeedback: FeedbackKind | null = wrapped ? "wrap" : null;
+    let nextPulse = wrapped ? current.pulse + 1 : current.pulse;
 
     if (collected) {
       nextCollected += 1;
@@ -527,7 +569,7 @@ export function CodeSnake({ locale, onComplete }: CodeSnakeProps) {
       feedback: nextFeedback,
       crash: null,
     });
-  }, [commitFrame, finishGame]);
+  }, [commitFrame, finishGame, wallsEnabled]);
 
   useEffect(() => {
     if (status !== "running") {
@@ -583,6 +625,7 @@ export function CodeSnake({ locale, onComplete }: CodeSnakeProps) {
   const overlayTitle = status === "gameOver" ? t.gameOverTitle : t.idleTitle;
   const overlayText = status === "gameOver" ? t.gameOverText : t.idleText;
   const feedbackLabel = frame.feedback ? t.feedback[frame.feedback] : null;
+  const wallsLabel = wallsEnabled ? t.wallsOn : t.wallsOff;
 
   return (
     <section aria-labelledby="code-snake-title" ref={rootRef}>
@@ -602,6 +645,7 @@ export function CodeSnake({ locale, onComplete }: CodeSnakeProps) {
           className={[
             styles.snakeStage,
             frame.feedback === "collect" ? styles.snakeStageCollect : "",
+            frame.feedback === "wrap" ? styles.snakeStageWrap : "",
             isDanger ? styles.snakeStageDanger : "",
             status === "paused" ? styles.snakeStagePaused : "",
             status === "gameOver" ? styles.snakeStageHit : "",
@@ -630,6 +674,10 @@ export function CodeSnake({ locale, onComplete }: CodeSnakeProps) {
               <span>{t.speed}</span>
               <strong>{cadenceLabel}</strong>
             </div>
+            <div>
+              <span>{t.walls}</span>
+              <strong>{wallsEnabled ? "ON" : "OFF"}</strong>
+            </div>
           </div>
 
           <div className={styles.snakeMeta}>
@@ -642,6 +690,7 @@ export function CodeSnake({ locale, onComplete }: CodeSnakeProps) {
               </span>
             ) : null}
             <span>{t.status[status]}</span>
+            {!wallsEnabled ? <span className={styles.snakeWrapBadge}>{t.wrapMode}</span> : null}
             {isDanger && nearestHazardLabel ? (
               <span className={styles.snakeDangerBadge}>
                 {t.danger}: {nearestHazardLabel}
@@ -698,7 +747,7 @@ export function CodeSnake({ locale, onComplete }: CodeSnakeProps) {
               aria-live="polite"
               className={[
                 styles.snakeFeedback,
-                frame.feedback === "collect" || frame.feedback === "start" ? styles.snakeFeedbackGood : "",
+                frame.feedback === "collect" || frame.feedback === "start" || frame.feedback === "wrap" ? styles.snakeFeedbackGood : "",
                 frame.feedback === "hit" ? styles.snakeFeedbackHit : "",
               ].join(" ")}
               key={frame.pulse}
@@ -734,6 +783,21 @@ export function CodeSnake({ locale, onComplete }: CodeSnakeProps) {
                 {t.restart}
               </button>
             </div>
+          </div>
+
+          <div className={styles.runnerPanel}>
+            <div className={styles.snakeWallHeader}>
+              <h3>{t.walls}</h3>
+              <span>{wallsLabel}</span>
+            </div>
+            <button
+              aria-pressed={wallsEnabled}
+              className={`${styles.runnerAction} ${styles.snakeWallToggle}`}
+              onClick={toggleWalls}
+              type="button"
+            >
+              {t.wallsToggle}
+            </button>
           </div>
 
           <div className={styles.runnerPanel}>

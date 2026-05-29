@@ -161,6 +161,7 @@ const copy = {
     gameOverTitle: "Build quebrado.",
     gameOverText: "A pilha saturou. O melhor score local foi salvo e o resultado foi enviado sem bloquear a interface.",
     controlsTitle: "Controles",
+    swipeHint: "Swipe: esquerda/direita move, baixo desce, cima rotaciona.",
     rulesTitle: "Regras",
     rules: [
       "A/D ou setas laterais movem o módulo.",
@@ -217,6 +218,7 @@ const copy = {
     gameOverTitle: "Build broken.",
     gameOverText: "The stack saturated. Local best score was saved and the result was submitted without blocking the UI.",
     controlsTitle: "Controls",
+    swipeHint: "Swipe: left/right moves, down drops, up rotates.",
     rulesTitle: "Rules",
     rules: [
       "A/D or lateral arrows move the module.",
@@ -786,6 +788,7 @@ export function StackTetris({ locale, onComplete }: StackTetrisProps) {
           className={[
             styles.tetrisStage,
             frame.lastClear > 0 ? styles.tetrisStageClear : "",
+            frame.feedback === "drop" ? styles.tetrisStageDrop : "",
             status === "paused" ? styles.tetrisStagePaused : "",
             status === "gameOver" ? styles.tetrisStageHit : "",
           ].join(" ")}
@@ -945,6 +948,7 @@ export function StackTetris({ locale, onComplete }: StackTetrisProps) {
 
           <div className={styles.runnerPanel}>
             <h3>{t.controlsTitle}</h3>
+            <p className={styles.tetrisSwipeHint}>{t.swipeHint}</p>
             <div className={styles.tetrisControls} aria-label={t.controlsTitle}>
               <button aria-label={t.buttons.left} className={styles.tetrisControl} onClick={() => movePiece(-1, 0)} type="button">
                 <span aria-hidden="true" className={styles.tetrisControlIcon}>
@@ -970,7 +974,7 @@ export function StackTetris({ locale, onComplete }: StackTetrisProps) {
                 </span>
                 <span className={styles.tetrisControlHint}>S</span>
               </button>
-              <button className={`${styles.tetrisControl} ${styles.tetrisDropControl}`} onClick={hardDrop} type="button">
+              <button aria-label={t.buttons.drop} className={`${styles.tetrisControl} ${styles.tetrisDropControl}`} onClick={hardDrop} type="button">
                 {t.buttons.drop}
               </button>
             </div>
