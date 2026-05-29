@@ -56,12 +56,12 @@ Apesar disso, a versão atual ainda demonstra mais domínio de HTML/CSS/JS vanil
 
 ## Estado Atual Real
 
-Atualização R1-E.10.1 — Clean UI Pass & Smart Navbar.
+Atualização R1-E.10.2 — Arcade Hub & Game Focus Mode.
 
 Checkpoint publicado antes desta fase:
 
 ```txt
-febd33c docs: plan premium product polish
+31e7306 feat: add smart navbar and clean ui pass
 ```
 
 Estado real do produto após revisão humana em vídeo:
@@ -81,7 +81,8 @@ Estado real do produto após revisão humana em vídeo:
 - Metadata, sitemap, robots, not-found e fundamentos de SEO estão implementados.
 - `/api/score` é mock/local, não persistente, com validação para os jogos do Developer Arcade.
 - R1-F.0 foi checkpointada como planejamento do Admin de Imagens, mas `/admin`, Supabase, storage, banco e upload ainda não existem.
-- A fase atual volta ao produto público para executar um clean UI pass e smart navbar antes da R1-F.1.
+- R1-E.10.1 foi checkpointada com clean UI pass, Smart Navbar funcional, scroll root real e remoção da faixa residual.
+- A fase atual transforma `/lab` em Arcade Hub com um jogo ativo por vez e modo foco, antes da R1-F.1.
 
 Direção final desejada do Developer Arcade:
 
@@ -132,12 +133,12 @@ Estado de produção na R1-E.9:
 
 Próximo passo oficial:
 
-- Executar R1-E.10.1 — Clean UI Pass & Smart Navbar sem alterar `/curriculo`, salvo bug crítico.
-- Reduzir poluição visual em home, projetos/cases e Lab sem criar Arcade Hub nesta fase.
-- Implementar smart navbar com recolhimento ao scroll down e reaparição ao scroll up.
+- Executar R1-E.10.2 — Arcade Hub & Game Focus Mode sem alterar `/curriculo`, salvo bug crítico.
+- Transformar `/lab` em hub limpo com os quatro jogos finais e um jogo ativo por vez.
+- Adicionar modo foco desktop/mobile sem reescrever a mecânica dos jogos.
 - Adiar R1-F.1 Admin Shell até o polish público estar planejado e aprovado.
 - Manter Runtime Runner, Bug Maze, Code Snake e Stack Tetris preservados.
-- Criar checkpoint somente após revisão e validação do clean pass.
+- Criar checkpoint somente após revisão e validação do Arcade Hub.
 
 Plano oficial pós-revisão:
 
@@ -757,10 +758,10 @@ Regras permanentes:
 A fase em execução local é:
 
 ```txt
-R1-E.10.1 — Clean UI Pass & Smart Navbar
+R1-E.10.2 — Arcade Hub & Game Focus Mode
 ```
 
-Essa fase reduz poluição visual em home, projetos/cases e Lab, preserva `/curriculo` e implementa a smart navbar antes da implementação do Admin Shell.
+Essa fase transforma `/lab` em um Arcade Hub com um jogo ativo por vez, preserva `/curriculo` e mantém Bug Maze Expansion, Snake walls on/off e Admin Shell para fases próprias.
 
 A fase atual não implementa Admin, Supabase, ranking real, analytics real ou persistência real.
 

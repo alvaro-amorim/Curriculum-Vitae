@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { usePortfolioUi } from "@/components/layout/app-shell";
 import { ApiLatencyGame } from "@/components/lab/api-latency-game";
@@ -15,6 +15,7 @@ import type { LabGameId } from "@/types/portfolio";
 import styles from "./developer-lab.module.css";
 
 type ScoreStatus = "idle" | "syncing" | "synced" | "failed";
+type ArcadeGameId = Extract<LabGameId, "runtime" | "bug-maze" | "code-snake" | "stack-tetris">;
 type FoundationGameId = Exclude<LabGameId, "runtime" | "bug-maze" | "code-snake" | "stack-tetris" | "debug-arena" | "latency-lab">;
 
 function GameLoading() {
@@ -84,13 +85,24 @@ const foundationModules: {
 const labCopy = {
   pt: {
     eyebrow: "Developer Arcade",
-    title: "Quatro jogos dev, direto ao ponto.",
+    title: "Arcade Hub, um jogo por vez.",
     description:
-      "Runtime Runner, Bug Maze, Code Snake e Stack Tetris ficam como os quatro jogos finais, com treino e arquivo fora do destaque.",
+      "Escolha um dos quatro jogos finais, entre em modo foco e mantenha os treinos fora do caminho principal.",
     primary: "Jogar Runtime Runner",
     mazePrimary: "Jogar Bug Maze",
     snakePrimary: "Jogar Code Snake",
     tetrisPrimary: "Jogar Stack Tetris",
+    hubEyebrow: "hub jogável",
+    hubTitle: "Escolha o módulo ativo.",
+    hubText: "Os quatro jogos continuam disponíveis, mas a tela abre somente um por vez para reduzir ruído e dar mais área para jogar.",
+    openGame: "Abrir jogo",
+    activeGame: "Jogo ativo",
+    backToHub: "Voltar ao Hub",
+    switchGame: "Trocar jogo",
+    focusEyebrow: "modo foco",
+    focusHint: "HUD compacto, controles visíveis e troca rápida entre jogos.",
+    focusLoading: "Carregando arena",
+    controlsLabel: "controles",
     secondary: "Ver projetos",
     tertiary: "Abrir currículo",
     panelLabel: "arcade jogável",
@@ -100,6 +112,10 @@ const labCopy = {
     mazeCardText: "Labirinto técnico com patches, hazards e deploy.",
     snakeCardText: "Snake de programação com tokens e bugs.",
     tetrisCardText: "Puzzle de build com módulos e linhas compiladas.",
+    runtimeControls: "Space / ArrowUp / toque",
+    mazeControls: "Setas / WASD / D-pad",
+    snakeControls: "Setas / WASD / D-pad",
+    tetrisControls: "Setas / WASD / Space",
     session: "score da sessão",
     arcadeStatus: "Arcade final jogável",
     futureStatus: "em preparação",
@@ -116,13 +132,24 @@ const labCopy = {
   },
   en: {
     eyebrow: "Developer Arcade",
-    title: "Four dev games, straight to the point.",
+    title: "Arcade Hub, one game at a time.",
     description:
-      "Runtime Runner, Bug Maze, Code Snake, and Stack Tetris are the four final games, with training and archive material kept out of the spotlight.",
+      "Pick one of the four final games, enter focus mode, and keep training material out of the main path.",
     primary: "Play Runtime Runner",
     mazePrimary: "Play Bug Maze",
     snakePrimary: "Play Code Snake",
     tetrisPrimary: "Play Stack Tetris",
+    hubEyebrow: "playable hub",
+    hubTitle: "Choose the active module.",
+    hubText: "All four games remain available, but the screen opens only one at a time to reduce noise and give gameplay more room.",
+    openGame: "Open game",
+    activeGame: "Active game",
+    backToHub: "Back to Hub",
+    switchGame: "Switch game",
+    focusEyebrow: "focus mode",
+    focusHint: "Compact HUD, visible controls, and fast switching between games.",
+    focusLoading: "Loading arena",
+    controlsLabel: "controls",
     secondary: "View projects",
     tertiary: "Open resume",
     panelLabel: "playable arcade",
@@ -132,6 +159,10 @@ const labCopy = {
     mazeCardText: "Technical maze with patches, hazards, and deploy.",
     snakeCardText: "Programming snake with tokens and bugs.",
     tetrisCardText: "Build puzzle with modules and compiled lines.",
+    runtimeControls: "Space / ArrowUp / tap",
+    mazeControls: "Arrows / WASD / D-pad",
+    snakeControls: "Arrows / WASD / D-pad",
+    tetrisControls: "Arrows / WASD / Space",
     session: "session score",
     arcadeStatus: "Playable final arcade",
     futureStatus: "in preparation",
@@ -196,8 +227,65 @@ export function DeveloperLab() {
     architecture: "idle",
     latency: "idle",
   });
+  const [activeGame, setActiveGame] = useState<ArcadeGameId | null>(null);
+  const [isSwitchingGame, setIsSwitchingGame] = useState(false);
+  const focusRef = useRef<HTMLElement | null>(null);
+  const hubRef = useRef<HTMLElement | null>(null);
+  const switchTimerRef = useRef<number | null>(null);
 
   const sessionScore = useMemo(() => calculateSessionScore(scores), [scores]);
+  const arcadeGames = useMemo(
+    () =>
+      [
+        {
+          controls: copy.runtimeControls,
+          description: copy.runtimeCardText,
+          id: "runtime" as const,
+          title: "Runtime Runner",
+        },
+        {
+          controls: copy.mazeControls,
+          description: copy.mazeCardText,
+          id: "bug-maze" as const,
+          title: "Bug Maze",
+        },
+        {
+          controls: copy.snakeControls,
+          description: copy.snakeCardText,
+          id: "code-snake" as const,
+          title: "Code Snake",
+        },
+        {
+          controls: copy.tetrisControls,
+          description: copy.tetrisCardText,
+          id: "stack-tetris" as const,
+          title: "Stack Tetris",
+        },
+      ] satisfies { controls: string; description: string; id: ArcadeGameId; title: string }[],
+    [copy],
+  );
+  const selectedGame = activeGame ? arcadeGames.find((game) => game.id === activeGame) ?? null : null;
+
+  useEffect(() => {
+    return () => {
+      if (switchTimerRef.current) {
+        window.clearTimeout(switchTimerRef.current);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!activeGame) {
+      return;
+    }
+
+    const frame = window.requestAnimationFrame(() => {
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      focusRef.current?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
+    });
+
+    return () => window.cancelAnimationFrame(frame);
+  }, [activeGame]);
 
   const handleComplete = useCallback((game: LabGameId, score: number) => {
     setScores((current) => ({
@@ -222,6 +310,35 @@ export function DeveloperLab() {
           [game]: "failed",
         }));
       });
+  }, []);
+
+  const openGame = useCallback((game: ArcadeGameId) => {
+    setActiveGame(game);
+    setIsSwitchingGame(true);
+
+    if (switchTimerRef.current) {
+      window.clearTimeout(switchTimerRef.current);
+    }
+
+    switchTimerRef.current = window.setTimeout(() => {
+      setIsSwitchingGame(false);
+      switchTimerRef.current = null;
+    }, 420);
+  }, []);
+
+  const backToHub = useCallback(() => {
+    setActiveGame(null);
+    setIsSwitchingGame(false);
+
+    if (switchTimerRef.current) {
+      window.clearTimeout(switchTimerRef.current);
+      switchTimerRef.current = null;
+    }
+
+    window.requestAnimationFrame(() => {
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      hubRef.current?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
+    });
   }, []);
 
   function statusLabel(game: LabGameId) {
@@ -252,6 +369,22 @@ export function DeveloperLab() {
     return labPageCopy.apiPending[locale];
   }
 
+  function renderActiveGame(game: ArcadeGameId) {
+    if (game === "runtime") {
+      return <RuntimeRunner locale={locale} onComplete={(score) => handleComplete("runtime", score)} />;
+    }
+
+    if (game === "bug-maze") {
+      return <BugMaze locale={locale} onComplete={(score) => handleComplete("bug-maze", score)} />;
+    }
+
+    if (game === "code-snake") {
+      return <CodeSnake locale={locale} onComplete={(score) => handleComplete("code-snake", score)} />;
+    }
+
+    return <StackTetris locale={locale} onComplete={(score) => handleComplete("stack-tetris", score)} />;
+  }
+
   return (
     <main className={styles.labExperience}>
       <div className={styles.shell}>
@@ -262,18 +395,9 @@ export function DeveloperLab() {
             <p className={styles.heroText}>{copy.description}</p>
 
             <nav className={styles.heroActions} aria-label={labPageCopy.backLinksLabel[locale]}>
-              <a className={styles.actionPrimary} href="#runtime-runner-title">
+              <button className={styles.actionPrimary} onClick={() => openGame("runtime")} type="button">
                 {copy.primary}
-              </a>
-              <a className={styles.actionSecondary} href="#bug-maze-title">
-                {copy.mazePrimary}
-              </a>
-              <a className={styles.actionSecondary} href="#code-snake-title">
-                {copy.snakePrimary}
-              </a>
-              <a className={styles.actionSecondary} href="#stack-tetris-title">
-                {copy.tetrisPrimary}
-              </a>
+              </button>
               <Link className={styles.actionSecondary} href="/projetos">
                 {copy.secondary}
               </Link>
@@ -293,60 +417,101 @@ export function DeveloperLab() {
           </div>
         </section>
 
-        <aside className={styles.scorePanel} aria-label={copy.session}>
-          <p className={styles.panelLabel}>{copy.arcadeStatus}</p>
-          <span className={styles.scoreValue} aria-live="polite">
-            {sessionScore === null ? "--" : sessionScore}
-          </span>
-          <p className={styles.panelText}>{copy.session}</p>
-          <div className={styles.gameTabs}>
-            <div className={styles.gameTab} aria-label="Runtime Runner">
-              <span className={styles.gameTabTitle}>Runtime Runner</span>
-              <span className={styles.gameTabDescription}>{copy.runtimeCardText}</span>
-              <span className={styles.gameTabStatus}>
-                {statusLabel("runtime")} {apiStatusLabel("runtime")}
-              </span>
+        <section className={styles.arcadeHub} data-mode={activeGame ? "focus" : "hub"} ref={hubRef}>
+          <div className={styles.hubHeader}>
+            <div>
+              <p className={styles.eyebrow}>{copy.hubEyebrow}</p>
+              <h2 className={styles.sectionTitle}>{copy.hubTitle}</h2>
             </div>
-            <div className={styles.gameTab} aria-label="Bug Maze">
-              <span className={styles.gameTabTitle}>Bug Maze</span>
-              <span className={styles.gameTabDescription}>{copy.mazeCardText}</span>
-              <span className={styles.gameTabStatus}>
-                {statusLabel("bug-maze")} {apiStatusLabel("bug-maze")}
-              </span>
+            <div className={styles.hubScore} aria-label={copy.session}>
+              <span>{copy.session}</span>
+              <strong aria-live="polite">{sessionScore === null ? "--" : sessionScore}</strong>
             </div>
-            <div className={styles.gameTab} aria-label="Code Snake">
-              <span className={styles.gameTabTitle}>Code Snake</span>
-              <span className={styles.gameTabDescription}>{copy.snakeCardText}</span>
-              <span className={styles.gameTabStatus}>
-                {statusLabel("code-snake")} {apiStatusLabel("code-snake")}
-              </span>
-            </div>
-            <div className={styles.gameTab} aria-label="Stack Tetris">
-              <span className={styles.gameTabTitle}>Stack Tetris</span>
-              <span className={styles.gameTabDescription}>{copy.tetrisCardText}</span>
-              <span className={styles.gameTabStatus}>
-                {statusLabel("stack-tetris")} {apiStatusLabel("stack-tetris")}
-              </span>
-            </div>
+            <p className={styles.trainingNote}>{copy.hubText}</p>
           </div>
-        </aside>
 
-        <section className={styles.gameShell}>
-          <RuntimeRunner locale={locale} onComplete={(score) => handleComplete("runtime", score)} />
+          <div className={styles.hubGrid} aria-label={copy.arcadeStatus}>
+            {arcadeGames.map((game) => (
+              <button
+                aria-pressed={activeGame === game.id}
+                className={styles.hubCard}
+                data-active={activeGame === game.id ? "true" : "false"}
+                key={game.id}
+                onClick={() => openGame(game.id)}
+                type="button"
+              >
+                <span className={styles.hubCardMeta}>{copy.playable}</span>
+                <strong>{game.title}</strong>
+                <span className={styles.hubCardText}>{game.description}</span>
+                <span className={styles.hubCardControls}>
+                  {copy.controlsLabel}: {game.controls}
+                </span>
+                <span className={styles.hubCardStatus}>
+                  {statusLabel(game.id)} {apiStatusLabel(game.id)}
+                </span>
+                <span className={styles.hubCardAction}>{activeGame === game.id ? copy.activeGame : copy.openGame}</span>
+              </button>
+            ))}
+          </div>
         </section>
 
-        <section className={styles.gameShell}>
-          <BugMaze locale={locale} onComplete={(score) => handleComplete("bug-maze", score)} />
-        </section>
+        {activeGame && selectedGame ? (
+          <section
+            aria-labelledby="active-arcade-game-title"
+            className={styles.focusShell}
+            data-game={activeGame}
+            ref={focusRef}
+          >
+            <div className={styles.focusHeader}>
+              <div className={styles.focusTitleBlock}>
+                <p className={styles.eyebrow}>{copy.focusEyebrow}</p>
+                <h2 className={styles.sectionTitle} id="active-arcade-game-title">
+                  {selectedGame.title}
+                </h2>
+                <p className={styles.trainingNote}>{selectedGame.description}</p>
+              </div>
 
-        <section className={styles.gameShell}>
-          <CodeSnake locale={locale} onComplete={(score) => handleComplete("code-snake", score)} />
-        </section>
+              <div className={styles.focusMeta} aria-label={copy.session}>
+                <span>{statusLabel(activeGame)}</span>
+                <strong>{sessionScore === null ? "--" : sessionScore}</strong>
+              </div>
 
-        <section className={styles.gameShell}>
-          <StackTetris locale={locale} onComplete={(score) => handleComplete("stack-tetris", score)} />
-        </section>
+              <div className={styles.focusActions}>
+                <button className={styles.actionSecondary} onClick={backToHub} type="button">
+                  {copy.backToHub}
+                </button>
+                <span className={styles.focusHint}>{copy.focusHint}</span>
+              </div>
+            </div>
 
+            <div className={styles.focusSwitch} aria-label={copy.switchGame}>
+              {arcadeGames.map((game) => (
+                <button
+                  aria-pressed={activeGame === game.id}
+                  className={styles.focusTab}
+                  key={game.id}
+                  onClick={() => openGame(game.id)}
+                  type="button"
+                >
+                  {game.title}
+                </button>
+              ))}
+            </div>
+
+            <div className={styles.focusStage}>
+              {isSwitchingGame ? (
+                <div aria-live="polite" className={styles.focusLoading}>
+                  <span aria-hidden="true" />
+                  {copy.focusLoading}
+                </div>
+              ) : null}
+              {renderActiveGame(activeGame)}
+            </div>
+          </section>
+        ) : null}
+
+        {!activeGame ? (
+          <>
         <section className={styles.trainingShell}>
           <div className={styles.sectionHeader}>
             <div>
@@ -430,6 +595,8 @@ export function DeveloperLab() {
             </Link>
           </nav>
         </section>
+          </>
+        ) : null}
       </div>
     </main>
   );

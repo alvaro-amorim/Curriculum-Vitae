@@ -6,10 +6,10 @@ O projeto deixou de ser apenas um currículo digital e passou a funcionar como u
 
 ## Estado Atual
 
-Checkpoint publicado antes da R1-E.10.1:
+Checkpoint publicado antes da R1-E.10.2:
 
 ```txt
-febd33c docs: plan premium product polish
+31e7306 feat: add smart navbar and clean ui pass
 ```
 
 Estado real do produto após a revisão humana que abriu a R1-E.9.3.0:
@@ -34,7 +34,8 @@ Estado real do produto após a revisão humana que abriu a R1-E.9.3.0:
 - R1-E.9.5/R1-E.9.5.1 foram checkpointadas em `73b3d69` com Stack Tetris como quarto jogo final.
 - R1-F.0 foi checkpointada em `9adaa48` com o planejamento do Admin de Imagens.
 - R1-E.10.0 foi checkpointada em `febd33c` com a estratégia de polish público antes da R1-F.1.
-- R1-E.10.1 está em execução local sem checkpoint para clean UI pass e smart navbar, preservando `/curriculo`.
+- R1-E.10.1 foi checkpointada em `31e7306` com clean UI pass e Smart Navbar funcional.
+- R1-E.10.2 está em execução local sem checkpoint para transformar `/lab` em Arcade Hub com Game Focus Mode.
 - O projeto ainda não deve ser tratado como fechamento final enquanto Admin de Imagens, storage real e mídia real dos projetos estiverem pendentes.
 
 ## Rotas Principais
@@ -213,17 +214,18 @@ Roadmap proposto:
 - R1-F.5 — Public Rendering Integration: consumir imagens reais quando existirem e manter placeholders quando não existirem.
 - R1-F.6 — Admin QA & Security Gate: validar auth, upload, permissões, produção e documentação.
 
-## Fase Atual: R1-E.10.1
+## Fase Atual: R1-E.10.2
 
 Antes da R1-F.1, o produto público terá uma nova rodada de polish com direção **Arcade clean premium com detalhes dev**.
 
 Objetivo da rodada atual:
 
-- Reduzir poluição visual sem perder identidade full-stack/dev.
-- Tornar home, projetos e Lab mais objetivos para entrevistadores.
+- Transformar `/lab` em um Arcade Hub mais limpo.
+- Renderizar um jogo final ativo por vez.
+- Adicionar Game Focus Mode desktop e mobile.
+- Reduzir a sensação de lista empilhada de demos.
 - Preservar `/curriculo`, que está aprovado em tema claro e escuro.
-- Implementar smart navbar que recolhe ao scroll down e reaparece ao scroll up.
-- Manter Arcade Hub, modo foco mobile, Bug Maze Expansion e Snake walls on/off como próximos passos.
+- Manter Bug Maze Expansion e Snake walls on/off como próximos passos.
 - Deixar R1-F.1 Admin Shell para depois do polish público.
 
 ## Plano Atual de Fases
@@ -281,11 +283,11 @@ NEXT_PUBLIC_APP_URL=https://curriculum-vitae-babr.vercel.app
 
 ## Próximos Passos Reais
 
-- Concluir R1-E.10.1 com UI clean e smart navbar antes da R1-F.1.
+- Concluir R1-E.10.2 com Arcade Hub e modo foco antes da R1-F.1.
 - Preservar `/curriculo` no polish atual, salvo bug crítico.
-- Manter Arcade Hub, Bug Maze Expansion e Snake walls on/off para fases próprias.
+- Manter Bug Maze Expansion e Snake walls on/off para fases próprias.
 - Preservar Runtime Runner, Bug Maze, Code Snake e Stack Tetris como jogos principais.
-- Planejar o Arcade Hub para renderizar um jogo ativo por vez.
+- Validar o Arcade Hub renderizando um jogo ativo por vez.
 - Decidir quando remover ou arquivar `/visual-final-candidate`.
 - Adicionar screenshots reais dos projetos quando houver assets próprios.
 - Planejar Supabase, ranking real ou analytics real somente em fase futura explícita.

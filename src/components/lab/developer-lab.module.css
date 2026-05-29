@@ -157,6 +157,8 @@
   font-weight: 850;
   text-decoration: none;
   white-space: normal;
+  cursor: pointer;
+  font-family: inherit;
   transition:
     transform 220ms cubic-bezier(0.16, 1, 0.3, 1),
     border-color 220ms cubic-bezier(0.16, 1, 0.3, 1),
@@ -198,6 +200,8 @@
 .actionPrimary:hover,
 .actionSecondary:hover,
 .actionGhost:hover,
+.hubCard:hover,
+.focusTab:hover,
 .gameTab:hover,
 .runnerAction:hover,
 .snakeDirection:hover,
@@ -213,6 +217,8 @@
 .actionPrimary:focus-visible,
 .actionSecondary:focus-visible,
 .actionGhost:focus-visible,
+.hubCard:focus-visible,
+.focusTab:focus-visible,
 .gameTab:focus-visible,
 .runnerAction:focus-visible,
 .runnerStage:focus-visible,
@@ -232,9 +238,12 @@
 }
 
 .heroPanel,
+.arcadeHub,
+.focusShell,
 .scorePanel,
 .gameShell,
 .trainingShell,
+.hubCard,
 .moduleCard,
 .runnerStage,
 .snakeStage,
@@ -252,9 +261,12 @@
 }
 
 :global([data-theme="light"]) .heroPanel,
+:global([data-theme="light"]) .arcadeHub,
+:global([data-theme="light"]) .focusShell,
 :global([data-theme="light"]) .scorePanel,
 :global([data-theme="light"]) .gameShell,
 :global([data-theme="light"]) .trainingShell,
+:global([data-theme="light"]) .hubCard,
 :global([data-theme="light"]) .moduleCard,
 :global([data-theme="light"]) .runnerStage,
 :global([data-theme="light"]) .snakeStage,
@@ -381,6 +393,250 @@
   line-height: 0.94;
 }
 
+.arcadeHub {
+  margin-top: clamp(1rem, 3vw, 2rem);
+  border-radius: 1.55rem;
+  padding: clamp(1rem, 2.4vw, 1.35rem);
+}
+
+.arcadeHub[data-mode="focus"] {
+  background:
+    linear-gradient(145deg, color-mix(in srgb, var(--lab-panel) 86%, transparent), rgba(5, 9, 18, 0.72)),
+    rgba(255, 255, 255, 0.035);
+}
+
+.hubHeader {
+  display: grid;
+  grid-template-columns: minmax(0, 0.82fr) auto minmax(18rem, 0.62fr);
+  gap: clamp(0.8rem, 2.2vw, 1.35rem);
+  align-items: end;
+}
+
+.hubScore,
+.focusMeta {
+  min-width: 8rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 1.15rem;
+  padding: 0.82rem 0.95rem;
+  background: rgba(255, 255, 255, 0.055);
+}
+
+.hubScore span,
+.focusMeta span,
+.hubCardMeta,
+.hubCardControls,
+.hubCardStatus {
+  display: block;
+  color: var(--lab-muted);
+  font-family: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.68rem;
+  font-weight: 820;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.hubScore strong,
+.focusMeta strong {
+  display: block;
+  margin-top: 0.28rem;
+  color: var(--lab-ink);
+  font-size: clamp(1.7rem, 3.2vw, 2.7rem);
+  line-height: 1;
+}
+
+.hubGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.85rem;
+  margin-top: 1.15rem;
+}
+
+.hubCard {
+  display: grid;
+  min-height: 14.5rem;
+  align-content: space-between;
+  gap: 0.68rem;
+  border-radius: 1.3rem;
+  padding: 1rem;
+  color: var(--lab-ink);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    transform 220ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 220ms cubic-bezier(0.16, 1, 0.3, 1),
+    background 220ms cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hubCard[data-active="true"] {
+  border-color: color-mix(in srgb, var(--lab-accent-a) 52%, transparent);
+  background:
+    linear-gradient(145deg, color-mix(in srgb, var(--lab-accent-a) 18%, transparent), color-mix(in srgb, var(--lab-accent-b) 13%, transparent)),
+    rgba(255, 255, 255, 0.06);
+  box-shadow:
+    0 24px 74px rgba(103, 232, 249, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.hubCard strong {
+  color: var(--lab-ink);
+  font-size: clamp(1.08rem, 1.5vw, 1.35rem);
+  line-height: 1.08;
+}
+
+.hubCardText {
+  display: block;
+  color: var(--lab-muted);
+  font-size: 0.88rem;
+  font-weight: 650;
+  line-height: 1.55;
+}
+
+.hubCardControls,
+.hubCardStatus {
+  color: color-mix(in srgb, var(--lab-muted) 88%, var(--lab-accent-a));
+  text-transform: none;
+}
+
+.hubCardAction {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid color-mix(in srgb, var(--lab-accent-a) 40%, transparent);
+  border-radius: 999px;
+  padding: 0.48rem 0.7rem;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--lab-ink);
+  font-size: 0.76rem;
+  font-weight: 860;
+}
+
+.focusShell {
+  position: relative;
+  margin-top: clamp(1rem, 3vw, 2rem);
+  overflow: hidden;
+  border-radius: 1.65rem;
+  padding: clamp(0.8rem, 2vw, 1.25rem);
+}
+
+.focusHeader {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(14rem, 0.36fr);
+  gap: clamp(0.8rem, 2vw, 1.25rem);
+  align-items: end;
+}
+
+.focusTitleBlock .sectionTitle {
+  max-width: 16ch;
+}
+
+.focusActions {
+  display: grid;
+  justify-items: end;
+  gap: 0.55rem;
+}
+
+.focusHint {
+  color: var(--lab-muted);
+  font-size: 0.78rem;
+  font-weight: 680;
+  line-height: 1.45;
+  text-align: right;
+}
+
+.focusSwitch {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.55rem;
+  margin-top: 1rem;
+}
+
+.focusTab {
+  min-height: 2.65rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--lab-muted);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 820;
+  transition:
+    transform 180ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 180ms cubic-bezier(0.16, 1, 0.3, 1),
+    background 180ms cubic-bezier(0.16, 1, 0.3, 1),
+    color 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.focusTab[aria-pressed="true"] {
+  border-color: color-mix(in srgb, var(--lab-accent-a) 54%, transparent);
+  background: color-mix(in srgb, var(--lab-accent-a) 14%, transparent);
+  color: var(--lab-ink);
+}
+
+.focusStage {
+  position: relative;
+  margin-top: 1rem;
+}
+
+.focusStage > section > .sectionHeader {
+  grid-template-columns: minmax(0, 0.7fr) minmax(18rem, 0.62fr);
+  margin-bottom: 0.85rem;
+}
+
+.focusStage .runnerGrid,
+.focusStage .mazeLayout,
+.focusStage .snakeLayout,
+.focusStage .tetrisLayout {
+  grid-template-columns: minmax(0, 1fr) minmax(14rem, 0.3fr);
+}
+
+.focusStage .runnerSide .runnerPanel:last-child,
+.focusStage .mazeSide .runnerPanel:last-child,
+.focusStage .snakeSide .runnerPanel:last-child,
+.focusStage .tetrisSide .runnerPanel:last-child {
+  display: none;
+}
+
+.focusLoading {
+  position: absolute;
+  inset: 0;
+  z-index: 25;
+  display: grid;
+  place-items: center;
+  gap: 0.8rem;
+  border-radius: 1.45rem;
+  background:
+    radial-gradient(circle at 50% 38%, rgba(103, 232, 249, 0.2), transparent 18rem),
+    rgba(2, 6, 23, 0.72);
+  color: #f8fbff;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  backdrop-filter: blur(12px);
+}
+
+.focusLoading span {
+  width: min(16rem, 60vw);
+  height: 0.28rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.focusLoading span::before {
+  display: block;
+  width: 42%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--lab-accent-a), var(--lab-accent-c));
+  content: "";
+  animation: focus-loading 620ms cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+
 .gameTabs {
   display: grid;
   gap: 0.75rem;
@@ -443,6 +699,9 @@
 }
 
 :global([data-theme="light"]) .gameTab,
+:global([data-theme="light"]) .focusTab,
+:global([data-theme="light"]) .hubScore,
+:global([data-theme="light"]) .focusMeta,
 :global([data-theme="light"]) .runnerAction,
 :global([data-theme="light"]) .laneControl,
 :global([data-theme="light"]) .mazeDirection,
@@ -457,6 +716,7 @@
 }
 
 :global([data-theme="light"]) .gameTab[aria-pressed="true"],
+:global([data-theme="light"]) .focusTab[aria-pressed="true"],
 :global([data-theme="light"]) .arenaOptionFocused,
 :global([data-theme="light"]) .arenaOptionSelected,
 :global([data-theme="light"]) .latencyActionFocused,
@@ -468,6 +728,7 @@
 }
 
 :global([data-theme="light"]) .gameTabDescription,
+:global([data-theme="light"]) .hubCardText,
 :global([data-theme="light"]) .trainingNote,
 :global([data-theme="light"]) .runnerPanel p,
 :global([data-theme="light"]) .runnerPanel li,
@@ -479,6 +740,19 @@
 :global([data-theme="light"]) .latencyFeedback p,
 :global([data-theme="light"]) .arenaFeedback p {
   color: var(--lab-muted) !important;
+}
+
+:global([data-theme="light"]) .arcadeHub[data-mode="focus"] {
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.86), rgba(248, 251, 255, 0.72)),
+    var(--lab-panel);
+}
+
+:global([data-theme="light"]) .focusLoading {
+  background:
+    radial-gradient(circle at 50% 38%, rgba(8, 145, 178, 0.16), transparent 18rem),
+    rgba(248, 251, 255, 0.78);
+  color: var(--lab-ink);
 }
 
 :global([data-theme="light"]) .runnerPanel,
@@ -3268,6 +3542,16 @@
   background-color: rgba(255, 255, 255, 0.045);
 }
 
+@keyframes focus-loading {
+  from {
+    transform: translateX(-115%);
+  }
+
+  to {
+    transform: translateX(260%);
+  }
+}
+
 @keyframes score-pulse {
   0% {
     opacity: 0;
@@ -3667,6 +3951,8 @@
 
 @media (max-width: 980px) {
   .hero,
+  .hubHeader,
+  .focusHeader,
   .runnerGrid,
   .mazeLayout,
   .snakeLayout,
@@ -3699,6 +3985,19 @@
 
   .moduleGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .hubGrid,
+  .focusSwitch {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .focusActions {
+    justify-items: start;
+  }
+
+  .focusHint {
+    text-align: left;
   }
 
   .scorePanel .gameTabs,
@@ -3765,6 +4064,123 @@
   .trainingShell {
     border-radius: 1.35rem;
     padding: 0.75rem;
+  }
+
+  .arcadeHub {
+    border-radius: 1.35rem;
+    padding: 0.72rem;
+  }
+
+  .hubHeader {
+    grid-template-columns: 1fr;
+    gap: 0.72rem;
+  }
+
+  .hubScore {
+    width: 100%;
+  }
+
+  .hubGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .hubCard {
+    min-height: 11.75rem;
+    border-radius: 1.12rem;
+    padding: 0.88rem;
+  }
+
+  .focusShell {
+    min-height: calc(100svh - 1rem);
+    margin: 1rem -0.58rem 0;
+    border-radius: 1.05rem;
+    padding: 0.58rem;
+  }
+
+  .focusHeader {
+    position: sticky;
+    top: 0.35rem;
+    z-index: 30;
+    grid-template-columns: 1fr;
+    gap: 0.62rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 0.95rem;
+    padding: 0.72rem;
+    background: rgba(4, 9, 18, 0.82);
+    backdrop-filter: blur(14px);
+  }
+
+  :global([data-theme="light"]) .focusHeader {
+    border-color: rgba(15, 23, 42, 0.12);
+    background: rgba(255, 255, 255, 0.84);
+  }
+
+  .focusTitleBlock .sectionTitle {
+    font-size: clamp(1.35rem, 7vw, 1.8rem);
+  }
+
+  .focusActions {
+    grid-template-columns: 1fr;
+    width: 100%;
+  }
+
+  .focusActions .actionSecondary {
+    width: 100%;
+  }
+
+  .focusMeta {
+    display: none;
+  }
+
+  .focusSwitch {
+    display: flex;
+    gap: 0.5rem;
+    margin: 0.72rem -0.1rem 0;
+    overflow-x: auto;
+    padding-bottom: 0.12rem;
+    scrollbar-width: none;
+  }
+
+  .focusSwitch::-webkit-scrollbar {
+    display: none;
+  }
+
+  .focusTab {
+    flex: 0 0 auto;
+    min-width: 9.5rem;
+    min-height: 2.75rem;
+  }
+
+  .focusStage {
+    margin-top: 0.72rem;
+  }
+
+  .focusStage > section > .sectionHeader {
+    grid-template-columns: 1fr;
+    margin-bottom: 0.62rem;
+  }
+
+  .focusStage .sectionHeader .trainingNote {
+    display: none;
+  }
+
+  .focusStage .runnerGrid,
+  .focusStage .mazeLayout,
+  .focusStage .snakeLayout,
+  .focusStage .tetrisLayout {
+    grid-template-columns: 1fr;
+    gap: 0.72rem;
+  }
+
+  .focusStage .runnerSide,
+  .focusStage .mazeSide,
+  .focusStage .snakeSide,
+  .focusStage .tetrisSide {
+    gap: 0.72rem;
+  }
+
+  .focusLoading {
+    border-radius: 1rem;
   }
 
   .runnerStage {
@@ -4166,6 +4582,7 @@
   .tetrisStageClear .tetrisGrid,
   .tetrisActive,
   .tetrisLineBurst span,
+  .focusLoading span::before,
   .gameLoading {
     animation: none;
   }
@@ -4173,6 +4590,8 @@
   .actionPrimary,
   .actionSecondary,
   .actionGhost,
+  .hubCard,
+  .focusTab,
   .gameTab,
   .runnerAction,
   .laneControl,
