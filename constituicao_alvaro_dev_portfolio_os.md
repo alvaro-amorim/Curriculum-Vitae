@@ -56,12 +56,12 @@ Apesar disso, a versão atual ainda demonstra mais domínio de HTML/CSS/JS vanil
 
 ## Estado Atual Real
 
-Atualização R1-F.0 — Project Assets Admin Planning.
+Atualização R1-E.10.0 — Premium Product Polish Strategy.
 
 Checkpoint publicado antes desta fase:
 
 ```txt
-69cc377 docs: finalize developer arcade qa
+9adaa48 docs: plan project assets admin
 ```
 
 Estado real do produto após revisão humana em vídeo:
@@ -80,8 +80,8 @@ Estado real do produto após revisão humana em vídeo:
 - A imagem ativa continua em `public/profile/`.
 - Metadata, sitemap, robots, not-found e fundamentos de SEO estão implementados.
 - `/api/score` é mock/local, não persistente, com validação para os jogos do Developer Arcade.
-- A revisão humana bloqueou o checkpoint R1-E.9 e também a checkpointagem da R1-E.9.1/R1-E.9.2.
-- O projeto não deve ser tratado como fechamento final até a QA final do Developer Arcade ser validada, revisada e checkpointada.
+- R1-F.0 foi checkpointada como planejamento do Admin de Imagens, mas `/admin`, Supabase, storage, banco e upload ainda não existem.
+- A fase atual volta ao produto público para planejar polish premium antes da R1-F.1.
 
 Direção final desejada do Developer Arcade:
 
@@ -132,8 +132,10 @@ Estado de produção na R1-E.9:
 
 Próximo passo oficial:
 
-- Executar R1-F.0 — Project Assets Admin Planning como auditoria e plano, sem implementação.
-- Mapear modelo `visuals`, placeholders, segurança, persistência, variáveis de ambiente e UX do `/admin`.
+- Executar R1-E.10.0 — Premium Product Polish Strategy como auditoria e plano, sem implementação funcional.
+- Formalizar a direção Arcade clean premium com detalhes dev.
+- Preservar `/curriculo` no próximo polish, salvo bug crítico.
+- Adiar R1-F.1 Admin Shell até o polish público estar planejado e aprovado.
 - Manter Runtime Runner, Bug Maze, Code Snake e Stack Tetris preservados.
 - Criar checkpoint documental somente após revisão do plano.
 
@@ -149,6 +151,13 @@ R1-E.9.4.1 — Code Snake Action Polish
 R1-E.9.5   — Stack Tetris
 R1-E.9.5.1 — Stack Tetris Action Polish
 R1-E.9.6   — Developer Arcade Final QA
+R1-E.10.0  — Premium Product Polish Strategy
+R1-E.10.1  — Clean UI Pass & Smart Navbar
+R1-E.10.2  — Arcade Hub & Game Focus Mode
+R1-E.10.3  — Bug Maze Expansion
+R1-E.10.4  — Snake/Runner/Tetris Polish
+R1-E.10.5  — Motion & Interaction System
+R1-E.10.6  — Public Experience QA
 R1-F.0     — Project Assets Admin Planning
 R1-F.1     — Protected Admin Shell
 R1-F.2     — Project Media Data Model
@@ -170,6 +179,19 @@ Estratégia de navegação direta na home:
 - Criar uma solução minimalista como nav flutuante, section rail, magnetic nav pills, command dock visual ou progress/section navigator.
 - A navegação deve levar diretamente para projetos, Lab, currículo, contato/download e seções internas relevantes.
 - Não pode poluir a primeira dobra nem competir com o palco visual aprovado.
+
+Fase R1-E.10 — direção de polish público:
+
+- Direção visual: Arcade clean premium com detalhes dev.
+- Reduzir poluição visual, excesso de texto, badges, glows permanentes e títulos grandes demais.
+- Smart navbar: aparece no topo, recolhe ao scroll down, reaparece no scroll up e pode reaparecer no desktop ao aproximar o mouse do topo.
+- Lab deve virar Arcade Hub com quatro cards principais e um jogo ativo por vez.
+- Mobile deve abrir jogo selecionado em modo foco/tela cheia, com loading/transição premium e saída clara.
+- Bug Maze é o principal alvo de evolução: grid menor, labirinto maior, becos sem saída, coletáveis vivos, Safe Deploy bloqueado até coleta, vírus/inimigos ativáveis, perseguição, 3 vidas e feedback de dano.
+- Code Snake deve ganhar opção de paredes ativadas/desativadas; com paredes desligadas, a snake atravessa uma borda e sai na outra.
+- Runtime Runner e Stack Tetris podem receber polish de apresentação e HUD, sem reescrita pesada nesta rodada.
+- Motion deve ter propósito: menos efeitos competindo, mais transições de estado, feedback e microinterações úteis.
+- `/curriculo` está aprovado e deve ser preservado, salvo bug crítico.
 
 Fase futura obrigatória R1-F:
 
@@ -735,10 +757,10 @@ Regras permanentes:
 A fase em execução local é:
 
 ```txt
-R1-F.0 — Project Assets Admin Planning
+R1-E.10.0 — Premium Product Polish Strategy
 ```
 
-Essa fase audita o modelo atual de projetos/imagens e define o plano técnico do futuro Project Assets Admin, sem criar `/admin`, upload, autenticação, storage ou banco.
+Essa fase audita o produto público e define a sequência de polish clean premium antes da implementação do Admin Shell.
 
 A fase atual não implementa Admin, Supabase, ranking real, analytics real ou persistência real.
 

@@ -6,10 +6,10 @@ O projeto deixou de ser apenas um currículo digital e passou a funcionar como u
 
 ## Estado Atual
 
-Checkpoint publicado antes da R1-F.0:
+Checkpoint publicado antes da R1-E.10.0:
 
 ```txt
-69cc377 docs: finalize developer arcade qa
+9adaa48 docs: plan project assets admin
 ```
 
 Estado real do produto após a revisão humana que abriu a R1-E.9.3.0:
@@ -32,7 +32,8 @@ Estado real do produto após a revisão humana que abriu a R1-E.9.3.0:
 - R1-E.9.3.2 foi checkpointada em `4ececc9` com o reset da direção do Arcade.
 - R1-E.9.4/R1-E.9.4.1 foram checkpointadas em `9bcf7a3` com Code Snake como terceiro jogo final.
 - R1-E.9.5/R1-E.9.5.1 foram checkpointadas em `73b3d69` com Stack Tetris como quarto jogo final.
-- R1-F.0 está em execução local sem checkpoint para planejar o Admin de Imagens.
+- R1-F.0 foi checkpointada em `9adaa48` com o planejamento do Admin de Imagens.
+- R1-E.10.0 está em execução local sem checkpoint para planejar um polish público antes da R1-F.1.
 - O projeto ainda não deve ser tratado como fechamento final enquanto Admin de Imagens, storage real e mídia real dos projetos estiverem pendentes.
 
 ## Rotas Principais
@@ -211,6 +212,21 @@ Roadmap proposto:
 - R1-F.5 — Public Rendering Integration: consumir imagens reais quando existirem e manter placeholders quando não existirem.
 - R1-F.6 — Admin QA & Security Gate: validar auth, upload, permissões, produção e documentação.
 
+## Fase Atual: R1-E.10
+
+Antes da R1-F.1, o produto público terá uma nova rodada de polish com direção **Arcade clean premium com detalhes dev**.
+
+Objetivo:
+
+- Reduzir poluição visual sem perder identidade full-stack/dev.
+- Tornar home, projetos e Lab mais objetivos para entrevistadores.
+- Preservar `/curriculo`, que está aprovado em tema claro e escuro.
+- Transformar o Lab em Arcade Hub com um jogo ativo por vez.
+- Planejar modo foco/tela cheia em mobile ao abrir jogos.
+- Evoluir Bug Maze como principal jogo de ação.
+- Adicionar opção futura de paredes on/off no Code Snake.
+- Deixar R1-F.1 Admin Shell para depois do polish público.
+
 ## Plano Atual de Fases
 
 ```txt
@@ -223,6 +239,13 @@ R1-E.9.4.1 — Code Snake Action Polish
 R1-E.9.5   — Stack Tetris
 R1-E.9.5.1 — Stack Tetris Action Polish
 R1-E.9.6   — Developer Arcade Final QA
+R1-E.10.0  — Premium Product Polish Strategy
+R1-E.10.1  — Clean UI Pass & Smart Navbar
+R1-E.10.2  — Arcade Hub & Game Focus Mode
+R1-E.10.3  — Bug Maze Expansion
+R1-E.10.4  — Snake/Runner/Tetris Polish
+R1-E.10.5  — Motion & Interaction System
+R1-E.10.6  — Public Experience QA
 R1-F.0     — Project Assets Admin Planning
 R1-F.1     — Protected Admin Shell
 R1-F.2     — Project Media Data Model
@@ -259,10 +282,11 @@ NEXT_PUBLIC_APP_URL=https://curriculum-vitae-babr.vercel.app
 
 ## Próximos Passos Reais
 
-- Planejar R1-F.0 sem implementar `/admin`, Supabase, storage, banco ou autenticação.
+- Concluir R1-E.10.0 como estratégia documental, sem implementar mudanças funcionais.
+- Preservar `/curriculo` no próximo polish, salvo bug crítico.
+- Iniciar R1-E.10.1 com UI clean e smart navbar antes da R1-F.1.
 - Preservar Runtime Runner, Bug Maze, Code Snake e Stack Tetris como jogos principais.
-- Criar checkpoint documental da R1-F.0 somente após revisão do plano.
-- Iniciar R1-F.1 apenas depois do planejamento técnico ser aprovado.
+- Planejar o Arcade Hub para renderizar um jogo ativo por vez.
 - Decidir quando remover ou arquivar `/visual-final-candidate`.
 - Adicionar screenshots reais dos projetos quando houver assets próprios.
 - Planejar Supabase, ranking real ou analytics real somente em fase futura explícita.
