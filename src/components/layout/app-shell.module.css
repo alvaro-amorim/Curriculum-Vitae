@@ -1,4 +1,5 @@
 .appShell {
+  --topbar-clearance: clamp(5rem, 7vw, 6.2rem);
   position: relative;
   min-height: 100vh;
   overflow-x: clip;
@@ -10,8 +11,13 @@
 }
 
 .pageFrame {
-  min-height: calc(100vh - 4.5rem);
+  min-height: 100vh;
+  padding-top: var(--topbar-clearance);
   animation: pageEnter 420ms var(--ease-emphasized) both;
+}
+
+.pageFrame[data-route="immersive"] {
+  padding-top: 0;
 }
 
 .transitionVeil {
@@ -103,5 +109,11 @@
 
   .transitionVeil {
     display: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .appShell {
+    --topbar-clearance: 6.55rem;
   }
 }

@@ -110,16 +110,16 @@
   max-width: 12ch;
   margin: 0.85rem 0 0;
   color: var(--project-ink, #f8fbff);
-  font-size: clamp(3rem, 6.2vw, 6.7rem);
+  font-size: clamp(2.55rem, 4.8vw, 5.25rem);
   font-weight: 900;
-  line-height: 0.92;
+  line-height: 0.98;
   letter-spacing: 0;
   text-wrap: balance;
 }
 
 .caseTitle {
   max-width: 11ch;
-  font-size: clamp(2.85rem, 5.8vw, 6.1rem);
+  font-size: clamp(2.35rem, 4.45vw, 4.85rem);
 }
 
 .heroText,
@@ -264,9 +264,9 @@
 .casePlate h2 {
   margin: 0.35rem 0 0;
   color: #fff;
-  font-size: clamp(1.75rem, 3.2vw, 3.2rem);
+  font-size: clamp(1.45rem, 2.45vw, 2.55rem);
   font-weight: 900;
-  line-height: 0.92;
+  line-height: 1.02;
   letter-spacing: 0;
 }
 
@@ -490,9 +490,9 @@
   max-width: 10ch;
   margin: 0.65rem 0 0;
   color: var(--project-ink);
-  font-size: clamp(2.35rem, 4.8vw, 5.4rem);
+  font-size: clamp(1.95rem, 3.55vw, 3.95rem);
   font-weight: 950;
-  line-height: 0.9;
+  line-height: 0.98;
   letter-spacing: 0;
   overflow-wrap: anywhere;
   text-wrap: balance;
@@ -538,9 +538,9 @@
   max-width: 12ch;
   margin: 0.6rem 0 0;
   color: var(--project-ink);
-  font-size: clamp(2.25rem, 4.8vw, 5.15rem);
+  font-size: clamp(2rem, 3.65vw, 4rem);
   font-weight: 950;
-  line-height: 0.94;
+  line-height: 1;
   letter-spacing: 0;
 }
 
@@ -595,9 +595,9 @@
   max-width: 9ch;
   margin: 0.8rem 0 0;
   color: var(--project-ink);
-  font-size: clamp(2rem, 4vw, 4.5rem);
+  font-size: clamp(1.65rem, 3.1vw, 3.5rem);
   font-weight: 950;
-  line-height: 0.94;
+  line-height: 1.02;
   letter-spacing: 0;
   overflow-wrap: anywhere;
   text-wrap: balance;
@@ -952,13 +952,13 @@
 
   .heroTitle,
   .caseTitle {
-    font-size: clamp(2.65rem, 11.5vw, 4.15rem);
-    line-height: 0.94;
+    font-size: clamp(2.35rem, 9.4vw, 3.55rem);
+    line-height: 1;
   }
 
   .sectionTitle {
-    font-size: clamp(2.2rem, 9.2vw, 3.45rem);
-    line-height: 0.98;
+    font-size: clamp(2rem, 8vw, 3rem);
+    line-height: 1.02;
   }
 
   .scene:nth-child(even) .sceneInfo {
@@ -983,7 +983,7 @@
   }
 
   .frameTitle {
-    font-size: clamp(2.5rem, 13vw, 4rem);
+    font-size: clamp(1.8rem, 7.4vw, 2.45rem);
   }
 
   .frameHint {
@@ -1022,8 +1022,8 @@
   .heroTitle,
   .caseTitle {
     max-width: 12ch;
-    font-size: clamp(2.05rem, 8.9vw, 2.72rem);
-    line-height: 1;
+    font-size: clamp(1.92rem, 7.8vw, 2.45rem);
+    line-height: 1.04;
   }
 
   .heroText,
@@ -1089,6 +1089,7 @@
   .stagePlate h2,
   .casePlate h2,
   .sceneTitle {
-    font-size: clamp(2.1rem, 12vw, 3.4rem);
+    font-size: clamp(1.6rem, 7.8vw, 2.3rem);
+    line-height: 1.03;
   }
 }

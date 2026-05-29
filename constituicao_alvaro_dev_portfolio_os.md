@@ -56,12 +56,12 @@ Apesar disso, a versão atual ainda demonstra mais domínio de HTML/CSS/JS vanil
 
 ## Estado Atual Real
 
-Atualização R1-E.10.0 — Premium Product Polish Strategy.
+Atualização R1-E.10.1 — Clean UI Pass & Smart Navbar.
 
 Checkpoint publicado antes desta fase:
 
 ```txt
-9adaa48 docs: plan project assets admin
+febd33c docs: plan premium product polish
 ```
 
 Estado real do produto após revisão humana em vídeo:
@@ -81,7 +81,7 @@ Estado real do produto após revisão humana em vídeo:
 - Metadata, sitemap, robots, not-found e fundamentos de SEO estão implementados.
 - `/api/score` é mock/local, não persistente, com validação para os jogos do Developer Arcade.
 - R1-F.0 foi checkpointada como planejamento do Admin de Imagens, mas `/admin`, Supabase, storage, banco e upload ainda não existem.
-- A fase atual volta ao produto público para planejar polish premium antes da R1-F.1.
+- A fase atual volta ao produto público para executar um clean UI pass e smart navbar antes da R1-F.1.
 
 Direção final desejada do Developer Arcade:
 
@@ -132,12 +132,12 @@ Estado de produção na R1-E.9:
 
 Próximo passo oficial:
 
-- Executar R1-E.10.0 — Premium Product Polish Strategy como auditoria e plano, sem implementação funcional.
-- Formalizar a direção Arcade clean premium com detalhes dev.
-- Preservar `/curriculo` no próximo polish, salvo bug crítico.
+- Executar R1-E.10.1 — Clean UI Pass & Smart Navbar sem alterar `/curriculo`, salvo bug crítico.
+- Reduzir poluição visual em home, projetos/cases e Lab sem criar Arcade Hub nesta fase.
+- Implementar smart navbar com recolhimento ao scroll down e reaparição ao scroll up.
 - Adiar R1-F.1 Admin Shell até o polish público estar planejado e aprovado.
 - Manter Runtime Runner, Bug Maze, Code Snake e Stack Tetris preservados.
-- Criar checkpoint documental somente após revisão do plano.
+- Criar checkpoint somente após revisão e validação do clean pass.
 
 Plano oficial pós-revisão:
 
@@ -757,10 +757,10 @@ Regras permanentes:
 A fase em execução local é:
 
 ```txt
-R1-E.10.0 — Premium Product Polish Strategy
+R1-E.10.1 — Clean UI Pass & Smart Navbar
 ```
 
-Essa fase audita o produto público e define a sequência de polish clean premium antes da implementação do Admin Shell.
+Essa fase reduz poluição visual em home, projetos/cases e Lab, preserva `/curriculo` e implementa a smart navbar antes da implementação do Admin Shell.
 
 A fase atual não implementa Admin, Supabase, ranking real, analytics real ou persistência real.
 

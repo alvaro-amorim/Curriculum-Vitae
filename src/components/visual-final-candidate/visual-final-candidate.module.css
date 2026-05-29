@@ -592,10 +592,10 @@
   max-width: 12.4ch;
   margin: 1rem 0 0;
   color: var(--ink);
-  font-size: clamp(3rem, 4.9vw, 5.75rem);
+  font-size: clamp(2.75rem, 4.25vw, 4.95rem);
   font-weight: 850;
-  letter-spacing: -0.048em;
-  line-height: 0.94;
+  letter-spacing: -0.026em;
+  line-height: 0.98;
   text-wrap: balance;
 }
 
@@ -2127,10 +2127,10 @@
 .finalCta h2 {
   margin: 0.9rem 0 0;
   color: var(--ink);
-  font-size: clamp(2.75rem, 5vw, 5.45rem);
+  font-size: clamp(2.35rem, 3.9vw, 4.45rem);
   font-weight: 880;
-  letter-spacing: -0.045em;
-  line-height: 0.94;
+  letter-spacing: -0.024em;
+  line-height: 0.98;
   text-wrap: balance;
 }
 
@@ -3212,8 +3212,8 @@
 
   .heroCopy h1 {
     max-width: 12ch;
-    font-size: clamp(2.85rem, 8.2vw, 5.15rem);
-    line-height: 0.94;
+    font-size: clamp(2.5rem, 7.2vw, 4.35rem);
+    line-height: 0.98;
   }
 
   .heroStage {
@@ -3326,8 +3326,8 @@
   .heroCopy h1 {
     max-width: 10.8ch;
     margin-top: 0.62rem;
-    font-size: clamp(2.12rem, 9.2vw, 2.86rem);
-    line-height: 0.96;
+    font-size: clamp(2rem, 8.2vw, 2.58rem);
+    line-height: 1;
   }
 
   .heroCopy > span {
@@ -3612,7 +3612,8 @@
 
   .screenIdentity strong,
   .productMeta h3 {
-    font-size: clamp(2.4rem, 10vw, 3.4rem);
+    font-size: clamp(2rem, 8.4vw, 2.9rem);
+    line-height: 1.02;
   }
 
   .productMeta {
@@ -3621,8 +3622,8 @@
 
   .sectionHeading h2,
   .finalCta h2 {
-    font-size: clamp(2.05rem, 9.4vw, 3.05rem);
-    line-height: 0.98;
+    font-size: clamp(1.9rem, 8vw, 2.72rem);
+    line-height: 1.02;
   }
 
   .sectionHeading > span,

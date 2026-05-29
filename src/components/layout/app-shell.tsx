@@ -144,7 +144,11 @@ export function AppShell({ children }: { children: ReactNode }) {
       <div className={styles.appShell} data-transition-kind={transitionKind}>
         <Topbar onNavigateStart={() => triggerTransition("route")} />
         <CommandPalette />
-        <div className={styles.pageFrame} key={pathname}>
+        <div
+          className={styles.pageFrame}
+          data-route={pathname === "/" || pathname === "/visual-final-candidate" ? "immersive" : "standard"}
+          key={pathname}
+        >
           {children}
         </div>
         <div aria-hidden="true" className={styles.transitionVeil} data-active={transitionKind !== "idle"} data-kind={transitionKind} />
