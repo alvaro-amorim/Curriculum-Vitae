@@ -7,13 +7,13 @@ export const metadata: Metadata = {
     absolute: "Developer Arcade — Álvaro Amorim",
   },
   description:
-    "Developer Arcade em reset com Runtime Runner e Bug Maze jogáveis, Code Snake e Stack Tetris em preparação, score local e módulos de treino técnico.",
+    "Developer Arcade final com Runtime Runner, Bug Maze, Code Snake e Stack Tetris jogáveis, score local e módulos de treino técnico fora da vitrine principal.",
   alternates: {
     canonical: "/lab",
   },
   openGraph: {
     title: "Developer Arcade — Álvaro Amorim",
-    description: "Arcade em reset com dois jogos jogáveis, dois slots futuros e score local sem ranking real ou persistência.",
+    description: "Arcade final com quatro jogos jogáveis, score local sem ranking real e módulos de treino mantidos fora da vitrine principal.",
     url: "/lab",
   },
 };
