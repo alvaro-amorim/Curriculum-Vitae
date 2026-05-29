@@ -1,6 +1,6 @@
 "use client";
 
-import type { CSSProperties, KeyboardEvent, MouseEvent, PointerEvent } from "react";
+import type { CSSProperties, KeyboardEvent, MouseEvent, PointerEvent, TouchEvent } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { clampScore } from "@/lib/lab-score";
@@ -46,6 +46,7 @@ const JUMP_BUFFER_MS = 145;
 const COYOTE_TIME_MS = 95;
 const JUMP_VELOCITY = 1.74;
 const REDUCED_JUMP_VELOCITY = 1.38;
+const SWIPE_THRESHOLD = 34;
 
 const obstacleConfigs: Omit<Obstacle, "id" | "x">[] = [
   { label: "BUG", tone: "bug", width: 10, hitHeight: 0.22 },
@@ -190,6 +191,7 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
   const lastPointerActionRef = useRef(0);
   const lastGroundedAtRef = useRef(0);
   const pendingJumpAtRef = useRef<number | null>(null);
+  const touchStartRef = useRef<{ x: number; y: number } | null>(null);
 
   useEffect(() => {
     statusRef.current = status;
@@ -301,6 +303,40 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
         return;
       }
 
+      jump();
+    },
+    [jump],
+  );
+
+  const handleStageTouchStart = useCallback((event: TouchEvent<HTMLDivElement>) => {
+    const touch = event.touches[0];
+    if (!touch) {
+      return;
+    }
+
+    touchStartRef.current = {
+      x: touch.clientX,
+      y: touch.clientY,
+    };
+  }, []);
+
+  const handleStageTouchEnd = useCallback(
+    (event: TouchEvent<HTMLDivElement>) => {
+      const start = touchStartRef.current;
+      const touch = event.changedTouches[0];
+      touchStartRef.current = null;
+
+      if (!start || !touch) {
+        return;
+      }
+
+      const dx = touch.clientX - start.x;
+      const dy = touch.clientY - start.y;
+      if (Math.abs(dy) < SWIPE_THRESHOLD || Math.abs(dy) < Math.abs(dx) || dy > 0) {
+        return;
+      }
+
+      event.preventDefault();
       jump();
     },
     [jump],
@@ -470,6 +506,8 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
           onClick={handleStageClick}
           onKeyDown={handleKeyDown}
           onPointerDown={handleStagePointerDown}
+          onTouchEnd={handleStageTouchEnd}
+          onTouchStart={handleStageTouchStart}
           role="button"
           tabIndex={0}
         >

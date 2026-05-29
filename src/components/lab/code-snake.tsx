@@ -1,6 +1,6 @@
 "use client";
 
-import type { CSSProperties } from "react";
+import type { CSSProperties, TouchEvent } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { clampScore } from "@/lib/lab-score";
@@ -49,6 +49,7 @@ type StyleVars = CSSProperties & Record<`--${string}`, string | number>;
 
 const GRID_SIZE = 13;
 const BEST_SCORE_KEY = "alvaro-dev-code-snake-best-v1";
+const SWIPE_THRESHOLD = 34;
 const tokenKinds: TokenKind[] = ["TOKEN", "API", "CACHE", "FIX", "TEST", "TYPE"];
 const hazardKinds: HazardKind[] = ["BUG", "MEMORY LEAK", "TYPE ERROR", "TIMEOUT", "NULL", "500"];
 
@@ -308,6 +309,7 @@ export function CodeSnake({ locale, onComplete }: CodeSnakeProps) {
   const completedRef = useRef(false);
   const tokenIdRef = useRef(2);
   const hazardIdRef = useRef(4);
+  const touchStartRef = useRef<Position | null>(null);
 
   useEffect(() => {
     statusRef.current = status;
@@ -419,6 +421,41 @@ export function CodeSnake({ locale, onComplete }: CodeSnakeProps) {
       commitFrame({ ...frameRef.current, feedback: "turn", pulse: frameRef.current.pulse + 1 });
     },
     [commitFrame, startGame],
+  );
+
+  const handleStageTouchStart = useCallback((event: TouchEvent<HTMLDivElement>) => {
+    const touch = event.touches[0];
+    if (!touch) {
+      return;
+    }
+
+    touchStartRef.current = {
+      x: touch.clientX,
+      y: touch.clientY,
+    };
+  }, []);
+
+  const handleStageTouchEnd = useCallback(
+    (event: TouchEvent<HTMLDivElement>) => {
+      const start = touchStartRef.current;
+      const touch = event.changedTouches[0];
+      touchStartRef.current = null;
+
+      if (!start || !touch) {
+        return;
+      }
+
+      const dx = touch.clientX - start.x;
+      const dy = touch.clientY - start.y;
+      const distance = Math.max(Math.abs(dx), Math.abs(dy));
+      if (distance < SWIPE_THRESHOLD) {
+        return;
+      }
+
+      event.preventDefault();
+      queueDirection(Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? "right" : "left") : dy > 0 ? "down" : "up");
+    },
+    [queueDirection],
   );
 
   const advanceFrame = useCallback(() => {
@@ -569,6 +606,8 @@ export function CodeSnake({ locale, onComplete }: CodeSnakeProps) {
             status === "paused" ? styles.snakeStagePaused : "",
             status === "gameOver" ? styles.snakeStageHit : "",
           ].join(" ")}
+          onTouchEnd={handleStageTouchEnd}
+          onTouchStart={handleStageTouchStart}
           role="group"
           tabIndex={0}
         >

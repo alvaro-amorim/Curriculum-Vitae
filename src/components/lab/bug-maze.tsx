@@ -1,6 +1,6 @@
 "use client";
 
-import type { CSSProperties, KeyboardEvent } from "react";
+import type { CSSProperties, KeyboardEvent, TouchEvent } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { clampScore } from "@/lib/lab-score";
@@ -10,15 +10,32 @@ import styles from "./developer-lab.module.css";
 
 type MazeStatus = "idle" | "running" | "won" | "failed";
 type Direction = "up" | "down" | "left" | "right";
-type CellKind = "wall" | "path" | "start" | "goal" | "patch" | "hazard";
+type CellKind = "wall" | "path" | "start" | "goal" | "item" | "hazard";
+type ItemKind = "TEST" | "FIX" | "TOKEN" | "PATCH" | "KEY" | "API";
 type HazardKind = "bug" | "deadlock" | "memory" | "route";
-type FeedbackKind = "blocked" | "patch" | "hit" | "win" | "fail";
+type FeedbackKind = "blocked" | "item" | "hit" | "win" | "fail" | "locked" | "virus";
 
-type MazeCell = {
+type Position = {
   x: number;
   y: number;
+};
+
+type MazeCell = Position & {
   kind: CellKind;
   hazard?: HazardKind;
+};
+
+type MazeItem = {
+  id: string;
+  kind: ItemKind;
+  position: Position;
+};
+
+type MazeEnemy = {
+  id: string;
+  label: string;
+  position: Position;
+  start: Position;
 };
 
 type MazeDefinition = {
@@ -29,14 +46,11 @@ type MazeDefinition = {
 type ParsedMaze = {
   cells: MazeCell[];
   columns: number;
+  enemies: MazeEnemy[];
+  goal: Position;
+  items: MazeItem[];
   rows: number;
   start: Position;
-  patches: string[];
-};
-
-type Position = {
-  x: number;
-  y: number;
 };
 
 type BugMazeProps = {
@@ -46,69 +60,73 @@ type BugMazeProps = {
 
 type StyleVars = CSSProperties & Record<`--${string}`, string | number>;
 
-const BEST_SCORE_KEY = "alvaro-dev-bug-maze-best-v1";
-const FAILURE_LIMIT = 3;
-const TRAIL_LIMIT = 7;
+const BEST_SCORE_KEY = "alvaro-dev-bug-maze-best-v2";
+const MAX_LIVES = 3;
+const TRAIL_LIMIT = 10;
+const SWIPE_THRESHOLD = 34;
+const DAMAGE_GRACE_MS = 900;
 
 const mazeDefinitions: MazeDefinition[] = [
   {
     name: {
-      pt: "Pipeline quebrada",
-      en: "Broken pipeline",
+      pt: "Pacote de deploy",
+      en: "Deploy package",
     },
     rows: [
-      "#########",
-      "#S..#..G#",
-      "#.#.#.#.#",
-      "#.#P..#.#",
-      "#...##..#",
-      "#B.P..D.#",
-      "#########",
+      "###############",
+      "#S....#T....G.#",
+      "#.###.#.###.#.#",
+      "#...#...#...#.#",
+      "###.#####.#.#.#",
+      "#K..#..F#.#...#",
+      "#.###.#.#.###.#",
+      "#...#.#...#A..#",
+      "#.###.###.#.###",
+      "#P....V...C...#",
+      "###############",
     ],
   },
   {
     name: {
-      pt: "Deploy em risco",
-      en: "Risky deploy",
+      pt: "Incidente em produção",
+      en: "Production incident",
     },
     rows: [
-      "#########",
-      "#S..P#..#",
-      "#.###.#G#",
-      "#...M.#.#",
-      "###.#...#",
-      "#R..P.B.#",
-      "#########",
-    ],
-  },
-  {
-    name: {
-      pt: "Rollback quente",
-      en: "Hot rollback",
-    },
-    rows: [
-      "#########",
-      "#S#..P.G#",
-      "#.#.###.#",
-      "#...B...#",
-      "###.#.#.#",
-      "#P..M.R.#",
-      "#########",
+      "###############",
+      "#S..#...A....G#",
+      "#.#.#.#####.#.#",
+      "#.#...#...#.#.#",
+      "#.###.#T#.#.#.#",
+      "#...#...#...#.#",
+      "###.#.###.###.#",
+      "#P..#...#...K.#",
+      "#.#####.#.###.#",
+      "#..F...V...C..#",
+      "###############",
     ],
   },
 ];
 
 const directionDelta: Record<Direction, Position> = {
-  up: { x: 0, y: -1 },
   down: { x: 0, y: 1 },
   left: { x: -1, y: 0 },
   right: { x: 1, y: 0 },
+  up: { x: 0, y: -1 },
+};
+
+const itemTokens: Record<string, ItemKind> = {
+  A: "API",
+  C: "TOKEN",
+  F: "FIX",
+  K: "KEY",
+  P: "PATCH",
+  T: "TEST",
 };
 
 const hazardLabels: Record<HazardKind, string> = {
   bug: "BUG",
   deadlock: "DEADLOCK",
-  memory: "MEMORY",
+  memory: "MEM",
   route: "ROUTE",
 };
 
@@ -122,9 +140,9 @@ const hazardClassNames: Record<HazardKind, string> = {
 const copy = {
   pt: {
     eyebrow: "Bug Maze",
-    title: "Navegue at\u00e9 o deploy seguro.",
+    title: "Colete os tokens antes do deploy.",
     subtitle:
-      "Um labirinto técnico com grid real, patches visíveis, bugs agressivos, penalidade, vitória e score local.",
+      "Um mini Pac-Man dev: maze maior, tokens vivos, Safe Deploy bloqueado, vírus perseguidores e três vidas.",
     start: "Iniciar labirinto",
     restart: "Reiniciar layout",
     nextLayout: "Trocar mapa",
@@ -132,46 +150,56 @@ const copy = {
     best: "melhor",
     moves: "movimentos",
     time: "tempo",
-    incidents: "incidentes",
-    patches: "patches",
+    lives: "vidas",
+    items: "tokens",
+    threat: "vírus",
+    deploy: "deploy",
+    virusMode: "Modo vírus",
+    virusModeOn: "vírus forçado",
+    virusModeOff: "vírus após 1 token",
     status: {
-      idle: "pronto para mapear",
-      running: "debug em execu\u00e7\u00e3o",
-      won: "safe deploy alcan\u00e7ado",
       failed: "debug interrompido",
+      idle: "pronto para mapear",
+      running: "ameaça em execução",
+      won: "safe deploy alcançado",
     },
-    idleTitle: "Leve o n\u00f3 de debug at\u00e9 o deploy.",
+    idleTitle: "Colete todos os tokens e libere o Safe Deploy.",
     idleText:
-      "Use setas, WASD ou os controles de toque. O primeiro movimento já inicia a rodada; colete patches e evite três incidentes.",
+      "Use setas, WASD, swipe ou D-pad. Vírus acordam após o primeiro token; o objetivo só libera quando tudo for coletado.",
     wonTitle: "Deploy seguro.",
-    wonText: "O caminho foi validado e o score local foi registrado sem ranking real.",
-    failedTitle: "Incidentes demais.",
-    failedText: "Reinicie o mapa, colete patches e evite bugs, deadlocks e rotas quebradas.",
-    blocked: "parede de execu\u00e7\u00e3o",
-    patch: "+patch aplicado",
-    hit: "incidente detectado",
+    wonText: "Todos os tokens foram aplicados e o score local foi registrado sem ranking real.",
+    failedTitle: "Vidas esgotadas.",
+    failedText: "Reinicie o mapa, colete tokens e use os becos para escapar dos vírus.",
+    blocked: "parede de execução",
+    item: "+token coletado",
+    hit: "-1 vida",
     win: "deploy liberado",
-    fail: "limite de incidentes",
+    fail: "stack infectada",
+    locked: "Safe Deploy bloqueado",
+    virus: "vírus ativados",
+    lockedCount: (count: number) => `faltam ${count} tokens`,
+    active: "ativo",
+    dormant: "dormente",
     controlsTitle: "Controles",
     rulesTitle: "Regras",
     rules: [
-      "Setas ou WASD movem o n\u00f3 de debug.",
-      "Toque nos controles no mobile.",
-      "Patches aumentam o score final.",
-      "Tr\u00eas incidentes encerram a rodada.",
+      "Setas, WASD, swipe ou D-pad movem o debug node.",
+      "Todos os tokens precisam ser coletados antes do Safe Deploy.",
+      "Vírus perseguem depois do primeiro token ou com Modo vírus ativo.",
+      "Três vidas; dano concede invulnerabilidade curta.",
     ],
     reduced: "Modo reduced motion: efeitos decorativos reduzidos, gameplay preservado.",
     directions: {
-      up: "Mover para cima",
       down: "Mover para baixo",
       left: "Mover para esquerda",
       right: "Mover para direita",
+      up: "Mover para cima",
     },
   },
   en: {
     eyebrow: "Bug Maze",
-    title: "Navigate to the safe deploy.",
-    subtitle: "A technical maze with a real grid, visible patches, aggressive bugs, penalty, win state, and local score.",
+    title: "Collect tokens before deploy.",
+    subtitle: "A dev mini Pac-Man: larger maze, living tokens, locked Safe Deploy, chasing viruses, and three lives.",
     start: "Start maze",
     restart: "Restart layout",
     nextLayout: "Switch map",
@@ -179,39 +207,50 @@ const copy = {
     best: "best",
     moves: "moves",
     time: "time",
-    incidents: "incidents",
-    patches: "patches",
+    lives: "lives",
+    items: "tokens",
+    threat: "virus",
+    deploy: "deploy",
+    virusMode: "Virus mode",
+    virusModeOn: "virus forced",
+    virusModeOff: "virus after 1 token",
     status: {
-      idle: "ready to map",
-      running: "debug running",
-      won: "safe deploy reached",
       failed: "debug interrupted",
+      idle: "ready to map",
+      running: "threat running",
+      won: "safe deploy reached",
     },
-    idleTitle: "Move the debug node to deploy.",
-    idleText: "Use arrows, WASD, or touch controls. The first move starts the round; collect patches and avoid three incidents.",
+    idleTitle: "Collect every token and unlock Safe Deploy.",
+    idleText:
+      "Use arrows, WASD, swipe, or D-pad. Viruses wake after the first token; the goal unlocks only when everything is collected.",
     wonTitle: "Safe deploy.",
-    wonText: "The route was validated and the local score was recorded without a real ranking.",
-    failedTitle: "Too many incidents.",
-    failedText: "Restart the map, collect patches, and avoid bugs, deadlocks, and broken routes.",
+    wonText: "Every token was applied and the local score was recorded without a real ranking.",
+    failedTitle: "Lives depleted.",
+    failedText: "Restart the map, collect tokens, and use dead ends to escape viruses.",
     blocked: "execution wall",
-    patch: "+patch applied",
-    hit: "incident detected",
+    item: "+token collected",
+    hit: "-1 life",
     win: "deploy cleared",
-    fail: "incident limit",
+    fail: "stack infected",
+    locked: "Safe Deploy locked",
+    virus: "viruses active",
+    lockedCount: (count: number) => `${count} tokens left`,
+    active: "active",
+    dormant: "dormant",
     controlsTitle: "Controls",
     rulesTitle: "Rules",
     rules: [
-      "Arrow keys or WASD move the debug node.",
-      "Use touch controls on mobile.",
-      "Patches increase the final score.",
-      "Three incidents end the round.",
+      "Arrows, WASD, swipe, or D-pad move the debug node.",
+      "Every token must be collected before Safe Deploy.",
+      "Viruses chase after the first token or when Virus mode is enabled.",
+      "Three lives; damage grants a short invulnerability window.",
     ],
     reduced: "Reduced motion mode: decorative effects are reduced, gameplay stays available.",
     directions: {
-      up: "Move up",
       down: "Move down",
       left: "Move left",
       right: "Move right",
+      up: "Move up",
     },
   },
 } as const;
@@ -220,36 +259,55 @@ function cellKey(position: Position) {
   return `${position.x}:${position.y}`;
 }
 
+function samePosition(a: Position, b: Position) {
+  return a.x === b.x && a.y === b.y;
+}
+
 function parseMaze(definition: MazeDefinition): ParsedMaze {
   const cells: MazeCell[] = [];
-  const patches: string[] = [];
+  const enemies: MazeEnemy[] = [];
+  const items: MazeItem[] = [];
+  let goal: Position = { x: 1, y: 1 };
   let start: Position = { x: 1, y: 1 };
 
   definition.rows.forEach((row, y) => {
     [...row].forEach((token, x) => {
-      const base = { x, y };
+      const position = { x, y };
       let cell: MazeCell;
 
       if (token === "#") {
-        cell = { ...base, kind: "wall" };
+        cell = { ...position, kind: "wall" };
       } else if (token === "S") {
-        start = base;
-        cell = { ...base, kind: "start" };
+        start = position;
+        cell = { ...position, kind: "start" };
       } else if (token === "G") {
-        cell = { ...base, kind: "goal" };
-      } else if (token === "P") {
-        patches.push(cellKey(base));
-        cell = { ...base, kind: "patch" };
+        goal = position;
+        cell = { ...position, kind: "goal" };
+      } else if (token === "V") {
+        enemies.push({
+          id: `virus-${x}-${y}`,
+          label: "VIRUS",
+          position,
+          start: position,
+        });
+        cell = { ...position, kind: "path" };
+      } else if (token in itemTokens) {
+        items.push({
+          id: cellKey(position),
+          kind: itemTokens[token],
+          position,
+        });
+        cell = { ...position, kind: "item" };
       } else if (token === "B") {
-        cell = { ...base, hazard: "bug", kind: "hazard" };
+        cell = { ...position, hazard: "bug", kind: "hazard" };
       } else if (token === "D") {
-        cell = { ...base, hazard: "deadlock", kind: "hazard" };
+        cell = { ...position, hazard: "deadlock", kind: "hazard" };
       } else if (token === "M") {
-        cell = { ...base, hazard: "memory", kind: "hazard" };
+        cell = { ...position, hazard: "memory", kind: "hazard" };
       } else if (token === "R") {
-        cell = { ...base, hazard: "route", kind: "hazard" };
+        cell = { ...position, hazard: "route", kind: "hazard" };
       } else {
-        cell = { ...base, kind: "path" };
+        cell = { ...position, kind: "path" };
       }
 
       cells.push(cell);
@@ -259,9 +317,11 @@ function parseMaze(definition: MazeDefinition): ParsedMaze {
   return {
     cells,
     columns: definition.rows[0]?.length ?? 0,
+    enemies,
+    goal,
+    items,
     rows: definition.rows.length,
     start,
-    patches,
   };
 }
 
@@ -277,15 +337,87 @@ function readBestScore() {
 
 function calculateMazeScore(input: {
   elapsed: number;
-  hits: number;
+  itemCount: number;
+  lives: number;
   moves: number;
-  patchCount: number;
-  totalPatches: number;
+  totalItems: number;
   won: boolean;
 }) {
-  const patchBonus = input.patchCount * 12 + (input.patchCount === input.totalPatches ? 8 : 0);
-  const base = input.won ? 94 : 52;
-  return clampScore(base + patchBonus - input.moves * 1.9 - input.elapsed * 1.15 - input.hits * 17);
+  const allItemsBonus = input.itemCount === input.totalItems ? 24 : 0;
+  const itemBonus = input.itemCount * 11 + allItemsBonus;
+  const lifeBonus = input.lives * 9;
+  const base = input.won ? 92 : 42;
+  return clampScore(base + itemBonus + lifeBonus - input.moves * 1.25 - input.elapsed * 0.9);
+}
+
+function resetEnemies(maze: ParsedMaze) {
+  return maze.enemies.map((enemy) => ({
+    ...enemy,
+    position: enemy.start,
+  }));
+}
+
+function keyToDirection(key: string): Direction | null {
+  switch (key.toLowerCase()) {
+    case "arrowdown":
+    case "s":
+      return "down";
+    case "arrowleft":
+    case "a":
+      return "left";
+    case "arrowright":
+    case "d":
+      return "right";
+    case "arrowup":
+    case "w":
+      return "up";
+    default:
+      return null;
+  }
+}
+
+function getCell(maze: ParsedMaze, position: Position) {
+  return maze.cells.find((cell) => cell.x === position.x && cell.y === position.y);
+}
+
+function isWalkableForEnemy(maze: ParsedMaze, position: Position) {
+  const cell = getCell(maze, position);
+  return Boolean(cell && cell.kind !== "wall");
+}
+
+function enemyStep(enemy: MazeEnemy, target: Position, maze: ParsedMaze) {
+  const options = (Object.keys(directionDelta) as Direction[])
+    .map((direction) => {
+      const delta = directionDelta[direction];
+      const position = {
+        x: enemy.position.x + delta.x,
+        y: enemy.position.y + delta.y,
+      };
+
+      return {
+        distance: Math.abs(position.x - target.x) + Math.abs(position.y - target.y),
+        position,
+      };
+    })
+    .filter((candidate) => isWalkableForEnemy(maze, candidate.position))
+    .sort((a, b) => a.distance - b.distance);
+
+  return options[0]?.position ?? enemy.position;
+}
+
+function nextSwipeDirection(start: Position, end: Position): Direction | null {
+  const dx = end.x - start.x;
+  const dy = end.y - start.y;
+
+  if (Math.max(Math.abs(dx), Math.abs(dy)) < SWIPE_THRESHOLD) {
+    return null;
+  }
+
+  if (Math.abs(dx) > Math.abs(dy)) {
+    return dx > 0 ? "right" : "left";
+  }
+
+  return dy > 0 ? "down" : "up";
 }
 
 export function BugMaze({ locale, onComplete }: BugMazeProps) {
@@ -295,15 +427,19 @@ export function BugMaze({ locale, onComplete }: BugMazeProps) {
   const [status, setStatus] = useState<MazeStatus>("idle");
   const [position, setPosition] = useState<Position>(() => parseMaze(mazeDefinitions[0]).start);
   const [trail, setTrail] = useState<string[]>([]);
-  const [collectedPatches, setCollectedPatches] = useState<Set<string>>(() => new Set());
+  const [collectedItems, setCollectedItems] = useState<Set<string>>(() => new Set());
   const [moves, setMoves] = useState(0);
   const [elapsed, setElapsed] = useState(0);
-  const [hits, setHits] = useState(0);
+  const [lives, setLives] = useState(MAX_LIVES);
+  const [enemies, setEnemies] = useState<MazeEnemy[]>(() => resetEnemies(parseMaze(mazeDefinitions[0])));
+  const [virusMode, setVirusMode] = useState(false);
+  const [invulnerableUntil, setInvulnerableUntil] = useState(0);
   const [bestScore, setBestScore] = useState(0);
   const [finalScore, setFinalScore] = useState<number | null>(null);
-  const [feedback, setFeedback] = useState<{ id: number; kind: FeedbackKind } | null>(null);
+  const [feedback, setFeedback] = useState<{ count?: number; id: number; kind: FeedbackKind } | null>(null);
   const [reducedMotion, setReducedMotion] = useState(false);
   const rootRef = useRef<HTMLElement | null>(null);
+  const touchStartRef = useRef<Position | null>(null);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- Browser preferences and localStorage are client-only.
@@ -325,6 +461,17 @@ export function BugMaze({ locale, onComplete }: BugMazeProps) {
     return () => window.clearInterval(timer);
   }, [status]);
 
+  useEffect(() => {
+    if (invulnerableUntil <= 0) {
+      return;
+    }
+
+    const timeout = window.setTimeout(() => setInvulnerableUntil(0), Math.max(0, invulnerableUntil - Date.now()));
+    return () => window.clearTimeout(timeout);
+  }, [invulnerableUntil]);
+
+  const allItemsCollected = collectedItems.size === maze.items.length;
+  const threatActive = virusMode || collectedItems.size > 0;
   const currentScore = useMemo(
     () =>
       finalScore ??
@@ -332,17 +479,20 @@ export function BugMaze({ locale, onComplete }: BugMazeProps) {
         ? 0
         : calculateMazeScore({
             elapsed,
-            hits,
+            itemCount: collectedItems.size,
+            lives,
             moves,
-            patchCount: collectedPatches.size,
-            totalPatches: maze.patches.length,
+            totalItems: maze.items.length,
             won: status === "won",
           })),
-    [collectedPatches.size, elapsed, finalScore, hits, maze.patches.length, moves, status],
+    [collectedItems.size, elapsed, finalScore, lives, maze.items.length, moves, status],
   );
 
-  const triggerFeedback = useCallback((kind: FeedbackKind) => {
-    setFeedback({ id: Date.now(), kind });
+  const itemsByCell = useMemo(() => new Map(maze.items.map((item) => [item.id, item])), [maze.items]);
+  const enemiesByCell = useMemo(() => new Map(enemies.map((enemy) => [cellKey(enemy.position), enemy])), [enemies]);
+
+  const triggerFeedback = useCallback((kind: FeedbackKind, count?: number) => {
+    setFeedback({ count, id: Date.now(), kind });
   }, []);
 
   const startGame = useCallback(
@@ -351,10 +501,12 @@ export function BugMaze({ locale, onComplete }: BugMazeProps) {
       setLayoutIndex(nextLayout);
       setPosition(nextMaze.start);
       setTrail([]);
-      setCollectedPatches(new Set());
+      setCollectedItems(new Set());
       setMoves(0);
       setElapsed(0);
-      setHits(0);
+      setLives(MAX_LIVES);
+      setEnemies(resetEnemies(nextMaze));
+      setInvulnerableUntil(0);
       setFinalScore(null);
       setFeedback(null);
       setStatus("running");
@@ -363,7 +515,7 @@ export function BugMaze({ locale, onComplete }: BugMazeProps) {
   );
 
   const finishGame = useCallback(
-    (nextStatus: "won" | "failed", snapshot: { elapsed: number; hits: number; moves: number; patchCount: number; totalPatches: number }) => {
+    (nextStatus: "won" | "failed", snapshot: { elapsed: number; itemCount: number; lives: number; moves: number; totalItems: number }) => {
       const score = calculateMazeScore({
         ...snapshot,
         won: nextStatus === "won",
@@ -381,79 +533,126 @@ export function BugMaze({ locale, onComplete }: BugMazeProps) {
     [onComplete, triggerFeedback],
   );
 
+  const applyDamage = useCallback(
+    (snapshot: { activeElapsed: number; itemCount: number; moves: number; totalItems: number }, nextEnemies: MazeEnemy[]) => {
+      if (Date.now() < invulnerableUntil) {
+        setEnemies(nextEnemies);
+        return;
+      }
+
+      const nextLives = lives - 1;
+      setLives(nextLives);
+      setInvulnerableUntil(Date.now() + DAMAGE_GRACE_MS);
+      triggerFeedback(nextLives <= 0 ? "fail" : "hit");
+
+      if (nextLives <= 0) {
+        setEnemies(nextEnemies);
+        finishGame("failed", {
+          elapsed: snapshot.activeElapsed,
+          itemCount: snapshot.itemCount,
+          lives: 0,
+          moves: snapshot.moves,
+          totalItems: snapshot.totalItems,
+        });
+        return;
+      }
+
+      setPosition(maze.start);
+      setTrail([]);
+      setEnemies(resetEnemies(maze));
+    },
+    [finishGame, invulnerableUntil, lives, maze, triggerFeedback],
+  );
+
   const move = useCallback(
     (direction: Direction) => {
       let activePosition = position;
       let activeMoves = moves;
-      let activeHits = hits;
       let activeElapsed = elapsed;
-      let nextCollected = new Set(collectedPatches);
+      let nextCollected = new Set(collectedItems);
+      let nextEnemies = enemies;
 
       if (status === "idle" || status === "won" || status === "failed") {
         activePosition = maze.start;
         activeMoves = 0;
-        activeHits = 0;
         activeElapsed = 0;
         nextCollected = new Set();
+        nextEnemies = resetEnemies(maze);
         setPosition(maze.start);
         setTrail([]);
-        setCollectedPatches(nextCollected);
+        setCollectedItems(nextCollected);
         setMoves(0);
         setElapsed(0);
-        setHits(0);
+        setLives(MAX_LIVES);
+        setEnemies(nextEnemies);
+        setInvulnerableUntil(0);
         setFinalScore(null);
         setFeedback(null);
         setStatus("running");
       }
 
-      if (status !== "running" && status !== "idle" && status !== "won" && status !== "failed") {
-        return;
-      }
-
       const delta = directionDelta[direction];
       const nextPosition = { x: activePosition.x + delta.x, y: activePosition.y + delta.y };
-      const nextCell = maze.cells.find((cell) => cell.x === nextPosition.x && cell.y === nextPosition.y);
+      const nextCell = getCell(maze, nextPosition);
 
       if (!nextCell || nextCell.kind === "wall") {
         triggerFeedback("blocked");
         return;
       }
 
+      if (nextCell.kind === "goal" && nextCollected.size < maze.items.length) {
+        triggerFeedback("locked", maze.items.length - nextCollected.size);
+        return;
+      }
+
       const nextMoves = activeMoves + 1;
-      let nextHits = activeHits;
       const currentKey = cellKey(activePosition);
+      const nextKey = cellKey(nextPosition);
 
       setPosition(nextPosition);
       setMoves(nextMoves);
       setTrail((current) => [currentKey, ...current.filter((key) => key !== currentKey)].slice(0, TRAIL_LIMIT));
 
-      if (nextCell.kind === "patch" && !nextCollected.has(cellKey(nextPosition))) {
-        nextCollected.add(cellKey(nextPosition));
-        setCollectedPatches(nextCollected);
-        triggerFeedback("patch");
+      if (nextCell.kind === "item" && !nextCollected.has(nextKey)) {
+        nextCollected.add(nextKey);
+        setCollectedItems(nextCollected);
+        triggerFeedback(nextCollected.size === 1 ? "virus" : "item");
       }
 
-      if (nextCell.kind === "hazard") {
-        nextHits += 1;
-        setHits(nextHits);
-        triggerFeedback("hit");
+      const nextThreatActive = virusMode || nextCollected.size > 0;
+      const shouldMoveEnemies = nextThreatActive && nextMoves % 3 === 0;
+
+      if (shouldMoveEnemies) {
+        nextEnemies = nextEnemies.map((enemy) => ({
+          ...enemy,
+          position: enemyStep(enemy, nextPosition, maze),
+        }));
+        setEnemies(nextEnemies);
       }
 
       const snapshot = {
-        elapsed: activeElapsed,
-        hits: nextHits,
+        activeElapsed,
+        itemCount: nextCollected.size,
         moves: nextMoves,
-        patchCount: nextCollected.size,
-        totalPatches: maze.patches.length,
+        totalItems: maze.items.length,
       };
 
+      if (nextCell.kind === "hazard" || (nextThreatActive && nextEnemies.some((enemy) => samePosition(enemy.position, nextPosition)))) {
+        applyDamage(snapshot, nextEnemies);
+        return;
+      }
+
       if (nextCell.kind === "goal") {
-        finishGame("won", snapshot);
-      } else if (nextHits >= FAILURE_LIMIT) {
-        finishGame("failed", snapshot);
+        finishGame("won", {
+          elapsed: activeElapsed,
+          itemCount: nextCollected.size,
+          lives,
+          moves: nextMoves,
+          totalItems: maze.items.length,
+        });
       }
     },
-    [collectedPatches, elapsed, finishGame, hits, maze.cells, maze.patches.length, maze.start, moves, position, status, triggerFeedback],
+    [applyDamage, collectedItems, elapsed, enemies, finishGame, lives, maze, moves, position, status, triggerFeedback, virusMode],
   );
 
   useEffect(() => {
@@ -495,13 +694,51 @@ export function BugMaze({ locale, onComplete }: BugMazeProps) {
     }
   }
 
+  function handleTouchStart(event: TouchEvent<HTMLDivElement>) {
+    const touch = event.touches[0];
+    if (!touch) {
+      return;
+    }
+
+    touchStartRef.current = {
+      x: touch.clientX,
+      y: touch.clientY,
+    };
+  }
+
+  function handleTouchEnd(event: TouchEvent<HTMLDivElement>) {
+    const start = touchStartRef.current;
+    const touch = event.changedTouches[0];
+    touchStartRef.current = null;
+
+    if (!start || !touch) {
+      return;
+    }
+
+    const direction = nextSwipeDirection(start, {
+      x: touch.clientX,
+      y: touch.clientY,
+    });
+
+    if (!direction) {
+      return;
+    }
+
+    event.preventDefault();
+    move(direction);
+  }
+
   function switchMap() {
     startGame((layoutIndex + 1) % mazeDefinitions.length);
   }
 
   const statusTitle = status === "won" ? t.wonTitle : status === "failed" ? t.failedTitle : t.idleTitle;
   const statusText = status === "won" ? t.wonText : status === "failed" ? t.failedText : t.idleText;
-  const feedbackLabel = feedback ? t[feedback.kind] : "";
+  const feedbackLabel = feedback
+    ? feedback.kind === "locked" && typeof feedback.count === "number"
+      ? `${t.locked}: ${t.lockedCount(feedback.count)}`
+      : t[feedback.kind]
+    : "";
 
   return (
     <section aria-labelledby="bug-maze-title" ref={rootRef}>
@@ -520,13 +757,15 @@ export function BugMaze({ locale, onComplete }: BugMazeProps) {
           aria-label={`${t.eyebrow}: ${mazeDefinitions[layoutIndex].name[locale]}`}
           className={[
             styles.mazeStage,
-            hits >= FAILURE_LIMIT - 1 && status === "running" ? styles.mazeStageDanger : "",
+            threatActive && status === "running" ? styles.mazeStageDanger : "",
             status === "won" ? styles.mazeStageWon : "",
             status === "failed" ? styles.mazeStageFailed : "",
             feedback?.kind === "hit" || feedback?.kind === "fail" ? styles.mazeStageHitFlash : "",
-            feedback?.kind === "blocked" ? styles.mazeStageBlocked : "",
+            feedback?.kind === "blocked" || feedback?.kind === "locked" ? styles.mazeStageBlocked : "",
           ].join(" ")}
           onKeyDown={handleBoardKeyDown}
+          onTouchEnd={handleTouchEnd}
+          onTouchStart={handleTouchStart}
           role="group"
           tabIndex={0}
         >
@@ -552,15 +791,21 @@ export function BugMaze({ locale, onComplete }: BugMazeProps) {
           <div className={styles.mazeMeta}>
             <span>{mazeDefinitions[layoutIndex].name[locale]}</span>
             <span>
-              {t.patches}: {collectedPatches.size}/{maze.patches.length}
+              {t.items}: {collectedItems.size}/{maze.items.length}
             </span>
             <span>
-              {t.incidents}: {hits}/{FAILURE_LIMIT}
-              <span className={styles.mazeIncidentPips} aria-hidden="true">
-                {Array.from({ length: FAILURE_LIMIT }, (_, index) => (
-                  <span className={index < hits ? styles.mazeIncidentPipActive : ""} key={index} />
+              {t.lives}: {lives}/{MAX_LIVES}
+              <span className={styles.mazeLifePips} aria-hidden="true">
+                {Array.from({ length: MAX_LIVES }, (_, index) => (
+                  <span className={index >= lives ? styles.mazeLifeLost : ""} key={index} />
                 ))}
               </span>
+            </span>
+            <span className={threatActive ? styles.mazeVirusModeActive : ""}>
+              {t.threat}: {threatActive ? t.active : t.dormant}
+            </span>
+            <span className={allItemsCollected ? styles.mazeDeployOpen : styles.mazeDeployLocked}>
+              {t.deploy}: {allItemsCollected ? t.active : t.locked}
             </span>
           </div>
 
@@ -569,24 +814,36 @@ export function BugMaze({ locale, onComplete }: BugMazeProps) {
               const key = cellKey(cell);
               const hasPlayer = position.x === cell.x && position.y === cell.y;
               const isTrail = trail.includes(key) && !hasPlayer;
-              const patchCollected = cell.kind === "patch" && collectedPatches.has(key);
+              const item = itemsByCell.get(key);
+              const itemCollected = Boolean(item && collectedItems.has(key));
+              const enemy = enemiesByCell.get(key);
               const classNames = [
                 styles.mazeCell,
                 cell.kind === "wall" ? styles.mazeWall : "",
                 cell.kind === "goal" ? styles.mazeGoal : "",
-                cell.kind === "patch" ? styles.mazePatch : "",
+                cell.kind === "goal" && !allItemsCollected ? styles.mazeGoalLocked : "",
+                item ? styles.mazePatch : "",
                 cell.kind === "start" ? styles.mazeStart : "",
                 cell.kind === "hazard" && cell.hazard ? `${styles.mazeHazard} ${hazardClassNames[cell.hazard]}` : "",
-                patchCollected ? styles.mazePatchCollected : "",
+                itemCollected ? styles.mazePatchCollected : "",
+                enemy ? styles.mazeVirusCell : "",
                 isTrail ? styles.mazeTrail : "",
               ].join(" ");
 
               return (
                 <span className={classNames} key={key}>
-                  {cell.kind === "goal" ? <span className={styles.mazeCellLabel}>SAFE DEPLOY</span> : null}
-                  {cell.kind === "patch" && !patchCollected ? <span className={styles.mazeCellLabel}>PATCH</span> : null}
+                  {cell.kind === "goal" ? (
+                    <span className={styles.mazeCellLabel}>{allItemsCollected ? "SAFE DEPLOY" : "LOCKED"}</span>
+                  ) : null}
+                  {item && !itemCollected ? <span className={styles.mazeCellLabel}>{item.kind}</span> : null}
                   {cell.kind === "hazard" && cell.hazard ? <span className={styles.mazeCellLabel}>{hazardLabels[cell.hazard]}</span> : null}
-                  {hasPlayer ? <span className={styles.mazePlayer} key={`${key}-${moves}`} /> : null}
+                  {enemy ? <span className={styles.mazeVirus}>{enemy.label}</span> : null}
+                  {hasPlayer ? (
+                    <span
+                      className={[styles.mazePlayer, invulnerableUntil > 0 ? styles.mazePlayerInvulnerable : ""].join(" ")}
+                      key={`${key}-${moves}-${lives}`}
+                    />
+                  ) : null}
                 </span>
               );
             })}
@@ -608,8 +865,8 @@ export function BugMaze({ locale, onComplete }: BugMazeProps) {
               className={[
                 styles.mazeFeedback,
                 feedback.kind === "hit" || feedback.kind === "fail" ? styles.mazeFeedbackHit : "",
-                feedback.kind === "win" || feedback.kind === "patch" ? styles.mazeFeedbackGood : "",
-                feedback.kind === "blocked" ? styles.mazeFeedbackBlocked : "",
+                feedback.kind === "win" || feedback.kind === "item" || feedback.kind === "virus" ? styles.mazeFeedbackGood : "",
+                feedback.kind === "blocked" || feedback.kind === "locked" ? styles.mazeFeedbackBlocked : "",
               ].join(" ")}
               key={feedback.id}
             >
@@ -627,6 +884,14 @@ export function BugMaze({ locale, onComplete }: BugMazeProps) {
               </button>
               <button className={styles.runnerAction} onClick={switchMap} type="button">
                 {t.nextLayout}
+              </button>
+              <button
+                aria-pressed={virusMode}
+                className={styles.runnerAction}
+                onClick={() => setVirusMode((current) => !current)}
+                type="button"
+              >
+                {t.virusMode}: {virusMode ? t.virusModeOn : t.virusModeOff}
               </button>
             </div>
           </div>
@@ -662,23 +927,4 @@ export function BugMaze({ locale, onComplete }: BugMazeProps) {
       </div>
     </section>
   );
-}
-
-function keyToDirection(key: string): Direction | null {
-  switch (key.toLowerCase()) {
-    case "arrowup":
-    case "w":
-      return "up";
-    case "arrowdown":
-    case "s":
-      return "down";
-    case "arrowleft":
-    case "a":
-      return "left";
-    case "arrowright":
-    case "d":
-      return "right";
-    default:
-      return null;
-  }
 }

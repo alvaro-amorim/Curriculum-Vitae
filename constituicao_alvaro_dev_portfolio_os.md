@@ -56,12 +56,12 @@ Apesar disso, a versão atual ainda demonstra mais domínio de HTML/CSS/JS vanil
 
 ## Estado Atual Real
 
-Atualização R1-E.10.2 — Arcade Hub & Game Focus Mode.
+Atualização R1-E.10.3/R1-E.10.3.1 — Bug Maze Expansion, Mobile Gesture Controls & Lab Density Calibration.
 
 Checkpoint publicado antes desta fase:
 
 ```txt
-31e7306 feat: add smart navbar and clean ui pass
+4fc0581 feat: add arcade hub and game focus mode
 ```
 
 Estado real do produto após revisão humana em vídeo:
@@ -82,7 +82,8 @@ Estado real do produto após revisão humana em vídeo:
 - `/api/score` é mock/local, não persistente, com validação para os jogos do Developer Arcade.
 - R1-F.0 foi checkpointada como planejamento do Admin de Imagens, mas `/admin`, Supabase, storage, banco e upload ainda não existem.
 - R1-E.10.1 foi checkpointada com clean UI pass, Smart Navbar funcional, scroll root real e remoção da faixa residual.
-- A fase atual transforma `/lab` em Arcade Hub com um jogo ativo por vez e modo foco, antes da R1-F.1.
+- R1-E.10.2 foi checkpointada com Arcade Hub, um jogo ativo por vez e Game Focus Mode desktop/mobile.
+- A fase atual expande o Bug Maze, adiciona controles mobile por swipe nos quatro jogos finais e calibra a densidade visual do Lab em 100% de zoom, antes da R1-F.1.
 
 Direção final desejada do Developer Arcade:
 
@@ -133,12 +134,14 @@ Estado de produção na R1-E.9:
 
 Próximo passo oficial:
 
-- Executar R1-E.10.2 — Arcade Hub & Game Focus Mode sem alterar `/curriculo`, salvo bug crítico.
-- Transformar `/lab` em hub limpo com os quatro jogos finais e um jogo ativo por vez.
-- Adicionar modo foco desktop/mobile sem reescrever a mecânica dos jogos.
+- Executar R1-E.10.3/R1-E.10.3.1 — Bug Maze Expansion, Mobile Gesture Controls & Lab Density Calibration sem alterar `/curriculo`, salvo bug crítico.
+- Expandir Bug Maze com maze maior, coletáveis vivos, Safe Deploy bloqueado, vírus perseguidores e 3 vidas.
+- Adicionar swipe mobile aos quatro jogos finais, mantendo botões e D-pads existentes.
+- Reduzir escala visual do Lab via CSS real, sem `zoom` global ou `transform: scale()` global.
+- Preservar Arcade Hub e Game Focus Mode sem reestruturar a página.
 - Adiar R1-F.1 Admin Shell até o polish público estar planejado e aprovado.
 - Manter Runtime Runner, Bug Maze, Code Snake e Stack Tetris preservados.
-- Criar checkpoint somente após revisão e validação do Arcade Hub.
+- Criar checkpoint somente após revisão visual humana do Bug Maze expandido e dos gestos mobile.
 
 Plano oficial pós-revisão:
 
@@ -155,7 +158,8 @@ R1-E.9.6   — Developer Arcade Final QA
 R1-E.10.0  — Premium Product Polish Strategy
 R1-E.10.1  — Clean UI Pass & Smart Navbar
 R1-E.10.2  — Arcade Hub & Game Focus Mode
-R1-E.10.3  — Bug Maze Expansion
+R1-E.10.3  — Bug Maze Expansion & Mobile Gesture Controls
+R1-E.10.3.1 — Lab Density & Scale Calibration
 R1-E.10.4  — Snake/Runner/Tetris Polish
 R1-E.10.5  — Motion & Interaction System
 R1-E.10.6  — Public Experience QA
@@ -189,6 +193,7 @@ Fase R1-E.10 — direção de polish público:
 - Lab deve virar Arcade Hub com quatro cards principais e um jogo ativo por vez.
 - Mobile deve abrir jogo selecionado em modo foco/tela cheia, com loading/transição premium e saída clara.
 - Bug Maze é o principal alvo de evolução: grid menor, labirinto maior, becos sem saída, coletáveis vivos, Safe Deploy bloqueado até coleta, vírus/inimigos ativáveis, perseguição, 3 vidas e feedback de dano.
+- Controles mobile por swipe devem existir nos quatro jogos finais como complemento aos botões atuais.
 - Code Snake deve ganhar opção de paredes ativadas/desativadas; com paredes desligadas, a snake atravessa uma borda e sai na outra.
 - Runtime Runner e Stack Tetris podem receber polish de apresentação e HUD, sem reescrita pesada nesta rodada.
 - Motion deve ter propósito: menos efeitos competindo, mais transições de estado, feedback e microinterações úteis.
@@ -758,10 +763,10 @@ Regras permanentes:
 A fase em execução local é:
 
 ```txt
-R1-E.10.2 — Arcade Hub & Game Focus Mode
+R1-E.10.3/R1-E.10.3.1 — Bug Maze Expansion, Mobile Gesture Controls & Lab Density Calibration
 ```
 
-Essa fase transforma `/lab` em um Arcade Hub com um jogo ativo por vez, preserva `/curriculo` e mantém Bug Maze Expansion, Snake walls on/off e Admin Shell para fases próprias.
+Essa fase expande o Bug Maze com maze maior, tokens, Safe Deploy bloqueado, vírus perseguidores, 3 vidas, adiciona swipe mobile aos quatro jogos finais e calibra a densidade visual do Lab sem zoom global. `/curriculo`, Snake walls on/off e Admin Shell permanecem fora desta fase.
 
 A fase atual não implementa Admin, Supabase, ranking real, analytics real ou persistência real.
 

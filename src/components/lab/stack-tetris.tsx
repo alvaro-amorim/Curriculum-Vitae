@@ -1,6 +1,6 @@
 "use client";
 
-import type { CSSProperties } from "react";
+import type { CSSProperties, TouchEvent } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { clampScore } from "@/lib/lab-score";
@@ -65,6 +65,7 @@ const BOARD_WIDTH = 10;
 const BOARD_HEIGHT = 18;
 const PREVIEW_SIZE = 4;
 const BEST_SCORE_KEY = "alvaro-dev-stack-tetris-best-v1";
+const SWIPE_THRESHOLD = 34;
 
 const pieceDefinitions: PieceDefinition[] = [
   {
@@ -412,6 +413,7 @@ export function StackTetris({ locale, onComplete }: StackTetrisProps) {
   const lastHardDropAtRef = useRef(0);
   const nextIdRef = useRef(3);
   const completedRef = useRef(false);
+  const touchStartRef = useRef<Position | null>(null);
 
   useEffect(() => {
     statusRef.current = status;
@@ -627,6 +629,51 @@ export function StackTetris({ locale, onComplete }: StackTetrisProps) {
     lockPiece(dropped, distance * 2);
   }, [commitFrame, lockPiece, startGame]);
 
+  const handleStageTouchStart = useCallback((event: TouchEvent<HTMLDivElement>) => {
+    const touch = event.touches[0];
+    if (!touch) {
+      return;
+    }
+
+    touchStartRef.current = {
+      x: touch.clientX,
+      y: touch.clientY,
+    };
+  }, []);
+
+  const handleStageTouchEnd = useCallback(
+    (event: TouchEvent<HTMLDivElement>) => {
+      const start = touchStartRef.current;
+      const touch = event.changedTouches[0];
+      touchStartRef.current = null;
+
+      if (!start || !touch) {
+        return;
+      }
+
+      const dx = touch.clientX - start.x;
+      const dy = touch.clientY - start.y;
+      const distance = Math.max(Math.abs(dx), Math.abs(dy));
+      if (distance < SWIPE_THRESHOLD) {
+        return;
+      }
+
+      event.preventDefault();
+      if (Math.abs(dx) > Math.abs(dy)) {
+        movePiece(dx > 0 ? 1 : -1, 0);
+        return;
+      }
+
+      if (dy > 0) {
+        movePiece(0, 1, "drop");
+        return;
+      }
+
+      rotatePiece();
+    },
+    [movePiece, rotatePiece],
+  );
+
   const togglePause = useCallback(() => {
     const currentStatus = statusRef.current;
 
@@ -742,6 +789,8 @@ export function StackTetris({ locale, onComplete }: StackTetrisProps) {
             status === "paused" ? styles.tetrisStagePaused : "",
             status === "gameOver" ? styles.tetrisStageHit : "",
           ].join(" ")}
+          onTouchEnd={handleStageTouchEnd}
+          onTouchStart={handleStageTouchStart}
           role="group"
           ref={stageRef}
           tabIndex={0}

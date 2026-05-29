@@ -6,10 +6,10 @@ O projeto deixou de ser apenas um currículo digital e passou a funcionar como u
 
 ## Estado Atual
 
-Checkpoint publicado antes da R1-E.10.2:
+Checkpoint publicado antes da R1-E.10.3/R1-E.10.3.1:
 
 ```txt
-31e7306 feat: add smart navbar and clean ui pass
+4fc0581 feat: add arcade hub and game focus mode
 ```
 
 Estado real do produto após a revisão humana que abriu a R1-E.9.3.0:
@@ -35,7 +35,9 @@ Estado real do produto após a revisão humana que abriu a R1-E.9.3.0:
 - R1-F.0 foi checkpointada em `9adaa48` com o planejamento do Admin de Imagens.
 - R1-E.10.0 foi checkpointada em `febd33c` com a estratégia de polish público antes da R1-F.1.
 - R1-E.10.1 foi checkpointada em `31e7306` com clean UI pass e Smart Navbar funcional.
-- R1-E.10.2 está em execução local sem checkpoint para transformar `/lab` em Arcade Hub com Game Focus Mode.
+- R1-E.10.2 foi checkpointada em `4fc0581` com Arcade Hub, um jogo ativo por vez e Game Focus Mode desktop/mobile.
+- R1-E.10.3 está em execução local sem checkpoint para expandir Bug Maze e adicionar controles mobile por swipe nos quatro jogos finais.
+- R1-E.10.3.1 está em execução local sem checkpoint para calibrar densidade/escala visual do Lab em 100% de zoom, sem `zoom` global ou `transform: scale()` global.
 - O projeto ainda não deve ser tratado como fechamento final enquanto Admin de Imagens, storage real e mídia real dos projetos estiverem pendentes.
 
 ## Rotas Principais
@@ -214,18 +216,20 @@ Roadmap proposto:
 - R1-F.5 — Public Rendering Integration: consumir imagens reais quando existirem e manter placeholders quando não existirem.
 - R1-F.6 — Admin QA & Security Gate: validar auth, upload, permissões, produção e documentação.
 
-## Fase Atual: R1-E.10.2
+## Fase Atual: R1-E.10.3/R1-E.10.3.1
 
 Antes da R1-F.1, o produto público terá uma nova rodada de polish com direção **Arcade clean premium com detalhes dev**.
 
 Objetivo da rodada atual:
 
-- Transformar `/lab` em um Arcade Hub mais limpo.
-- Renderizar um jogo final ativo por vez.
-- Adicionar Game Focus Mode desktop e mobile.
-- Reduzir a sensação de lista empilhada de demos.
+- Expandir o Bug Maze para um maze maior e mais próximo de um mini Pac-Man dev.
+- Exigir coleta de todos os tokens antes de liberar o Safe Deploy.
+- Ativar vírus perseguidores após o primeiro token, com 3 vidas e feedback de dano.
+- Adicionar controles mobile por swipe em Runtime Runner, Bug Maze, Code Snake e Stack Tetris, mantendo botões atuais.
+- Calibrar densidade visual do Arcade Hub, Game Focus Mode, HUDs e stages para reduzir a sensação de interface ampliada em 100% de zoom.
 - Preservar `/curriculo`, que está aprovado em tema claro e escuro.
-- Manter Bug Maze Expansion e Snake walls on/off como próximos passos.
+- Manter Snake walls on/off como próxima fase própria.
+- Manter o Arcade Hub e o Game Focus Mode já implementados.
 - Deixar R1-F.1 Admin Shell para depois do polish público.
 
 ## Plano Atual de Fases
@@ -243,7 +247,8 @@ R1-E.9.6   — Developer Arcade Final QA
 R1-E.10.0  — Premium Product Polish Strategy
 R1-E.10.1  — Clean UI Pass & Smart Navbar
 R1-E.10.2  — Arcade Hub & Game Focus Mode
-R1-E.10.3  — Bug Maze Expansion
+R1-E.10.3  — Bug Maze Expansion & Mobile Gesture Controls
+R1-E.10.3.1 — Lab Density & Scale Calibration
 R1-E.10.4  — Snake/Runner/Tetris Polish
 R1-E.10.5  — Motion & Interaction System
 R1-E.10.6  — Public Experience QA
@@ -283,11 +288,12 @@ NEXT_PUBLIC_APP_URL=https://curriculum-vitae-babr.vercel.app
 
 ## Próximos Passos Reais
 
-- Concluir R1-E.10.2 com Arcade Hub e modo foco antes da R1-F.1.
+- Concluir R1-E.10.3/R1-E.10.3.1 com Bug Maze expandido, gestos mobile e calibração de densidade antes da R1-F.1.
 - Preservar `/curriculo` no polish atual, salvo bug crítico.
-- Manter Bug Maze Expansion e Snake walls on/off para fases próprias.
+- Manter Snake walls on/off para fase própria.
 - Preservar Runtime Runner, Bug Maze, Code Snake e Stack Tetris como jogos principais.
-- Validar o Arcade Hub renderizando um jogo ativo por vez.
+- Validar o Arcade Hub, o modo foco e os gestos mobile nos quatro jogos.
+- Validar o Lab em 100% de zoom para não depender de zoom manual do navegador.
 - Decidir quando remover ou arquivar `/visual-final-candidate`.
 - Adicionar screenshots reais dos projetos quando houver assets próprios.
 - Planejar Supabase, ranking real ou analytics real somente em fase futura explícita.
