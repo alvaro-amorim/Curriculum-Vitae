@@ -64,6 +64,14 @@ function handlePointer(event: PointerEvent<HTMLElement>) {
   event.currentTarget.style.setProperty("--ry", ((0.5 - y) * 8).toFixed(2));
 }
 
+function handleExperiencePointer(event: PointerEvent<HTMLElement>) {
+  const rect = event.currentTarget.getBoundingClientRect();
+  const x = Math.min(1, Math.max(0, (event.clientX - rect.left) / rect.width));
+  const y = Math.min(1, Math.max(0, (event.clientY - rect.top) / rect.height));
+  event.currentTarget.style.setProperty("--px", `${(x * 100).toFixed(2)}%`);
+  event.currentTarget.style.setProperty("--py", `${(y * 100).toFixed(2)}%`);
+}
+
 export function ProjectCaseStudy({ project }: ProjectCaseStudyProps) {
   const { locale, t } = usePortfolioUi();
   const copy = caseCopy[locale];
@@ -72,7 +80,7 @@ export function ProjectCaseStudy({ project }: ProjectCaseStudyProps) {
   const nextProject = projects[(projectIndex + 1) % projects.length];
 
   return (
-    <main className={styles.experience} style={projectAccentStyle(project)}>
+    <main className={styles.experience} onPointerMove={handleExperiencePointer} style={projectAccentStyle(project)}>
       <div className={styles.shell}>
         <section className={styles.caseHero}>
           <div className={styles.reveal}>

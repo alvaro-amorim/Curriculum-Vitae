@@ -47,6 +47,7 @@ const COYOTE_TIME_MS = 95;
 const JUMP_VELOCITY = 1.74;
 const REDUCED_JUMP_VELOCITY = 1.38;
 const SWIPE_THRESHOLD = 34;
+const MOBILE_QUERY = "(max-width: 640px)";
 
 const obstacleConfigs: Omit<Obstacle, "id" | "x">[] = [
   { label: "BUG", tone: "bug", width: 10, hitHeight: 0.22 },
@@ -89,13 +90,13 @@ const copy = {
     cleared: "erros evitados",
     near: "quase colisão",
     idleTitle: "Desvie dos erros antes do build cair.",
-    idleText: "Pressione Space ou ArrowUp, toque no palco ou use o botão para saltar sobre bugs, 404, timeout e falhas de build.",
+    idleText: "Mobile: deslize para cima ou toque para pular. Desktop: Space ou ArrowUp. Sobreviva aos bugs.",
     gameOverTitle: "Pipeline quebrado.",
     gameOverText: "Reinicie para tentar um score maior. O score local é mantido sem depender de banco ou ranking real.",
     rulesTitle: "Regras",
     rules: [
       "Space ou ArrowUp fazem o runtime saltar.",
-      "Toque no palco ou swipe up funciona no mobile.",
+      "No mobile, swipe up ou toque no palco funciona como salto.",
       "A velocidade aumenta com o tempo.",
       "Colisão encerra a rodada e salva o melhor score local.",
     ],
@@ -125,13 +126,13 @@ const copy = {
     cleared: "errors avoided",
     near: "near miss",
     idleTitle: "Avoid errors before the build fails.",
-    idleText: "Press Space or ArrowUp, tap the stage, or use the button to jump over bugs, 404, timeout, and build failures.",
+    idleText: "Mobile: swipe up or tap to jump. Desktop: Space or ArrowUp. Survive the bugs.",
     gameOverTitle: "Pipeline failed.",
     gameOverText: "Restart to chase a higher score. Local score is kept without a database or real ranking.",
     rulesTitle: "Rules",
     rules: [
       "Space or ArrowUp make the runtime jump.",
-      "Tapping the stage or swiping up works on mobile.",
+      "On mobile, swipe up or tap the stage to jump.",
       "Speed increases over time.",
       "Collision ends the run and saves the local best score.",
     ],
@@ -185,6 +186,7 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
   const [frame, setFrame] = useState<RunnerFrame>(() => createInitialFrame());
   const [bestScore, setBestScore] = useState(0);
   const [reducedMotion, setReducedMotion] = useState(false);
+  const [mobilePlayfield, setMobilePlayfield] = useState(false);
   const stateRef = useRef<RunnerFrame>(createInitialFrame());
   const statusRef = useRef<RunnerStatus>("idle");
   const rootRef = useRef<HTMLElement | null>(null);
@@ -203,11 +205,18 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- Browser preferences and localStorage are client-only.
     setBestScore(readBestScore());
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const mobileMedia = window.matchMedia(MOBILE_QUERY);
     setReducedMotion(media.matches);
+    setMobilePlayfield(mobileMedia.matches);
 
     const handleChange = () => setReducedMotion(media.matches);
+    const handleMobileChange = () => setMobilePlayfield(mobileMedia.matches);
     media.addEventListener("change", handleChange);
-    return () => media.removeEventListener("change", handleChange);
+    mobileMedia.addEventListener("change", handleMobileChange);
+    return () => {
+      media.removeEventListener("change", handleChange);
+      mobileMedia.removeEventListener("change", handleMobileChange);
+    };
   }, []);
 
   const speedLabel = useMemo(() => `${Math.round(frame.speed)}x`, [frame.speed]);
@@ -227,8 +236,8 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
     const next = {
       ...createInitialFrame(),
       obstacles: [],
-      speed: reducedMotion ? 16.5 : 18.5,
-      spawnIn: reducedMotion ? 1.45 : 1.22,
+      speed: reducedMotion ? 16.5 : mobilePlayfield ? 14.8 : 18.5,
+      spawnIn: reducedMotion ? 1.45 : mobilePlayfield ? 1.5 : 1.22,
     };
     completedRef.current = false;
     obstacleIdRef.current = 1;
@@ -236,7 +245,7 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
     pendingJumpAtRef.current = null;
     commitFrame(next);
     setStatus("running");
-  }, [commitFrame, reducedMotion]);
+  }, [commitFrame, mobilePlayfield, reducedMotion]);
 
   const finishRun = useCallback(
     (next: RunnerFrame) => {
@@ -415,7 +424,10 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
       }
 
       const elapsed = current.elapsed + delta;
-      const speed = Math.min(reducedMotion ? 32 : 41, (reducedMotion ? 16.5 : 18.5) + elapsed * (reducedMotion ? 0.48 : 0.68));
+      const baseSpeed = reducedMotion ? 16.5 : mobilePlayfield ? 14.8 : 18.5;
+      const maxSpeed = reducedMotion ? 32 : mobilePlayfield ? 29 : 41;
+      const acceleration = reducedMotion ? 0.48 : mobilePlayfield ? 0.36 : 0.68;
+      const speed = Math.min(maxSpeed, baseSpeed + elapsed * acceleration);
       const moved = current.obstacles.map((obstacle) => ({
         ...obstacle,
         x: obstacle.x - speed * delta,
@@ -428,13 +440,18 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
       if (spawnIn <= 0) {
         obstacleIdRef.current += 1;
         obstacles.push(createObstacle(obstacleIdRef.current));
-        const cadence = Math.max(reducedMotion ? 1.34 : 1.16, 1.72 - elapsed * 0.012);
-        spawnIn = cadence + Math.random() * 0.42;
+        const cadence = Math.max(
+          reducedMotion ? 1.34 : mobilePlayfield ? 1.42 : 1.16,
+          (mobilePlayfield ? 1.9 : 1.72) - elapsed * (mobilePlayfield ? 0.007 : 0.012),
+        );
+        spawnIn = cadence + Math.random() * (mobilePlayfield ? 0.5 : 0.42);
       }
 
       const collision = obstacles.some((obstacle) => {
-        const hitsRunnerX = obstacle.x < 17.2 && obstacle.x + obstacle.width > 14.4;
-        return elapsed > 1 && hitsRunnerX && runnerY < obstacle.hitHeight * 0.88;
+        const hitsRunnerX = mobilePlayfield
+          ? obstacle.x < 15.7 && obstacle.x + obstacle.width > 13.2
+          : obstacle.x < 17.2 && obstacle.x + obstacle.width > 14.4;
+        return elapsed > (mobilePlayfield ? 1.35 : 1) && hitsRunnerX && runnerY < obstacle.hitHeight * (mobilePlayfield ? 0.68 : 0.88);
       });
 
       const cleared = current.cleared + clearedNow;
@@ -467,7 +484,7 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
 
     animationFrame = window.requestAnimationFrame(tick);
     return () => window.cancelAnimationFrame(animationFrame);
-  }, [commitFrame, finishRun, reducedMotion, status]);
+  }, [commitFrame, finishRun, mobilePlayfield, reducedMotion, status]);
 
   function handleKeyDown(event: KeyboardEvent<HTMLDivElement>) {
     if (event.code === "Space" || event.code === "ArrowUp") {
@@ -580,7 +597,11 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
           <div className={styles.runnerPanel}>
             <p className={styles.gameStatus}>{t.status[status]}</p>
             <div className={styles.runnerControls}>
-              <button className={`${styles.runnerAction} ${styles.runnerActionPrimary}`} onClick={jump} type="button">
+              <button
+                className={`${styles.runnerAction} ${styles.runnerActionPrimary} ${status === "running" ? styles.mobileGameplayControl : ""}`}
+                onClick={jump}
+                type="button"
+              >
                 {primaryLabel}
               </button>
               <button className={styles.runnerAction} disabled={status === "idle" || status === "gameOver"} onClick={togglePause} type="button">

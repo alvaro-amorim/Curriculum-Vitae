@@ -51,6 +51,7 @@ export function ProjectCard({ project, compact = false, index = 0 }: ProjectCard
   return (
     <article
       className={styles.scene}
+      data-motion-surface
       onPointerMove={handlePointer}
       style={projectAccentStyle(project)}
       tabIndex={-1}

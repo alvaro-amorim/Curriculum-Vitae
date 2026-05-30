@@ -1,4 +1,21 @@
 @media (prefers-reduced-motion: no-preference) {
+  [data-motion-surface] {
+    transition:
+      transform var(--motion-medium) var(--ease-signature),
+      border-color var(--motion-medium) var(--ease-signature),
+      background var(--motion-medium) var(--ease-signature),
+      box-shadow var(--motion-medium) var(--ease-signature),
+      opacity var(--motion-medium) var(--ease-standard);
+  }
+
+  [data-motion-surface]:where(:hover, :focus-within) {
+    transform: translateY(calc(var(--motion-distance-sm) * -1));
+  }
+
+  [data-motion-press]:active {
+    transform: translateY(0) scale(0.985);
+  }
+
   .interactive-surface {
     transition:
       transform var(--duration-base) var(--ease-standard),
@@ -17,6 +34,18 @@
 
   .terminal-caret {
     animation: terminal-caret 1s steps(2, end) infinite;
+  }
+}
+
+@keyframes system-surface-in {
+  from {
+    opacity: 0;
+    transform: translateY(var(--motion-distance-md));
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
@@ -59,5 +88,10 @@
 
   .terminal-caret {
     opacity: 1;
+  }
+
+  [data-motion-surface],
+  [data-motion-press] {
+    transform: none !important;
   }
 }

@@ -157,7 +157,7 @@ const copy = {
     },
     idleTitle: "Compile módulos em linhas estáveis.",
     idleText:
-      "Use setas ou WASD para mover e rotacionar. Space inicia e faz hard drop durante a rodada; P pausa; R reinicia.",
+      "Mobile: deslize para mover/descer e para cima para rotacionar. Desktop: setas/WASD e Space.",
     gameOverTitle: "Build quebrado.",
     gameOverText: "A pilha saturou. O melhor score local foi salvo e o resultado foi enviado sem bloquear a interface.",
     controlsTitle: "Controles",
@@ -214,7 +214,7 @@ const copy = {
     },
     idleTitle: "Compile modules into stable lines.",
     idleText:
-      "Use arrows or WASD to move and rotate. Space starts and hard-drops during a run; P pauses; R restarts.",
+      "Mobile: swipe to move/drop and swipe up to rotate. Desktop: arrows/WASD and Space.",
     gameOverTitle: "Build broken.",
     gameOverText: "The stack saturated. Local best score was saved and the result was submitted without blocking the UI.",
     controlsTitle: "Controls",

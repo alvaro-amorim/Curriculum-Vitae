@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import type { MouseEvent as ReactMouseEvent, ReactNode } from "react";
 import { createContext, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 
@@ -57,24 +57,55 @@ function resolveInitialLocale(): Locale {
   return stored === "en" ? "en" : "pt";
 }
 
+function formatRouteLabel(pathname: string, locale: Locale) {
+  const routeNames: Record<string, { pt: string; en: string }> = {
+    "/": { pt: "home", en: "home" },
+    "/projetos": { pt: "projetos", en: "projects" },
+    "/lab": { pt: "lab", en: "lab" },
+    "/curriculo": { pt: "currículo", en: "resume" },
+    "/visual-final-candidate": { pt: "visual", en: "visual" },
+  };
+  const route = routeNames[pathname] ?? (pathname.startsWith("/projetos/") ? { pt: "case", en: "case" } : { pt: "rota", en: "route" });
+
+  return locale === "pt" ? `abrindo ${route.pt}` : `opening ${route.en}`;
+}
+
+function formatThemeLabel(nextTheme: ThemeName, locale: Locale) {
+  if (locale === "pt") {
+    return nextTheme === "light" ? "calibrando modo claro" : "calibrando modo escuro";
+  }
+
+  return nextTheme === "light" ? "calibrating light mode" : "calibrating dark mode";
+}
+
+function formatLocaleLabel(currentLocale: Locale, nextLocale: Locale) {
+  return `${currentLocale.toUpperCase()} -> ${nextLocale.toUpperCase()}`;
+}
+
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [theme, setTheme] = useState<ThemeName>(() => resolveInitialTheme());
   const [locale, setLocaleState] = useState<Locale>("pt");
   const [transitionKind, setTransitionKind] = useState<TransitionKind>("idle");
+  const [transitionLabel, setTransitionLabel] = useState("");
+  const [transitionSequence, setTransitionSequence] = useState(0);
   const firstRoute = useRef(true);
+  const localeRef = useRef<Locale>("pt");
   const transitionTimer = useRef<number | null>(null);
 
-  const triggerTransition = useCallback((kind: Exclude<TransitionKind, "idle">) => {
+  const triggerTransition = useCallback((kind: Exclude<TransitionKind, "idle">, label = "") => {
     if (transitionTimer.current) {
       window.clearTimeout(transitionTimer.current);
     }
 
+    setTransitionSequence((current) => current + 1);
+    setTransitionLabel(label);
     setTransitionKind(kind);
     transitionTimer.current = window.setTimeout(() => {
       setTransitionKind("idle");
+      setTransitionLabel("");
       transitionTimer.current = null;
-    }, kind === "route" ? 520 : 680);
+    }, kind === "route" ? 780 : kind === "theme" ? 860 : 740);
   }, []);
 
   useEffect(() => {
@@ -95,12 +126,16 @@ export function AppShell({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
+    localeRef.current = locale;
+  }, [locale]);
+
+  useEffect(() => {
     if (firstRoute.current) {
       firstRoute.current = false;
       return;
     }
 
-    triggerTransition("route");
+    triggerTransition("route", formatRouteLabel(pathname, localeRef.current));
   }, [pathname, triggerTransition]);
 
   useLayoutEffect(() => {
@@ -110,22 +145,54 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   useLayoutEffect(() => {
     document.documentElement.lang = locale === "pt" ? "pt-BR" : "en-US";
+    document.documentElement.dataset.locale = locale;
   }, [locale]);
 
   const setLocale = useCallback((nextLocale: Locale) => {
-    triggerTransition("locale");
+    triggerTransition("locale", formatLocaleLabel(locale, nextLocale));
     window.localStorage.setItem(STORAGE_KEYS.locale, nextLocale);
     setLocaleState(nextLocale);
-  }, [triggerTransition]);
+  }, [locale, triggerTransition]);
 
   const toggleTheme = useCallback(() => {
-    triggerTransition("theme");
     setTheme((current) => {
       const nextTheme = current === "dark" ? "light" : "dark";
+      triggerTransition("theme", formatThemeLabel(nextTheme, locale));
       window.localStorage.setItem(STORAGE_KEYS.theme, nextTheme);
       return nextTheme;
     });
-  }, [triggerTransition]);
+  }, [locale, triggerTransition]);
+
+  const handleShellClick = useCallback(
+    (event: ReactMouseEvent<HTMLDivElement>) => {
+      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+        return;
+      }
+
+      const target = event.target instanceof Element ? event.target : null;
+      const anchor = target?.closest("a[href]");
+
+      if (!(anchor instanceof HTMLAnchorElement) || anchor.target || anchor.hasAttribute("download")) {
+        return;
+      }
+
+      const url = new URL(anchor.href, window.location.href);
+
+      if (url.origin !== window.location.origin) {
+        return;
+      }
+
+      const currentPath = `${window.location.pathname}${window.location.search}`;
+      const nextPath = `${url.pathname}${url.search}`;
+
+      if (nextPath === currentPath) {
+        return;
+      }
+
+      triggerTransition("route", formatRouteLabel(url.pathname, locale));
+    },
+    [locale, triggerTransition],
+  );
 
   const value = useMemo<PortfolioUiContextValue>(
     () => ({
@@ -141,8 +208,15 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   return (
     <PortfolioUiContext.Provider value={value}>
-      <div className={styles.appShell} data-transition-kind={transitionKind}>
-        <Topbar onNavigateStart={() => triggerTransition("route")} />
+      <div
+        className={styles.appShell}
+        data-locale={locale}
+        data-transition-label={transitionLabel}
+        data-transition-kind={transitionKind}
+        data-transitioning={transitionKind !== "idle" ? "true" : "false"}
+        onClickCapture={handleShellClick}
+      >
+        <Topbar />
         <CommandPalette />
         <div
           className={styles.pageFrame}
@@ -151,7 +225,42 @@ export function AppShell({ children }: { children: ReactNode }) {
         >
           {children}
         </div>
-        <div aria-hidden="true" className={styles.transitionVeil} data-active={transitionKind !== "idle"} data-kind={transitionKind} />
+        <div
+          aria-hidden="true"
+          className={styles.transitionVeil}
+          data-active={transitionKind !== "idle"}
+          data-kind={transitionKind}
+          key={`veil-${transitionKind}-${transitionSequence}`}
+        />
+        <div
+          aria-hidden="true"
+          className={styles.themeSweep}
+          data-active={transitionKind === "theme"}
+          key={`theme-sweep-${transitionKind}-${transitionSequence}`}
+        />
+        <div
+          aria-hidden="true"
+          className={styles.localeScan}
+          data-active={transitionKind === "locale"}
+          key={`locale-scan-${transitionKind}-${transitionSequence}`}
+        />
+        <div
+          aria-hidden="true"
+          className={styles.transitionStatus}
+          data-active={transitionKind !== "idle"}
+          data-kind={transitionKind}
+          key={`status-${transitionKind}-${transitionSequence}`}
+        >
+          <span>{transitionLabel}</span>
+          <i />
+        </div>
+        <div
+          aria-hidden="true"
+          className={styles.motionRail}
+          data-active={transitionKind !== "idle"}
+          data-kind={transitionKind}
+          key={`rail-${transitionKind}-${transitionSequence}`}
+        />
       </div>
     </PortfolioUiContext.Provider>
   );

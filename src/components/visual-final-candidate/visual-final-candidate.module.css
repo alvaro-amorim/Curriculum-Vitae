@@ -40,6 +40,23 @@
   text-rendering: geometricPrecision;
 }
 
+.candidate::before {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  content: "";
+  pointer-events: none;
+  background:
+    radial-gradient(circle at var(--px) var(--py), color-mix(in srgb, var(--cyan) 10%, transparent), transparent 18rem),
+    linear-gradient(116deg, transparent 0 42%, color-mix(in srgb, var(--cyan) 8%, transparent) 50%, transparent 58%),
+    radial-gradient(circle at 18% 82%, color-mix(in srgb, var(--green) 7%, transparent), transparent 22rem);
+  opacity: 0.68;
+  transform: translate3d(calc(var(--mx) * 0.01px), calc(var(--my) * 0.01px), 0);
+  transition:
+    opacity var(--motion-slow, 520ms) var(--ease-signature, cubic-bezier(0.16, 1, 0.3, 1)),
+    transform var(--motion-slow, 520ms) var(--ease-signature, cubic-bezier(0.16, 1, 0.3, 1));
+}
+
 :global([data-theme="light"]) .candidate,
 :global(html[data-theme="light"]) .candidate {
   --bg: #f8fbff;
@@ -573,6 +590,30 @@
   animation: heroCopyIn 640ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
+.ready .heroCopy p,
+.ready .heroCopy h1,
+.ready .heroCopy > span,
+.ready .heroCopy .actions,
+.ready .heroCopy .quickNav {
+  animation: signatureTextIn var(--motion-slow, 520ms) var(--ease-signature, cubic-bezier(0.16, 1, 0.3, 1)) both;
+}
+
+.ready .heroCopy h1 {
+  animation-delay: 70ms;
+}
+
+.ready .heroCopy > span {
+  animation-delay: 130ms;
+}
+
+.ready .heroCopy .actions {
+  animation-delay: 190ms;
+}
+
+.ready .heroCopy .quickNav {
+  animation-delay: 240ms;
+}
+
 .heroCopy p,
 .sectionHeading p,
 .productMeta p,
@@ -665,9 +706,12 @@
 
 .actions a {
   display: inline-flex;
+  position: relative;
+  isolation: isolate;
   min-height: 3rem;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
   padding: 0.85rem 1.16rem;
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 999px;
@@ -676,13 +720,34 @@
   font-weight: 820;
   text-decoration: none;
   transition:
-    border-color 180ms ease,
-    background 180ms ease,
-    transform 180ms ease;
+    border-color var(--motion-fast, 150ms) var(--ease-signature, cubic-bezier(0.16, 1, 0.3, 1)),
+    background var(--motion-fast, 150ms) var(--ease-signature, cubic-bezier(0.16, 1, 0.3, 1)),
+    box-shadow var(--motion-fast, 150ms) var(--ease-signature, cubic-bezier(0.16, 1, 0.3, 1)),
+    transform var(--motion-fast, 150ms) var(--ease-signature, cubic-bezier(0.16, 1, 0.3, 1));
+}
+
+.actions a::before {
+  position: absolute;
+  inset: -1px;
+  z-index: 0;
+  border-radius: inherit;
+  background: linear-gradient(110deg, transparent 0 30%, rgba(255, 255, 255, 0.18) 48%, transparent 64%);
+  content: "";
+  opacity: 0;
+  transform: translateX(-58%);
+  transition:
+    opacity var(--motion-medium, 280ms) var(--ease-signature, cubic-bezier(0.16, 1, 0.3, 1)),
+    transform var(--motion-medium, 280ms) var(--ease-signature, cubic-bezier(0.16, 1, 0.3, 1));
 }
 
 .actions a:hover {
   transform: translateY(-2px);
+}
+
+.actions a:hover::before,
+.actions a:focus-visible::before {
+  opacity: 1;
+  transform: translateX(58%);
 }
 
 .primary {
@@ -1043,6 +1108,9 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.15),
     0 46px 132px rgba(0, 0, 0, 0.44),
     0 0 112px color-mix(in srgb, var(--project-accent, var(--cyan)) 15%, transparent);
+  transform:
+    translate3d(calc(var(--rx, 0) * 0.42px), calc(var(--ry, 0) * -0.52px), 0)
+    scale(1.006);
 }
 
 .activeScreen {
@@ -2906,8 +2974,8 @@
   transform: translateY(26px);
   opacity: 0;
   transition:
-    opacity 580ms ease,
-    transform 580ms cubic-bezier(0.16, 1, 0.3, 1);
+    opacity var(--motion-slow, 520ms) var(--ease-signature, cubic-bezier(0.16, 1, 0.3, 1)),
+    transform var(--motion-slow, 520ms) var(--ease-signature, cubic-bezier(0.16, 1, 0.3, 1));
 }
 
 .candidate [data-candidate-reveal][data-visible="true"] {
@@ -3092,6 +3160,20 @@
   }
   to {
     transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes signatureTextIn {
+  from {
+    transform: translateY(0.55rem);
+    filter: blur(4px);
+    opacity: 0.001;
+  }
+
+  to {
+    transform: translateY(0);
+    filter: blur(0);
     opacity: 1;
   }
 }
@@ -3717,9 +3799,22 @@
     display: none;
   }
 
+  .candidate::before {
+    opacity: 0.24;
+    transform: none;
+  }
+
   .candidate [data-candidate-reveal] {
     transform: none;
     opacity: 1;
+  }
+
+  .ready .heroCopy p,
+  .ready .heroCopy h1,
+  .ready .heroCopy > span,
+  .ready .heroCopy .actions,
+  .ready .heroCopy .quickNav {
+    animation: none;
   }
 
   .heroStage,

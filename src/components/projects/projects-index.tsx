@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import type { PointerEvent } from "react";
 
 import { projects } from "@/content/projects";
 import { usePortfolioUi } from "@/components/layout/app-shell";
@@ -9,6 +10,14 @@ import { formatProjectTech } from "./project-card";
 import { ProjectGrid } from "./project-grid";
 import styles from "./project-experience.module.css";
 import { ProjectVisualFrame, projectAccentStyle } from "./project-visual-frame";
+
+function handleExperiencePointer(event: PointerEvent<HTMLElement>) {
+  const rect = event.currentTarget.getBoundingClientRect();
+  const x = Math.min(1, Math.max(0, (event.clientX - rect.left) / rect.width));
+  const y = Math.min(1, Math.max(0, (event.clientY - rect.top) / rect.height));
+  event.currentTarget.style.setProperty("--px", `${(x * 100).toFixed(2)}%`);
+  event.currentTarget.style.setProperty("--py", `${(y * 100).toFixed(2)}%`);
+}
 
 export function ProjectsIndex() {
   const { locale, t } = usePortfolioUi();
@@ -21,7 +30,7 @@ export function ProjectsIndex() {
   const viewCase = locale === "pt" ? "Ver estudo" : "View case study";
 
   return (
-    <main className={styles.experience} style={projectAccentStyle(featuredProject)}>
+    <main className={styles.experience} onPointerMove={handleExperiencePointer} style={projectAccentStyle(featuredProject)}>
       <div className={styles.shell}>
         <section className={styles.hero}>
           <div className={styles.reveal}>

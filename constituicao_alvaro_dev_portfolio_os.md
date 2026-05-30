@@ -56,12 +56,12 @@ Apesar disso, a versão atual ainda demonstra mais domínio de HTML/CSS/JS vanil
 
 ## Estado Atual Real
 
-Atualização R1-E.10.4 — Snake/Runner/Tetris Polish & Lab Archive Cleanup.
+Atualização R1-E.10.5.2 — Mobile Arcade Final Polish.
 
 Checkpoint publicado antes desta fase:
 
 ```txt
-fce20dd feat: expand bug maze and tune arcade density
+18f38f2 feat: polish arcade games and cleanup lab
 ```
 
 Estado real do produto após revisão humana em vídeo:
@@ -84,7 +84,10 @@ Estado real do produto após revisão humana em vídeo:
 - R1-E.10.1 foi checkpointada com clean UI pass, Smart Navbar funcional, scroll root real e remoção da faixa residual.
 - R1-E.10.2 foi checkpointada com Arcade Hub, um jogo ativo por vez e Game Focus Mode desktop/mobile.
 - R1-E.10.3/R1-E.10.3.1 foi checkpointada com Bug Maze expandido, controles mobile por swipe nos quatro jogos finais e densidade visual calibrada em 100% de zoom.
-- A fase atual adiciona paredes on/off no Code Snake, polish visual leve em Runtime Runner/Stack Tetris e remove treinos/experimentos da UI principal do Lab, antes da R1-F.1.
+- R1-E.10.4 foi checkpointada com walls on/off no Code Snake, polish visual leve de Runtime Runner/Stack Tetris e limpeza da UI principal do Lab.
+- R1-E.10.5 criou a primeira camada do Signature Motion & Interaction System para home, navegação, projetos/cases e Lab.
+- R1-E.10.5.1 fortaleceu transições de rota, tema e idioma após revisão humana, antes da R1-F.1.
+- A fase atual fecha o polish mobile do Arcade em 400x858, com swipe como controle primário, instruções compactas e ajustes de escala/performance dos quatro jogos finais.
 
 Direção final desejada do Developer Arcade:
 
@@ -135,15 +138,14 @@ Estado de produção na R1-E.9:
 
 Próximo passo oficial:
 
-- Executar R1-E.10.4 — Snake/Runner/Tetris Polish & Lab Archive Cleanup sem alterar `/curriculo`, salvo bug crítico.
-- Adicionar paredes on/off ao Code Snake, com paredes desligadas por padrão e wrap-around nas bordas.
-- Preservar swipe mobile nos quatro jogos finais, mantendo botões e D-pads existentes.
-- Polir visualmente Runtime Runner e Stack Tetris sem reescrever mecânica.
-- Remover da UI principal os cards/blocos antigos de treino, quiz/foundation, Debug Arena e Latency Lab.
-- Preservar Arcade Hub e Game Focus Mode sem reestruturar a página.
+- Executar R1-E.10.5.2 — Mobile Arcade Final Polish sem redesenhar `/curriculo`.
+- Preservar route transitions, loading/lazy visual, theme sweep e language scan sem dependência nova.
+- Fechar o Arcade mobile em 400x858 com foco por jogo, controles de gameplay ocultos no mobile, swipe como controle primário, instruções idle compactas e ajustes de escala/performance.
+- Melhorar home, projetos/cases e Lab com motion de propósito, sem excesso de glow/pulse.
+- Preservar Arcade Hub, Game Focus Mode, Smart Navbar e regras dos jogos.
 - Adiar R1-F.1 Admin Shell até o polish público estar planejado e aprovado.
 - Manter Runtime Runner, Bug Maze, Code Snake e Stack Tetris preservados.
-- Criar checkpoint somente após revisão visual humana do Code Snake walls toggle, polish leve e limpeza do Lab.
+- Criar checkpoint somente após revisão visual humana do Signature Motion & Interaction System reforçado e do polish mobile do Arcade.
 
 Plano oficial pós-revisão:
 
@@ -164,6 +166,8 @@ R1-E.10.3  — Bug Maze Expansion & Mobile Gesture Controls
 R1-E.10.3.1 — Lab Density & Scale Calibration
 R1-E.10.4  — Snake/Runner/Tetris Polish
 R1-E.10.5  — Motion & Interaction System
+R1-E.10.5.1 — Strong Route, Theme & Language Transitions
+R1-E.10.5.2 — Mobile Arcade Final Polish
 R1-E.10.6  — Public Experience QA
 R1-F.0     — Project Assets Admin Planning
 R1-F.1     — Protected Admin Shell
@@ -765,10 +769,10 @@ Regras permanentes:
 A fase em execução local é:
 
 ```txt
-R1-E.10.4 — Snake/Runner/Tetris Polish & Lab Archive Cleanup
+R1-E.10.5.2 — Mobile Arcade Final Polish
 ```
 
-Essa fase adiciona paredes on/off ao Code Snake, com paredes desligadas por padrão e wrap-around nas bordas, preserva os gestos mobile, aplica polish visual leve em Runtime Runner/Stack Tetris e remove treinos/experimentos da UI principal do Lab. `/curriculo` e Admin Shell permanecem fora desta fase.
+Essa fase fecha o polish mobile do Developer Arcade depois do reforço de route/theme/language transitions. Ela ajusta foco 400x858, escala dos jogos, instruções compactas e controles por swipe como padrão mobile sem redesenhar `/curriculo`, sem alterar regras principais dos jogos e sem iniciar Admin Shell.
 
 A fase atual não implementa Admin, Supabase, ranking real, analytics real ou persistência real.
 

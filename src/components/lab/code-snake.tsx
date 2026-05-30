@@ -51,6 +51,7 @@ const GRID_SIZE = 13;
 const BEST_SCORE_KEY = "alvaro-dev-code-snake-best-v1";
 const WALLS_KEY = "alvaro-dev-code-snake-walls-v1";
 const SWIPE_THRESHOLD = 34;
+const MOBILE_QUERY = "(max-width: 640px)";
 const tokenKinds: TokenKind[] = ["TOKEN", "API", "CACHE", "FIX", "TEST", "TYPE"];
 const hazardKinds: HazardKind[] = ["BUG", "MEMORY LEAK", "TYPE ERROR", "TIMEOUT", "NULL", "500"];
 
@@ -99,7 +100,7 @@ const copy = {
     },
     idleTitle: "Colete tokens sem quebrar a cadeia.",
     idleText:
-      "Use setas, WASD, swipe ou o D-pad. Por padrão, as paredes ficam OFF: atravessar uma borda sai pela outra.",
+      "Mobile: deslize para mudar direção. Paredes OFF por padrão: atravesse bordas. Desktop: setas ou WASD.",
     gameOverTitle: "Pipeline colidiu.",
     gameOverText: "A colisão salva o melhor score local e envia o resultado sem bloquear a interface.",
     controlsTitle: "Controles",
@@ -166,7 +167,7 @@ const copy = {
     },
     idleTitle: "Collect tokens without breaking the chain.",
     idleText:
-      "Use arrows, WASD, swipe, or the D-pad. By default, walls are OFF: crossing one edge exits through the opposite edge.",
+      "Mobile: swipe to turn. Walls are OFF by default: cross edges with wrap-around. Desktop: arrows or WASD.",
     gameOverTitle: "Pipeline collided.",
     gameOverText: "The collision saves the local best score and submits the result without blocking the interface.",
     controlsTitle: "Controls",
@@ -333,6 +334,7 @@ export function CodeSnake({ locale, onComplete }: CodeSnakeProps) {
   const [bestScore, setBestScore] = useState(0);
   const [wallsEnabled, setWallsEnabled] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
+  const [mobilePlayfield, setMobilePlayfield] = useState(false);
   const frameRef = useRef<SnakeFrame>(createInitialFrame());
   const statusRef = useRef<SnakeStatus>("idle");
   const rootRef = useRef<HTMLElement | null>(null);
@@ -351,11 +353,18 @@ export function CodeSnake({ locale, onComplete }: CodeSnakeProps) {
     setBestScore(readBestScore());
     setWallsEnabled(readWallsEnabled());
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const mobileMedia = window.matchMedia(MOBILE_QUERY);
     setReducedMotion(media.matches);
+    setMobilePlayfield(mobileMedia.matches);
 
     const handleChange = () => setReducedMotion(media.matches);
+    const handleMobileChange = () => setMobilePlayfield(mobileMedia.matches);
     media.addEventListener("change", handleChange);
-    return () => media.removeEventListener("change", handleChange);
+    mobileMedia.addEventListener("change", handleMobileChange);
+    return () => {
+      media.removeEventListener("change", handleChange);
+      mobileMedia.removeEventListener("change", handleMobileChange);
+    };
   }, []);
 
   const toggleWalls = useCallback(() => {
@@ -366,7 +375,14 @@ export function CodeSnake({ locale, onComplete }: CodeSnakeProps) {
     });
   }, []);
 
-  const delay = useMemo(() => Math.max(reducedMotion ? 178 : 118, (reducedMotion ? 286 : 246) - frame.collected * 11), [frame.collected, reducedMotion]);
+  const delay = useMemo(
+    () =>
+      Math.max(
+        reducedMotion ? 178 : mobilePlayfield ? 148 : 118,
+        (reducedMotion ? 286 : mobilePlayfield ? 268 : 246) - frame.collected * (mobilePlayfield ? 8 : 11),
+      ),
+    [frame.collected, mobilePlayfield, reducedMotion],
+  );
   const cadenceLabel = useMemo(() => `${Math.round(1000 / delay)}/s`, [delay]);
   const head = frame.snake[0] ?? { x: 0, y: 0 };
   const nearHazards = useMemo(
@@ -458,9 +474,11 @@ export function CodeSnake({ locale, onComplete }: CodeSnakeProps) {
       }
 
       queuedDirectionRef.current = direction;
-      commitFrame({ ...frameRef.current, feedback: "turn", pulse: frameRef.current.pulse + 1 });
+      if (!mobilePlayfield || statusRef.current !== "running") {
+        commitFrame({ ...frameRef.current, feedback: "turn", pulse: frameRef.current.pulse + 1 });
+      }
     },
-    [commitFrame, startGame],
+    [commitFrame, mobilePlayfield, startGame],
   );
 
   const handleStageTouchStart = useCallback((event: TouchEvent<HTMLDivElement>) => {

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import dynamic from "next/dynamic";
+import type { PointerEvent } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { usePortfolioUi } from "@/components/layout/app-shell";
@@ -16,6 +17,14 @@ type ArcadeGameId = Extract<LabGameId, "runtime" | "bug-maze" | "code-snake" | "
 
 function GameLoading() {
   return <div aria-hidden="true" className={styles.gameLoading} />;
+}
+
+function handleLabPointer(event: PointerEvent<HTMLElement>) {
+  const rect = event.currentTarget.getBoundingClientRect();
+  const x = Math.min(1, Math.max(0, (event.clientX - rect.left) / rect.width));
+  const y = Math.min(1, Math.max(0, (event.clientY - rect.top) / rect.height));
+  event.currentTarget.style.setProperty("--lab-px", `${(x * 100).toFixed(2)}%`);
+  event.currentTarget.style.setProperty("--lab-py", `${(y * 100).toFixed(2)}%`);
 }
 
 const RuntimeRunner = dynamic(() => import("@/components/lab/runtime-runner").then((module) => module.RuntimeRunner), {
@@ -69,9 +78,9 @@ const labCopy = {
     snakeCardText: "Snake de programação com wrap-around, paredes opcionais, tokens e bugs.",
     tetrisCardText: "Puzzle de build com módulos e linhas compiladas.",
     runtimeControls: "Space / ArrowUp / toque",
-    mazeControls: "Setas / WASD / swipe / D-pad",
-    snakeControls: "Setas / WASD / swipe / D-pad",
-    tetrisControls: "Setas / WASD / swipe / Space",
+    mazeControls: "Swipe no mobile / Setas no desktop",
+    snakeControls: "Swipe no mobile / Setas no desktop",
+    tetrisControls: "Swipe no mobile / Space no desktop",
     session: "score da sessão",
     arcadeStatus: "Arcade final jogável",
     futureStatus: "em preparação",
@@ -112,9 +121,9 @@ const labCopy = {
     snakeCardText: "Programming snake with wrap-around, optional walls, tokens, and bugs.",
     tetrisCardText: "Build puzzle with modules and compiled lines.",
     runtimeControls: "Space / ArrowUp / tap",
-    mazeControls: "Arrows / WASD / swipe / D-pad",
-    snakeControls: "Arrows / WASD / swipe / D-pad",
-    tetrisControls: "Arrows / WASD / swipe / Space",
+    mazeControls: "Mobile swipe / desktop arrows",
+    snakeControls: "Mobile swipe / desktop arrows",
+    tetrisControls: "Mobile swipe / desktop Space",
     session: "session score",
     arcadeStatus: "Playable final arcade",
     futureStatus: "in preparation",
@@ -316,7 +325,7 @@ export function DeveloperLab() {
   }
 
   return (
-    <main className={styles.labExperience}>
+    <main className={styles.labExperience} onPointerMove={handleLabPointer}>
       <div className={styles.shell}>
         <section className={styles.hero}>
           <div>
@@ -390,6 +399,7 @@ export function DeveloperLab() {
             aria-labelledby="active-arcade-game-title"
             className={styles.focusShell}
             data-game={activeGame}
+            data-switching={isSwitchingGame ? "true" : "false"}
             ref={focusRef}
           >
             <div className={styles.focusHeader}>

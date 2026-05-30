@@ -1,4 +1,6 @@
 .labExperience {
+  --lab-px: 76%;
+  --lab-py: 18%;
   --lab-accent-a: #67e8f9;
   --lab-accent-b: #8b5cf6;
   --lab-accent-c: #34d399;
@@ -11,10 +13,13 @@
   min-height: calc(100vh - 4rem);
   padding: clamp(1.4rem, 4vw, 4rem) clamp(1rem, 3vw, 2.25rem) clamp(2.25rem, 5vw, 4.5rem);
   background:
-    radial-gradient(circle at 76% 18%, rgba(103, 232, 249, 0.12), transparent 28rem),
+    radial-gradient(circle at var(--lab-px) var(--lab-py), rgba(103, 232, 249, 0.14), transparent 28rem),
     radial-gradient(circle at 18% 52%, rgba(139, 92, 246, 0.14), transparent 34rem),
     linear-gradient(180deg, #02040a 0%, #040713 48%, #05030c 100%);
   color: #f8fbff;
+  transition:
+    background var(--motion-theme) var(--ease-signature),
+    color var(--motion-medium) var(--ease-standard);
 }
 
 :global([data-theme="light"]) .labExperience {
@@ -25,7 +30,7 @@
   --lab-muted: rgba(15, 23, 42, 0.68);
   --lab-panel: rgba(255, 255, 255, 0.82);
   background:
-    radial-gradient(circle at 76% 18%, rgba(8, 145, 178, 0.1), transparent 28rem),
+    radial-gradient(circle at var(--lab-px) var(--lab-py), rgba(8, 145, 178, 0.11), transparent 28rem),
     radial-gradient(circle at 18% 52%, rgba(109, 40, 217, 0.1), transparent 34rem),
     linear-gradient(180deg, #f8fbff 0%, #eef4fb 48%, #e7eef7 100%);
   color: var(--lab-ink);
@@ -145,6 +150,7 @@
 .actionSecondary,
 .actionGhost {
   display: inline-flex;
+  position: relative;
   min-width: 0;
   align-items: center;
   justify-content: center;
@@ -159,11 +165,36 @@
   white-space: normal;
   cursor: pointer;
   font-family: inherit;
+  overflow: hidden;
   transition:
-    transform 220ms cubic-bezier(0.16, 1, 0.3, 1),
-    border-color 220ms cubic-bezier(0.16, 1, 0.3, 1),
-    background 220ms cubic-bezier(0.16, 1, 0.3, 1),
-    box-shadow 220ms cubic-bezier(0.16, 1, 0.3, 1);
+    transform var(--motion-medium) var(--ease-signature),
+    border-color var(--motion-medium) var(--ease-signature),
+    background var(--motion-medium) var(--ease-signature),
+    box-shadow var(--motion-medium) var(--ease-signature);
+}
+
+.actionPrimary::before,
+.actionSecondary::before,
+.actionGhost::before {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent, color-mix(in srgb, var(--lab-accent-a) 22%, transparent), transparent);
+  content: "";
+  opacity: 0;
+  transform: translateX(-76%);
+  transition:
+    opacity var(--motion-fast) var(--ease-signature),
+    transform var(--motion-slow) var(--ease-signature);
+}
+
+.actionPrimary:hover::before,
+.actionSecondary:hover::before,
+.actionGhost:hover::before,
+.actionPrimary:focus-visible::before,
+.actionSecondary:focus-visible::before,
+.actionGhost:focus-visible::before {
+  opacity: 1;
+  transform: translateX(76%);
 }
 
 .actionPrimary {
@@ -258,6 +289,11 @@
     0 24px 90px rgba(0, 0, 0, 0.36),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(18px);
+  transition:
+    border-color var(--motion-medium) var(--ease-signature),
+    background var(--motion-medium) var(--ease-signature),
+    box-shadow var(--motion-medium) var(--ease-signature),
+    transform var(--motion-medium) var(--ease-signature);
 }
 
 :global([data-theme="light"]) .heroPanel,
@@ -394,9 +430,24 @@
 }
 
 .arcadeHub {
+  position: relative;
+  overflow: hidden;
   margin-top: clamp(0.85rem, 2.2vw, 1.45rem);
   border-radius: 1.25rem;
   padding: clamp(0.78rem, 1.8vw, 1.05rem);
+}
+
+.arcadeHub::before,
+.focusShell::before {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    radial-gradient(circle at var(--lab-px) var(--lab-py), color-mix(in srgb, var(--lab-accent-a) 14%, transparent), transparent 18rem),
+    linear-gradient(120deg, transparent 0 42%, color-mix(in srgb, var(--lab-accent-b) 10%, transparent) 52%, transparent 66%);
+  content: "";
+  opacity: 0.42;
+  pointer-events: none;
 }
 
 .arcadeHub[data-mode="focus"] {
@@ -406,6 +457,8 @@
 }
 
 .hubHeader {
+  position: relative;
+  z-index: 1;
   display: grid;
   grid-template-columns: minmax(0, 0.82fr) auto minmax(16rem, 0.54fr);
   gap: clamp(0.65rem, 1.6vw, 1rem);
@@ -445,6 +498,8 @@
 }
 
 .hubGrid {
+  position: relative;
+  z-index: 1;
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 0.62rem;
@@ -453,6 +508,7 @@
 
 .hubCard {
   display: grid;
+  position: relative;
   min-height: 11.25rem;
   align-content: space-between;
   gap: 0.46rem;
@@ -461,11 +517,33 @@
   color: var(--lab-ink);
   text-align: left;
   cursor: pointer;
+  overflow: hidden;
   transition:
-    transform 220ms cubic-bezier(0.16, 1, 0.3, 1),
-    border-color 220ms cubic-bezier(0.16, 1, 0.3, 1),
-    background 220ms cubic-bezier(0.16, 1, 0.3, 1),
-    box-shadow 220ms cubic-bezier(0.16, 1, 0.3, 1);
+    transform var(--motion-medium) var(--ease-signature),
+    border-color var(--motion-medium) var(--ease-signature),
+    background var(--motion-medium) var(--ease-signature),
+    box-shadow var(--motion-medium) var(--ease-signature);
+}
+
+.hubCard::before {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 18% 0%, color-mix(in srgb, var(--lab-accent-a) 18%, transparent), transparent 62%),
+    linear-gradient(120deg, transparent 0 38%, rgba(255, 255, 255, 0.08) 49%, transparent 62%);
+  content: "";
+  opacity: 0;
+  transform: translateX(-18%);
+  transition:
+    opacity var(--motion-fast) var(--ease-signature),
+    transform var(--motion-slow) var(--ease-signature);
+}
+
+.hubCard:hover::before,
+.hubCard:focus-visible::before,
+.hubCard[data-active="true"]::before {
+  opacity: 1;
+  transform: translateX(0);
 }
 
 .hubCard[data-active="true"] {
@@ -479,12 +557,16 @@
 }
 
 .hubCard strong {
+  position: relative;
+  z-index: 1;
   color: var(--lab-ink);
   font-size: clamp(0.96rem, 1.25vw, 1.16rem);
   line-height: 1.08;
 }
 
 .hubCardText {
+  position: relative;
+  z-index: 1;
   display: block;
   color: var(--lab-muted);
   font-size: 0.78rem;
@@ -494,12 +576,16 @@
 
 .hubCardControls,
 .hubCardStatus {
+  position: relative;
+  z-index: 1;
   color: color-mix(in srgb, var(--lab-muted) 88%, var(--lab-accent-a));
   text-transform: none;
 }
 
 .hubCardAction {
   display: inline-flex;
+  position: relative;
+  z-index: 1;
   width: fit-content;
   align-items: center;
   justify-content: center;
@@ -520,7 +606,16 @@
   padding: clamp(0.65rem, 1.55vw, 0.95rem);
 }
 
+.focusShell[data-switching="true"] {
+  border-color: color-mix(in srgb, var(--lab-accent-a) 42%, rgba(255, 255, 255, 0.16));
+  box-shadow:
+    0 30px 105px color-mix(in srgb, var(--lab-accent-a) 16%, rgba(0, 0, 0, 0.28)),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+
 .focusHeader {
+  position: relative;
+  z-index: 1;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto minmax(12rem, 0.32fr);
   gap: clamp(0.62rem, 1.45vw, 0.9rem);
@@ -546,6 +641,8 @@
 }
 
 .focusSwitch {
+  position: relative;
+  z-index: 1;
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 0.4rem;
@@ -577,7 +674,9 @@
 
 .focusStage {
   position: relative;
+  z-index: 1;
   margin-top: 0.7rem;
+  animation: arenaSurfaceIn var(--motion-slow) var(--ease-signature) both;
 }
 
 .focusStage > section > .sectionHeader {
@@ -820,8 +919,9 @@
   cursor: pointer;
   touch-action: none;
   transition:
-    border-color 180ms ease,
-    box-shadow 180ms ease;
+    border-color var(--motion-medium) var(--ease-signature),
+    box-shadow var(--motion-medium) var(--ease-signature),
+    filter var(--motion-medium) var(--ease-signature);
 }
 
 .runnerStage::after {
@@ -1204,6 +1304,10 @@
     0 24px 90px rgba(0, 0, 0, 0.38),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
   touch-action: none;
+  transition:
+    border-color var(--motion-medium) var(--ease-signature),
+    box-shadow var(--motion-medium) var(--ease-signature),
+    filter var(--motion-medium) var(--ease-signature);
 }
 
 .mazeStage::before {
@@ -1693,8 +1797,9 @@
     linear-gradient(145deg, rgba(5, 18, 28, 0.92), rgba(2, 7, 14, 0.94));
   touch-action: none;
   transition:
-    border-color 180ms ease,
-    box-shadow 180ms ease;
+    border-color var(--motion-medium) var(--ease-signature),
+    box-shadow var(--motion-medium) var(--ease-signature),
+    filter var(--motion-medium) var(--ease-signature);
 }
 
 .snakeStage::before {
@@ -2180,8 +2285,9 @@
     linear-gradient(145deg, rgba(8, 12, 26, 0.93), rgba(3, 7, 17, 0.95));
   touch-action: none;
   transition:
-    border-color 180ms ease,
-    box-shadow 180ms ease;
+    border-color var(--motion-medium) var(--ease-signature),
+    box-shadow var(--motion-medium) var(--ease-signature),
+    filter var(--motion-medium) var(--ease-signature);
 }
 
 .tetrisStage::before {
@@ -3729,6 +3835,20 @@
   background-color: rgba(255, 255, 255, 0.045);
 }
 
+@keyframes arenaSurfaceIn {
+  from {
+    transform: translateY(0.65rem);
+    filter: saturate(0.92);
+    opacity: 0.001;
+  }
+
+  to {
+    transform: translateY(0);
+    filter: saturate(1);
+    opacity: 1;
+  }
+}
+
 @keyframes focus-loading {
   from {
     transform: translateX(-115%);
@@ -4278,21 +4398,22 @@
   }
 
   .focusShell {
-    min-height: calc(100svh - 0.7rem);
-    margin: 0.72rem -0.42rem 0;
-    border-radius: 0.9rem;
-    padding: 0.42rem;
+    min-height: calc(100svh - 0.35rem);
+    margin: 0.32rem -0.52rem 0;
+    border-radius: 0.82rem;
+    padding: 0.32rem;
   }
 
   .focusHeader {
-    position: sticky;
-    top: 0.28rem;
+    position: relative;
+    top: auto;
     z-index: 30;
-    grid-template-columns: 1fr;
-    gap: 0.42rem;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.32rem;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 0.78rem;
-    padding: 0.52rem;
+    border-radius: 0.72rem;
+    padding: 0.38rem;
     background: rgba(4, 9, 18, 0.82);
     backdrop-filter: blur(14px);
   }
@@ -4302,8 +4423,12 @@
     background: rgba(255, 255, 255, 0.84);
   }
 
+  .focusTitleBlock .eyebrow {
+    display: none;
+  }
+
   .focusTitleBlock .sectionTitle {
-    font-size: clamp(1.14rem, 5.8vw, 1.45rem);
+    font-size: clamp(1rem, 5vw, 1.24rem);
   }
 
   .focusHeader .trainingNote,
@@ -4312,12 +4437,16 @@
   }
 
   .focusActions {
-    grid-template-columns: 1fr;
-    width: 100%;
+    grid-template-columns: auto;
+    justify-self: end;
+    width: auto;
   }
 
   .focusActions .actionSecondary {
-    width: 100%;
+    width: auto;
+    min-height: 2.05rem;
+    padding: 0.36rem 0.58rem;
+    font-size: 0.64rem;
   }
 
   .focusMeta {
@@ -4325,7 +4454,7 @@
   }
 
   .focusSwitch {
-    display: flex;
+    display: none;
     gap: 0.38rem;
     margin: 0.52rem -0.06rem 0;
     overflow-x: auto;
@@ -4344,12 +4473,11 @@
   }
 
   .focusStage {
-    margin-top: 0.5rem;
+    margin-top: 0.34rem;
   }
 
   .focusStage > section > .sectionHeader {
-    grid-template-columns: 1fr;
-    margin-bottom: 0.42rem;
+    display: none;
   }
 
   .focusStage .sectionHeader .trainingNote {
@@ -4361,14 +4489,42 @@
   .focusStage .snakeLayout,
   .focusStage .tetrisLayout {
     grid-template-columns: 1fr;
-    gap: 0.54rem;
+    gap: 0.38rem;
   }
 
   .focusStage .runnerSide,
   .focusStage .mazeSide,
   .focusStage .snakeSide,
   .focusStage .tetrisSide {
-    gap: 0.54rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.38rem;
+  }
+
+  .focusStage .runnerPanel {
+    flex: 1 1 10rem;
+    border-radius: 0.76rem;
+    padding: 0.42rem;
+  }
+
+  .focusStage .runnerPanel h3 {
+    font-size: 0.72rem;
+  }
+
+  .focusStage .runnerPanel p,
+  .focusStage .runnerPanel li {
+    font-size: 0.66rem;
+    line-height: 1.35;
+  }
+
+  .focusStage .mazeSide .runnerPanel:nth-child(2),
+  .focusStage .snakeSide .runnerPanel:nth-child(3),
+  .focusStage .tetrisSide .runnerPanel:nth-child(3) {
+    display: none;
+  }
+
+  .mobileGameplayControl {
+    display: none;
   }
 
   .focusLoading {
@@ -4376,8 +4532,9 @@
   }
 
   .runnerStage {
-    min-height: 20.5rem;
-    border-radius: 1rem;
+    height: min(46svh, 16.5rem);
+    min-height: 14.8rem;
+    border-radius: 0.86rem;
   }
 
   :global(#runtime-runner-title),
@@ -4392,6 +4549,16 @@
   .runnerHud {
     display: grid;
     grid-template-columns: 1fr 1fr;
+    inset: 0.5rem 0.5rem auto;
+    gap: 0.34rem;
+  }
+
+  .runnerHud strong {
+    font-size: clamp(0.9rem, 4.6vw, 1.15rem);
+  }
+
+  .runnerHud span {
+    font-size: 0.52rem;
   }
 
   .scorePanel .gameTabs {
@@ -4400,43 +4567,79 @@
 
   .stageMessage {
     align-items: end;
-    padding: 0.8rem;
+    padding: 0.52rem;
   }
 
   .stageMessageInner {
     width: 100%;
-    border-radius: 0.9rem;
-    padding: 0.72rem;
+    border-radius: 0.74rem;
+    padding: 0.54rem;
   }
 
   .stageMessageInner h3 {
-    font-size: clamp(1.35rem, 6.5vw, 1.65rem);
+    font-size: clamp(1rem, 5.4vw, 1.28rem);
     line-height: 1.04;
   }
 
   .stageMessageInner p {
-    font-size: 0.78rem;
-    line-height: 1.45;
+    font-size: 0.68rem;
+    line-height: 1.34;
   }
 
   .pipelineTrack {
-    bottom: 6rem;
+    bottom: 4.15rem;
+    height: 5.6rem;
+  }
+
+  .laneLineOne {
+    bottom: 9.25rem;
+  }
+
+  .laneLineTwo {
+    bottom: 6.45rem;
   }
 
   .runnerAvatar {
-    left: 11%;
-    width: 3.8rem;
+    left: 10.2%;
+    bottom: calc(4.82rem + (var(--runner-y, 0) * 7.1rem));
+    width: 2.65rem;
+    border-radius: 0.72rem;
+    box-shadow:
+      0 0 20px rgba(103, 232, 249, 0.18),
+      inset 0 1px 0 rgba(255, 255, 255, 0.22);
+  }
+
+  .runnerAvatar::before {
+    inset: 0.62rem 0.56rem auto;
+  }
+
+  .runnerAvatar::after {
+    right: -1.38rem;
+    width: 1.1rem;
   }
 
   .obstacle {
-    min-width: 4.6rem;
-    min-height: 2.8rem;
-    font-size: 0.66rem;
+    bottom: 4.92rem;
+    min-width: 3.05rem;
+    min-height: 2rem;
+    padding: 0.28rem 0.34rem;
+    border-radius: 0.62rem;
+    font-size: 0.48rem;
+    box-shadow:
+      0 10px 24px rgba(248, 113, 113, 0.11),
+      inset 0 1px 0 rgba(255, 255, 255, 0.12);
   }
 
   .runnerControls {
     display: grid;
     grid-template-columns: 1fr 1fr;
+    gap: 0.36rem;
+  }
+
+  .runnerAction {
+    min-height: 2rem;
+    padding: 0.38rem 0.52rem;
+    font-size: 0.66rem;
   }
 
   .runnerControls .runnerAction:first-child {
@@ -4444,160 +4647,248 @@
   }
 
   .laneControls {
-    display: grid;
+    display: none;
   }
 
   .mazeStage {
     min-height: auto;
-    border-radius: 1rem;
-    padding: 0.48rem;
+    border-radius: 0.86rem;
+    padding: 0.34rem;
   }
 
   .mazeHud {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.28rem;
   }
 
   .mazeHud div {
-    padding: 0.46rem;
+    border-radius: 0.56rem;
+    padding: 0.32rem;
+  }
+
+  .mazeHud span,
+  .mazeMeta {
+    font-size: 0.5rem;
+  }
+
+  .mazeHud strong {
+    font-size: clamp(0.78rem, 4vw, 1rem);
   }
 
   .mazeMeta {
-    gap: 0.32rem;
+    gap: 0.22rem;
+    margin: 0.34rem 0;
   }
 
   .mazeMeta > span {
-    padding: 0.26rem 0.42rem;
+    padding: 0.18rem 0.3rem;
   }
 
   .mazeGrid {
-    gap: 0.16rem;
-    padding: 0.32rem;
-    border-radius: 0.82rem;
+    width: min(100%, 21rem);
+    margin: 0 auto;
+    gap: 0.1rem;
+    padding: 0.2rem;
+    border-radius: 0.66rem;
   }
 
   .mazeCell {
-    min-height: clamp(1.1rem, 5.4vw, 1.8rem);
-    border-radius: 0.36rem;
+    min-height: clamp(0.88rem, 4.55vw, 1.18rem);
+    border-radius: 0.26rem;
   }
 
   .mazeCellLabel {
-    font-size: clamp(0.34rem, 1.48vw, 0.48rem);
+    font-size: clamp(0.26rem, 1.18vw, 0.36rem);
   }
 
   .mazeVirus {
     inset: 18%;
-    font-size: clamp(0.3rem, 1.25vw, 0.42rem);
+    font-size: clamp(0.24rem, 1vw, 0.32rem);
   }
 
   .mazeDpad {
-    width: 100%;
-    max-width: 16.5rem;
-    margin-right: auto;
-    margin-left: auto;
+    display: none;
   }
 
   .mazeDirection {
-    min-height: 3.35rem;
+    min-height: 0;
+  }
+
+  .mazeActions {
+    grid-template-columns: 1fr;
+    gap: 0.34rem;
+    margin-top: 0.36rem;
   }
 
   .snakeStage {
     min-height: auto;
-    border-radius: 1rem;
-    padding: 0.48rem;
+    border-radius: 0.86rem;
+    padding: 0.34rem;
   }
 
   .snakeHud {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.28rem;
   }
 
   .snakeHud div {
-    padding: 0.46rem;
+    border-radius: 0.56rem;
+    padding: 0.32rem;
+  }
+
+  .snakeHud span,
+  .snakeMeta {
+    font-size: 0.5rem;
+  }
+
+  .snakeHud strong {
+    font-size: clamp(0.78rem, 4vw, 1rem);
   }
 
   .snakeMeta {
-    gap: 0.32rem;
+    gap: 0.22rem;
+    margin: 0.34rem 0;
   }
 
   .snakeMeta > span {
-    padding: 0.26rem 0.42rem;
+    padding: 0.18rem 0.3rem;
   }
 
   .snakeGrid {
-    gap: 0.12rem;
-    padding: 0.28rem;
-    border-radius: 0.82rem;
+    width: min(100%, 16.9rem);
+    gap: 0.08rem;
+    padding: 0.18rem;
+    border-radius: 0.66rem;
   }
 
   .snakeCell {
-    border-radius: 0.34rem;
+    border-radius: 0.24rem;
   }
 
   .snakeCellLabel {
-    font-size: clamp(0.36rem, 1.5vw, 0.48rem);
+    font-size: clamp(0.26rem, 1.12vw, 0.36rem);
   }
 
   .snakeDpad {
-    width: 100%;
-    max-width: 16.5rem;
-    margin-right: auto;
-    margin-left: auto;
+    display: none;
   }
 
   .snakeDirection {
-    min-height: 3.45rem;
+    min-height: 0;
+  }
+
+  .snakeActions {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.34rem;
+    margin-top: 0.36rem;
+  }
+
+  .snakeWallHeader {
+    gap: 0.3rem;
+  }
+
+  .snakeWallToggle {
+    width: 100%;
+    margin-top: 0.34rem;
   }
 
   .tetrisStage {
     min-height: auto;
-    border-radius: 1rem;
-    padding: 0.48rem;
+    border-radius: 0.86rem;
+    padding: 0.34rem;
   }
 
   .tetrisHud {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.28rem;
   }
 
   .tetrisHud div {
-    padding: 0.46rem;
+    border-radius: 0.56rem;
+    padding: 0.32rem;
+  }
+
+  .tetrisHud span,
+  .tetrisMeta {
+    font-size: 0.5rem;
+  }
+
+  .tetrisHud strong {
+    font-size: clamp(0.78rem, 4vw, 1rem);
   }
 
   .tetrisMeta {
-    gap: 0.32rem;
+    gap: 0.22rem;
+    margin: 0.34rem 0;
   }
 
   .tetrisMeta > span {
-    padding: 0.26rem 0.42rem;
+    padding: 0.18rem 0.3rem;
   }
 
   .tetrisGrid {
-    gap: 0.08rem;
-    width: min(100%, 17.5rem);
-    padding: 0.26rem;
-    border-radius: 0.82rem;
+    gap: 0.055rem;
+    width: min(100%, 11.8rem);
+    padding: 0.16rem;
+    border-radius: 0.58rem;
   }
 
   .tetrisCell {
-    border-radius: 0.2rem;
+    border-radius: 0.14rem;
   }
 
   .tetrisCellLabel {
-    font-size: clamp(0.28rem, 1.24vw, 0.4rem);
+    font-size: clamp(0.22rem, 0.95vw, 0.32rem);
   }
 
   .tetrisControls {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    width: 100%;
-    max-width: 16.5rem;
-    margin-right: auto;
-    margin-left: auto;
+    display: none;
   }
 
   .tetrisControl {
-    min-height: 3.35rem;
+    min-height: 0;
   }
 
   .tetrisDropControl {
-    min-height: 3.25rem;
+    min-height: 0;
+  }
+
+  .tetrisActions {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.34rem;
+    margin-top: 0.36rem;
+  }
+
+  .tetrisPreviewGrid {
+    width: 4.9rem;
+    margin-top: 0.32rem;
+    padding: 0.22rem;
+  }
+
+  .tetrisSwipeHint {
+    font-size: 0.62rem;
+  }
+
+  .snakeHead,
+  .snakeBody,
+  .snakeToken,
+  .snakeHazard,
+  .snakeHazardNear,
+  .mazePatch,
+  .mazeVirus,
+  .mazeGoal,
+  .tetrisFilled,
+  .tetrisActive,
+  .tetrisPreviewCell.tetrisActive,
+  .obstacleNear {
+    box-shadow: none;
+  }
+
+  .snakeStageCollect .snakeGrid,
+  .snakeStageWrap,
+  .snakeToken,
+  .snakeHazardNear {
+    animation-duration: 160ms;
   }
 
   .arenaStage {
@@ -4783,7 +5074,14 @@
   .tetrisStageDrop,
   .tetrisActive,
   .tetrisLineBurst span,
+  .focusStage,
   .focusLoading span::before,
+  .arcadeHub::before,
+  .focusShell::before,
+  .hubCard::before,
+  .actionPrimary::before,
+  .actionSecondary::before,
+  .actionGhost::before,
   .gameLoading {
     animation: none;
   }
@@ -4792,6 +5090,8 @@
   .actionSecondary,
   .actionGhost,
   .hubCard,
+  .focusShell,
+  .focusStage,
   .focusTab,
   .gameTab,
   .runnerAction,

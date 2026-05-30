@@ -287,6 +287,23 @@
   transition: opacity 180ms ease;
 }
 
+.navLink::after {
+  position: absolute;
+  right: 18%;
+  bottom: 0.34rem;
+  left: 18%;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, var(--nav-cyan), var(--nav-violet), transparent);
+  content: "";
+  opacity: 0;
+  transform: scaleX(0.22);
+  transform-origin: 50% 50%;
+  transition:
+    opacity var(--motion-fast) var(--ease-signature),
+    transform var(--motion-medium) var(--ease-signature);
+}
+
 .navLink:hover,
 .active {
   border-color: rgba(125, 211, 252, 0.18);
@@ -297,6 +314,12 @@
 .navLink:hover::before,
 .active::before {
   opacity: 1;
+}
+
+.navLink:hover::after,
+.active::after {
+  opacity: 1;
+  transform: scaleX(1);
 }
 
 .active {
@@ -339,6 +362,7 @@
 
 .control {
   display: inline-flex;
+  position: relative;
   min-height: 2.38rem;
   align-items: center;
   justify-content: center;
@@ -354,6 +378,24 @@
   line-height: 1;
   text-decoration: none;
   white-space: nowrap;
+  overflow: hidden;
+}
+
+.control::before {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--nav-cyan) 24%, transparent), transparent 70%);
+  content: "";
+  opacity: 0;
+  transform: translateY(20%);
+  transition:
+    opacity var(--motion-fast) var(--ease-signature),
+    transform var(--motion-medium) var(--ease-signature);
+}
+
+.control > * {
+  position: relative;
+  z-index: 1;
 }
 
 :global([data-theme="light"]) .control,
@@ -377,6 +419,12 @@
   background: rgba(255, 255, 255, 0.1);
   color: var(--nav-ink);
   transform: translateY(-1px);
+}
+
+.control:hover::before,
+.control:focus-visible::before {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .download {
@@ -533,7 +581,9 @@
   .brand,
   .navLink,
   .control,
-  .navLink::before {
+  .navLink::before,
+  .navLink::after,
+  .control::before {
     transition-duration: 1ms !important;
   }
 

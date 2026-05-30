@@ -165,7 +165,7 @@ const copy = {
     },
     idleTitle: "Colete todos os tokens e libere o Safe Deploy.",
     idleText:
-      "Use setas, WASD, swipe ou D-pad. Vírus acordam após o primeiro token; o objetivo só libera quando tudo for coletado.",
+      "Mobile: deslize para mover. Colete tokens, fuja dos vírus e faça deploy. Desktop: setas ou WASD.",
     wonTitle: "Deploy seguro.",
     wonText: "Todos os tokens foram aplicados e o score local foi registrado sem ranking real.",
     failedTitle: "Vidas esgotadas.",
@@ -183,7 +183,7 @@ const copy = {
     controlsTitle: "Controles",
     rulesTitle: "Regras",
     rules: [
-      "Setas, WASD, swipe ou D-pad movem o debug node.",
+      "No mobile, swipe move o debug node; no desktop, setas ou WASD.",
       "Todos os tokens precisam ser coletados antes do Safe Deploy.",
       "Vírus perseguem depois do primeiro token ou com Modo vírus ativo.",
       "Três vidas; dano concede invulnerabilidade curta.",
@@ -222,7 +222,7 @@ const copy = {
     },
     idleTitle: "Collect every token and unlock Safe Deploy.",
     idleText:
-      "Use arrows, WASD, swipe, or D-pad. Viruses wake after the first token; the goal unlocks only when everything is collected.",
+      "Mobile: swipe to move. Collect tokens, avoid viruses, and deploy. Desktop: arrows or WASD.",
     wonTitle: "Safe deploy.",
     wonText: "Every token was applied and the local score was recorded without a real ranking.",
     failedTitle: "Lives depleted.",
@@ -240,7 +240,7 @@ const copy = {
     controlsTitle: "Controls",
     rulesTitle: "Rules",
     rules: [
-      "Arrows, WASD, swipe, or D-pad move the debug node.",
+      "On mobile, swipe moves the debug node; on desktop, arrows or WASD.",
       "Every token must be collected before Safe Deploy.",
       "Viruses chase after the first token or when Virus mode is enabled.",
       "Three lives; damage grants a short invulnerability window.",
