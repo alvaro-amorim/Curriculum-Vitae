@@ -112,8 +112,6 @@ Candidatos a análise/remoção futura, sem remoção aprovada nesta fase:
 - `src/components/lab/interactive-terminal.tsx`
 - `src/components/lab/latency-lab.tsx`
 - `src/components/lab/skill-radar.tsx`
-- `src/components/projects/project-section.tsx`
-- `src/components/resume/home-overview.tsx`
 
 Ruídos e cautelas identificados:
 

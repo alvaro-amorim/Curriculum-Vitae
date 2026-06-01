@@ -63,8 +63,6 @@ Legados e candidatos a análise futura, sem remoção aprovada nesta fase:
 - `interactive-terminal.tsx`
 - `latency-lab.tsx`
 - `skill-radar.tsx`
-- `project-section.tsx`
-- `resume/home-overview.tsx`
 
 Ruídos e cuidados:
 
