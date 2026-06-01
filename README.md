@@ -70,8 +70,8 @@ Ruídos e cuidados:
 
 - `.next/`, `node_modules/`, logs `.next-dev*`, logs `.next-start*` e `tsconfig.tsbuildinfo` são artefatos locais ignorados.
 - `next-env.d.ts` é versionado pelo Next e não deve ser removido.
-- `imagem.png` na raiz parece duplicata de `public/profile/imagem.png`; avaliar em cleanup seguro futuro antes de remover.
-- Não remover `/visual-final-candidate`, módulos antigos do Lab, CSS aparentemente órfão ou `imagem.png` raiz sem fase própria e validação.
+- R1-E.11.2 removeu `imagem.png` da raiz após confirmar que era duplicata byte-a-byte de `public/profile/imagem.png` e que o código usa `/profile/imagem.png`.
+- Não remover `/visual-final-candidate`, módulos antigos do Lab ou CSS aparentemente órfão sem fase própria e validação.
 
 ## Rotas Principais
 
@@ -326,7 +326,7 @@ NEXT_PUBLIC_APP_URL=https://curriculum-vitae-babr.vercel.app
 ## Próximos Passos Reais
 
 - Executar R1-E.11.2 — Safe Cleanup com mudanças pequenas e reversíveis.
-- Avaliar `imagem.png` raiz, logs/artefatos ignorados e documentação pós-checkpoint sem tocar em `public/resume` ou `public/profile`.
+- Manter `public/profile/imagem.png`, `public/resume`, PDFs e DOCX preservados.
 - Executar R1-E.11.3 — Cautious Legacy Cleanup somente depois de provar imports, UI, score e docs dos módulos rebaixados.
 - Executar R1-E.11.4 — Final Mobile Polish com teste real em celular, especialmente Runtime Runner e Code Snake.
 - Executar R1-E.11.5 — Public QA Final antes de chamar o site de final.

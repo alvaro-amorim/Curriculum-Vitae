@@ -119,7 +119,7 @@ Ruídos e cautelas identificados:
 
 - `.next/`, `node_modules/`, logs `.next-dev*`, logs `.next-start*` e `tsconfig.tsbuildinfo` são artefatos locais ignorados.
 - `next-env.d.ts` é versionado pelo Next e não deve ser removido.
-- `imagem.png` na raiz parece duplicata de `public/profile/imagem.png`, mas só deve ser removida após confirmar que não há dependência externa.
+- R1-E.11.2 removeu `imagem.png` da raiz após confirmar que era duplicata byte-a-byte de `public/profile/imagem.png` e que a aplicação usa `/profile/imagem.png`.
 - Não remover CSS aparentemente órfão, módulos antigos do Lab ou `/visual-final-candidate` sem fase própria, validação e plano de rollback.
 
 Direção final desejada do Developer Arcade:
