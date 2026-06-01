@@ -6,10 +6,10 @@ O projeto deixou de ser apenas um currículo digital e passou a funcionar como u
 
 ## Estado Atual
 
-Checkpoint publicado antes da R1-E.10.5:
+Checkpoint atual publicado:
 
 ```txt
-18f38f2 feat: polish arcade games and cleanup lab
+e69e771 feat: enhance motion system and mobile arcade
 ```
 
 Estado real do produto após a revisão humana que abriu a R1-E.9.3.0:
@@ -38,10 +38,40 @@ Estado real do produto após a revisão humana que abriu a R1-E.9.3.0:
 - R1-E.10.2 foi checkpointada em `4fc0581` com Arcade Hub, um jogo ativo por vez e Game Focus Mode desktop/mobile.
 - R1-E.10.3/R1-E.10.3.1 foram checkpointadas em `fce20dd` com Bug Maze expandido, gestos mobile nos quatro jogos e calibração de densidade do Lab sem `zoom` global.
 - R1-E.10.4 foi checkpointada em `18f38f2` com walls on/off no Code Snake, polish visual leve de Runtime Runner/Stack Tetris e limpeza da UI principal do Lab.
-- R1-E.10.5 está em execução local sem checkpoint para criar o Signature Motion & Interaction System do produto público.
-- R1-E.10.5.1 está em execução local sem checkpoint para fortalecer transições de rota, tema e idioma após revisão humana.
-- R1-E.10.5.2 está em execução local sem checkpoint para fechar o polish mobile do Arcade: foco 400x858, controles por swipe, instruções compactas e ajustes de escala/performance dos jogos.
+- R1-E.10.5/R1-E.10.5.1/R1-E.10.5.2 foram checkpointadas em `e69e771` com Signature Motion & Interaction System, transições fortes de rota/tema/idioma e polish mobile do Arcade para teste real em celular.
+- R1-E.11.0 foi executada como auditoria geral sem alterações no worktree.
 - O projeto ainda não deve ser tratado como fechamento final enquanto Admin de Imagens, storage real e mídia real dos projetos estiverem pendentes.
+
+## Auditoria R1-E.11.0
+
+A auditoria confirmou que o site público está em estado avançado, mas ainda não final. Home, projetos/cases, currículo, Lab, Smart Navbar, motion/transições e Arcade estão fortes; ainda faltam limpeza cautelosa, QA real, imagens reais dos projetos e Admin de Imagens.
+
+Estado das rotas:
+
+- `/`, `/projetos`, `/projetos/[slug]`, `/lab` e `/curriculo` são as rotas públicas principais.
+- `/curriculo` está aprovado e deve ser preservado sem redesign salvo solicitação explícita.
+- `/visual-final-candidate` é rota experimental/legada de comparação; avaliar remoção ou arquivamento futuro com cautela.
+- `/admin` não existe.
+- APIs existentes são locais/mock: `/api/health`, `/api/score`, `/api/contact`, `/api/analytics` e `/api/terminal`.
+
+Legados e candidatos a análise futura, sem remoção aprovada nesta fase:
+
+- `api-latency-game.tsx`
+- `architecture-builder.tsx`
+- `debug-arena.tsx`
+- `debug-challenge.tsx`
+- `interactive-terminal.tsx`
+- `latency-lab.tsx`
+- `skill-radar.tsx`
+- `project-section.tsx`
+- `resume/home-overview.tsx`
+
+Ruídos e cuidados:
+
+- `.next/`, `node_modules/`, logs `.next-dev*`, logs `.next-start*` e `tsconfig.tsbuildinfo` são artefatos locais ignorados.
+- `next-env.d.ts` é versionado pelo Next e não deve ser removido.
+- `imagem.png` na raiz parece duplicata de `public/profile/imagem.png`; avaliar em cleanup seguro futuro antes de remover.
+- Não remover `/visual-final-candidate`, módulos antigos do Lab, CSS aparentemente órfão ou `imagem.png` raiz sem fase própria e validação.
 
 ## Rotas Principais
 
@@ -219,23 +249,18 @@ Roadmap proposto:
 - R1-F.5 — Public Rendering Integration: consumir imagens reais quando existirem e manter placeholders quando não existirem.
 - R1-F.6 — Admin QA & Security Gate: validar auth, upload, permissões, produção e documentação.
 
-## Fase Atual: R1-E.10.5.2
+## Fase Atual: R1-E.11.1
 
-Antes da R1-F.1, o produto público terá uma nova rodada de polish com direção **Arcade clean premium com detalhes dev**.
+R1-E.11.1 — Audit Documentation Sync é uma fase exclusivamente documental para registrar a auditoria R1-E.11.0 e corrigir divergências após o checkpoint `e69e771`.
 
 Objetivo da rodada atual:
 
-- Criar um sistema de motion/interação com assinatura própria para home, navegação, projetos/cases e Lab.
-- Fortalecer page transitions, troca de tema e troca de idioma sem adicionar dependência.
-- Adicionar loading/lazy visual curto para navegação interna com continuidade de rota.
-- Diferenciar claramente rota, tema e idioma: handoff de rota, sweep de tema e scan de tradução.
-- Dar mais resposta a botões, cards, foco, seleção e estados ativos com microinterações consistentes.
-- Evoluir o Lab/Arcade Hub e o Game Focus Mode com transições de abertura/troca mais premium, sem alterar regras dos jogos.
-- Fechar o polish mobile do Arcade em 400x858: jogos dentro da tela, controles de gameplay ocultos no mobile, swipe como controle primário, instruções idle compactas e ajustes de Runtime Runner/Code Snake/Bug Maze/Stack Tetris.
-- Preservar reduced motion com versões simplificadas e acessíveis das transições.
+- Registrar que R1-E.10.5/R1-E.10.5.1/R1-E.10.5.2 já foram checkpointadas em `e69e771`.
+- Registrar que R1-E.11.0 foi auditoria sem alteração de arquivos.
+- Documentar rotas finais, rota experimental `/visual-final-candidate`, módulos rebaixados, candidatos a legado e riscos de remoção.
+- Manter Admin, Supabase, storage, upload, cleanup, imagens reais e QA final como pendências futuras.
 - Preservar `/curriculo`, que está aprovado em tema claro e escuro.
-- Manter o Arcade Hub, Smart Navbar e os quatro jogos finais já implementados.
-- Deixar R1-F.1 Admin Shell para depois do polish público.
+- Não alterar código, componentes, rotas, CSS, jogos, `public/resume`, `public/profile` ou PDFs/DOCX.
 
 ## Plano Atual de Fases
 
@@ -258,7 +283,12 @@ R1-E.10.4  — Snake/Runner/Tetris Polish
 R1-E.10.5  — Motion & Interaction System
 R1-E.10.5.1 — Strong Route, Theme & Language Transitions
 R1-E.10.5.2 — Mobile Arcade Final Polish
-R1-E.10.6  — Public Experience QA
+R1-E.11.0  — Full Project Audit Before Finalization
+R1-E.11.1  — Audit Documentation Sync
+R1-E.11.2  — Safe Cleanup
+R1-E.11.3  — Cautious Legacy Cleanup
+R1-E.11.4  — Final Mobile Polish
+R1-E.11.5  — Public QA Final
 R1-F.0     — Project Assets Admin Planning
 R1-F.1     — Protected Admin Shell
 R1-F.2     — Project Media Data Model
@@ -295,10 +325,10 @@ NEXT_PUBLIC_APP_URL=https://curriculum-vitae-babr.vercel.app
 
 ## Próximos Passos Reais
 
-- Concluir R1-E.10.5/R1-E.10.5.1/R1-E.10.5.2 com Signature Motion & Interaction System, page/theme/language transitions fortes, microinterações premium e Arcade mobile jogável em 400x858.
-- Preservar `/curriculo` no polish atual, salvo bug crítico.
-- Preservar Runtime Runner, Bug Maze, Code Snake e Stack Tetris como jogos principais.
-- Validar home, projetos/cases, Lab, Smart Navbar, tema claro/escuro, PT/EN e reduced motion.
-- Decidir quando remover ou arquivar `/visual-final-candidate`.
-- Adicionar screenshots reais dos projetos quando houver assets próprios.
-- Planejar Supabase, ranking real ou analytics real somente em fase futura explícita.
+- Executar R1-E.11.2 — Safe Cleanup com mudanças pequenas e reversíveis.
+- Avaliar `imagem.png` raiz, logs/artefatos ignorados e documentação pós-checkpoint sem tocar em `public/resume` ou `public/profile`.
+- Executar R1-E.11.3 — Cautious Legacy Cleanup somente depois de provar imports, UI, score e docs dos módulos rebaixados.
+- Executar R1-E.11.4 — Final Mobile Polish com teste real em celular, especialmente Runtime Runner e Code Snake.
+- Executar R1-E.11.5 — Public QA Final antes de chamar o site de final.
+- Depois, iniciar R1-F.1 — Protected Admin Shell em fase própria.
+- Planejar Supabase, storage, ranking real ou analytics real somente em fase futura explícita.

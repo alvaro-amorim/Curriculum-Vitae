@@ -56,12 +56,12 @@ Apesar disso, a versão atual ainda demonstra mais domínio de HTML/CSS/JS vanil
 
 ## Estado Atual Real
 
-Atualização R1-E.10.5.2 — Mobile Arcade Final Polish.
+Atualização R1-E.11.1 — Audit Documentation Sync.
 
-Checkpoint publicado antes desta fase:
+Checkpoint atual publicado:
 
 ```txt
-18f38f2 feat: polish arcade games and cleanup lab
+e69e771 feat: enhance motion system and mobile arcade
 ```
 
 Estado real do produto após revisão humana em vídeo:
@@ -85,9 +85,42 @@ Estado real do produto após revisão humana em vídeo:
 - R1-E.10.2 foi checkpointada com Arcade Hub, um jogo ativo por vez e Game Focus Mode desktop/mobile.
 - R1-E.10.3/R1-E.10.3.1 foi checkpointada com Bug Maze expandido, controles mobile por swipe nos quatro jogos finais e densidade visual calibrada em 100% de zoom.
 - R1-E.10.4 foi checkpointada com walls on/off no Code Snake, polish visual leve de Runtime Runner/Stack Tetris e limpeza da UI principal do Lab.
-- R1-E.10.5 criou a primeira camada do Signature Motion & Interaction System para home, navegação, projetos/cases e Lab.
-- R1-E.10.5.1 fortaleceu transições de rota, tema e idioma após revisão humana, antes da R1-F.1.
-- A fase atual fecha o polish mobile do Arcade em 400x858, com swipe como controle primário, instruções compactas e ajustes de escala/performance dos quatro jogos finais.
+- R1-E.10.5/R1-E.10.5.1/R1-E.10.5.2 foram checkpointadas em `e69e771` com Signature Motion & Interaction System, transições fortes de rota/tema/idioma e polish mobile do Arcade para teste real em celular.
+- R1-E.11.0 executou uma auditoria geral sem alteração de arquivos, sem cleanup, sem Admin e sem Supabase.
+- A fase atual é documental: sincronizar README e constituição com a auditoria antes de qualquer limpeza ou implementação.
+
+Resultado da auditoria R1-E.11.0:
+
+- O worktree estava limpo e o HEAD real era `e69e771`.
+- O produto público está avançado, mas ainda não deve ser tratado como final.
+- `/`, `/projetos`, `/projetos/[slug]`, `/lab` e `/curriculo` são as rotas públicas principais.
+- `/visual-final-candidate` é rota experimental/legada de comparação; remoção ou arquivamento deve ser avaliado em fase futura com cautela.
+- `/admin` não existe.
+- APIs existentes são locais/mock: `/api/health`, `/api/score`, `/api/contact`, `/api/analytics` e `/api/terminal`.
+- AppShell contém camadas de route/theme/language transition; `tokens.css` e `motion.css` concentram tokens de motion; reduced motion existe.
+- Ainda é necessário QA humano em dispositivo real, especialmente no Arcade mobile, Runtime Runner e Code Snake.
+- Projetos/cases estão coerentes, mas imagens reais continuam pendentes.
+- A estrutura `visuals` existe em `src/types/portfolio.ts` e `src/content/projects.ts` com thumbnail, hero image, galeria, alt, status, accent, layout e mockupHint.
+- Todos os placeholders de projeto continuam honestos.
+
+Candidatos a análise/remoção futura, sem remoção aprovada nesta fase:
+
+- `src/components/lab/api-latency-game.tsx`
+- `src/components/lab/architecture-builder.tsx`
+- `src/components/lab/debug-arena.tsx`
+- `src/components/lab/debug-challenge.tsx`
+- `src/components/lab/interactive-terminal.tsx`
+- `src/components/lab/latency-lab.tsx`
+- `src/components/lab/skill-radar.tsx`
+- `src/components/projects/project-section.tsx`
+- `src/components/resume/home-overview.tsx`
+
+Ruídos e cautelas identificados:
+
+- `.next/`, `node_modules/`, logs `.next-dev*`, logs `.next-start*` e `tsconfig.tsbuildinfo` são artefatos locais ignorados.
+- `next-env.d.ts` é versionado pelo Next e não deve ser removido.
+- `imagem.png` na raiz parece duplicata de `public/profile/imagem.png`, mas só deve ser removida após confirmar que não há dependência externa.
+- Não remover CSS aparentemente órfão, módulos antigos do Lab ou `/visual-final-candidate` sem fase própria, validação e plano de rollback.
 
 Direção final desejada do Developer Arcade:
 
@@ -138,14 +171,12 @@ Estado de produção na R1-E.9:
 
 Próximo passo oficial:
 
-- Executar R1-E.10.5.2 — Mobile Arcade Final Polish sem redesenhar `/curriculo`.
-- Preservar route transitions, loading/lazy visual, theme sweep e language scan sem dependência nova.
-- Fechar o Arcade mobile em 400x858 com foco por jogo, controles de gameplay ocultos no mobile, swipe como controle primário, instruções idle compactas e ajustes de escala/performance.
-- Melhorar home, projetos/cases e Lab com motion de propósito, sem excesso de glow/pulse.
-- Preservar Arcade Hub, Game Focus Mode, Smart Navbar e regras dos jogos.
-- Adiar R1-F.1 Admin Shell até o polish público estar planejado e aprovado.
-- Manter Runtime Runner, Bug Maze, Code Snake e Stack Tetris preservados.
-- Criar checkpoint somente após revisão visual humana do Signature Motion & Interaction System reforçado e do polish mobile do Arcade.
+- Executar R1-E.11.1 — Audit Documentation Sync alterando somente README e constituição.
+- Registrar a auditoria R1-E.11.0 sem iniciar cleanup.
+- Manter `/curriculo` aprovado e preservado.
+- Manter Admin, Supabase, storage, banco, upload e imagens reais como pendências futuras.
+- Documentar legados apenas como candidatos a análise, não como remoção aprovada.
+- Depois da documentação, iniciar R1-E.11.2 — Safe Cleanup em fase própria.
 
 Plano oficial pós-revisão:
 
@@ -168,7 +199,12 @@ R1-E.10.4  — Snake/Runner/Tetris Polish
 R1-E.10.5  — Motion & Interaction System
 R1-E.10.5.1 — Strong Route, Theme & Language Transitions
 R1-E.10.5.2 — Mobile Arcade Final Polish
-R1-E.10.6  — Public Experience QA
+R1-E.11.0  — Full Project Audit Before Finalization
+R1-E.11.1  — Audit Documentation Sync
+R1-E.11.2  — Safe Cleanup
+R1-E.11.3  — Cautious Legacy Cleanup
+R1-E.11.4  — Final Mobile Polish
+R1-E.11.5  — Public QA Final
 R1-F.0     — Project Assets Admin Planning
 R1-F.1     — Protected Admin Shell
 R1-F.2     — Project Media Data Model
@@ -764,17 +800,15 @@ Regras permanentes:
 - QA visual é obrigatório.
 - Screenshots e, quando possível, vídeo curto são obrigatórios antes de pedir aprovação humana.
 
-### Próximo Passo Oficial
-
-A fase em execução local é:
+### Próximo Passo Oficial Histórico
 
 ```txt
 R1-E.10.5.2 — Mobile Arcade Final Polish
 ```
 
-Essa fase fecha o polish mobile do Developer Arcade depois do reforço de route/theme/language transitions. Ela ajusta foco 400x858, escala dos jogos, instruções compactas e controles por swipe como padrão mobile sem redesenhar `/curriculo`, sem alterar regras principais dos jogos e sem iniciar Admin Shell.
+Essa fase foi checkpointada em `e69e771` junto com R1-E.10.5/R1-E.10.5.1. A fase corrente deve ser lida no bloco **Estado Atual Real** no topo deste documento.
 
-A fase atual não implementa Admin, Supabase, ranking real, analytics real ou persistência real.
+O checkpoint não implementou Admin, Supabase, ranking real, analytics real ou persistência real.
 
 ### Roadmap R1-C Recomendado
 
