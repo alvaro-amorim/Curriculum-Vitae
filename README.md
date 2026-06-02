@@ -54,15 +54,12 @@ Estado das rotas:
 - `/admin` não existe.
 - APIs existentes são locais/mock: `/api/health`, `/api/score`, `/api/contact`, `/api/analytics` e `/api/terminal`.
 
-Legados e candidatos a análise futura, sem remoção aprovada nesta fase:
+Legados mantidos para análise futura, sem remoção aprovada nesta fase:
 
-- `api-latency-game.tsx`
-- `architecture-builder.tsx`
 - `debug-arena.tsx`
-- `debug-challenge.tsx`
-- `interactive-terminal.tsx`
 - `latency-lab.tsx`
-- `skill-radar.tsx`
+
+R1-E.11.3.3 removeu os módulos legados zero-import `api-latency-game.tsx`, `architecture-builder.tsx`, `debug-challenge.tsx`, `interactive-terminal.tsx` e `skill-radar.tsx`. A compatibilidade de score, Debug Arena, Latency Lab, CSS legado e `/visual-final-candidate` continuam preservados para fases próprias.
 
 Ruídos e cuidados:
 

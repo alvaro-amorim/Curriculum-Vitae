@@ -103,15 +103,12 @@ Resultado da auditoria R1-E.11.0:
 - A estrutura `visuals` existe em `src/types/portfolio.ts` e `src/content/projects.ts` com thumbnail, hero image, galeria, alt, status, accent, layout e mockupHint.
 - Todos os placeholders de projeto continuam honestos.
 
-Candidatos a análise/remoção futura, sem remoção aprovada nesta fase:
+Candidatos mantidos para análise/remoção futura, sem remoção aprovada nesta fase:
 
-- `src/components/lab/api-latency-game.tsx`
-- `src/components/lab/architecture-builder.tsx`
 - `src/components/lab/debug-arena.tsx`
-- `src/components/lab/debug-challenge.tsx`
-- `src/components/lab/interactive-terminal.tsx`
 - `src/components/lab/latency-lab.tsx`
-- `src/components/lab/skill-radar.tsx`
+
+R1-E.11.3.3 removeu apenas os módulos legados zero-import `src/components/lab/api-latency-game.tsx`, `src/components/lab/architecture-builder.tsx`, `src/components/lab/debug-challenge.tsx`, `src/components/lab/interactive-terminal.tsx` e `src/components/lab/skill-radar.tsx`. Debug Arena, Latency Lab, `/api/score` compatível, validators/types, CSS legado e `/visual-final-candidate` seguem preservados.
 
 Ruídos e cautelas identificados:
 
@@ -1109,10 +1106,6 @@ components/
 
   lab/
     command-palette.tsx
-    debug-challenge.tsx
-    architecture-builder.tsx
-    api-latency-game.tsx
-    skill-radar.tsx
 
   ui/
     button.tsx
