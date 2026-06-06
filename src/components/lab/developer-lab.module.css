@@ -123,8 +123,7 @@
 
 .heroText,
 .panelText,
-.moduleText,
-.runnerHint {
+.moduleText {
   color: var(--lab-muted);
   font-size: clamp(0.9rem, 1.05vw, 1rem);
   font-weight: 650;
@@ -137,7 +136,6 @@
 }
 
 .heroActions,
-.gameControls,
 .runnerControls,
 .backLinks {
   display: flex;
@@ -233,7 +231,6 @@
 .actionGhost:hover,
 .hubCard:hover,
 .focusTab:hover,
-.gameTab:hover,
 .runnerAction:hover,
 .snakeDirection:hover,
 .tetrisControl:hover,
@@ -250,7 +247,6 @@
 .actionGhost:focus-visible,
 .hubCard:focus-visible,
 .focusTab:focus-visible,
-.gameTab:focus-visible,
 .runnerAction:focus-visible,
 .runnerStage:focus-visible,
 .laneControl:focus-visible,
@@ -271,8 +267,6 @@
 .heroPanel,
 .arcadeHub,
 .focusShell,
-.scorePanel,
-.gameShell,
 .trainingShell,
 .hubCard,
 .moduleCard,
@@ -299,8 +293,6 @@
 :global([data-theme="light"]) .heroPanel,
 :global([data-theme="light"]) .arcadeHub,
 :global([data-theme="light"]) .focusShell,
-:global([data-theme="light"]) .scorePanel,
-:global([data-theme="light"]) .gameShell,
 :global([data-theme="light"]) .trainingShell,
 :global([data-theme="light"]) .hubCard,
 :global([data-theme="light"]) .moduleCard,
@@ -401,7 +393,6 @@
 
 .heroPanelCopy h2,
 .sectionTitle,
-.runnerTitle,
 .moduleCard h3 {
   margin: 0.55rem 0 0;
   color: var(--lab-ink);
@@ -413,20 +404,6 @@
 
 .heroPanelCopy h2 {
   max-width: 8ch;
-}
-
-.scorePanel {
-  border-radius: 1.25rem;
-  padding: 0.95rem;
-}
-
-.scoreValue {
-  display: block;
-  margin-top: 0.45rem;
-  color: var(--lab-ink);
-  font-size: clamp(2rem, 3.4vw, 3.5rem);
-  font-weight: 900;
-  line-height: 0.94;
 }
 
 .arcadeHub {
@@ -736,68 +713,6 @@
   animation: focus-loading 620ms cubic-bezier(0.16, 1, 0.3, 1) infinite;
 }
 
-.gameTabs {
-  display: grid;
-  gap: 0.75rem;
-  margin-top: 1.1rem;
-}
-
-.scorePanel .gameTabs {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-}
-
-.trainingShell .gameTabs {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-.gameTab {
-  width: 100%;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 1.1rem;
-  padding: 0.82rem;
-  background: rgba(255, 255, 255, 0.045);
-  color: #f8fbff;
-  text-align: left;
-  transition:
-    transform 220ms cubic-bezier(0.16, 1, 0.3, 1),
-    border-color 220ms cubic-bezier(0.16, 1, 0.3, 1),
-    background 220ms cubic-bezier(0.16, 1, 0.3, 1),
-    box-shadow 220ms cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.gameTab[aria-pressed="true"] {
-  border-color: rgba(103, 232, 249, 0.56);
-  background: linear-gradient(135deg, rgba(103, 232, 249, 0.14), rgba(139, 92, 246, 0.1));
-}
-
-.gameTabTitle {
-  display: block;
-  font-size: 0.98rem;
-  font-weight: 850;
-}
-
-.gameTabDescription,
-.gameTabStatus {
-  display: block;
-  margin-top: 0.42rem;
-  color: rgba(237, 246, 255, 0.66);
-  font-size: 0.78rem;
-  font-weight: 680;
-  line-height: 1.55;
-}
-
-.gameTabStatus {
-  color: var(--lab-accent-a);
-}
-
-.futureGameTab {
-  border-style: dashed;
-  background:
-    linear-gradient(135deg, rgba(103, 232, 249, 0.07), rgba(139, 92, 246, 0.05)),
-    rgba(255, 255, 255, 0.035);
-}
-
-:global([data-theme="light"]) .gameTab,
 :global([data-theme="light"]) .focusTab,
 :global([data-theme="light"]) .hubScore,
 :global([data-theme="light"]) .focusMeta,
@@ -814,7 +729,6 @@
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
 }
 
-:global([data-theme="light"]) .gameTab[aria-pressed="true"],
 :global([data-theme="light"]) .focusTab[aria-pressed="true"],
 :global([data-theme="light"]) .arenaOptionFocused,
 :global([data-theme="light"]) .arenaOptionSelected,
@@ -826,7 +740,6 @@
     rgba(255, 255, 255, 0.82);
 }
 
-:global([data-theme="light"]) .gameTabDescription,
 :global([data-theme="light"]) .hubCardText,
 :global([data-theme="light"]) .trainingNote,
 :global([data-theme="light"]) .runnerPanel p,
@@ -882,7 +795,6 @@
   color: color-mix(in srgb, var(--lab-muted) 86%, var(--lab-ink));
 }
 
-.gameShell,
 .trainingShell {
   margin-top: clamp(0.85rem, 2.2vw, 1.45rem);
   border-radius: 1.25rem;
@@ -1407,29 +1319,9 @@
   background: rgba(255, 255, 255, 0.045);
 }
 
-.mazeIncidentPips {
-  display: inline-flex;
-  gap: 0.2rem;
-}
-
 .mazeLifePips {
   display: inline-flex;
   gap: 0.2rem;
-}
-
-.mazeIncidentPips span {
-  width: 0.42rem;
-  height: 0.42rem;
-  padding: 0;
-  border: 1px solid rgba(248, 251, 255, 0.2);
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.mazeIncidentPips .mazeIncidentPipActive {
-  border-color: rgba(248, 113, 113, 0.62);
-  background: rgba(248, 113, 113, 0.78);
-  box-shadow: 0 0 18px rgba(248, 113, 113, 0.28);
 }
 
 .mazeLifePips span {
@@ -3793,19 +3685,6 @@
   font-size: 1.2rem;
 }
 
-.futureModuleCard {
-  min-height: 10rem;
-  border-style: dashed;
-  background:
-    linear-gradient(145deg, color-mix(in srgb, var(--lab-accent-a) 10%, transparent), rgba(255, 255, 255, 0.035)),
-    rgba(255, 255, 255, 0.035);
-}
-
-.archiveGrid {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  margin-top: 1rem;
-}
-
 .archiveNote {
   margin: 0.86rem 0 0;
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -3818,21 +3697,9 @@
   line-height: 1.35;
 }
 
-.archivedModuleCard {
-  border-style: dashed;
-  opacity: 0.82;
-}
-
 .moduleText {
   margin: 0.75rem 0 0;
   font-size: 0.86rem;
-}
-
-.trainingContent :global(.rounded-3xl),
-.trainingContent :global(.rounded-2xl),
-.trainingContent :global(.rounded-xl) {
-  border-color: rgba(255, 255, 255, 0.12);
-  background-color: rgba(255, 255, 255, 0.045);
 }
 
 @keyframes arenaSurfaceIn {
@@ -4307,10 +4174,6 @@
     text-align: left;
   }
 
-  .scorePanel .gameTabs,
-  .trainingShell .gameTabs {
-    grid-template-columns: 1fr;
-  }
 }
 
 @media (max-width: 640px) {
@@ -4367,7 +4230,6 @@
     margin-top: 6.6rem;
   }
 
-  .gameShell,
   .trainingShell {
     border-radius: 1.05rem;
     padding: 0.58rem;
@@ -4559,10 +4421,6 @@
 
   .runnerHud span {
     font-size: 0.52rem;
-  }
-
-  .scorePanel .gameTabs {
-    grid-template-columns: 1fr;
   }
 
   .stageMessage {
@@ -5051,9 +4909,6 @@
     grid-template-columns: 1fr;
   }
 
-  .archiveGrid {
-    grid-template-columns: 1fr;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -5093,7 +4948,6 @@
   .focusShell,
   .focusStage,
   .focusTab,
-  .gameTab,
   .runnerAction,
   .laneControl,
   .mazeDirection,
