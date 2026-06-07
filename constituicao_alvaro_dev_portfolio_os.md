@@ -108,14 +108,13 @@ Componentes legados do Lab tratados pela limpeza R1-E.11.3:
 - `src/components/lab/debug-arena.tsx` removido na R1-E.11.3.8.
 - `src/components/lab/latency-lab.tsx` removido na R1-E.11.3.8.
 
-R1-E.11.3.3 removeu apenas os módulos legados zero-import `src/components/lab/api-latency-game.tsx`, `src/components/lab/architecture-builder.tsx`, `src/components/lab/debug-challenge.tsx`, `src/components/lab/interactive-terminal.tsx` e `src/components/lab/skill-radar.tsx`. `/api/score` compatível, validators/types, CSS legado de Debug/Latency e `/visual-final-candidate` seguem preservados.
+R1-E.11.3.3 removeu apenas os módulos legados zero-import `src/components/lab/api-latency-game.tsx`, `src/components/lab/architecture-builder.tsx`, `src/components/lab/debug-challenge.tsx`, `src/components/lab/interactive-terminal.tsx` e `src/components/lab/skill-radar.tsx`. `/api/score` compatível, validators/types e `/visual-final-candidate` seguem preservados.
 
-R1-E.11.3.6 definiu a estratégia de depreciação sem remoção e R1-E.11.3.7 documentou `DebugArena` e `LatencyLab` como deprecated. R1-E.11.3.8 removeu `src/components/lab/debug-arena.tsx` e `src/components/lab/latency-lab.tsx`, mantendo `/api/score`, validators/types, `lab-score`, CSS `.arena*`/`.latency*` e ids legados para fases próprias.
+R1-E.11.3.6 definiu a estratégia de depreciação sem remoção e R1-E.11.3.7 documentou `DebugArena` e `LatencyLab` como deprecated. R1-E.11.3.8 removeu `src/components/lab/debug-arena.tsx` e `src/components/lab/latency-lab.tsx`. R1-E.11.3.9 removeu CSS `.arena*`/`.latency*`, mantendo `/api/score`, validators/types, `lab-score` e ids legados para fase própria.
 
 Ordem restante aprovada:
 
-1. R1-E.11.3.9 — remover CSS `.arena*` e `.latency*` somente após a remoção dos componentes.
-2. R1-E.11.3.10 — remover ids legados de score/types/validators/API após validação e aviso documental.
+1. R1-E.11.3.10 — remover ids legados de score/types/validators/API após validação e aviso documental.
 
 Ruídos e cautelas identificados:
 
@@ -1436,7 +1435,7 @@ O Developer Lab deve evoluir para Developer Arcade: uma área com jogos reais e 
 
 ### 11.1 Debug Arena
 
-Status atual: deprecated/removido. O componente saiu do código na R1-E.11.3.8, não faz parte da vitrine principal do Developer Arcade e não deve voltar como jogo final. Compatibilidade de score/CSS legado permanece para fases próprias.
+Status atual: deprecated/removido. O componente saiu do código na R1-E.11.3.8 e o CSS dedicado saiu na R1-E.11.3.9. Não faz parte da vitrine principal do Developer Arcade e não deve voltar como jogo final. Compatibilidade de score permanece para fase própria.
 
 Experiência visual onde o usuário interage com uma interface de editor, identifica bugs em linhas de código e tenta corrigir antes do build falhar.
 
@@ -1501,7 +1500,7 @@ Não precisa começar com drag and drop complexo, mas a versão final deve parec
 
 ### 11.3 Latency Lab
 
-Status atual: deprecated/removido. O componente saiu do código na R1-E.11.3.8, não faz parte da vitrine principal do Developer Arcade e não deve voltar como jogo final. Compatibilidade de score/CSS legado permanece para fases próprias.
+Status atual: deprecated/removido. O componente saiu do código na R1-E.11.3.8 e o CSS dedicado saiu na R1-E.11.3.9. Não faz parte da vitrine principal do Developer Arcade e não deve voltar como jogo final. Compatibilidade de score permanece para fase própria.
 
 Simulação visual de performance full stack.
 

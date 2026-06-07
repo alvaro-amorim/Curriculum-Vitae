@@ -59,14 +59,13 @@ Componentes legados do Lab tratados pela limpeza R1-E.11.3:
 - `debug-arena.tsx` removido na R1-E.11.3.8.
 - `latency-lab.tsx` removido na R1-E.11.3.8.
 
-R1-E.11.3.3 removeu os módulos legados zero-import `api-latency-game.tsx`, `architecture-builder.tsx`, `debug-challenge.tsx`, `interactive-terminal.tsx` e `skill-radar.tsx`. A compatibilidade de score, o CSS legado de Debug/Latency e `/visual-final-candidate` continuam preservados para fases próprias.
+R1-E.11.3.3 removeu os módulos legados zero-import `api-latency-game.tsx`, `architecture-builder.tsx`, `debug-challenge.tsx`, `interactive-terminal.tsx` e `skill-radar.tsx`. A compatibilidade de score e `/visual-final-candidate` continuam preservadas para fases próprias.
 
-R1-E.11.3.6 definiu a estratégia de depreciação e R1-E.11.3.7 documentou `DebugArena` e `LatencyLab` como deprecated. R1-E.11.3.8 removeu os componentes `debug-arena.tsx` e `latency-lab.tsx`, mantendo CSS legado e compatibilidade temporária de `/api/score` para fases próprias.
+R1-E.11.3.6 definiu a estratégia de depreciação e R1-E.11.3.7 documentou `DebugArena` e `LatencyLab` como deprecated. R1-E.11.3.8 removeu os componentes `debug-arena.tsx` e `latency-lab.tsx`. R1-E.11.3.9 removeu o CSS `.arena*`/`.latency*`, mantendo compatibilidade temporária de `/api/score` para fase própria.
 
 Ordem restante aprovada:
 
-1. R1-E.11.3.9 — remover CSS `.arena*` e `.latency*` somente depois que os componentes saírem.
-2. R1-E.11.3.10 — remover ids legados de score/types/validators/API após validação e aviso documental.
+1. R1-E.11.3.10 — remover ids legados de score/types/validators/API após validação e aviso documental.
 
 Ruídos e cuidados:
 
@@ -103,11 +102,11 @@ A revisão humana da R1-E.9.3.0 redefiniu os jogos finais desejados:
 Estado atual:
 
 - Runtime Runner, Bug Maze, Code Snake e Stack Tetris existem como jogos principais jogáveis.
-- Debug Arena está deprecated, com componente removido e compatibilidade temporária de score/CSS preservada para fases próprias.
-- Latency Lab está deprecated, com componente removido e compatibilidade temporária de score/CSS preservada para fases próprias.
+- Debug Arena está deprecated, com componente e CSS removidos; compatibilidade temporária de score segue preservada para fase própria.
+- Latency Lab está deprecated, com componente e CSS removidos; compatibilidade temporária de score segue preservada para fase própria.
 - Quiz/foundation challenge não é jogo final.
 
-Desde a R1-E.9.3.2, o `/lab` não deve vender Debug Arena, Latency Lab e quiz/foundation como jogos principais. Depois da R1-E.11.3.8, Debug Arena e Latency Lab seguem como histórico deprecated sem componentes ativos; score/CSS legados só devem ser limpos nas fases planejadas.
+Desde a R1-E.9.3.2, o `/lab` não deve vender Debug Arena, Latency Lab e quiz/foundation como jogos principais. Depois da R1-E.11.3.9, Debug Arena e Latency Lab seguem como histórico deprecated sem componentes ativos e sem CSS dedicado; ids de score legados só devem ser limpos na fase planejada.
 
 ## Interface, Motion e Navegação
 

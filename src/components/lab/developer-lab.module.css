@@ -79,9 +79,7 @@
 :global(#runtime-runner-title),
 :global(#bug-maze-title),
 :global(#code-snake-title),
-:global(#stack-tetris-title),
-:global(#debug-arena-title),
-:global(#latency-lab-title) {
+:global(#stack-tetris-title) {
   scroll-margin-top: 7.5rem;
 }
 
@@ -234,8 +232,6 @@
 .runnerAction:hover,
 .snakeDirection:hover,
 .tetrisControl:hover,
-.arenaOption:hover,
-.latencyAction:hover,
 .moduleCard:hover {
   transform: translateY(-2px);
   border-color: color-mix(in srgb, var(--lab-accent-a) 58%, rgba(255, 255, 255, 0.18));
@@ -255,11 +251,7 @@
 .snakeStage:focus-visible,
 .snakeDirection:focus-visible,
 .tetrisStage:focus-visible,
-.tetrisControl:focus-visible,
-.arenaStage:focus-visible,
-.arenaOption:focus-visible,
-.latencyStage:focus-visible,
-.latencyAction:focus-visible {
+.tetrisControl:focus-visible {
   outline: 2px solid color-mix(in srgb, var(--lab-accent-a) 78%, white);
   outline-offset: 4px;
 }
@@ -272,9 +264,7 @@
 .moduleCard,
 .runnerStage,
 .snakeStage,
-.tetrisStage,
-.arenaStage,
-.latencyStage {
+.tetrisStage {
   border: 1px solid rgba(255, 255, 255, 0.12);
   background:
     linear-gradient(145deg, var(--lab-panel), rgba(5, 9, 18, 0.82)),
@@ -298,9 +288,7 @@
 :global([data-theme="light"]) .moduleCard,
 :global([data-theme="light"]) .runnerStage,
 :global([data-theme="light"]) .snakeStage,
-:global([data-theme="light"]) .tetrisStage,
-:global([data-theme="light"]) .arenaStage,
-:global([data-theme="light"]) .latencyStage {
+:global([data-theme="light"]) .tetrisStage {
   border-color: rgba(15, 23, 42, 0.13);
   background:
     linear-gradient(145deg, rgba(255, 255, 255, 0.92), rgba(248, 251, 255, 0.74)),
@@ -653,7 +641,7 @@
   position: relative;
   z-index: 1;
   margin-top: 0.7rem;
-  animation: arenaSurfaceIn var(--motion-slow) var(--ease-signature) both;
+  animation: focus-surface-in var(--motion-slow) var(--ease-signature) both;
 }
 
 .focusStage > section > .sectionHeader {
@@ -720,20 +708,14 @@
 :global([data-theme="light"]) .laneControl,
 :global([data-theme="light"]) .mazeDirection,
 :global([data-theme="light"]) .snakeDirection,
-:global([data-theme="light"]) .tetrisControl,
-:global([data-theme="light"]) .arenaOption,
-:global([data-theme="light"]) .latencyAction {
+:global([data-theme="light"]) .tetrisControl {
   border-color: rgba(15, 23, 42, 0.14);
   background: rgba(255, 255, 255, 0.74);
   color: var(--lab-ink);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
 }
 
-:global([data-theme="light"]) .focusTab[aria-pressed="true"],
-:global([data-theme="light"]) .arenaOptionFocused,
-:global([data-theme="light"]) .arenaOptionSelected,
-:global([data-theme="light"]) .latencyActionFocused,
-:global([data-theme="light"]) .latencyActionSelected {
+:global([data-theme="light"]) .focusTab[aria-pressed="true"] {
   border-color: color-mix(in srgb, var(--lab-accent-a) 44%, rgba(15, 23, 42, 0.12));
   background:
     linear-gradient(135deg, color-mix(in srgb, var(--lab-accent-a) 14%, transparent), rgba(255, 255, 255, 0.78)),
@@ -747,12 +729,7 @@
 :global([data-theme="light"]) .snakeMeta,
 :global([data-theme="light"]) .tetrisMeta,
 :global([data-theme="light"]) .tetrisSwipeHint,
-:global([data-theme="light"]) .archiveNote,
-:global([data-theme="light"]) .arenaOption > span:not(.arenaOptionMeta),
-:global([data-theme="light"]) .arenaOptionDetail,
-:global([data-theme="light"]) .latencyAction > span:not(.latencyActionMeta),
-:global([data-theme="light"]) .latencyFeedback p,
-:global([data-theme="light"]) .arenaFeedback p {
+:global([data-theme="light"]) .archiveNote {
   color: var(--lab-muted) !important;
 }
 
@@ -769,20 +746,13 @@
   color: var(--lab-ink);
 }
 
-:global([data-theme="light"]) .runnerPanel,
-:global([data-theme="light"]) .arenaFeedback,
-:global([data-theme="light"]) .latencyFeedback {
+:global([data-theme="light"]) .runnerPanel {
   border-color: rgba(15, 23, 42, 0.12);
   background: rgba(255, 255, 255, 0.72);
   box-shadow: 0 18px 52px rgba(15, 23, 42, 0.08);
 }
 
 :global([data-theme="light"]) .runnerPanel h3,
-:global([data-theme="light"]) .arenaFeedback h3,
-:global([data-theme="light"]) .latencyFeedback h3,
-:global([data-theme="light"]) .arenaBugPanel h3,
-:global([data-theme="light"]) .latencyIncidentPanel h3,
-:global([data-theme="light"]) .latencyMetric strong,
 :global([data-theme="light"]) .runnerHud strong,
 :global([data-theme="light"]) .snakeHud strong,
 :global([data-theme="light"]) .tetrisHud strong {
@@ -2681,991 +2651,6 @@
   color: rgba(15, 23, 42, 0.54);
 }
 
-.arenaLayout {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(18rem, 0.38fr);
-  gap: 1rem;
-}
-
-.arenaStage {
-  position: relative;
-  overflow: hidden;
-  min-height: clamp(28rem, 52vw, 42rem);
-  border-radius: 1.65rem;
-  padding: clamp(0.85rem, 2vw, 1.15rem);
-  background:
-    radial-gradient(circle at 78% 18%, rgba(139, 92, 246, 0.18), transparent 17rem),
-    radial-gradient(circle at 18% 76%, rgba(103, 232, 249, 0.12), transparent 16rem),
-    linear-gradient(145deg, rgba(7, 13, 26, 0.92), rgba(2, 6, 16, 0.94));
-  transition:
-    border-color 180ms ease,
-    box-shadow 180ms ease;
-}
-
-.arenaStage::before {
-  position: absolute;
-  inset: 0;
-  content: "";
-  pointer-events: none;
-  background:
-    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.026) 1px, transparent 1px),
-    linear-gradient(118deg, transparent 0 38%, rgba(139, 92, 246, 0.12) 50%, transparent 64%);
-  background-size: 62px 62px, 62px 62px, auto;
-  opacity: 0.86;
-}
-
-.arenaStageSafe,
-.arenaStageCompleted {
-  border-color: rgba(52, 211, 153, 0.55);
-  box-shadow:
-    0 28px 105px rgba(52, 211, 153, 0.12),
-    inset 0 0 0 1px rgba(52, 211, 153, 0.1);
-}
-
-.arenaStagePartial {
-  border-color: rgba(251, 191, 36, 0.5);
-  box-shadow:
-    0 28px 105px rgba(251, 191, 36, 0.1),
-    inset 0 0 0 1px rgba(251, 191, 36, 0.08);
-}
-
-.arenaStageDanger,
-.arenaStageFailed {
-  border-color: rgba(248, 113, 113, 0.56);
-  box-shadow:
-    0 28px 105px rgba(248, 113, 113, 0.12),
-    inset 0 0 0 1px rgba(248, 113, 113, 0.1);
-}
-
-.arenaStageCritical {
-  border-color: rgba(251, 191, 36, 0.58);
-  box-shadow:
-    0 28px 105px rgba(251, 191, 36, 0.12),
-    inset 0 0 0 1px rgba(251, 191, 36, 0.12);
-}
-
-.arenaHud {
-  position: relative;
-  z-index: 2;
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 0.65rem;
-}
-
-.arenaHud div {
-  min-width: 0;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 1rem;
-  padding: 0.75rem;
-  background: rgba(255, 255, 255, 0.05);
-}
-
-.arenaHud span {
-  display: block;
-  color: rgba(237, 246, 255, 0.66);
-  font-size: 0.72rem;
-  font-weight: 850;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.arenaHud strong {
-  display: block;
-  margin-top: 0.28rem;
-  color: #fff;
-  font-family: var(--font-mono), ui-monospace, monospace;
-  font-size: clamp(1.2rem, 2.4vw, 2rem);
-  line-height: 1;
-}
-
-.arenaHudPulse {
-  animation: arena-score-pulse 320ms cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-.arenaComboChip {
-  display: inline-grid;
-  margin-left: 0.45rem;
-  transform: translateY(-0.16rem);
-  border: 1px solid rgba(103, 232, 249, 0.28);
-  border-radius: 999px;
-  padding: 0.18rem 0.42rem;
-  background: rgba(103, 232, 249, 0.1);
-  color: var(--lab-accent-a);
-  font-family: var(--font-mono), ui-monospace, monospace;
-  font-size: 0.58rem;
-  font-style: normal;
-  font-weight: 900;
-  line-height: 1;
-  text-transform: uppercase;
-}
-
-.arenaTimeCritical {
-  color: #fbbf24;
-  text-shadow: 0 0 18px rgba(251, 191, 36, 0.34);
-}
-
-.arenaProgress {
-  position: relative;
-  z-index: 2;
-  height: 0.42rem;
-  margin: 0.8rem 0 1rem;
-  overflow: hidden;
-  border: 1px solid rgba(103, 232, 249, 0.18);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.06);
-}
-
-.arenaProgress span {
-  display: block;
-  width: var(--progress, 0%);
-  height: 100%;
-  border-radius: inherit;
-  background: linear-gradient(90deg, rgba(103, 232, 249, 0.78), rgba(52, 211, 153, 0.72));
-  box-shadow: 0 0 24px rgba(103, 232, 249, 0.24);
-  transition: width 280ms cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.arenaBody {
-  position: relative;
-  z-index: 2;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(15rem, 0.42fr);
-  gap: 1rem;
-  min-width: 0;
-}
-
-.arenaEditor,
-.arenaBugPanel,
-.arenaFeedback {
-  border: 1px solid rgba(255, 255, 255, 0.11);
-  border-radius: 1.25rem;
-  background: rgba(255, 255, 255, 0.045);
-}
-
-.arenaEditor {
-  min-width: 0;
-  overflow: hidden;
-}
-
-.arenaEditorHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  padding: 0.8rem 0.9rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.04);
-}
-
-.arenaEditorHeader span,
-.arenaOptionMeta {
-  color: var(--lab-accent-a);
-  font-family: var(--font-mono), ui-monospace, monospace;
-  font-size: 0.72rem;
-  font-weight: 900;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.arenaEditorHeader strong {
-  color: #f8fbff;
-  font-size: 0.92rem;
-  font-weight: 850;
-}
-
-.arenaCode {
-  display: grid;
-  gap: 0.15rem;
-  min-width: 0;
-  overflow-x: auto;
-  padding: 0.8rem;
-}
-
-.arenaLine {
-  display: grid;
-  grid-template-columns: 2.4rem minmax(0, 1fr);
-  align-items: center;
-  min-height: 2.28rem;
-  border: 1px solid transparent;
-  border-radius: 0.75rem;
-  color: rgba(237, 246, 255, 0.78);
-  font-family: var(--font-mono), ui-monospace, monospace;
-  font-size: 0.78rem;
-  line-height: 1.45;
-}
-
-.arenaLine code {
-  overflow-wrap: anywhere;
-  white-space: pre-wrap;
-}
-
-.arenaGutter {
-  color: rgba(237, 246, 255, 0.34);
-  text-align: center;
-}
-
-.arenaLineSuspect {
-  border-color: rgba(251, 191, 36, 0.24);
-  background: linear-gradient(90deg, rgba(251, 191, 36, 0.11), rgba(251, 191, 36, 0.035));
-}
-
-.arenaLineResolved {
-  border-color: rgba(52, 211, 153, 0.32);
-  background: linear-gradient(90deg, rgba(52, 211, 153, 0.12), rgba(52, 211, 153, 0.04));
-}
-
-.arenaBugPanel {
-  padding: 1rem;
-}
-
-.arenaBugPanel h3 {
-  margin: 0.55rem 0 0;
-  color: #fff;
-  font-size: clamp(1.3rem, 2.4vw, 2rem);
-  font-weight: 900;
-  line-height: 1.02;
-}
-
-.arenaBugPanel p {
-  margin: 0.75rem 0 0;
-  color: rgba(237, 246, 255, 0.7);
-  font-size: 0.9rem;
-  font-weight: 650;
-  line-height: 1.6;
-}
-
-.arenaMeter {
-  display: grid;
-  gap: 0.5rem;
-  margin-top: 1rem;
-}
-
-.arenaMeter span {
-  color: rgba(237, 246, 255, 0.64);
-  font-size: 0.72rem;
-  font-weight: 850;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.arenaMeter strong {
-  color: #fff;
-  font-family: var(--font-mono), ui-monospace, monospace;
-  font-size: 2.2rem;
-  line-height: 1;
-}
-
-.arenaMeter i {
-  display: block;
-  height: 0.48rem;
-  overflow: hidden;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.arenaMeter i::before {
-  display: block;
-  width: var(--stability, 100%);
-  height: 100%;
-  border-radius: inherit;
-  background: linear-gradient(90deg, rgba(248, 113, 113, 0.82), rgba(251, 191, 36, 0.74), rgba(52, 211, 153, 0.76));
-  content: "";
-  transition: width 240ms cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.arenaSystemGrid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.55rem;
-  margin-top: 0.8rem;
-}
-
-.arenaMiniMeter {
-  display: grid;
-  gap: 0.38rem;
-  min-width: 0;
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  border-radius: 0.95rem;
-  padding: 0.72rem;
-  background: rgba(255, 255, 255, 0.04);
-}
-
-.arenaMiniMeter span {
-  color: rgba(237, 246, 255, 0.62);
-  font-size: 0.66rem;
-  font-weight: 850;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.arenaMiniMeter strong {
-  color: #fff;
-  font-family: var(--font-mono), ui-monospace, monospace;
-  font-size: 1.25rem;
-  line-height: 1;
-}
-
-.arenaMiniMeter i {
-  display: block;
-  height: 0.34rem;
-  overflow: hidden;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.arenaMiniMeter i::before {
-  display: block;
-  width: var(--meter, 0%);
-  height: 100%;
-  border-radius: inherit;
-  content: "";
-  transition: width 220ms cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.arenaRiskMeter i::before {
-  background: linear-gradient(90deg, rgba(251, 191, 36, 0.76), rgba(248, 113, 113, 0.78));
-}
-
-.arenaConfidenceMeter i::before {
-  background: linear-gradient(90deg, rgba(103, 232, 249, 0.74), rgba(52, 211, 153, 0.78));
-}
-
-.arenaImpactRail {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.45rem;
-  align-items: center;
-  margin-top: 0.85rem;
-}
-
-.arenaImpactLabel,
-.arenaImpactEmpty,
-.arenaImpactItem {
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 999px;
-  padding: 0.38rem 0.6rem;
-  font-family: var(--font-mono), ui-monospace, monospace;
-  font-size: 0.68rem;
-  font-weight: 850;
-  line-height: 1.15;
-}
-
-.arenaImpactLabel {
-  border-color: rgba(103, 232, 249, 0.24);
-  background: rgba(103, 232, 249, 0.08);
-  color: var(--lab-accent-a);
-  text-transform: uppercase;
-}
-
-.arenaImpactEmpty {
-  color: rgba(237, 246, 255, 0.56);
-  background: rgba(255, 255, 255, 0.035);
-}
-
-.arenaImpactItem {
-  color: rgba(248, 251, 255, 0.88);
-  background: rgba(255, 255, 255, 0.045);
-  animation: arena-impact-enter 260ms cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-.arenaImpactSafe {
-  border-color: rgba(52, 211, 153, 0.3);
-  background: rgba(52, 211, 153, 0.08);
-}
-
-.arenaImpactPartial {
-  border-color: rgba(251, 191, 36, 0.3);
-  background: rgba(251, 191, 36, 0.08);
-}
-
-.arenaImpactDanger {
-  border-color: rgba(248, 113, 113, 0.34);
-  background: rgba(248, 113, 113, 0.09);
-}
-
-.arenaOverlay {
-  position: absolute;
-  inset: 0;
-  z-index: 8;
-  display: grid;
-  place-items: center;
-  padding: 1rem;
-  background: linear-gradient(180deg, rgba(2, 6, 23, 0.18), rgba(2, 6, 23, 0.76));
-}
-
-.arenaOverlay .runnerAction {
-  margin-top: 1rem;
-}
-
-.arenaSide {
-  display: grid;
-  align-content: start;
-  gap: 1rem;
-}
-
-.arenaTimeline {
-  display: flex;
-  gap: 0.38rem;
-  margin-top: 0.75rem;
-}
-
-.arenaNode {
-  flex: 1;
-  height: 0.46rem;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.arenaNodeActive {
-  background: rgba(103, 232, 249, 0.78);
-  box-shadow: 0 0 18px rgba(103, 232, 249, 0.24);
-}
-
-.arenaNodeDone {
-  background: rgba(52, 211, 153, 0.72);
-}
-
-.arenaOptions {
-  display: grid;
-  gap: 0.72rem;
-}
-
-.arenaOption {
-  display: grid;
-  gap: 0.48rem;
-  width: 100%;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 1.2rem;
-  padding: 0.9rem;
-  background: rgba(255, 255, 255, 0.045);
-  color: #f8fbff;
-  text-align: left;
-  transition:
-    transform 180ms cubic-bezier(0.16, 1, 0.3, 1),
-    border-color 180ms cubic-bezier(0.16, 1, 0.3, 1),
-    background 180ms cubic-bezier(0.16, 1, 0.3, 1),
-    box-shadow 180ms cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.arenaOption strong {
-  font-size: 0.95rem;
-  line-height: 1.25;
-}
-
-.arenaOption > span:not(.arenaOptionMeta) {
-  color: rgba(237, 246, 255, 0.66);
-  font-size: 0.78rem;
-  font-weight: 650;
-  line-height: 1.42;
-}
-
-.arenaOptionDetail {
-  border-left: 2px solid rgba(103, 232, 249, 0.26);
-  padding-left: 0.58rem;
-  color: rgba(237, 246, 255, 0.54) !important;
-}
-
-.arenaOptionFocused,
-.arenaOptionSelected {
-  border-color: rgba(103, 232, 249, 0.52);
-  background: rgba(103, 232, 249, 0.1);
-}
-
-.arenaOptionSafe.arenaOptionSelected {
-  border-color: rgba(52, 211, 153, 0.56);
-}
-
-.arenaOptionPartial.arenaOptionSelected {
-  border-color: rgba(251, 191, 36, 0.56);
-}
-
-.arenaOptionDanger.arenaOptionSelected {
-  border-color: rgba(248, 113, 113, 0.62);
-}
-
-.arenaOption:disabled {
-  cursor: default;
-}
-
-.arenaFeedback {
-  padding: 1rem;
-}
-
-.arenaFeedback h3 {
-  margin: 0.55rem 0 0;
-  color: #fff;
-  font-size: 1rem;
-  font-weight: 850;
-}
-
-.arenaFeedback p {
-  margin: 0.72rem 0 0;
-  color: rgba(237, 246, 255, 0.7);
-  font-size: 0.86rem;
-  font-weight: 650;
-  line-height: 1.55;
-}
-
-.arenaFeedbackSafe {
-  border-color: rgba(52, 211, 153, 0.34);
-  background: rgba(52, 211, 153, 0.08);
-}
-
-.arenaFeedbackPartial {
-  border-color: rgba(251, 191, 36, 0.34);
-  background: rgba(251, 191, 36, 0.08);
-}
-
-.arenaFeedbackDanger {
-  border-color: rgba(248, 113, 113, 0.36);
-  background: rgba(248, 113, 113, 0.08);
-}
-
-.latencyLayout {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(18rem, 0.38fr);
-  gap: 1rem;
-}
-
-.latencyStage {
-  position: relative;
-  overflow: hidden;
-  min-height: clamp(28rem, 52vw, 42rem);
-  border-radius: 1.65rem;
-  padding: clamp(0.85rem, 2vw, 1.15rem);
-  background:
-    radial-gradient(circle at 76% 18%, rgba(52, 211, 153, 0.16), transparent 16rem),
-    radial-gradient(circle at 20% 78%, rgba(103, 232, 249, 0.12), transparent 16rem),
-    linear-gradient(145deg, rgba(5, 16, 28, 0.92), rgba(2, 6, 16, 0.94));
-  transition:
-    border-color 180ms ease,
-    box-shadow 180ms ease;
-}
-
-.latencyStage::before {
-  position: absolute;
-  inset: 0;
-  content: "";
-  pointer-events: none;
-  background:
-    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.026) 1px, transparent 1px),
-    radial-gradient(circle at 50% 50%, rgba(103, 232, 249, 0.1), transparent 58%);
-  background-size: 64px 64px, 64px 64px, auto;
-  opacity: 0.86;
-}
-
-.latencyStageCritical,
-.latencyStageTradeoff {
-  border-color: rgba(251, 191, 36, 0.54);
-  box-shadow:
-    0 28px 105px rgba(251, 191, 36, 0.1),
-    inset 0 0 0 1px rgba(251, 191, 36, 0.08);
-}
-
-.latencyStageOptimize,
-.latencyStageWon {
-  border-color: rgba(52, 211, 153, 0.55);
-  box-shadow:
-    0 28px 105px rgba(52, 211, 153, 0.12),
-    inset 0 0 0 1px rgba(52, 211, 153, 0.1);
-}
-
-.latencyStageRegress,
-.latencyStageFailed {
-  border-color: rgba(248, 113, 113, 0.56);
-  box-shadow:
-    0 28px 105px rgba(248, 113, 113, 0.12),
-    inset 0 0 0 1px rgba(248, 113, 113, 0.1);
-}
-
-.latencyHud {
-  position: relative;
-  z-index: 2;
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 0.65rem;
-}
-
-.latencyHud div {
-  min-width: 0;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 1rem;
-  padding: 0.75rem;
-  background: rgba(255, 255, 255, 0.05);
-}
-
-.latencyHud span,
-.latencyMetric span,
-.latencyBudget span,
-.latencyActionMeta {
-  display: block;
-  color: rgba(237, 246, 255, 0.66);
-  font-size: 0.72rem;
-  font-weight: 850;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.latencyHud strong {
-  display: block;
-  margin-top: 0.28rem;
-  color: #fff;
-  font-family: var(--font-mono), ui-monospace, monospace;
-  font-size: clamp(1.2rem, 2.4vw, 2rem);
-  line-height: 1;
-}
-
-.latencyScorePulse {
-  animation: latency-score-pulse 320ms cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-.latencyBudgetCritical {
-  color: #fbbf24 !important;
-  text-shadow: 0 0 18px rgba(251, 191, 36, 0.34);
-}
-
-.latencyProgress {
-  position: relative;
-  z-index: 2;
-  height: 0.42rem;
-  margin: 0.8rem 0 1rem;
-  overflow: hidden;
-  border: 1px solid rgba(103, 232, 249, 0.18);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.06);
-}
-
-.latencyProgress span {
-  display: block;
-  width: var(--progress, 0%);
-  height: 100%;
-  border-radius: inherit;
-  background: linear-gradient(90deg, rgba(103, 232, 249, 0.78), rgba(52, 211, 153, 0.72));
-  box-shadow: 0 0 24px rgba(103, 232, 249, 0.24);
-  transition: width 280ms cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.latencyTopology {
-  position: relative;
-  z-index: 2;
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: clamp(0.42rem, 1vw, 0.72rem);
-  margin-top: 1rem;
-  padding: clamp(0.65rem, 1.5vw, 1rem);
-  border: 1px solid rgba(103, 232, 249, 0.16);
-  border-radius: 1.25rem;
-  background:
-    linear-gradient(90deg, transparent, rgba(103, 232, 249, 0.1), transparent),
-    rgba(255, 255, 255, 0.035);
-}
-
-.latencyTopology::before {
-  position: absolute;
-  top: 50%;
-  left: 8%;
-  right: 8%;
-  height: 2px;
-  content: "";
-  background: linear-gradient(90deg, rgba(103, 232, 249, 0.12), rgba(52, 211, 153, 0.42), rgba(103, 232, 249, 0.12));
-}
-
-.latencyNode {
-  position: relative;
-  z-index: 2;
-  display: grid;
-  min-height: clamp(4rem, 7vw, 5.4rem);
-  place-items: center;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 1.05rem;
-  background: rgba(3, 10, 22, 0.72);
-  color: rgba(237, 246, 255, 0.72);
-  font-size: clamp(0.68rem, 1vw, 0.82rem);
-  font-weight: 850;
-  text-align: center;
-}
-
-.latencyNode i {
-  position: absolute;
-  inset: auto 0.7rem 0.58rem;
-  height: 0.24rem;
-  overflow: hidden;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.latencyNode i::before {
-  display: block;
-  width: 46%;
-  height: 100%;
-  border-radius: inherit;
-  background: linear-gradient(90deg, rgba(103, 232, 249, 0.2), rgba(52, 211, 153, 0.78), rgba(103, 232, 249, 0.2));
-  content: "";
-}
-
-.latencyNodeActive {
-  border-color: rgba(103, 232, 249, 0.52);
-  background: linear-gradient(135deg, rgba(103, 232, 249, 0.16), rgba(52, 211, 153, 0.08));
-  color: #f8fbff;
-  box-shadow: 0 0 28px rgba(103, 232, 249, 0.16);
-}
-
-.latencyMetrics {
-  position: relative;
-  z-index: 2;
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 0.62rem;
-  margin-top: 1rem;
-}
-
-.latencyMetric {
-  min-width: 0;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 1rem;
-  padding: 0.75rem;
-  background: rgba(255, 255, 255, 0.045);
-}
-
-.latencyMetric strong {
-  display: block;
-  margin-top: 0.28rem;
-  color: #fff;
-  font-family: var(--font-mono), ui-monospace, monospace;
-  font-size: clamp(1.05rem, 1.8vw, 1.45rem);
-  line-height: 1;
-}
-
-.latencyMetric i {
-  display: block;
-  height: 0.36rem;
-  margin-top: 0.58rem;
-  overflow: hidden;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.latencyMetric i::before {
-  display: block;
-  width: var(--meter, 0%);
-  height: 100%;
-  border-radius: inherit;
-  background: linear-gradient(90deg, rgba(103, 232, 249, 0.74), rgba(52, 211, 153, 0.78));
-  content: "";
-  transition: width 220ms cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.latencyMetricDanger {
-  border-color: rgba(251, 191, 36, 0.34);
-  background: rgba(251, 191, 36, 0.06);
-}
-
-.latencyMetricDanger i::before {
-  background: linear-gradient(90deg, rgba(251, 191, 36, 0.78), rgba(248, 113, 113, 0.74));
-}
-
-.latencyIncidentPanel {
-  position: relative;
-  z-index: 2;
-  margin-top: 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.11);
-  border-radius: 1.25rem;
-  padding: 1rem;
-  background: rgba(255, 255, 255, 0.045);
-}
-
-.latencyIncidentPanel h3 {
-  margin: 0.55rem 0 0;
-  color: #fff;
-  font-size: clamp(1.45rem, 3vw, 2.4rem);
-  font-weight: 900;
-  line-height: 1.02;
-}
-
-.latencyIncidentPanel p,
-.latencyIncidentPanel small {
-  display: block;
-  margin: 0.72rem 0 0;
-  color: rgba(237, 246, 255, 0.7);
-  font-size: 0.9rem;
-  font-weight: 650;
-  line-height: 1.6;
-}
-
-.latencyIncidentPanel small {
-  color: rgba(237, 246, 255, 0.56);
-}
-
-.latencyOverlay {
-  position: absolute;
-  inset: 0;
-  z-index: 8;
-  display: grid;
-  place-items: center;
-  padding: 1rem;
-  background: linear-gradient(180deg, rgba(2, 6, 23, 0.18), rgba(2, 6, 23, 0.76));
-}
-
-.latencyOverlay .runnerAction {
-  margin-top: 1rem;
-}
-
-.latencySide {
-  display: grid;
-  align-content: start;
-  gap: 1rem;
-}
-
-.latencyBudget {
-  display: grid;
-  gap: 0.48rem;
-  margin-top: 0.75rem;
-}
-
-.latencyBudget strong {
-  color: #fff;
-  font-family: var(--font-mono), ui-monospace, monospace;
-  font-size: 2.2rem;
-  line-height: 1;
-}
-
-.latencyBudget i {
-  display: block;
-  height: 0.48rem;
-  overflow: hidden;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.latencyBudget i::before {
-  display: block;
-  width: var(--budget, 0%);
-  height: 100%;
-  border-radius: inherit;
-  background: linear-gradient(90deg, rgba(248, 113, 113, 0.82), rgba(251, 191, 36, 0.74), rgba(52, 211, 153, 0.76));
-  content: "";
-  transition: width 240ms cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.latencyActions {
-  display: grid;
-  gap: 0.72rem;
-}
-
-.latencyAction {
-  display: grid;
-  gap: 0.48rem;
-  width: 100%;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 1.2rem;
-  padding: 0.9rem;
-  background: rgba(255, 255, 255, 0.045);
-  color: #f8fbff;
-  text-align: left;
-  transition:
-    transform 180ms cubic-bezier(0.16, 1, 0.3, 1),
-    border-color 180ms cubic-bezier(0.16, 1, 0.3, 1),
-    background 180ms cubic-bezier(0.16, 1, 0.3, 1),
-    box-shadow 180ms cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.latencyAction strong {
-  font-size: 0.95rem;
-  line-height: 1.25;
-}
-
-.latencyAction > span:not(.latencyActionMeta) {
-  color: rgba(237, 246, 255, 0.66);
-  font-size: 0.78rem;
-  font-weight: 650;
-  line-height: 1.42;
-}
-
-.latencyActionMeta {
-  color: var(--lab-accent-a);
-}
-
-.latencyActionFocused,
-.latencyActionSelected {
-  border-color: rgba(103, 232, 249, 0.52);
-  background: rgba(103, 232, 249, 0.1);
-}
-
-.latencyActionOptimize.latencyActionSelected {
-  border-color: rgba(52, 211, 153, 0.56);
-}
-
-.latencyActionTradeoff.latencyActionSelected {
-  border-color: rgba(251, 191, 36, 0.56);
-}
-
-.latencyActionRegress.latencyActionSelected {
-  border-color: rgba(248, 113, 113, 0.62);
-}
-
-.latencyAction:disabled {
-  cursor: default;
-}
-
-.latencyFeedback {
-  border: 1px solid rgba(255, 255, 255, 0.11);
-  border-radius: 1.25rem;
-  padding: 1rem;
-  background: rgba(255, 255, 255, 0.045);
-}
-
-.latencyFeedback h3 {
-  margin: 0.55rem 0 0;
-  color: #fff;
-  font-size: 1rem;
-  font-weight: 850;
-}
-
-.latencyFeedback p {
-  margin: 0.72rem 0 0;
-  color: rgba(237, 246, 255, 0.7);
-  font-size: 0.86rem;
-  font-weight: 650;
-  line-height: 1.55;
-}
-
-.latencyFeedbackOptimize {
-  border-color: rgba(52, 211, 153, 0.34);
-  background: rgba(52, 211, 153, 0.08);
-}
-
-.latencyFeedbackTradeoff {
-  border-color: rgba(251, 191, 36, 0.34);
-  background: rgba(251, 191, 36, 0.08);
-}
-
-.latencyFeedbackRegress {
-  border-color: rgba(248, 113, 113, 0.36);
-  background: rgba(248, 113, 113, 0.08);
-}
-
-.latencyDeltaRail {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.38rem;
-  margin-top: 0.82rem;
-}
-
-.latencyDeltaRail span {
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 999px;
-  padding: 0.34rem 0.52rem;
-  background: rgba(255, 255, 255, 0.04);
-  color: rgba(248, 251, 255, 0.84);
-  font-family: var(--font-mono), ui-monospace, monospace;
-  font-size: 0.64rem;
-  font-weight: 850;
-}
-
 .moduleGrid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -3702,7 +2687,7 @@
   font-size: 0.86rem;
 }
 
-@keyframes arenaSurfaceIn {
+@keyframes focus-surface-in {
   from {
     transform: translateY(0.65rem);
     filter: saturate(0.92);
@@ -3966,96 +2951,6 @@
   }
 }
 
-@keyframes arena-scan {
-  from {
-    transform: translateX(-30%);
-  }
-
-  to {
-    transform: translateX(130%);
-  }
-}
-
-@keyframes arena-feedback-pop {
-  0% {
-    opacity: 0.86;
-    transform: translateY(0.35rem);
-  }
-
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes arena-score-pulse {
-  0% {
-    transform: translateY(0);
-    text-shadow: none;
-  }
-
-  45% {
-    transform: translateY(-0.08rem);
-    text-shadow: 0 0 22px rgba(103, 232, 249, 0.42);
-  }
-
-  100% {
-    transform: translateY(0);
-    text-shadow: none;
-  }
-}
-
-@keyframes arena-impact-enter {
-  from {
-    opacity: 0;
-    transform: translateY(0.32rem);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes latency-node-flow {
-  from {
-    transform: translateX(-120%);
-  }
-
-  to {
-    transform: translateX(230%);
-  }
-}
-
-@keyframes latency-score-pulse {
-  0% {
-    transform: translateY(0);
-    text-shadow: none;
-  }
-
-  45% {
-    transform: translateY(-0.08rem);
-    text-shadow: 0 0 22px rgba(52, 211, 153, 0.42);
-  }
-
-  100% {
-    transform: translateY(0);
-    text-shadow: none;
-  }
-}
-
-@keyframes latency-feedback-pop {
-  0% {
-    opacity: 0.86;
-    transform: translateY(0.35rem);
-  }
-
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 @media (prefers-reduced-motion: no-preference) {
   .systemCore {
     animation: core-breathe 5.6s ease-in-out infinite;
@@ -4075,30 +2970,6 @@
 
   .mazeHazard::after {
     animation: maze-hazard-warn 2.5s ease-in-out infinite;
-  }
-
-  .arenaStage::after {
-    position: absolute;
-    inset: 0;
-    content: "";
-    pointer-events: none;
-    background: linear-gradient(90deg, transparent, rgba(103, 232, 249, 0.11), transparent);
-    opacity: 0.65;
-    transform: translateX(-30%);
-    animation: arena-scan 11.5s linear infinite;
-  }
-
-  .arenaFeedback {
-    animation: arena-feedback-pop 240ms cubic-bezier(0.16, 1, 0.3, 1) both;
-  }
-
-  .latencyNode i::before {
-    animation: latency-node-flow 4.2s ease-in-out infinite;
-    animation-delay: calc(var(--node-index, 0) * 190ms);
-  }
-
-  .latencyFeedback {
-    animation: latency-feedback-pop 240ms cubic-bezier(0.16, 1, 0.3, 1) both;
   }
 }
 
@@ -4125,16 +2996,13 @@
 
 @media (max-width: 980px) {
   .hero,
-  .hubHeader,
-  .focusHeader,
-  .runnerGrid,
-  .mazeLayout,
-  .snakeLayout,
-  .tetrisLayout,
-  .arenaLayout,
-  .arenaBody,
-  .latencyLayout,
-  .sectionHeader {
+.hubHeader,
+.focusHeader,
+.runnerGrid,
+.mazeLayout,
+.snakeLayout,
+.tetrisLayout,
+.sectionHeader {
     grid-template-columns: 1fr;
   }
 
@@ -4400,11 +3268,9 @@
   }
 
   :global(#runtime-runner-title),
-  :global(#bug-maze-title),
-  :global(#code-snake-title),
-  :global(#stack-tetris-title),
-  :global(#debug-arena-title),
-  :global(#latency-lab-title) {
+:global(#bug-maze-title),
+:global(#code-snake-title),
+:global(#stack-tetris-title) {
     scroll-margin-top: 15rem;
   }
 
@@ -4749,162 +3615,6 @@
     animation-duration: 160ms;
   }
 
-  .arenaStage {
-    min-height: auto;
-    border-radius: 1.25rem;
-    padding: 0.65rem;
-  }
-
-  .arenaHud {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .arenaHud div {
-    padding: 0.62rem;
-  }
-
-  .arenaBody {
-    gap: 0.75rem;
-  }
-
-  .arenaSystemGrid {
-    gap: 0.42rem;
-  }
-
-  .arenaMiniMeter {
-    padding: 0.58rem;
-  }
-
-  .arenaImpactRail {
-    gap: 0.34rem;
-    margin-top: 0.65rem;
-  }
-
-  .arenaImpactLabel,
-  .arenaImpactEmpty,
-  .arenaImpactItem {
-    padding: 0.34rem 0.48rem;
-    font-size: 0.6rem;
-  }
-
-  .arenaEditorHeader {
-    display: grid;
-  }
-
-  .arenaCode {
-    overflow-x: hidden;
-    padding: 0.58rem;
-  }
-
-  .arenaLine {
-    grid-template-columns: 1.8rem minmax(0, 1fr);
-    align-items: start;
-    font-size: 0.68rem;
-  }
-
-  .arenaLine code {
-    overflow-wrap: anywhere;
-    white-space: pre-wrap;
-  }
-
-  .arenaOptions {
-    gap: 0.58rem;
-  }
-
-  .arenaOption {
-    padding: 0.78rem;
-  }
-
-  .arenaOption strong {
-    font-size: 0.9rem;
-  }
-
-  .arenaOption > span:not(.arenaOptionMeta),
-  .arenaOptionDetail,
-  .latencyAction > span:not(.latencyActionMeta) {
-    display: -webkit-box;
-    overflow: hidden;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-  }
-
-  .arenaFeedback p,
-  .latencyFeedback p {
-    font-size: 0.8rem;
-    line-height: 1.45;
-  }
-
-  .latencyStage {
-    min-height: auto;
-    border-radius: 1.25rem;
-    padding: 0.65rem;
-  }
-
-  .latencyOverlay {
-    align-items: start;
-    padding-top: 0.75rem;
-  }
-
-  .latencyHud {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .latencyHud div {
-    padding: 0.62rem;
-  }
-
-  .latencyTopology {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.5rem;
-    padding: 0.55rem;
-  }
-
-  .latencyTopology::before {
-    display: none;
-  }
-
-  .latencyNode {
-    min-height: 3.4rem;
-    border-radius: 0.85rem;
-  }
-
-  .latencyMetrics {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.52rem;
-  }
-
-  .latencyMetric {
-    padding: 0.62rem;
-  }
-
-  .latencyIncidentPanel {
-    padding: 0.8rem;
-  }
-
-  .latencyIncidentPanel h3 {
-    font-size: clamp(1.25rem, 7vw, 1.7rem);
-  }
-
-  .latencyActions {
-    gap: 0.58rem;
-  }
-
-  .latencyAction {
-    padding: 0.78rem;
-  }
-
-  .latencyAction strong {
-    font-size: 0.9rem;
-  }
-
-  .latencyDeltaRail {
-    gap: 0.32rem;
-  }
-
-  .latencyDeltaRail span {
-    font-size: 0.58rem;
-  }
-
   .moduleGrid {
     grid-template-columns: 1fr;
   }
@@ -4942,29 +3652,25 @@
   }
 
   .actionPrimary,
-  .actionSecondary,
-  .actionGhost,
-  .hubCard,
-  .focusShell,
-  .focusStage,
-  .focusTab,
-  .runnerAction,
-  .laneControl,
-  .mazeDirection,
-  .snakeDirection,
-  .tetrisControl,
-  .arenaOption,
-  .latencyAction,
-  .runnerStage,
-  .mazeStage,
-  .snakeStage,
-  .tetrisStage,
-  .arenaStage,
-  .latencyStage,
-  .mazeCell,
-  .snakeCell,
-  .tetrisCell,
-  .moduleCard {
+.actionSecondary,
+.actionGhost,
+.hubCard,
+.focusShell,
+.focusStage,
+.focusTab,
+.runnerAction,
+.laneControl,
+.mazeDirection,
+.snakeDirection,
+.tetrisControl,
+.runnerStage,
+.mazeStage,
+.snakeStage,
+.tetrisStage,
+.mazeCell,
+.snakeCell,
+.tetrisCell,
+.moduleCard {
     transition: none;
   }
 
@@ -4973,21 +3679,14 @@
   }
 
   .mazePlayer,
-  .mazeStageHitFlash,
-  .mazeStageBlocked,
-  .snakeStageHit,
-  .tetrisStageHit,
-  .mazeGoal::after,
-  .mazePatch::after,
-  .mazeHazard::after,
-  .mazeVirus,
-  .arenaHudPulse,
-  .arenaImpactItem,
-  .arenaFeedback,
-  .arenaStage::after,
-  .latencyScorePulse,
-  .latencyNode i::before,
-  .latencyFeedback {
+.mazeStageHitFlash,
+.mazeStageBlocked,
+.snakeStageHit,
+.tetrisStageHit,
+.mazeGoal::after,
+.mazePatch::after,
+.mazeHazard::after,
+.mazeVirus {
     animation: none;
   }
 }
