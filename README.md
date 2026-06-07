@@ -61,6 +61,14 @@ Legados mantidos para análise futura, sem remoção aprovada nesta fase:
 
 R1-E.11.3.3 removeu os módulos legados zero-import `api-latency-game.tsx`, `architecture-builder.tsx`, `debug-challenge.tsx`, `interactive-terminal.tsx` e `skill-radar.tsx`. A compatibilidade de score, Debug Arena, Latency Lab, CSS legado e `/visual-final-candidate` continuam preservados para fases próprias.
 
+R1-E.11.3.6 definiu a estratégia de depreciação: `DebugArena` e `LatencyLab` existem no código, mas não são renderizados no Lab principal, estão deprecated e não devem voltar como jogos finais. A remoção deve acontecer em fases futuras, sem quebrar a compatibilidade temporária de `/api/score`.
+
+Ordem futura aprovada:
+
+1. R1-E.11.3.8 — remover `debug-arena.tsx` e `latency-lab.tsx`, mantendo `/api/score` compatível por mais um ciclo.
+2. R1-E.11.3.9 — remover CSS `.arena*` e `.latency*` somente depois que os componentes saírem.
+3. R1-E.11.3.10 — remover ids legados de score/types/validators/API após validação e aviso documental.
+
 Ruídos e cuidados:
 
 - `.next/`, `node_modules/`, logs `.next-dev*`, logs `.next-start*` e `tsconfig.tsbuildinfo` são artefatos locais ignorados.
@@ -96,11 +104,11 @@ A revisão humana da R1-E.9.3.0 redefiniu os jogos finais desejados:
 Estado atual:
 
 - Runtime Runner, Bug Maze, Code Snake e Stack Tetris existem como jogos principais jogáveis.
-- Debug Arena deve ser rebaixado para treino, experimento arquivado ou removido da vitrine principal.
-- Latency Lab deve ser rebaixado para treino, experimento arquivado ou removido da vitrine principal.
+- Debug Arena está deprecated, preservado temporariamente no código por compatibilidade, fora da vitrine principal.
+- Latency Lab está deprecated, preservado temporariamente no código por compatibilidade, fora da vitrine principal.
 - Quiz/foundation challenge não é jogo final.
 
-Desde a R1-E.9.3.2, o `/lab` não deve vender Debug Arena, Latency Lab e quiz/foundation como jogos principais. Eles podem permanecer como compatibilidade, treino ou arquivo temporário até a limpeza definitiva.
+Desde a R1-E.9.3.2, o `/lab` não deve vender Debug Arena, Latency Lab e quiz/foundation como jogos principais. Depois da R1-E.11.3.7, Debug Arena e Latency Lab devem ser tratados como deprecated até a remoção planejada.
 
 ## Interface, Motion e Navegação
 
@@ -175,18 +183,28 @@ Rotas existentes:
 /api/score
 ```
 
-`/api/score` aceita os jogos do Developer Arcade:
+`/api/score` aceita os jogos finais do Developer Arcade:
 
 ```txt
 runtime
 bug-maze
 code-snake
 stack-tetris
-debug-arena
-latency-lab
 ```
 
-Esse contrato reflete a implementação atual. `debug-arena` e `latency-lab` permanecem aceitos apenas por compatibilidade temporária.
+Compatibilidade temporária/deprecated ainda aceita:
+
+```txt
+debug-arena
+latency-lab
+debug
+architecture
+latency
+terminal
+portfolio
+```
+
+Esse contrato reflete a implementação atual. `debug-arena`, `latency-lab`, `debug`, `architecture`, `latency`, `terminal` e `portfolio` permanecem aceitos apenas por compatibilidade temporária. A limpeza desses ids deve acontecer somente após aviso documental e fases próprias.
 
 Contrato atual esperado:
 
@@ -282,6 +300,11 @@ R1-E.11.0  — Full Project Audit Before Finalization
 R1-E.11.1  — Audit Documentation Sync
 R1-E.11.2  — Safe Cleanup
 R1-E.11.3  — Cautious Legacy Cleanup
+R1-E.11.3.6 — Debug/Latency Deprecation Decision
+R1-E.11.3.7 — Debug/Latency Deprecation Docs
+R1-E.11.3.8 — Remove Debug/Latency Components
+R1-E.11.3.9 — Remove Debug/Latency CSS
+R1-E.11.3.10 — Score Compat Cleanup
 R1-E.11.4  — Final Mobile Polish
 R1-E.11.5  — Public QA Final
 R1-F.0     — Project Assets Admin Planning

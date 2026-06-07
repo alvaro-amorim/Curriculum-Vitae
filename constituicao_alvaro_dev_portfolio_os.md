@@ -110,6 +110,14 @@ Candidatos mantidos para análise/remoção futura, sem remoção aprovada nesta
 
 R1-E.11.3.3 removeu apenas os módulos legados zero-import `src/components/lab/api-latency-game.tsx`, `src/components/lab/architecture-builder.tsx`, `src/components/lab/debug-challenge.tsx`, `src/components/lab/interactive-terminal.tsx` e `src/components/lab/skill-radar.tsx`. Debug Arena, Latency Lab, `/api/score` compatível, validators/types, CSS legado e `/visual-final-candidate` seguem preservados.
 
+R1-E.11.3.6 definiu a estratégia de depreciação sem remoção: `src/components/lab/debug-arena.tsx` e `src/components/lab/latency-lab.tsx` existem no código, mas não são renderizados no Lab principal, estão deprecated e não devem voltar como jogos finais. A compatibilidade antiga de `/api/score` deve permanecer por pelo menos um ciclo após a remoção visual.
+
+Ordem futura aprovada:
+
+1. R1-E.11.3.8 — remover `src/components/lab/debug-arena.tsx` e `src/components/lab/latency-lab.tsx`, mantendo `/api/score` compatível por mais um ciclo.
+2. R1-E.11.3.9 — remover CSS `.arena*` e `.latency*` somente após a remoção dos componentes.
+3. R1-E.11.3.10 — remover ids legados de score/types/validators/API após validação e aviso documental.
+
 Ruídos e cautelas identificados:
 
 - `.next/`, `node_modules/`, logs `.next-dev*`, logs `.next-start*` e `tsconfig.tsbuildinfo` são artefatos locais ignorados.
@@ -198,6 +206,11 @@ R1-E.11.0  — Full Project Audit Before Finalization
 R1-E.11.1  — Audit Documentation Sync
 R1-E.11.2  — Safe Cleanup
 R1-E.11.3  — Cautious Legacy Cleanup
+R1-E.11.3.6 — Debug/Latency Deprecation Decision
+R1-E.11.3.7 — Debug/Latency Deprecation Docs
+R1-E.11.3.8 — Remove Debug/Latency Components
+R1-E.11.3.9 — Remove Debug/Latency CSS
+R1-E.11.3.10 — Score Compat Cleanup
 R1-E.11.4  — Final Mobile Polish
 R1-E.11.5  — Public QA Final
 R1-F.0     — Project Assets Admin Planning
@@ -768,9 +781,10 @@ Estado revisado antes do fechamento R1-E.9:
 - `/lab` ainda não validado como arcade final completo.
 - Jogos finais desejados: Runtime Runner, Bug Maze, Code Snake e Stack Tetris.
 - Runtime Runner, Bug Maze, Code Snake e Stack Tetris estão implementados como jogos finais.
-- Debug Arena, Latency Lab e quiz/foundation challenge não devem ser vendidos como jogos finais.
+- Debug Arena e Latency Lab estão deprecated: existem no código apenas como compatibilidade temporária, não aparecem no Lab principal e não devem voltar como jogos finais.
+- Quiz/foundation challenge não deve ser vendido como jogo final.
 - `/curriculo` e downloads preservados.
-- `/api/score` permanece mock/local não persistente. O contrato atual deve aceitar `runtime`, `bug-maze`, `code-snake` e `stack-tetris`; `debug-arena` e `latency-lab` ficam como compatibilidade temporária.
+- `/api/score` permanece mock/local não persistente. O contrato atual deve aceitar `runtime`, `bug-maze`, `code-snake` e `stack-tetris`; `debug-arena`, `latency-lab`, `debug`, `architecture`, `latency`, `terminal` e `portfolio` ficam como compatibilidade temporária/deprecated até fase própria de limpeza.
 - Sitemap, robots, metadata, links, idiomas, tema, acessibilidade, reduced motion e mobile validados.
 - Produção deve ser validada por leitura quando disponível, sem deploy manual nesta fase.
 
@@ -1423,6 +1437,8 @@ O Developer Lab deve evoluir para Developer Arcade: uma área com jogos reais e 
 
 ### 11.1 Debug Arena
 
+Status atual: deprecated. O componente pode existir temporariamente no código para compatibilidade, mas não faz parte da vitrine principal do Developer Arcade e não deve voltar como jogo final.
+
 Experiência visual onde o usuário interage com uma interface de editor, identifica bugs em linhas de código e tenta corrigir antes do build falhar.
 
 Funcionalidades:
@@ -1485,6 +1501,8 @@ Critérios de avaliação:
 Não precisa começar com drag and drop complexo, mas a versão final deve parecer uma construção visual de arquitetura, não apenas uma checklist.
 
 ### 11.3 Latency Lab
+
+Status atual: deprecated. O componente pode existir temporariamente no código para compatibilidade, mas não faz parte da vitrine principal do Developer Arcade e não deve voltar como jogo final.
 
 Simulação visual de performance full stack.
 
@@ -1622,11 +1640,27 @@ Payload:
 
 ```ts
 {
-  game: "debug" | "architecture" | "latency";
+  game:
+    | "runtime"
+    | "bug-maze"
+    | "code-snake"
+    | "stack-tetris"
+    // deprecated/compat temporária
+    | "debug-arena"
+    | "latency-lab"
+    | "debug"
+    | "architecture"
+    | "latency"
+    | "terminal"
+    | "portfolio";
   score: number;
   metadata?: Record<string, unknown>;
 }
 ```
+
+Ids finais: `runtime`, `bug-maze`, `code-snake` e `stack-tetris`.
+
+Ids deprecated/compatibilidade temporária: `debug-arena`, `latency-lab`, `debug`, `architecture`, `latency`, `terminal` e `portfolio`. A remoção desses ids deve acontecer apenas em R1-E.11.3.10 ou fase equivalente, depois de aviso documental e validação.
 
 Regras:
 
