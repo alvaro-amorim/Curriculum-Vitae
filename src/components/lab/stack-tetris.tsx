@@ -3,8 +3,8 @@
 import type { CSSProperties, TouchEvent } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { clampScore } from "@/lib/lab-score";
-import type { Locale } from "@/types/portfolio";
+import { GAME_VERSIONS, clampScore, detectGameDeviceType } from "@/lib/lab-score";
+import type { GameScorePayloadV2, Locale } from "@/types/portfolio";
 
 import styles from "./developer-lab.module.css";
 
@@ -47,6 +47,8 @@ type TetrisFrame = {
   lines: number;
   level: number;
   pieces: number;
+  hardDrops: number;
+  maxCombo: number;
   pulse: number;
   feedback: FeedbackKind | null;
   lastClear: number;
@@ -56,7 +58,7 @@ type TetrisFrame = {
 
 type StackTetrisProps = {
   locale: Locale;
-  onComplete: (score: number) => void;
+  onComplete: (payload: Extract<GameScorePayloadV2, { game: "stack-tetris" }>) => void;
 };
 
 type StyleVars = CSSProperties & Record<`--${string}`, string | number>;
@@ -304,6 +306,8 @@ function createInitialFrame(): TetrisFrame {
     level: 1,
     levelUp: false,
     lines: 0,
+    hardDrops: 0,
+    maxCombo: 0,
     next: createPiece(2),
     pieces: 0,
     pulse: 0,
@@ -416,6 +420,7 @@ export function StackTetris({ locale, onComplete }: StackTetrisProps) {
   const nextIdRef = useRef(3);
   const completedRef = useRef(false);
   const touchStartRef = useRef<Position | null>(null);
+  const startedAtRef = useRef(0);
 
   useEffect(() => {
     statusRef.current = status;
@@ -446,6 +451,7 @@ export function StackTetris({ locale, onComplete }: StackTetrisProps) {
     const next = createInitialFrame();
     completedRef.current = false;
     nextIdRef.current = 3;
+    startedAtRef.current = performance.now();
     commitFrame({ ...next, feedback: "start" });
     setStatus("running");
     window.requestAnimationFrame(() => stageRef.current?.focus());
@@ -470,7 +476,20 @@ export function StackTetris({ locale, onComplete }: StackTetrisProps) {
         window.localStorage.setItem(BEST_SCORE_KEY, String(best));
         return best;
       });
-      onComplete(completedFrame.apiScore);
+      onComplete({
+        deviceType: detectGameDeviceType(),
+        durationMs: Math.max(250, Math.round(performance.now() - startedAtRef.current)),
+        game: "stack-tetris",
+        gameVersion: GAME_VERSIONS["stack-tetris"],
+        metadata: {
+          hardDrops: completedFrame.hardDrops,
+          level: completedFrame.level,
+          linesCleared: completedFrame.lines,
+          maxCombo: completedFrame.maxCombo,
+          piecesPlaced: completedFrame.pieces,
+        },
+        score: completedFrame.apiScore,
+      });
     },
     [commitFrame, onComplete],
   );
@@ -484,6 +503,8 @@ export function StackTetris({ locale, onComplete }: StackTetrisProps) {
       const nextLevel = 1 + Math.floor(totalLines / 3);
       const levelUp = nextLevel > current.level;
       const combo = result.cleared > 0 ? current.combo + 1 : 0;
+      const hardDrops = current.hardDrops + (dropBonus > 0 ? 1 : 0);
+      const maxCombo = Math.max(current.maxCombo, combo);
       const clearBonus = lineScore(result.cleared, nextLevel);
       const comboBonus = result.cleared > 0 ? combo * 24 : 0;
       const nextScore = current.score + clearBonus + comboBonus + dropBonus + (result.cleared === 0 ? 12 : 0);
@@ -498,11 +519,13 @@ export function StackTetris({ locale, onComplete }: StackTetrisProps) {
         board: result.board,
         combo,
         feedback: result.cleared > 0 ? "clear" : "lock",
+        hardDrops,
         lastClear: result.cleared,
         lastDrop: dropBonus > 0 ? Math.round(dropBonus / 2) : 0,
         level: nextLevel,
         levelUp,
         lines: totalLines,
+        maxCombo,
         next: nextPiece,
         pieces: nextPieces,
         pulse: current.pulse + 1,

@@ -103,6 +103,83 @@ export type LabGameId =
   | "code-snake"
   | "stack-tetris";
 
+export type GameDeviceType = "desktop" | "mobile" | "unknown";
+
+export type RuntimeScoreMetadata = {
+  distance: number;
+  cleared: number;
+  maxSpeed: number;
+  stageReached: string;
+  collisions: number;
+  nearMisses?: number;
+};
+
+export type BugMazeScoreMetadata = {
+  tokensCollected: number;
+  totalTokens: number;
+  deployStage: number;
+  livesRemaining: number;
+  damageTaken: number;
+  virusesActive: number;
+};
+
+export type CodeSnakeScoreMetadata = {
+  length: number;
+  tokensCollected: number;
+  hazardsHit: number;
+  wallsEnabled: boolean;
+  wrapAround: boolean;
+  maxCombo?: number;
+};
+
+export type StackTetrisScoreMetadata = {
+  linesCleared: number;
+  level: number;
+  piecesPlaced: number;
+  hardDrops: number;
+  maxCombo: number;
+};
+
+export type GameScoreMetadata =
+  | RuntimeScoreMetadata
+  | BugMazeScoreMetadata
+  | CodeSnakeScoreMetadata
+  | StackTetrisScoreMetadata;
+
+export type GameScorePayloadV2 =
+  | {
+      deviceType?: GameDeviceType;
+      durationMs: number;
+      game: "runtime";
+      gameVersion: "runtime@2.0.0";
+      metadata: RuntimeScoreMetadata;
+      score: number;
+    }
+  | {
+      deviceType?: GameDeviceType;
+      durationMs: number;
+      game: "bug-maze";
+      gameVersion: "bug-maze@2.0.0";
+      metadata: BugMazeScoreMetadata;
+      score: number;
+    }
+  | {
+      deviceType?: GameDeviceType;
+      durationMs: number;
+      game: "code-snake";
+      gameVersion: "code-snake@2.0.0";
+      metadata: CodeSnakeScoreMetadata;
+      score: number;
+    }
+  | {
+      deviceType?: GameDeviceType;
+      durationMs: number;
+      game: "stack-tetris";
+      gameVersion: "stack-tetris@2.0.0";
+      metadata: StackTetrisScoreMetadata;
+      score: number;
+    };
+
 export type LabPageCopy = {
   title: LocalizedText;
   description: LocalizedText;

@@ -205,6 +205,9 @@ R1-E.11.3.7 — Debug/Latency Deprecation Docs
 R1-E.11.3.8 — Remove Debug/Latency Components
 R1-E.11.3.9 — Remove Debug/Latency CSS
 R1-E.11.3.10 — Score Compat Cleanup
+R1-E.12.0  — Game Systems, Leaderboard & Database Architecture Plan
+R1-E.12.1  — Game Score Contract v2
+R1-E.12.2  — Supabase/DB Foundation
 R1-E.11.4  — Final Mobile Polish
 R1-E.11.5  — Public QA Final
 R1-F.0     — Project Assets Admin Planning
@@ -779,6 +782,7 @@ Estado revisado antes do fechamento R1-E.9:
 - Quiz/foundation challenge não deve ser vendido como jogo final.
 - `/curriculo` e downloads preservados.
 - `/api/score` permanece mock/local não persistente. O contrato ativo aceita apenas `runtime`, `bug-maze`, `code-snake` e `stack-tetris`; `debug-arena`, `latency-lab`, `debug`, `architecture`, `latency`, `terminal` e `portfolio` foram removidos da compatibilidade e devem retornar validação inválida.
+- R1-E.12.1 elevou o contrato para score v2: payload válido exige `durationMs`, `gameVersion`, `deviceType` opcional e `metadata` estrita por jogo. A API continua sem banco e retorna modo local/mock.
 - Sitemap, robots, metadata, links, idiomas, tema, acessibilidade, reduced motion e mobile validados.
 - Produção deve ser validada por leitura quando disponível, sem deploy manual nesta fase.
 
@@ -957,9 +961,9 @@ Se a ferramenta visual falhar, isso deve ser relatado. A entrega visual não dev
 
 ### Supabase Durante R1-C
 
-Supabase ainda **não deve ser iniciado**.
+Supabase ainda **não deve ser integrado ao código sem fase explícita**.
 
-O usuário ainda não criou nem configurou Supabase para este projeto. A prioridade atual é experiência visual, UX e aprovação humana da nova direção. Supabase, banco real, dashboard admin, ranking real e analytics persistente só devem entrar depois que a base visual estiver aprovada.
+O usuário criou manualmente o projeto Supabase básico `alvaro-portfolio-arcade`, mas o app ainda não possui client Supabase, migrations, tabelas, RLS, Storage, Auth, Admin ou uso de service role. Banco real, ranking real e persistência devem começar somente em R1-E.12.2 ou fase posterior aprovada, com implementação versionada pelo Codex.
 
 ---
 
@@ -1431,7 +1435,7 @@ O Developer Lab deve evoluir para Developer Arcade: uma área com jogos reais e 
 
 ### 11.1 Debug Arena
 
-Status atual: deprecated/removido. O componente saiu do código na R1-E.11.3.8 e o CSS dedicado saiu na R1-E.11.3.9. Não faz parte da vitrine principal do Developer Arcade e não deve voltar como jogo final. Compatibilidade de score permanece para fase própria.
+Status atual: deprecated/removido. O componente saiu do código na R1-E.11.3.8, o CSS dedicado saiu na R1-E.11.3.9 e a compatibilidade de score saiu na R1-E.11.3.10. Não faz parte da vitrine principal do Developer Arcade e não deve voltar como jogo final.
 
 Experiência visual onde o usuário interage com uma interface de editor, identifica bugs em linhas de código e tenta corrigir antes do build falhar.
 
@@ -1496,7 +1500,7 @@ Não precisa começar com drag and drop complexo, mas a versão final deve parec
 
 ### 11.3 Latency Lab
 
-Status atual: deprecated/removido. O componente saiu do código na R1-E.11.3.8 e o CSS dedicado saiu na R1-E.11.3.9. Não faz parte da vitrine principal do Developer Arcade e não deve voltar como jogo final. Compatibilidade de score permanece para fase própria.
+Status atual: deprecated/removido. O componente saiu do código na R1-E.11.3.8, o CSS dedicado saiu na R1-E.11.3.9 e a compatibilidade de score saiu na R1-E.11.3.10. Não faz parte da vitrine principal do Developer Arcade e não deve voltar como jogo final.
 
 Simulação visual de performance full stack.
 
@@ -1640,7 +1644,18 @@ Payload:
     | "code-snake"
     | "stack-tetris";
   score: number;
-  metadata?: Record<string, unknown>;
+  durationMs: number;
+  gameVersion:
+    | "runtime@2.0.0"
+    | "bug-maze@2.0.0"
+    | "code-snake@2.0.0"
+    | "stack-tetris@2.0.0";
+  deviceType?: "desktop" | "mobile" | "unknown";
+  metadata:
+    | RuntimeScoreMetadata
+    | BugMazeScoreMetadata
+    | CodeSnakeScoreMetadata
+    | StackTetrisScoreMetadata;
 }
 ```
 
@@ -1650,10 +1665,12 @@ Ids legados removidos do contrato ativo: `debug-arena`, `latency-lab`, `debug`, 
 
 Regras:
 
-- Validar score.
-- Não permitir score absurdo.
-- Salvar se Supabase existir.
-- Caso contrário, usar estado local no front-end.
+- Validar score inteiro em escala 0..100.
+- Rejeitar payload v1 sem `durationMs`, `gameVersion` ou `metadata`.
+- Rejeitar metadata de jogo errado, campos desconhecidos e valores fora de faixa.
+- Não permitir score, duração, versão ou metadata absurdos.
+- Manter modo local/mock até R1-E.12.2 criar banco versionado.
+- Não usar service role nem Supabase client em componentes client.
 
 ---
 

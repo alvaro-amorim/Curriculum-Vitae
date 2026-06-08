@@ -21,6 +21,7 @@ export async function POST(request: Request) {
     return apiSuccess(
       {
         accepted: true,
+        contractVersion: "v2",
         mode: "local",
         game: parsed.data.game,
         score: parsed.data.score,
@@ -35,4 +36,3 @@ export async function POST(request: Request) {
 export function GET() {
   return methodNotAllowed(["POST"]);
 }
-

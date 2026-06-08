@@ -3,8 +3,8 @@
 import type { CSSProperties, TouchEvent } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { clampScore } from "@/lib/lab-score";
-import type { Locale } from "@/types/portfolio";
+import { GAME_VERSIONS, clampScore, detectGameDeviceType } from "@/lib/lab-score";
+import type { GameScorePayloadV2, Locale } from "@/types/portfolio";
 
 import styles from "./developer-lab.module.css";
 
@@ -34,6 +34,7 @@ type SnakeFrame = {
   apiScore: number;
   collected: number;
   combo: number;
+  maxCombo: number;
   moves: number;
   pulse: number;
   feedback: FeedbackKind | null;
@@ -42,7 +43,7 @@ type SnakeFrame = {
 
 type CodeSnakeProps = {
   locale: Locale;
-  onComplete: (score: number) => void;
+  onComplete: (payload: Extract<GameScorePayloadV2, { game: "code-snake" }>) => void;
 };
 
 type StyleVars = CSSProperties & Record<`--${string}`, string | number>;
@@ -244,6 +245,7 @@ function createInitialFrame(): SnakeFrame {
     apiScore: 0,
     collected: 0,
     combo: 0,
+    maxCombo: 0,
     moves: 0,
     pulse: 0,
     feedback: null,
@@ -343,6 +345,7 @@ export function CodeSnake({ locale, onComplete }: CodeSnakeProps) {
   const tokenIdRef = useRef(2);
   const hazardIdRef = useRef(4);
   const touchStartRef = useRef<Position | null>(null);
+  const startedAtRef = useRef(0);
 
   useEffect(() => {
     statusRef.current = status;
@@ -412,6 +415,7 @@ export function CodeSnake({ locale, onComplete }: CodeSnakeProps) {
     tokenIdRef.current = 2;
     hazardIdRef.current = 4;
     queuedDirectionRef.current = null;
+    startedAtRef.current = performance.now();
     commitFrame({ ...next, feedback: "start" });
     setStatus("running");
   }, [commitFrame]);
@@ -437,9 +441,23 @@ export function CodeSnake({ locale, onComplete }: CodeSnakeProps) {
         window.localStorage.setItem(BEST_SCORE_KEY, String(best));
         return best;
       });
-      onComplete(completedFrame.apiScore);
+      onComplete({
+        deviceType: detectGameDeviceType(),
+        durationMs: Math.max(250, Math.round(performance.now() - startedAtRef.current)),
+        game: "code-snake",
+        gameVersion: GAME_VERSIONS["code-snake"],
+        metadata: {
+          hazardsHit: reason === "wall" || reason === "body" ? 0 : 1,
+          length: completedFrame.snake.length,
+          maxCombo: completedFrame.maxCombo,
+          tokensCollected: completedFrame.collected,
+          wallsEnabled,
+          wrapAround: !wallsEnabled,
+        },
+        score: completedFrame.apiScore,
+      });
     },
-    [commitFrame, onComplete],
+    [commitFrame, onComplete, wallsEnabled],
   );
 
   const togglePause = useCallback(() => {
@@ -550,12 +568,14 @@ export function CodeSnake({ locale, onComplete }: CodeSnakeProps) {
     let nextScore = current.score;
     let nextCollected = current.collected;
     let nextCombo = current.combo > 0 && (current.moves + 1) % 10 === 0 ? current.combo - 1 : current.combo;
+    let nextMaxCombo = current.maxCombo;
     let nextFeedback: FeedbackKind | null = wrapped ? "wrap" : null;
     let nextPulse = wrapped ? current.pulse + 1 : current.pulse;
 
     if (collected) {
       nextCollected += 1;
       nextCombo = Math.min(9, current.combo + 1);
+      nextMaxCombo = Math.max(current.maxCombo, nextCombo);
       nextScore += 18 + Math.min(24, nextCollected * 2) + nextCombo * 3;
       nextPulse += 1;
       nextFeedback = "collect";
@@ -582,6 +602,7 @@ export function CodeSnake({ locale, onComplete }: CodeSnakeProps) {
       apiScore: nextApiScore,
       collected: nextCollected,
       combo: nextCombo,
+      maxCombo: nextMaxCombo,
       moves: nextMoves,
       pulse: nextPulse,
       feedback: nextFeedback,

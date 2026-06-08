@@ -205,18 +205,29 @@ Contrato atual esperado:
 - `GET /api/score`: retorna `405`.
 - `POST /api/score` válido: retorna `202`.
 - `POST /api/score` inválido: retorna `400`.
+- O contrato ativo é `v2` e exige `durationMs`, `gameVersion` e `metadata` validável por jogo.
+- O retorno válido segue local/mock e inclui `contractVersion: "v2"`; não há persistência real nesta fase.
 
-Exemplo:
+Game versions atuais:
+
+```txt
+runtime@2.0.0
+bug-maze@2.0.0
+code-snake@2.0.0
+stack-tetris@2.0.0
+```
+
+Exemplo v2:
 
 ```powershell
-curl.exe --% -X POST http://localhost:3000/api/score -H "Content-Type: application/json" -d "{\"game\":\"runtime\",\"score\":85,\"metadata\":{\"source\":\"developer-lab\",\"mode\":\"manual\"}}"
+curl.exe --% -X POST http://localhost:3000/api/score -H "Content-Type: application/json" -d "{\"game\":\"runtime\",\"score\":85,\"durationMs\":12000,\"gameVersion\":\"runtime@2.0.0\",\"deviceType\":\"desktop\",\"metadata\":{\"distance\":1800,\"cleared\":8,\"maxSpeed\":24.4,\"stageReached\":\"staging\",\"collisions\":1}}"
 ```
 
 ## O Que Ainda Não Existe
 
 Não marcar como concluído:
 
-- Supabase ativo.
+- Supabase integrado ao app.
 - Banco de dados real.
 - Ranking real.
 - Analytics persistente real.
@@ -242,7 +253,7 @@ Escopo previsto:
 - Preservação dos placeholders honestos enquanto imagens reais não existirem.
 - Nenhum screenshot falso.
 
-Supabase ainda não está ativo neste projeto.
+O projeto Supabase básico foi criado manualmente, mas ainda não há client Supabase no código, migrations, tabelas, RLS, Storage, Auth ou Admin. A integração versionada deve começar em R1-E.12.2 ou fase posterior aprovada.
 
 R1-F.0 não cria `/admin`, storage, banco, autenticação ou upload. A implementação deve começar somente em R1-F.1 ou fase posterior aprovada.
 
@@ -256,18 +267,16 @@ Roadmap proposto:
 - R1-F.5 — Public Rendering Integration: consumir imagens reais quando existirem e manter placeholders quando não existirem.
 - R1-F.6 — Admin QA & Security Gate: validar auth, upload, permissões, produção e documentação.
 
-## Fase Atual: R1-E.11.1
+## Fase Atual: R1-E.12.1
 
-R1-E.11.1 — Audit Documentation Sync é uma fase exclusivamente documental para registrar a auditoria R1-E.11.0 e corrigir divergências após o checkpoint `e69e771`.
+R1-E.12.1 — Game Score Contract v2 prepara o Developer Arcade para persistência futura sem criar banco nesta fase.
 
 Objetivo da rodada atual:
 
-- Registrar que R1-E.10.5/R1-E.10.5.1/R1-E.10.5.2 já foram checkpointadas em `e69e771`.
-- Registrar que R1-E.11.0 foi auditoria sem alteração de arquivos.
-- Documentar rotas finais, rota experimental `/visual-final-candidate`, módulos rebaixados, candidatos a legado e riscos de remoção.
-- Manter Admin, Supabase, storage, upload, cleanup, imagens reais e QA final como pendências futuras.
-- Preservar `/curriculo`, que está aprovado em tema claro e escuro.
-- Não alterar código, componentes, rotas, CSS, jogos, `public/resume`, `public/profile` ou PDFs/DOCX.
+- Exigir `durationMs`, `gameVersion`, `deviceType` opcional e metadata validada por jogo em `/api/score`.
+- Manter `/api/score` em modo local/mock, sem Supabase client, migrations, tabelas, RLS ou Storage.
+- Preservar `/api/terminal`, CommandPalette, `/curriculo`, assets públicos, Admin e Supabase como escopos separados.
+- Preparar a próxima fase R1-E.12.2 — Supabase/DB Foundation.
 
 ## Plano Atual de Fases
 
@@ -299,6 +308,9 @@ R1-E.11.3.7 — Debug/Latency Deprecation Docs
 R1-E.11.3.8 — Remove Debug/Latency Components
 R1-E.11.3.9 — Remove Debug/Latency CSS
 R1-E.11.3.10 — Score Compat Cleanup
+R1-E.12.0  — Game Systems, Leaderboard & Database Architecture Plan
+R1-E.12.1  — Game Score Contract v2
+R1-E.12.2  — Supabase/DB Foundation
 R1-E.11.4  — Final Mobile Polish
 R1-E.11.5  — Public QA Final
 R1-F.0     — Project Assets Admin Planning
@@ -343,4 +355,5 @@ NEXT_PUBLIC_APP_URL=https://curriculum-vitae-babr.vercel.app
 - Executar R1-E.11.4 — Final Mobile Polish com teste real em celular, especialmente Runtime Runner e Code Snake.
 - Executar R1-E.11.5 — Public QA Final antes de chamar o site de final.
 - Depois, iniciar R1-F.1 — Protected Admin Shell em fase própria.
-- Planejar Supabase, storage, ranking real ou analytics real somente em fase futura explícita.
+- Executar R1-E.12.2 — Supabase/DB Foundation para preparar banco versionado, sem expor service role no client.
+- Planejar storage, ranking real ou analytics real somente em fase futura explícita.

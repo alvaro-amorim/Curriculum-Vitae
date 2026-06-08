@@ -1,6 +1,15 @@
-import type { LabGameId } from "@/types/portfolio";
+import type { GameDeviceType, GameScorePayloadV2, LabGameId } from "@/types/portfolio";
 
 export type LabScoreState = Record<LabGameId, number | null>;
+
+export const GAME_SCORE_CONTRACT_VERSION = "v2";
+
+export const GAME_VERSIONS = {
+  runtime: "runtime@2.0.0",
+  "bug-maze": "bug-maze@2.0.0",
+  "code-snake": "code-snake@2.0.0",
+  "stack-tetris": "stack-tetris@2.0.0",
+} as const satisfies Record<LabGameId, GameScorePayloadV2["gameVersion"]>;
 
 export const initialLabScores: LabScoreState = {
   runtime: null,
@@ -23,14 +32,19 @@ export function calculateSessionScore(scores: LabScoreState) {
   return clampScore(completedScores.reduce((sum, score) => sum + score, 0) / completedScores.length);
 }
 
-export async function submitLabScore(game: LabGameId, score: number) {
+export function detectGameDeviceType(): GameDeviceType {
+  if (typeof window === "undefined") {
+    return "unknown";
+  }
+
+  return window.matchMedia("(max-width: 640px)").matches ? "mobile" : "desktop";
+}
+
+export async function submitLabScore(payload: GameScorePayloadV2) {
   const response = await fetch("/api/score", {
     body: JSON.stringify({
-      game,
-      score: clampScore(score),
-      metadata: {
-        source: "developer-lab",
-      },
+      ...payload,
+      score: clampScore(payload.score),
     }),
     headers: {
       "Content-Type": "application/json",

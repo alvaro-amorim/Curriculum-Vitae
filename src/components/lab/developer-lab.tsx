@@ -8,7 +8,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { usePortfolioUi } from "@/components/layout/app-shell";
 import { labPageCopy } from "@/content/challenges";
 import { calculateSessionScore, initialLabScores, submitLabScore } from "@/lib/lab-score";
-import type { LabGameId } from "@/types/portfolio";
+import type { GameScorePayloadV2, LabGameId } from "@/types/portfolio";
 
 import styles from "./developer-lab.module.css";
 
@@ -221,27 +221,27 @@ export function DeveloperLab() {
     return () => window.cancelAnimationFrame(frame);
   }, [activeGame]);
 
-  const handleComplete = useCallback((game: LabGameId, score: number) => {
+  const handleComplete = useCallback((payload: GameScorePayloadV2) => {
     setScores((current) => ({
       ...current,
-      [game]: score,
+      [payload.game]: payload.score,
     }));
     setScoreStatus((current) => ({
       ...current,
-      [game]: "syncing",
+      [payload.game]: "syncing",
     }));
 
-    void submitLabScore(game, score)
+    void submitLabScore(payload)
       .then(() => {
         setScoreStatus((current) => ({
           ...current,
-          [game]: "synced",
+          [payload.game]: "synced",
         }));
       })
       .catch(() => {
         setScoreStatus((current) => ({
           ...current,
-          [game]: "failed",
+          [payload.game]: "failed",
         }));
       });
   }, []);
@@ -305,18 +305,18 @@ export function DeveloperLab() {
 
   function renderActiveGame(game: ArcadeGameId) {
     if (game === "runtime") {
-      return <RuntimeRunner locale={locale} onComplete={(score) => handleComplete("runtime", score)} />;
+      return <RuntimeRunner locale={locale} onComplete={handleComplete} />;
     }
 
     if (game === "bug-maze") {
-      return <BugMaze locale={locale} onComplete={(score) => handleComplete("bug-maze", score)} />;
+      return <BugMaze locale={locale} onComplete={handleComplete} />;
     }
 
     if (game === "code-snake") {
-      return <CodeSnake locale={locale} onComplete={(score) => handleComplete("code-snake", score)} />;
+      return <CodeSnake locale={locale} onComplete={handleComplete} />;
     }
 
-    return <StackTetris locale={locale} onComplete={(score) => handleComplete("stack-tetris", score)} />;
+    return <StackTetris locale={locale} onComplete={handleComplete} />;
   }
 
   return (

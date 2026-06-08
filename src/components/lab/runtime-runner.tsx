@@ -3,8 +3,8 @@
 import type { CSSProperties, KeyboardEvent, MouseEvent, PointerEvent, TouchEvent } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { clampScore } from "@/lib/lab-score";
-import type { Locale } from "@/types/portfolio";
+import { GAME_VERSIONS, clampScore, detectGameDeviceType } from "@/lib/lab-score";
+import type { GameScorePayloadV2, Locale } from "@/types/portfolio";
 
 import styles from "./developer-lab.module.css";
 
@@ -35,7 +35,7 @@ type RunnerFrame = {
 
 type RuntimeRunnerProps = {
   locale: Locale;
-  onComplete: (score: number) => void;
+  onComplete: (payload: Extract<GameScorePayloadV2, { game: "runtime" }>) => void;
 };
 
 type StyleVars = CSSProperties & Record<`--${string}`, string | number>;
@@ -68,6 +68,14 @@ const obstacleToneClasses: Record<Obstacle["tone"], string> = {
   type: styles.obstacleToneType,
   rate: styles.obstacleToneRate,
 };
+
+function runnerStageReached(elapsed: number) {
+  if (elapsed >= 90) return "zero-downtime";
+  if (elapsed >= 62) return "incident-mode";
+  if (elapsed >= 38) return "production";
+  if (elapsed >= 18) return "staging";
+  return "dev-server";
+}
 
 const copy = {
   pt: {
@@ -262,7 +270,20 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
         window.localStorage.setItem(BEST_SCORE_KEY, String(best));
         return best;
       });
-      onComplete(next.apiScore);
+      onComplete({
+        deviceType: detectGameDeviceType(),
+        durationMs: Math.max(250, Math.round(next.elapsed * 1000)),
+        game: "runtime",
+        gameVersion: GAME_VERSIONS.runtime,
+        metadata: {
+          cleared: next.cleared,
+          collisions: 1,
+          distance: Math.max(0, Math.round(next.elapsed * next.speed * 10)),
+          maxSpeed: Number(next.speed.toFixed(1)),
+          stageReached: runnerStageReached(next.elapsed),
+        },
+        score: next.apiScore,
+      });
     },
     [commitFrame, onComplete],
   );

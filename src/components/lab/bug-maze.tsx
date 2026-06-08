@@ -3,8 +3,8 @@
 import type { CSSProperties, KeyboardEvent, TouchEvent } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { clampScore } from "@/lib/lab-score";
-import type { Locale } from "@/types/portfolio";
+import { GAME_VERSIONS, clampScore, detectGameDeviceType } from "@/lib/lab-score";
+import type { GameScorePayloadV2, Locale } from "@/types/portfolio";
 
 import styles from "./developer-lab.module.css";
 
@@ -55,7 +55,7 @@ type ParsedMaze = {
 
 type BugMazeProps = {
   locale: Locale;
-  onComplete: (score: number) => void;
+  onComplete: (payload: Extract<GameScorePayloadV2, { game: "bug-maze" }>) => void;
 };
 
 type StyleVars = CSSProperties & Record<`--${string}`, string | number>;
@@ -515,7 +515,10 @@ export function BugMaze({ locale, onComplete }: BugMazeProps) {
   );
 
   const finishGame = useCallback(
-    (nextStatus: "won" | "failed", snapshot: { elapsed: number; itemCount: number; lives: number; moves: number; totalItems: number }) => {
+    (
+      nextStatus: "won" | "failed",
+      snapshot: { deployStage: number; elapsed: number; itemCount: number; lives: number; moves: number; totalItems: number; virusesActive: number },
+    ) => {
       const score = calculateMazeScore({
         ...snapshot,
         won: nextStatus === "won",
@@ -528,7 +531,21 @@ export function BugMaze({ locale, onComplete }: BugMazeProps) {
         window.localStorage.setItem(BEST_SCORE_KEY, String(best));
         return best;
       });
-      onComplete(score);
+      onComplete({
+        deviceType: detectGameDeviceType(),
+        durationMs: Math.max(250, snapshot.elapsed * 1000),
+        game: "bug-maze",
+        gameVersion: GAME_VERSIONS["bug-maze"],
+        metadata: {
+          damageTaken: MAX_LIVES - snapshot.lives,
+          deployStage: snapshot.deployStage,
+          livesRemaining: snapshot.lives,
+          tokensCollected: snapshot.itemCount,
+          totalTokens: snapshot.totalItems,
+          virusesActive: snapshot.virusesActive,
+        },
+        score,
+      });
     },
     [onComplete, triggerFeedback],
   );
@@ -549,10 +566,12 @@ export function BugMaze({ locale, onComplete }: BugMazeProps) {
         setEnemies(nextEnemies);
         finishGame("failed", {
           elapsed: snapshot.activeElapsed,
+          deployStage: layoutIndex + 1,
           itemCount: snapshot.itemCount,
           lives: 0,
           moves: snapshot.moves,
           totalItems: snapshot.totalItems,
+          virusesActive: snapshot.itemCount > 0 || virusMode ? maze.enemies.length : 0,
         });
         return;
       }
@@ -561,7 +580,7 @@ export function BugMaze({ locale, onComplete }: BugMazeProps) {
       setTrail([]);
       setEnemies(resetEnemies(maze));
     },
-    [finishGame, invulnerableUntil, lives, maze, triggerFeedback],
+    [finishGame, invulnerableUntil, layoutIndex, lives, maze, triggerFeedback, virusMode],
   );
 
   const move = useCallback(
@@ -645,14 +664,16 @@ export function BugMaze({ locale, onComplete }: BugMazeProps) {
       if (nextCell.kind === "goal") {
         finishGame("won", {
           elapsed: activeElapsed,
+          deployStage: layoutIndex + 1,
           itemCount: nextCollected.size,
           lives,
           moves: nextMoves,
           totalItems: maze.items.length,
+          virusesActive: nextThreatActive ? maze.enemies.length : 0,
         });
       }
     },
-    [applyDamage, collectedItems, elapsed, enemies, finishGame, lives, maze, moves, position, status, triggerFeedback, virusMode],
+    [applyDamage, collectedItems, elapsed, enemies, finishGame, layoutIndex, lives, maze, moves, position, status, triggerFeedback, virusMode],
   );
 
   useEffect(() => {
