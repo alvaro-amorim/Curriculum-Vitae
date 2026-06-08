@@ -108,13 +108,9 @@ Componentes legados do Lab tratados pela limpeza R1-E.11.3:
 - `src/components/lab/debug-arena.tsx` removido na R1-E.11.3.8.
 - `src/components/lab/latency-lab.tsx` removido na R1-E.11.3.8.
 
-R1-E.11.3.3 removeu apenas os módulos legados zero-import `src/components/lab/api-latency-game.tsx`, `src/components/lab/architecture-builder.tsx`, `src/components/lab/debug-challenge.tsx`, `src/components/lab/interactive-terminal.tsx` e `src/components/lab/skill-radar.tsx`. `/api/score` compatível, validators/types e `/visual-final-candidate` seguem preservados.
+R1-E.11.3.3 removeu apenas os módulos legados zero-import `src/components/lab/api-latency-game.tsx`, `src/components/lab/architecture-builder.tsx`, `src/components/lab/debug-challenge.tsx`, `src/components/lab/interactive-terminal.tsx` e `src/components/lab/skill-radar.tsx`. `/visual-final-candidate` segue preservada para fase própria.
 
-R1-E.11.3.6 definiu a estratégia de depreciação sem remoção e R1-E.11.3.7 documentou `DebugArena` e `LatencyLab` como deprecated. R1-E.11.3.8 removeu `src/components/lab/debug-arena.tsx` e `src/components/lab/latency-lab.tsx`. R1-E.11.3.9 removeu CSS `.arena*`/`.latency*`, mantendo `/api/score`, validators/types, `lab-score` e ids legados para fase própria.
-
-Ordem restante aprovada:
-
-1. R1-E.11.3.10 — remover ids legados de score/types/validators/API após validação e aviso documental.
+R1-E.11.3.6 definiu a estratégia de depreciação sem remoção e R1-E.11.3.7 documentou `DebugArena` e `LatencyLab` como deprecated. R1-E.11.3.8 removeu `src/components/lab/debug-arena.tsx` e `src/components/lab/latency-lab.tsx`. R1-E.11.3.9 removeu CSS `.arena*`/`.latency*`. R1-E.11.3.10 removeu a compatibilidade legada de `/api/score`, validators/types, `lab-score` e ids antigos do contrato ativo.
 
 Ruídos e cautelas identificados:
 
@@ -782,7 +778,7 @@ Estado revisado antes do fechamento R1-E.9:
 - Debug Arena e Latency Lab estão deprecated: os componentes foram removidos na R1-E.11.3.8, não aparecem no Lab principal e não devem voltar como jogos finais.
 - Quiz/foundation challenge não deve ser vendido como jogo final.
 - `/curriculo` e downloads preservados.
-- `/api/score` permanece mock/local não persistente. O contrato atual deve aceitar `runtime`, `bug-maze`, `code-snake` e `stack-tetris`; `debug-arena`, `latency-lab`, `debug`, `architecture`, `latency`, `terminal` e `portfolio` ficam como compatibilidade temporária/deprecated até fase própria de limpeza.
+- `/api/score` permanece mock/local não persistente. O contrato ativo aceita apenas `runtime`, `bug-maze`, `code-snake` e `stack-tetris`; `debug-arena`, `latency-lab`, `debug`, `architecture`, `latency`, `terminal` e `portfolio` foram removidos da compatibilidade e devem retornar validação inválida.
 - Sitemap, robots, metadata, links, idiomas, tema, acessibilidade, reduced motion e mobile validados.
 - Produção deve ser validada por leitura quando disponível, sem deploy manual nesta fase.
 
@@ -1642,15 +1638,7 @@ Payload:
     | "runtime"
     | "bug-maze"
     | "code-snake"
-    | "stack-tetris"
-    // deprecated/compat temporária
-    | "debug-arena"
-    | "latency-lab"
-    | "debug"
-    | "architecture"
-    | "latency"
-    | "terminal"
-    | "portfolio";
+    | "stack-tetris";
   score: number;
   metadata?: Record<string, unknown>;
 }
@@ -1658,7 +1646,7 @@ Payload:
 
 Ids finais: `runtime`, `bug-maze`, `code-snake` e `stack-tetris`.
 
-Ids deprecated/compatibilidade temporária: `debug-arena`, `latency-lab`, `debug`, `architecture`, `latency`, `terminal` e `portfolio`. A remoção desses ids deve acontecer apenas em R1-E.11.3.10 ou fase equivalente, depois de aviso documental e validação.
+Ids legados removidos do contrato ativo: `debug-arena`, `latency-lab`, `debug`, `architecture`, `latency`, `terminal` e `portfolio`. Esses ids devem retornar `400` em `/api/score`. `/api/terminal` continua sendo uma rota separada e `terminal` não é mais score game id.
 
 Regras:
 

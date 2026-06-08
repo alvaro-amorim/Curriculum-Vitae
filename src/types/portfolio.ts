@@ -101,12 +101,7 @@ export type LabGameId =
   | "runtime"
   | "bug-maze"
   | "code-snake"
-  | "stack-tetris"
-  | "debug-arena"
-  | "latency-lab"
-  | "debug"
-  | "architecture"
-  | "latency";
+  | "stack-tetris";
 
 export type LabPageCopy = {
   title: LocalizedText;
@@ -118,48 +113,4 @@ export type LabPageCopy = {
   apiPending: LocalizedText;
   apiFailed: LocalizedText;
   backLinksLabel: LocalizedText;
-};
-
-export type DebugChallengeItem = {
-  id: string;
-  title: LocalizedText;
-  prompt: LocalizedText;
-  code: string;
-  options: {
-    id: string;
-    label: LocalizedText;
-    isCorrect: boolean;
-    feedback: LocalizedText;
-  }[];
-  explanation: LocalizedText;
-};
-
-export type ArchitectureBlock = {
-  id: string;
-  label: LocalizedText;
-  description: LocalizedText;
-  role: "required" | "bonus" | "unsafe";
-  feedback: LocalizedText;
-};
-
-export type ArchitectureChallenge = {
-  id: string;
-  title: LocalizedText;
-  scenario: LocalizedText;
-  blocks: ArchitectureBlock[];
-};
-
-export type LatencyOption = {
-  id: string;
-  label: LocalizedText;
-  description: LocalizedText;
-  impact: "positive" | "negative";
-  feedback: LocalizedText;
-};
-
-export type LatencyChallenge = {
-  id: string;
-  title: LocalizedText;
-  scenario: LocalizedText;
-  options: LatencyOption[];
 };

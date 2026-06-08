@@ -85,7 +85,7 @@ const labCopy = {
     arcadeStatus: "Arcade final jogável",
     futureStatus: "em preparação",
     archivedNote:
-      "Treinos antigos, Debug Arena e Latency Lab seguem apenas no código/compatibilidade. A tela principal mostra somente os quatro jogos finais.",
+      "Treinos antigos, Debug Arena e Latency Lab foram retirados da UI e do contrato ativo de score. A tela principal mostra somente os quatro jogos finais.",
     roadmapEyebrow: "direção final",
     roadmapTitle: "Quatro slots do Developer Arcade final.",
     pending: "planejado",
@@ -128,7 +128,7 @@ const labCopy = {
     arcadeStatus: "Playable final arcade",
     futureStatus: "in preparation",
     archivedNote:
-      "Legacy training, Debug Arena, and Latency Lab remain only in code/compatibility. The main screen shows the four final games only.",
+      "Legacy training, Debug Arena, and Latency Lab were retired from the UI and active score contract. The main screen shows the four final games only.",
     roadmapEyebrow: "final direction",
     roadmapTitle: "Four slots for the final Developer Arcade.",
     pending: "planned",
@@ -160,11 +160,6 @@ export function DeveloperLab() {
     "bug-maze": "idle",
     "code-snake": "idle",
     "stack-tetris": "idle",
-    "debug-arena": "idle",
-    "latency-lab": "idle",
-    debug: "idle",
-    architecture: "idle",
-    latency: "idle",
   });
   const [activeGame, setActiveGame] = useState<ArcadeGameId | null>(null);
   const [isSwitchingGame, setIsSwitchingGame] = useState(false);

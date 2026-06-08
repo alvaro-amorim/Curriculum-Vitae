@@ -7,11 +7,6 @@ export const initialLabScores: LabScoreState = {
   "bug-maze": null,
   "code-snake": null,
   "stack-tetris": null,
-  "debug-arena": null,
-  "latency-lab": null,
-  debug: null,
-  architecture: null,
-  latency: null,
 };
 
 export function clampScore(score: number) {
