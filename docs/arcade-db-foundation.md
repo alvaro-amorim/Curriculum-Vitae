@@ -4,12 +4,13 @@ R1-E.12.2 prepared the database foundation draft for the Developer Arcade.
 R1-E.12.3 applied that migration to the Supabase remote project.
 R1-E.12.4 adds the server-side anonymous player session that writes only to
 `arcade_sessions`.
+R1-E.12.5 persists validated Score Contract v2 submissions to `arcade_scores`.
 
 ## Scope
 
 - Project ref expected: `fkiuecyohcyjwygedncx`.
 - Applied migration: `supabase/migrations/20260608154425_arcade_scores_foundation.sql`.
-- Runtime status: `/api/score` remains local/mock.
+- Runtime status: `/api/score` writes to Supabase through a server-side Route Handler.
 - Server-side Supabase client: `src/lib/supabase/server.ts`.
 - Anonymous session API: `/api/player-session`.
 - Remote tables created: `arcade_sessions` and `arcade_scores`.
@@ -77,6 +78,25 @@ characters and aliases longer than 24 characters are rejected.
 The API never returns `session_hash`, the raw cookie value, service role keys or
 internal database details.
 
+## Persistent Score API
+
+`POST /api/score` validates Score Contract v2, ensures the anonymous Arcade
+session exists, inserts one row into `arcade_scores` and returns a sanitized DTO:
+
+```json
+{
+  "accepted": true,
+  "contractVersion": "v2",
+  "game": "runtime",
+  "mode": "persistent",
+  "score": 80
+}
+```
+
+The response does not include `session_hash`, raw cookie values, database ids,
+service role keys or metadata internals. Invalid v1 payloads, legacy ids and
+wrong metadata still return validation errors.
+
 ## Remote Verification
 
 - Project ref: `fkiuecyohcyjwygedncx`.
@@ -88,10 +108,11 @@ internal database details.
 
 ## Next Phase
 
-R1-E.12.5 should persist scores after the session foundation. The expected
-implementation order is:
+R1-E.12.6 should add a sanitized leaderboard surface after persistence. The
+expected implementation order is:
 
-1. Reuse `/api/player-session` to guarantee `arcade_sessions` exists.
-2. Write validated score contract v2 payloads to `arcade_scores`.
-3. Keep service role access server-side only.
-4. Return sanitized score submit DTOs without `session_hash`.
+1. Create a server-side leaderboard read API.
+2. Return top scores by game without `session_hash`.
+3. Add a compact Lab UI for rankings.
+4. Keep public browser access behind Route Handlers, not direct Supabase client
+   reads.

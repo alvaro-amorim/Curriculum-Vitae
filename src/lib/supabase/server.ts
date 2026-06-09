@@ -22,6 +22,34 @@ type ArcadeDatabase = {
         };
         Relationships: [];
       };
+      arcade_scores: {
+        Insert: {
+          contract_version?: "v2";
+          device_type?: "desktop" | "mobile" | "unknown";
+          duration_ms: number;
+          game_id: "runtime" | "bug-maze" | "code-snake" | "stack-tetris";
+          game_version: string;
+          metadata_json: Record<string, unknown>;
+          player_alias?: string | null;
+          score: number;
+          session_hash: string;
+        };
+        Row: {
+          contract_version: string;
+          created_at: string;
+          device_type: string;
+          duration_ms: number;
+          game_id: string;
+          game_version: string;
+          id: string;
+          metadata_json: Record<string, unknown>;
+          player_alias: string | null;
+          score: number;
+          session_hash: string;
+        };
+        Update: never;
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;

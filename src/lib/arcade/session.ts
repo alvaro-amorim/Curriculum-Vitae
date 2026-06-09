@@ -37,6 +37,11 @@ type PublicArcadeSession = {
   ready: true;
 };
 
+type ArcadeSessionContext = {
+  publicSession: PublicArcadeSession;
+  sessionHash: string;
+};
+
 const RAW_SESSION_ID_PATTERN = /^[A-Za-z0-9_-]{32,128}$/;
 const ALIAS_ALLOWED_PATTERN = /^[\p{L}\p{N} _-]+$/u;
 const CONTROL_CHARACTER_PATTERN = /[\u0000-\u001f\u007f]/;
@@ -217,5 +222,18 @@ export async function upsertArcadeSession({
     alias: insertedSession.alias,
     maxAliasLength: ARCADE_ALIAS_MAX_LENGTH,
     ready: true,
+  };
+}
+
+export async function resolveArcadeSessionContext(cookieStore: ArcadeCookieStore): Promise<ArcadeSessionContext> {
+  const rawSessionId = getOrCreateArcadeSessionCookie(cookieStore);
+  const sessionHash = hashArcadeSessionId(rawSessionId);
+  const publicSession = await upsertArcadeSession({
+    sessionHash,
+  });
+
+  return {
+    publicSession,
+    sessionHash,
   };
 }
