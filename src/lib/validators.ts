@@ -45,6 +45,12 @@ export const TerminalPayloadSchema = z
   })
   .strict();
 
+export const PlayerSessionPayloadSchema = z
+  .object({
+    alias: z.union([z.string(), z.null()]).optional(),
+  })
+  .strict();
+
 const scoreSchema = z.number().finite().int("Score deve ser inteiro.").min(0, "Score minimo e 0.").max(100, "Score maximo e 100.");
 const durationSchema = z.number().finite().int("Duracao deve ser inteira.").min(250, "Duracao muito curta.").max(900_000, "Duracao muito longa.");
 const deviceTypeSchema = z.enum(["desktop", "mobile", "unknown"]).optional();
@@ -155,4 +161,5 @@ export const ScorePayloadSchema = z.discriminatedUnion("game", [
 export type ContactPayload = z.infer<typeof ContactPayloadSchema>;
 export type AnalyticsPayload = z.infer<typeof AnalyticsPayloadSchema>;
 export type TerminalPayload = z.infer<typeof TerminalPayloadSchema>;
+export type PlayerSessionPayload = z.infer<typeof PlayerSessionPayloadSchema>;
 export type ScorePayload = z.infer<typeof ScorePayloadSchema>;

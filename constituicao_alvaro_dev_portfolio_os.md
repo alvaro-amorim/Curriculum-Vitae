@@ -210,6 +210,7 @@ R1-E.12.1  — Game Score Contract v2
 R1-E.12.2  — Supabase/DB Foundation
 R1-E.12.3  — Apply Supabase DB Foundation
 R1-E.12.4  — Anonymous Player Session
+R1-E.12.5  — Persistent Score API
 R1-E.11.4  — Final Mobile Polish
 R1-E.11.5  — Public QA Final
 R1-F.0     — Project Assets Admin Planning
@@ -786,6 +787,7 @@ Estado revisado antes do fechamento R1-E.9:
 - `/api/score` permanece mock/local não persistente. O contrato ativo aceita apenas `runtime`, `bug-maze`, `code-snake` e `stack-tetris`; `debug-arena`, `latency-lab`, `debug`, `architecture`, `latency`, `terminal` e `portfolio` foram removidos da compatibilidade e devem retornar validação inválida.
 - R1-E.12.1 elevou o contrato para score v2: payload válido exige `durationMs`, `gameVersion`, `deviceType` opcional e `metadata` estrita por jogo. A API continua sem banco e retorna modo local/mock.
 - R1-E.12.3 aplicou a migration versionada `20260608154425_arcade_scores_foundation.sql` no Supabase remoto `fkiuecyohcyjwygedncx`. `arcade_sessions` e `arcade_scores` existem remotamente, com RLS habilitado, sem policies públicas e sem seed.
+- R1-E.12.4 adiciona client Supabase server-side, cookie httpOnly `alvaro_arcade_session`, hash HMAC-SHA256 com `ARCADE_SESSION_SECRET` e `/api/player-session`. A API retorna apenas DTO público com alias e nunca expõe `session_hash` ou raw session id.
 - Sitemap, robots, metadata, links, idiomas, tema, acessibilidade, reduced motion e mobile validados.
 - Produção deve ser validada por leitura quando disponível, sem deploy manual nesta fase.
 
@@ -966,7 +968,7 @@ Se a ferramenta visual falhar, isso deve ser relatado. A entrega visual não dev
 
 Supabase ainda **não deve ser integrado ao código sem fase explícita**.
 
-O usuário criou manualmente o projeto Supabase básico `alvaro-portfolio-arcade`. A R1-E.12.3 aplicou a fundação remota de banco para scores do Arcade, mas o app ainda não possui client Supabase, leaderboard, sessão anônima no runtime, Storage, Auth, Admin ou uso de service role em componentes. Ranking real e persistência real devem começar somente em fase própria de API server-side.
+O usuário criou manualmente o projeto Supabase básico `alvaro-portfolio-arcade`. A R1-E.12.3 aplicou a fundação remota de banco para scores do Arcade e a R1-E.12.4 adicionou sessão anônima server-side. O app ainda não possui leaderboard, persistência real de score, Storage, Auth, Admin ou uso de service role em componentes. Ranking real e persistência real devem começar somente em fase própria de API server-side.
 
 ---
 
@@ -1688,7 +1690,7 @@ Estado:
 - Project ref aplicado: `fkiuecyohcyjwygedncx`.
 - Migration versionada aplicada remotamente: `20260608154425_arcade_scores_foundation.sql`.
 - `/api/score` continua local/mock.
-- Nenhum Supabase client foi criado no código.
+- Supabase client criado apenas em `src/lib/supabase/server.ts`, para uso server-side.
 - Tabelas remotas criadas: `arcade_sessions` e `arcade_scores`.
 - Nenhuma policy pública, bucket, Auth ou Admin foi criado por esta fase.
 
@@ -1703,7 +1705,15 @@ Segurança aplicada:
 - Nenhuma policy pública criada.
 - Escrita e leitura de leaderboard devem passar por Route Handlers server-side.
 - `SUPABASE_SERVICE_ROLE_KEY` nunca deve ir para client component ou `NEXT_PUBLIC_*`.
+- `ARCADE_SESSION_SECRET` nunca deve ir para client component ou `NEXT_PUBLIC_*`.
 - Respostas públicas de ranking não devem expor `session_hash`.
+
+Sessão anônima:
+
+- Cookie `alvaro_arcade_session`, `httpOnly`, `sameSite=lax`, `path=/`, 90 dias, `secure` em produção.
+- Hash server-side por HMAC-SHA256; raw cookie e `session_hash` nunca retornam ao client.
+- `/api/player-session` faz upsert em `arcade_sessions` e retorna `{ ready, alias, maxAliasLength }`.
+- Alias é opcional, normalizado e rejeita e-mail, telefone, URL, caracteres de controle e valores acima de 24 caracteres.
 
 Caso Supabase seja usado, criar tabelas simples.
 

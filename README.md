@@ -253,7 +253,7 @@ Escopo previsto:
 - Preservação dos placeholders honestos enquanto imagens reais não existirem.
 - Nenhum screenshot falso.
 
-O projeto Supabase básico foi criado manualmente. A R1-E.12.3 aplicou a migration versionada de fundação de scores no projeto remoto `fkiuecyohcyjwygedncx`. O app continua sem client Supabase no código, `/api/score` ainda opera em modo local/mock, e Storage, Auth, Leaderboard e Admin continuam fora do runtime atual.
+O projeto Supabase básico foi criado manualmente. A R1-E.12.3 aplicou a migration versionada de fundação de scores no projeto remoto `fkiuecyohcyjwygedncx`. A R1-E.12.4 adiciona client Supabase server-side e sessão anônima do Arcade. `/api/score` ainda opera em modo local/mock, e Storage, Auth, Leaderboard e Admin continuam fora do runtime atual.
 
 R1-F.0 não cria `/admin`, storage, banco, autenticação ou upload. A implementação deve começar somente em R1-F.1 ou fase posterior aprovada.
 
@@ -267,17 +267,18 @@ Roadmap proposto:
 - R1-F.5 — Public Rendering Integration: consumir imagens reais quando existirem e manter placeholders quando não existirem.
 - R1-F.6 — Admin QA & Security Gate: validar auth, upload, permissões, produção e documentação.
 
-## Fase Atual: R1-E.12.3
+## Fase Atual: R1-E.12.4
 
-R1-E.12.3 — Apply Supabase DB Foundation aplicou a migration versionada do Developer Arcade no Supabase remoto, sem alterar jogos nem tornar `/api/score` persistente ainda.
+R1-E.12.4 — Anonymous Player Session + Server Supabase Client cria a sessão anônima server-side do Developer Arcade, sem persistir scores ainda.
 
 Objetivo da rodada atual:
 
-- Aplicar `supabase/migrations/20260608154425_arcade_scores_foundation.sql` no project ref `fkiuecyohcyjwygedncx`.
-- Confirmar `arcade_sessions` e `arcade_scores` no banco remoto.
-- Confirmar RLS habilitado, zero policies públicas e tabelas sem seed.
-- Manter `/api/score` em modo local/mock e não criar Supabase client no app.
-- Preparar a próxima fase R1-E.12.4 — Anonymous Player Session.
+- Criar client Supabase server-side com `SUPABASE_SERVICE_ROLE_KEY` apenas no servidor.
+- Criar `/api/player-session` com cookie `httpOnly` e `sameSite=lax`.
+- Gerar `session_hash` via HMAC-SHA256 usando `ARCADE_SESSION_SECRET`.
+- Validar alias opcional sem aceitar e-mail, telefone, URL ou caracteres fora do padrão.
+- Upsertar `arcade_sessions` sem retornar `session_hash` ou raw session id.
+- Manter `/api/score` em modo local/mock até R1-E.12.5.
 
 ## Plano Atual de Fases
 
@@ -314,6 +315,7 @@ R1-E.12.1  — Game Score Contract v2
 R1-E.12.2  — Supabase/DB Foundation
 R1-E.12.3  — Apply Supabase DB Foundation
 R1-E.12.4  — Anonymous Player Session
+R1-E.12.5  — Persistent Score API
 R1-E.11.4  — Final Mobile Polish
 R1-E.11.5  — Public QA Final
 R1-F.0     — Project Assets Admin Planning
@@ -358,5 +360,5 @@ NEXT_PUBLIC_APP_URL=https://curriculum-vitae-babr.vercel.app
 - Executar R1-E.11.4 — Final Mobile Polish com teste real em celular, especialmente Runtime Runner e Code Snake.
 - Executar R1-E.11.5 — Public QA Final antes de chamar o site de final.
 - Depois, iniciar R1-F.1 — Protected Admin Shell em fase própria.
-- Executar R1-E.12.4 — Anonymous Player Session para criar identidade anônima e alias seguro antes de persistir scores reais.
+- Executar R1-E.12.5 — Persistent Score API para gravar scores reais usando a sessão anônima já criada.
 - Planejar storage, ranking real ou analytics real somente em fase futura explícita.

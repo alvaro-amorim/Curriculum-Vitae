@@ -2,13 +2,16 @@
 
 R1-E.12.2 prepared the database foundation draft for the Developer Arcade.
 R1-E.12.3 applied that migration to the Supabase remote project.
+R1-E.12.4 adds the server-side anonymous player session that writes only to
+`arcade_sessions`.
 
 ## Scope
 
 - Project ref expected: `fkiuecyohcyjwygedncx`.
 - Applied migration: `supabase/migrations/20260608154425_arcade_scores_foundation.sql`.
 - Runtime status: `/api/score` remains local/mock.
-- No Supabase client is created in application code in this phase.
+- Server-side Supabase client: `src/lib/supabase/server.ts`.
+- Anonymous session API: `/api/player-session`.
 - Remote tables created: `arcade_sessions` and `arcade_scores`.
 - No public policy, bucket, Auth, Leaderboard or Admin feature is created in this phase.
 
@@ -47,9 +50,32 @@ The table stores `score`, `duration_ms`, `game_version`, `contract_version`,
 - Public inserts are intentionally not allowed.
 - Future reads and writes should go through Next.js Route Handlers.
 - `SUPABASE_SERVICE_ROLE_KEY` must stay server-only.
+- `ARCADE_SESSION_SECRET` must stay server-only and is used for HMAC-SHA256
+  session hashing.
 - Public leaderboard responses must not expose `session_hash`.
 - Aliases are display-only and should reject emails, phone numbers or other PII
   in the API layer before insert.
+
+## Anonymous Session API
+
+`GET /api/player-session` ensures a `httpOnly` cookie named
+`alvaro_arcade_session`, hashes it server-side, upserts `arcade_sessions` and
+returns only:
+
+```json
+{
+  "ready": true,
+  "alias": null,
+  "maxAliasLength": 24
+}
+```
+
+`POST /api/player-session` accepts an optional `alias` string or `null`.
+Empty aliases clear to `null`. E-mail, phone-like values, URLs, control
+characters and aliases longer than 24 characters are rejected.
+
+The API never returns `session_hash`, the raw cookie value, service role keys or
+internal database details.
 
 ## Remote Verification
 
@@ -62,11 +88,10 @@ The table stores `score`, `duration_ms`, `game_version`, `contract_version`,
 
 ## Next Phase
 
-R1-E.12.4 should add anonymous player identity before score persistence. The
-expected implementation order is:
+R1-E.12.5 should persist scores after the session foundation. The expected
+implementation order is:
 
-1. Create a local anonymous player session id without collecting PII.
-2. Hash the session id server-side before database writes.
-3. Add optional alias validation.
-4. Keep `/api/score` local/mock until the persistent score API phase is
-   approved.
+1. Reuse `/api/player-session` to guarantee `arcade_sessions` exists.
+2. Write validated score contract v2 payloads to `arcade_scores`.
+3. Keep service role access server-side only.
+4. Return sanitized score submit DTOs without `session_hash`.
