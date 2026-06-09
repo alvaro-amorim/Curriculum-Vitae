@@ -228,6 +228,7 @@
 .actionSecondary:hover,
 .actionGhost:hover,
 .hubCard:hover,
+.leaderboardCard:hover,
 .focusTab:hover,
 .runnerAction:hover,
 .snakeDirection:hover,
@@ -259,9 +260,12 @@
 .heroPanel,
 .arcadeHub,
 .focusShell,
+.leaderboardShell,
 .trainingShell,
 .hubCard,
+.leaderboardCard,
 .moduleCard,
+.scoreResultPanel,
 .runnerStage,
 .snakeStage,
 .tetrisStage {
@@ -283,9 +287,12 @@
 :global([data-theme="light"]) .heroPanel,
 :global([data-theme="light"]) .arcadeHub,
 :global([data-theme="light"]) .focusShell,
+:global([data-theme="light"]) .leaderboardShell,
 :global([data-theme="light"]) .trainingShell,
 :global([data-theme="light"]) .hubCard,
+:global([data-theme="light"]) .leaderboardCard,
 :global([data-theme="light"]) .moduleCard,
+:global([data-theme="light"]) .scoreResultPanel,
 :global([data-theme="light"]) .runnerStage,
 :global([data-theme="light"]) .snakeStage,
 :global([data-theme="light"]) .tetrisStage {
@@ -561,6 +568,174 @@
   color: var(--lab-ink);
   font-size: 0.68rem;
   font-weight: 860;
+}
+
+.leaderboardShell {
+  position: relative;
+  overflow: hidden;
+  margin-top: clamp(0.85rem, 2.2vw, 1.45rem);
+  border-radius: 1.25rem;
+  padding: clamp(0.68rem, 1.7vw, 0.95rem);
+}
+
+.leaderboardGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.72rem;
+}
+
+.leaderboardCard {
+  display: grid;
+  gap: 0.62rem;
+  border-radius: 1rem;
+  padding: 0.78rem;
+}
+
+.leaderboardCardHeader {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 0.55rem;
+}
+
+.leaderboardCardHeader h3,
+.scoreResultLeaderboard h3 {
+  margin: 0;
+  color: var(--lab-ink);
+  font-size: 0.92rem;
+  line-height: 1.1;
+}
+
+.leaderboardCardHeader span {
+  flex: 0 0 auto;
+  border: 1px solid color-mix(in srgb, var(--lab-accent-a) 34%, transparent);
+  border-radius: 999px;
+  padding: 0.2rem 0.44rem;
+  color: var(--lab-accent-a);
+  background: color-mix(in srgb, var(--lab-accent-a) 10%, transparent);
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.6rem;
+  font-weight: 900;
+}
+
+.leaderboardList {
+  display: grid;
+  gap: 0.38rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.leaderboardRow {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 0.48rem;
+  align-items: center;
+  min-height: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 0.68rem;
+  padding: 0.36rem 0.44rem;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.leaderboardRank,
+.leaderboardScore {
+  color: var(--lab-accent-c);
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.68rem;
+  font-weight: 900;
+}
+
+.leaderboardAlias {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--lab-ink);
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.leaderboardScore {
+  color: var(--lab-ink);
+}
+
+.leaderboardEmpty {
+  min-height: 2rem;
+  border: 1px dashed rgba(255, 255, 255, 0.12);
+  border-radius: 0.68rem;
+  padding: 0.46rem 0.5rem;
+  color: var(--lab-muted);
+  font-size: 0.72rem;
+  font-weight: 750;
+}
+
+.scoreResultPanel {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(14rem, 0.56fr) auto;
+  gap: 0.72rem;
+  align-items: center;
+  margin-top: 0.72rem;
+  border-radius: 1rem;
+  padding: 0.78rem;
+}
+
+.scoreResultSummary {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.scoreResultMetrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.44rem;
+}
+
+.scoreResultMetrics div {
+  min-width: 0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.72rem;
+  padding: 0.48rem;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.scoreResultMetrics span {
+  display: block;
+  color: var(--lab-muted);
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.54rem;
+  font-weight: 850;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.scoreResultMetrics strong {
+  display: block;
+  min-width: 0;
+  margin-top: 0.18rem;
+  overflow: hidden;
+  color: var(--lab-ink);
+  font-size: 0.92rem;
+  line-height: 1.1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.scoreResultLeaderboard {
+  display: grid;
+  gap: 0.42rem;
+}
+
+:global([data-theme="light"]) .leaderboardRow,
+:global([data-theme="light"]) .scoreResultMetrics div {
+  border-color: rgba(15, 23, 42, 0.1);
+  background: rgba(255, 255, 255, 0.68);
+}
+
+:global([data-theme="light"]) .leaderboardEmpty {
+  border-color: rgba(15, 23, 42, 0.14);
 }
 
 .focusShell {
@@ -3025,8 +3200,13 @@
     margin-top: 9rem;
   }
 
-  .moduleGrid {
+  .moduleGrid,
+  .leaderboardGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .scoreResultPanel {
+    grid-template-columns: 1fr;
   }
 
   .hubGrid,
@@ -3099,6 +3279,11 @@
   }
 
   .trainingShell {
+    border-radius: 1.05rem;
+    padding: 0.58rem;
+  }
+
+  .leaderboardShell {
     border-radius: 1.05rem;
     padding: 0.58rem;
   }
@@ -3615,8 +3800,20 @@
     animation-duration: 160ms;
   }
 
-  .moduleGrid {
+  .moduleGrid,
+  .leaderboardGrid,
+  .scoreResultMetrics {
     grid-template-columns: 1fr;
+  }
+
+  .scoreResultPanel {
+    gap: 0.5rem;
+    border-radius: 0.82rem;
+    padding: 0.58rem;
+  }
+
+  .scoreResultPanel .actionPrimary {
+    width: 100%;
   }
 
 }

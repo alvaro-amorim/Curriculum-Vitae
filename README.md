@@ -52,7 +52,7 @@ Estado das rotas:
 - `/curriculo` está aprovado e deve ser preservado sem redesign salvo solicitação explícita.
 - `/visual-final-candidate` é rota experimental/legada de comparação; avaliar remoção ou arquivamento futuro com cautela.
 - `/admin` não existe.
-- APIs existentes são locais/mock: `/api/health`, `/api/score`, `/api/contact`, `/api/analytics` e `/api/terminal`.
+- APIs existentes combinam foundations locais e rotas persistentes do Arcade: `/api/health`, `/api/score`, `/api/leaderboard`, `/api/leaderboard/me`, `/api/player-session`, `/api/contact`, `/api/analytics` e `/api/terminal`.
 
 Componentes legados do Lab tratados pela limpeza R1-E.11.3:
 
@@ -82,6 +82,8 @@ Ruídos e cuidados:
 /curriculo                Currículo tradicional e downloads
 /api/health               Health check local
 /api/score                Score persistente no Supabase via Route Handler server-side
+/api/leaderboard          Ranking público sanitizado por jogo
+/api/leaderboard/me       Posição da sessão anônima atual
 /sitemap.xml              Sitemap
 /robots.txt               Robots
 ```
@@ -163,9 +165,9 @@ npm run start
 
 `npm run typecheck` executa `tsc --noEmit`.
 
-## APIs Locais
+## APIs
 
-As APIs atuais são foundations locais/mock. Elas validam entrada e retornam respostas padronizadas, mas não criam persistência real.
+As APIs atuais validam entrada e retornam respostas padronizadas. O Arcade já usa persistência real server-side para score e ranking, sem acesso direto do client ao Supabase.
 
 Rotas existentes:
 
@@ -175,6 +177,9 @@ Rotas existentes:
 /api/analytics
 /api/terminal
 /api/score
+/api/leaderboard
+/api/leaderboard/me
+/api/player-session
 ```
 
 `/api/score` aceita os jogos finais do Developer Arcade:
@@ -207,6 +212,8 @@ Contrato atual esperado:
 - `POST /api/score` inválido: retorna `400`.
 - O contrato ativo é `v2` e exige `durationMs`, `gameVersion` e `metadata` validável por jogo.
 - O retorno válido persiste em `arcade_scores`, segue `contractVersion: "v2"` e retorna `mode: "persistent"`.
+- `GET /api/leaderboard?game=<id>&period=all|month|week&limit=10`: retorna top scores sanitizados, sem `session_hash` ou ids internos.
+- `GET /api/leaderboard/me`: retorna alias público e posição da sessão anônima atual por jogo, sem expor hash.
 
 Game versions atuais:
 
@@ -227,9 +234,6 @@ curl.exe --% -X POST http://localhost:3000/api/score -H "Content-Type: applicati
 
 Não marcar como concluído:
 
-- Supabase integrado ao app.
-- Banco de dados real.
-- Ranking real.
 - Analytics persistente real.
 - Admin dashboard.
 - Autenticação.
@@ -253,7 +257,7 @@ Escopo previsto:
 - Preservação dos placeholders honestos enquanto imagens reais não existirem.
 - Nenhum screenshot falso.
 
-O projeto Supabase básico foi criado manualmente. A R1-E.12.3 aplicou a migration versionada de fundação de scores no projeto remoto `fkiuecyohcyjwygedncx`, a R1-E.12.4 adicionou sessão anônima e a R1-E.12.5 tornou `/api/score` persistente via Route Handler server-side. Storage, Auth, Leaderboard e Admin continuam fora do runtime atual.
+O projeto Supabase básico foi criado manualmente. A R1-E.12.3 aplicou a migration versionada de fundação de scores no projeto remoto `fkiuecyohcyjwygedncx`, a R1-E.12.4 adicionou sessão anônima, a R1-E.12.5 tornou `/api/score` persistente e a R1-E.12.6 adicionou leaderboard público sanitizado via Route Handlers server-side. Storage, Auth e Admin continuam fora do runtime atual.
 
 R1-F.0 não cria `/admin`, storage, banco, autenticação ou upload. A implementação deve começar somente em R1-F.1 ou fase posterior aprovada.
 
@@ -267,18 +271,17 @@ Roadmap proposto:
 - R1-F.5 — Public Rendering Integration: consumir imagens reais quando existirem e manter placeholders quando não existirem.
 - R1-F.6 — Admin QA & Security Gate: validar auth, upload, permissões, produção e documentação.
 
-## Fase Atual: R1-E.12.5
+## Fase Atual: R1-E.12.6
 
-R1-E.12.5 — Persistent Score API troca `/api/score` de mock/local para persistência real em `arcade_scores`, sem criar leaderboard nem alterar gameplay.
+R1-E.12.6 — Leaderboard API & UI cria ranking público conectado ao Supabase, sem alterar gameplay.
 
 Objetivo da rodada atual:
 
-- Reutilizar client Supabase server-side com `SUPABASE_SERVICE_ROLE_KEY` apenas no servidor.
-- Reutilizar cookie anônimo do Arcade e resolver `session_hash` apenas server-side.
-- Garantir/upsertar `arcade_sessions` antes de inserir score, preservando a FK.
-- Persistir payloads válidos do Score Contract v2 em `arcade_scores`.
-- Retornar `accepted: true`, `contractVersion: "v2"` e `mode: "persistent"`.
-- Não criar leaderboard, ranking, Admin, Auth, Storage ou alterações de gameplay.
+- Criar `GET /api/leaderboard` com filtros `game`, `period` e `limit`.
+- Criar `GET /api/leaderboard/me` para posição da sessão anônima atual.
+- Mostrar `Top Players` no Lab com top 3 dos quatro jogos finais.
+- Mostrar resumo pós-score com `Your Score`/alias/ranking e botão `Play Again`.
+- Manter Supabase apenas server-side, sem policies públicas, grants novos, migration nova ou alteração de gameplay.
 
 ## Plano Atual de Fases
 
@@ -361,5 +364,5 @@ NEXT_PUBLIC_APP_URL=https://curriculum-vitae-babr.vercel.app
 - Executar R1-E.11.4 — Final Mobile Polish com teste real em celular, especialmente Runtime Runner e Code Snake.
 - Executar R1-E.11.5 — Public QA Final antes de chamar o site de final.
 - Depois, iniciar R1-F.1 — Protected Admin Shell em fase própria.
-- Executar R1-E.12.6 — Leaderboard API & UI para ler `arcade_scores` de forma sanitizada sem expor `session_hash`.
-- Planejar storage, ranking real ou analytics real somente em fase futura explícita.
+- Executar R1-E.12.7 — Game Balance & Leaderboard QA para calibrar ranking e UX após dados reais.
+- Planejar storage, analytics real ou Admin somente em fase futura explícita.

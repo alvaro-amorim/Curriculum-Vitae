@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Developer Arcade — Álvaro Amorim",
     description:
-      "Arcade Hub com quatro jogos jogáveis, Code Snake com wrap-around, Bug Maze expandido, gestos mobile, score local sem ranking real e treinos antigos fora da UI principal.",
+      "Arcade Hub com quatro jogos jogáveis, Code Snake com wrap-around, Bug Maze expandido, gestos mobile, score persistente e Top Players.",
     url: "/lab",
   },
 };

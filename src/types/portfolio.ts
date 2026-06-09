@@ -104,6 +104,43 @@ export type LabGameId =
   | "stack-tetris";
 
 export type GameDeviceType = "desktop" | "mobile" | "unknown";
+export type LeaderboardPeriod = "all" | "month" | "week";
+
+export type LeaderboardEntry = {
+  alias: string;
+  createdAt: string;
+  score: number;
+};
+
+export type LeaderboardResponse = {
+  game: LabGameId;
+  leaderboard: LeaderboardEntry[];
+  period: LeaderboardPeriod;
+};
+
+export type PlayerGameRanking = {
+  createdAt: string | null;
+  rank: number | null;
+  score: number | null;
+};
+
+export type PlayerLeaderboardResponse = {
+  alias: string | null;
+  rankings: {
+    bugMaze: PlayerGameRanking;
+    codeSnake: PlayerGameRanking;
+    runtime: PlayerGameRanking;
+    stackTetris: PlayerGameRanking;
+  };
+};
+
+export type ScoreSubmitResponse = {
+  accepted: true;
+  contractVersion: "v2";
+  game: LabGameId;
+  mode: "persistent";
+  score: number;
+};
 
 export type RuntimeScoreMetadata = {
   distance: number;

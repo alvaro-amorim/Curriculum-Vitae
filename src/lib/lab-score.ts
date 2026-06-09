@@ -1,4 +1,4 @@
-import type { GameDeviceType, GameScorePayloadV2, LabGameId } from "@/types/portfolio";
+import type { GameDeviceType, GameScorePayloadV2, LabGameId, ScoreSubmitResponse } from "@/types/portfolio";
 
 export type LabScoreState = Record<LabGameId, number | null>;
 
@@ -40,7 +40,12 @@ export function detectGameDeviceType(): GameDeviceType {
   return window.matchMedia("(max-width: 640px)").matches ? "mobile" : "desktop";
 }
 
-export async function submitLabScore(payload: GameScorePayloadV2) {
+type ApiSuccessEnvelope<T> = {
+  data: T;
+  ok: true;
+};
+
+export async function submitLabScore(payload: GameScorePayloadV2): Promise<ScoreSubmitResponse> {
   const response = await fetch("/api/score", {
     body: JSON.stringify({
       ...payload,
@@ -55,4 +60,12 @@ export async function submitLabScore(payload: GameScorePayloadV2) {
   if (!response.ok) {
     throw new Error("Score API rejected the payload.");
   }
+
+  const body = (await response.json()) as ApiSuccessEnvelope<ScoreSubmitResponse>;
+
+  if (!body.ok || body.data.mode !== "persistent") {
+    throw new Error("Score API returned an invalid response.");
+  }
+
+  return body.data;
 }

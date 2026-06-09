@@ -79,8 +79,9 @@ Estado real do produto após revisão humana em vídeo:
 - Downloads PDF/DOCX continuam em `public/resume/`.
 - A imagem ativa continua em `public/profile/`.
 - Metadata, sitemap, robots, not-found e fundamentos de SEO estão implementados.
-- `/api/score` é mock/local, não persistente, com validação para os jogos do Developer Arcade.
-- R1-F.0 foi checkpointada como planejamento do Admin de Imagens, mas `/admin`, Supabase, storage, banco e upload ainda não existem.
+- `/api/score` persiste scores válidos do Developer Arcade em Supabase via Route Handler server-side.
+- `/api/leaderboard` e `/api/leaderboard/me` expõem ranking sanitizado sem `session_hash` ou ids internos.
+- R1-F.0 foi checkpointada como planejamento do Admin de Imagens, mas `/admin`, storage, Auth permanente e upload ainda não existem.
 - R1-E.10.1 foi checkpointada com clean UI pass, Smart Navbar funcional, scroll root real e remoção da faixa residual.
 - R1-E.10.2 foi checkpointada com Arcade Hub, um jogo ativo por vez e Game Focus Mode desktop/mobile.
 - R1-E.10.3/R1-E.10.3.1 foi checkpointada com Bug Maze expandido, controles mobile por swipe nos quatro jogos finais e densidade visual calibrada em 100% de zoom.
@@ -96,7 +97,7 @@ Resultado da auditoria R1-E.11.0:
 - `/`, `/projetos`, `/projetos/[slug]`, `/lab` e `/curriculo` são as rotas públicas principais.
 - `/visual-final-candidate` é rota experimental/legada de comparação; remoção ou arquivamento deve ser avaliado em fase futura com cautela.
 - `/admin` não existe.
-- APIs existentes são locais/mock: `/api/health`, `/api/score`, `/api/contact`, `/api/analytics` e `/api/terminal`.
+- APIs existentes combinam foundations locais e Arcade persistente: `/api/health`, `/api/score`, `/api/leaderboard`, `/api/leaderboard/me`, `/api/player-session`, `/api/contact`, `/api/analytics` e `/api/terminal`.
 - AppShell contém camadas de route/theme/language transition; `tokens.css` e `motion.css` concentram tokens de motion; reduced motion existe.
 - Ainda é necessário QA humano em dispositivo real, especialmente no Arcade mobile, Runtime Runner e Code Snake.
 - Projetos/cases estão coerentes, mas imagens reais continuam pendentes.
@@ -135,9 +136,6 @@ Decisão sobre módulos existentes:
 
 O que ainda não existe e não deve ser marcado como concluído:
 
-- Supabase ativo.
-- Banco de dados real.
-- Ranking real.
 - Analytics persistente real.
 - Admin dashboard.
 - Autenticação.
@@ -790,6 +788,7 @@ Estado revisado antes do fechamento R1-E.9:
 - R1-E.12.3 aplicou a migration versionada `20260608154425_arcade_scores_foundation.sql` no Supabase remoto `fkiuecyohcyjwygedncx`. `arcade_sessions` e `arcade_scores` existem remotamente, com RLS habilitado, sem policies públicas e sem seed.
 - R1-E.12.4 adiciona client Supabase server-side, cookie httpOnly `alvaro_arcade_session`, hash HMAC-SHA256 com `ARCADE_SESSION_SECRET` e `/api/player-session`. A API retorna apenas DTO público com alias e nunca expõe `session_hash` ou raw session id.
 - R1-E.12.5 reutiliza a sessão anônima, garante a FK em `arcade_sessions` e grava o score validado em `arcade_scores` sem expor `session_hash`, raw id, service role, metadata interna ou id de banco no response.
+- R1-E.12.6 adiciona `/api/leaderboard`, `/api/leaderboard/me` e a UI `Top Players` no Lab. A leitura continua server-side, não cria policies públicas, não cria grants novos e não expõe `session_hash`.
 - Sitemap, robots, metadata, links, idiomas, tema, acessibilidade, reduced motion e mobile validados.
 - Produção deve ser validada por leitura quando disponível, sem deploy manual nesta fase.
 
@@ -970,7 +969,7 @@ Se a ferramenta visual falhar, isso deve ser relatado. A entrega visual não dev
 
 Supabase ainda **não deve ser integrado ao código sem fase explícita**.
 
-O usuário criou manualmente o projeto Supabase básico `alvaro-portfolio-arcade`. A R1-E.12.3 aplicou a fundação remota de banco para scores do Arcade, a R1-E.12.4 adicionou sessão anônima server-side e a R1-E.12.5 ativou persistência real de score. O app ainda não possui leaderboard, Storage, Auth, Admin ou uso de service role em componentes. Ranking público deve começar somente em fase própria de API server-side.
+O usuário criou manualmente o projeto Supabase básico `alvaro-portfolio-arcade`. A R1-E.12.3 aplicou a fundação remota de banco para scores do Arcade, a R1-E.12.4 adicionou sessão anônima server-side, a R1-E.12.5 ativou persistência real de score e a R1-E.12.6 adicionou ranking público sanitizado via Route Handlers. O app ainda não possui Storage, Auth, Admin ou uso de service role em componentes.
 
 ---
 
@@ -1692,6 +1691,8 @@ Estado:
 - Project ref aplicado: `fkiuecyohcyjwygedncx`.
 - Migration versionada aplicada remotamente: `20260608154425_arcade_scores_foundation.sql`.
 - `/api/score` persiste em `arcade_scores` com `mode: "persistent"`.
+- `/api/leaderboard` lê ranking público por jogo com `game`, `period` e `limit`.
+- `/api/leaderboard/me` lê a posição da sessão anônima atual.
 - Supabase client criado apenas em `src/lib/supabase/server.ts`, para uso server-side.
 - Tabelas remotas criadas: `arcade_sessions` e `arcade_scores`.
 - Nenhuma policy pública, bucket, Auth ou Admin foi criado por esta fase.
@@ -1723,7 +1724,14 @@ Score persistente:
 - A rota garante/upserta `arcade_sessions` e usa o `session_hash` apenas internamente.
 - Cada payload aceito insere uma linha em `arcade_scores`.
 - O DTO público retorna apenas `accepted`, `contractVersion`, `game`, `mode` e `score`.
-- Leaderboard/ranking ainda não existe e não deve ler diretamente do client.
+
+Leaderboard:
+
+- `/api/leaderboard` retorna `{ game, period, leaderboard }`.
+- Cada item público contém apenas `alias`, `score` e `createdAt`.
+- `/api/leaderboard/me` retorna alias e rankings por jogo da sessão atual.
+- Nenhuma resposta pública retorna `session_hash`, raw cookie, ids internos ou service role.
+- O client do Lab consome apenas Route Handlers; não usa Supabase diretamente.
 
 Caso Supabase seja usado, criar tabelas simples.
 

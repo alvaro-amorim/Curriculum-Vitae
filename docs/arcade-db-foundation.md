@@ -5,6 +5,7 @@ R1-E.12.3 applied that migration to the Supabase remote project.
 R1-E.12.4 adds the server-side anonymous player session that writes only to
 `arcade_sessions`.
 R1-E.12.5 persists validated Score Contract v2 submissions to `arcade_scores`.
+R1-E.12.6 adds sanitized leaderboard read APIs and Lab UI cards.
 
 ## Scope
 
@@ -13,8 +14,9 @@ R1-E.12.5 persists validated Score Contract v2 submissions to `arcade_scores`.
 - Runtime status: `/api/score` writes to Supabase through a server-side Route Handler.
 - Server-side Supabase client: `src/lib/supabase/server.ts`.
 - Anonymous session API: `/api/player-session`.
+- Leaderboard APIs: `/api/leaderboard` and `/api/leaderboard/me`.
 - Remote tables created: `arcade_sessions` and `arcade_scores`.
-- No public policy, bucket, Auth, Leaderboard or Admin feature is created in this phase.
+- No public policy, bucket, Auth or Admin feature is created in this phase.
 
 ## Planned Tables
 
@@ -97,6 +99,35 @@ The response does not include `session_hash`, raw cookie values, database ids,
 service role keys or metadata internals. Invalid v1 payloads, legacy ids and
 wrong metadata still return validation errors.
 
+## Leaderboard APIs
+
+`GET /api/leaderboard` reads top scores through the server-side Supabase client.
+Supported query params:
+
+- `game`: `runtime`, `bug-maze`, `code-snake` or `stack-tetris`.
+- `period`: `all`, `month` or `week`.
+- `limit`: defaults to `10` and is capped at `50`.
+
+The public DTO returns only:
+
+```json
+{
+  "game": "runtime",
+  "period": "all",
+  "leaderboard": [
+    {
+      "alias": "Anonymous Dev",
+      "score": 80,
+      "createdAt": "2026-06-09T00:00:00.000Z"
+    }
+  ]
+}
+```
+
+`GET /api/leaderboard/me` resolves the current anonymous cookie server-side and
+returns alias plus all-time ranking per game. It never returns `session_hash`,
+raw cookie values or internal database ids.
+
 ## Remote Verification
 
 - Project ref: `fkiuecyohcyjwygedncx`.
@@ -108,11 +139,10 @@ wrong metadata still return validation errors.
 
 ## Next Phase
 
-R1-E.12.6 should add a sanitized leaderboard surface after persistence. The
-expected implementation order is:
+R1-E.12.7 should focus on game balance and leaderboard QA using real score data.
+Recommended scope:
 
-1. Create a server-side leaderboard read API.
-2. Return top scores by game without `session_hash`.
-3. Add a compact Lab UI for rankings.
-4. Keep public browser access behind Route Handlers, not direct Supabase client
-   reads.
+1. Validate ranking UX on real mobile sizes.
+2. Review score distribution by game.
+3. Add any needed anti-abuse throttling in a dedicated phase.
+4. Keep public browser access behind Route Handlers, not direct Supabase client reads.

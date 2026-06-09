@@ -8,12 +8,36 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { usePortfolioUi } from "@/components/layout/app-shell";
 import { labPageCopy } from "@/content/challenges";
 import { calculateSessionScore, initialLabScores, submitLabScore } from "@/lib/lab-score";
-import type { GameScorePayloadV2, LabGameId } from "@/types/portfolio";
+import type { GameScorePayloadV2, LabGameId, LeaderboardEntry, LeaderboardResponse, PlayerLeaderboardResponse } from "@/types/portfolio";
 
 import styles from "./developer-lab.module.css";
 
 type ScoreStatus = "idle" | "syncing" | "synced" | "failed";
 type ArcadeGameId = Extract<LabGameId, "runtime" | "bug-maze" | "code-snake" | "stack-tetris">;
+type LeaderboardStatus = "idle" | "loading" | "ready" | "failed";
+type LeaderboardState = Record<ArcadeGameId, LeaderboardEntry[]>;
+type LastScoreResult = {
+  alias: string | null;
+  game: ArcadeGameId;
+  leaderboard: LeaderboardEntry[];
+  rank: number | null;
+  score: number;
+};
+
+const arcadeGameIds = ["runtime", "bug-maze", "code-snake", "stack-tetris"] as const satisfies readonly ArcadeGameId[];
+const rankingKeyByGame = {
+  runtime: "runtime",
+  "bug-maze": "bugMaze",
+  "code-snake": "codeSnake",
+  "stack-tetris": "stackTetris",
+} as const satisfies Record<ArcadeGameId, keyof PlayerLeaderboardResponse["rankings"]>;
+
+const emptyLeaderboardState: LeaderboardState = {
+  runtime: [],
+  "bug-maze": [],
+  "code-snake": [],
+  "stack-tetris": [],
+};
 
 function GameLoading() {
   return <div aria-hidden="true" className={styles.gameLoading} />;
@@ -82,6 +106,18 @@ const labCopy = {
     snakeControls: "Swipe no mobile / Setas no desktop",
     tetrisControls: "Swipe no mobile / Space no desktop",
     session: "score da sessão",
+    topPlayersEyebrow: "ranking público",
+    topPlayersTitle: "Top Players",
+    topPlayersText: "Recordes reais gravados no Supabase pelos quatro jogos finais.",
+    leaderboardLoading: "Carregando ranking",
+    leaderboardEmpty: "Sem scores ainda",
+    anonymousAlias: "Dev anônimo",
+    scoreSubmitted: "Score persistido",
+    yourScore: "Seu score",
+    aliasLabel: "Alias",
+    yourPosition: "Sua posição",
+    leaderboardSummary: "Leaderboard resumido",
+    playAgain: "Play Again",
     arcadeStatus: "Arcade final jogável",
     futureStatus: "em preparação",
     archivedNote:
@@ -125,6 +161,18 @@ const labCopy = {
     snakeControls: "Mobile swipe / desktop arrows",
     tetrisControls: "Mobile swipe / desktop Space",
     session: "session score",
+    topPlayersEyebrow: "public ranking",
+    topPlayersTitle: "Top Players",
+    topPlayersText: "Real records stored in Supabase from the four final games.",
+    leaderboardLoading: "Loading ranking",
+    leaderboardEmpty: "No scores yet",
+    anonymousAlias: "Anonymous Dev",
+    scoreSubmitted: "Score persisted",
+    yourScore: "Your Score",
+    aliasLabel: "Alias",
+    yourPosition: "Your position",
+    leaderboardSummary: "Short leaderboard",
+    playAgain: "Play Again",
     arcadeStatus: "Playable final arcade",
     futureStatus: "in preparation",
     archivedNote:
@@ -140,14 +188,14 @@ const roadmap = {
   pt: [
     ["Runtime Runner", "Jogo ativo: runner de pipeline com salto, colisão, score, pause e dificuldade progressiva."],
     ["Bug Maze", "Jogo ativo: maze de debug com tokens, vírus perseguidores, 3 vidas e Safe Deploy bloqueado."],
-    ["Code Snake", "Jogo ativo: snake de programação com coleta de tokens, bugs perigosos e score local."],
-    ["Stack Tetris", "Jogo ativo: montagem de stack técnica com peças em queda, linhas compiladas e score local."],
+    ["Code Snake", "Jogo ativo: snake de programação com coleta de tokens, bugs perigosos e score persistente."],
+    ["Stack Tetris", "Jogo ativo: montagem de stack técnica com peças em queda, linhas compiladas e score persistente."],
   ],
   en: [
     ["Runtime Runner", "Active game: pipeline runner with jump, collision, score, pause, and progressive difficulty."],
     ["Bug Maze", "Active game: debug maze with tokens, chasing viruses, 3 lives, and locked Safe Deploy."],
-    ["Code Snake", "Active game: programming snake with code token collection, bug hazards, and local score."],
-    ["Stack Tetris", "Active game: technical stack assembly with falling modules, compiled lines, and local score."],
+    ["Code Snake", "Active game: programming snake with code token collection, bug hazards, and persistent score."],
+    ["Stack Tetris", "Active game: technical stack assembly with falling modules, compiled lines, and persistent score."],
   ],
 } as const;
 
@@ -161,8 +209,13 @@ export function DeveloperLab() {
     "code-snake": "idle",
     "stack-tetris": "idle",
   });
+  const [leaderboards, setLeaderboards] = useState<LeaderboardState>(emptyLeaderboardState);
+  const [leaderboardStatus, setLeaderboardStatus] = useState<LeaderboardStatus>("idle");
+  const [playerLeaderboard, setPlayerLeaderboard] = useState<PlayerLeaderboardResponse | null>(null);
+  const [lastScoreResult, setLastScoreResult] = useState<LastScoreResult | null>(null);
   const [activeGame, setActiveGame] = useState<ArcadeGameId | null>(null);
   const [isSwitchingGame, setIsSwitchingGame] = useState(false);
+  const [gameRunKey, setGameRunKey] = useState(0);
   const focusRef = useRef<HTMLElement | null>(null);
   const hubRef = useRef<HTMLElement | null>(null);
   const switchTimerRef = useRef<number | null>(null);
@@ -200,6 +253,76 @@ export function DeveloperLab() {
   );
   const selectedGame = activeGame ? arcadeGames.find((game) => game.id === activeGame) ?? null : null;
 
+  const fetchLeaderboard = useCallback(async (game: ArcadeGameId) => {
+    const response = await fetch(`/api/leaderboard?game=${game}&period=all&limit=3`, {
+      cache: "no-store",
+    });
+
+    if (!response.ok) {
+      throw new Error("Leaderboard API rejected the request.");
+    }
+
+    const body = (await response.json()) as { data?: LeaderboardResponse; ok: boolean };
+
+    if (!body.ok || !body.data) {
+      throw new Error("Leaderboard API returned an invalid response.");
+    }
+
+    return body.data.leaderboard;
+  }, []);
+
+  const refreshLeaderboards = useCallback(
+    async (targetGame?: ArcadeGameId) => {
+      const games = targetGame ? [targetGame] : arcadeGameIds;
+      setLeaderboardStatus("loading");
+
+      try {
+        const entries = await Promise.all(
+          games.map(async (game) => [game, await fetchLeaderboard(game)] as const),
+        );
+        const updates = entries.reduce<Partial<LeaderboardState>>(
+          (current, [game, leaderboard]) => ({
+            ...current,
+            [game]: leaderboard,
+          }),
+          {},
+        );
+
+        setLeaderboards((current) => ({
+          ...current,
+          ...updates,
+        }));
+        setLeaderboardStatus("ready");
+
+        return targetGame ? updates[targetGame] ?? [] : [];
+      } catch {
+        setLeaderboardStatus("failed");
+        throw new Error("Could not refresh leaderboard.");
+      }
+    },
+    [fetchLeaderboard],
+  );
+
+  const refreshPlayerLeaderboard = useCallback(async () => {
+    const response = await fetch("/api/leaderboard/me", {
+      cache: "no-store",
+    });
+
+    if (!response.ok) {
+      throw new Error("Player leaderboard API rejected the request.");
+    }
+
+    const body = (await response.json()) as { data?: PlayerLeaderboardResponse; ok: boolean };
+
+    if (!body.ok || !body.data) {
+      throw new Error("Player leaderboard API returned an invalid response.");
+    }
+
+    setPlayerLeaderboard(body.data);
+
+    return body.data;
+  }, []);
+
   useEffect(() => {
     return () => {
       if (switchTimerRef.current) {
@@ -207,6 +330,19 @@ export function DeveloperLab() {
       }
     };
   }, []);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      void refreshLeaderboards().catch(() => {
+        // The leaderboard is secondary; the games must remain playable if it fails.
+      });
+      void refreshPlayerLeaderboard().catch(() => {
+        // The player position is optional until a score exists for this session.
+      });
+    }, 0);
+
+    return () => window.clearTimeout(timer);
+  }, [refreshLeaderboards, refreshPlayerLeaderboard]);
 
   useEffect(() => {
     if (!activeGame) {
@@ -230,13 +366,28 @@ export function DeveloperLab() {
       ...current,
       [payload.game]: "syncing",
     }));
+    setLastScoreResult(null);
 
     void submitLabScore(payload)
-      .then(() => {
+      .then(async (result) => {
         setScoreStatus((current) => ({
           ...current,
           [payload.game]: "synced",
         }));
+
+        const [freshLeaderboard, freshPlayerLeaderboard] = await Promise.all([
+          refreshLeaderboards(payload.game).catch(() => leaderboards[payload.game]),
+          refreshPlayerLeaderboard().catch(() => playerLeaderboard),
+        ]);
+        const playerRanking = freshPlayerLeaderboard?.rankings[rankingKeyByGame[payload.game]] ?? null;
+
+        setLastScoreResult({
+          alias: freshPlayerLeaderboard?.alias ?? null,
+          game: payload.game,
+          leaderboard: freshLeaderboard,
+          rank: playerRanking?.rank ?? null,
+          score: result.score,
+        });
       })
       .catch(() => {
         setScoreStatus((current) => ({
@@ -244,11 +395,12 @@ export function DeveloperLab() {
           [payload.game]: "failed",
         }));
       });
-  }, []);
+  }, [leaderboards, playerLeaderboard, refreshLeaderboards, refreshPlayerLeaderboard]);
 
   const openGame = useCallback((game: ArcadeGameId) => {
     setActiveGame(game);
     setIsSwitchingGame(true);
+    setLastScoreResult(null);
 
     if (switchTimerRef.current) {
       window.clearTimeout(switchTimerRef.current);
@@ -263,6 +415,7 @@ export function DeveloperLab() {
   const backToHub = useCallback(() => {
     setActiveGame(null);
     setIsSwitchingGame(false);
+    setLastScoreResult(null);
 
     if (switchTimerRef.current) {
       window.clearTimeout(switchTimerRef.current);
@@ -273,6 +426,11 @@ export function DeveloperLab() {
       const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       hubRef.current?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
     });
+  }, []);
+
+  const playAgain = useCallback(() => {
+    setLastScoreResult(null);
+    setGameRunKey((current) => current + 1);
   }, []);
 
   function statusLabel(game: LabGameId) {
@@ -303,20 +461,34 @@ export function DeveloperLab() {
     return labPageCopy.apiPending[locale];
   }
 
+  function displayAlias(alias: string | null | undefined) {
+    return alias?.trim() ? alias : copy.anonymousAlias;
+  }
+
+  function leaderboardFallbackLabel() {
+    return leaderboardStatus === "loading" ? copy.leaderboardLoading : copy.leaderboardEmpty;
+  }
+
+  function playerRankLabel(game: ArcadeGameId) {
+    const rank = playerLeaderboard?.rankings[rankingKeyByGame[game]].rank;
+
+    return rank ? `#${rank}` : "--";
+  }
+
   function renderActiveGame(game: ArcadeGameId) {
     if (game === "runtime") {
-      return <RuntimeRunner locale={locale} onComplete={handleComplete} />;
+      return <RuntimeRunner key={`runtime-${gameRunKey}`} locale={locale} onComplete={handleComplete} />;
     }
 
     if (game === "bug-maze") {
-      return <BugMaze locale={locale} onComplete={handleComplete} />;
+      return <BugMaze key={`bug-maze-${gameRunKey}`} locale={locale} onComplete={handleComplete} />;
     }
 
     if (game === "code-snake") {
-      return <CodeSnake locale={locale} onComplete={handleComplete} />;
+      return <CodeSnake key={`code-snake-${gameRunKey}`} locale={locale} onComplete={handleComplete} />;
     }
 
-    return <StackTetris locale={locale} onComplete={handleComplete} />;
+    return <StackTetris key={`stack-tetris-${gameRunKey}`} locale={locale} onComplete={handleComplete} />;
   }
 
   return (
@@ -389,6 +561,45 @@ export function DeveloperLab() {
           </div>
         </section>
 
+        {!activeGame ? (
+          <section className={styles.leaderboardShell} aria-labelledby="arcade-leaderboard-title">
+            <div className={styles.sectionHeader}>
+              <div>
+                <p className={styles.eyebrow}>{copy.topPlayersEyebrow}</p>
+                <h2 className={styles.sectionTitle} id="arcade-leaderboard-title">
+                  {copy.topPlayersTitle}
+                </h2>
+              </div>
+              <p className={styles.trainingNote}>{copy.topPlayersText}</p>
+            </div>
+
+            <div className={styles.leaderboardGrid}>
+              {arcadeGames.map((game) => (
+                <article className={styles.leaderboardCard} key={game.id}>
+                  <div className={styles.leaderboardCardHeader}>
+                    <h3>{game.title}</h3>
+                    <span>{playerRankLabel(game.id)}</span>
+                  </div>
+
+                  <ol className={styles.leaderboardList}>
+                    {leaderboards[game.id].length > 0 ? (
+                      leaderboards[game.id].map((entry, index) => (
+                        <li className={styles.leaderboardRow} key={`${game.id}-${entry.createdAt}-${index}`}>
+                          <span className={styles.leaderboardRank}>#{index + 1}</span>
+                          <span className={styles.leaderboardAlias}>{entry.alias}</span>
+                          <strong className={styles.leaderboardScore}>{entry.score}</strong>
+                        </li>
+                      ))
+                    ) : (
+                      <li className={styles.leaderboardEmpty}>{leaderboardFallbackLabel()}</li>
+                    )}
+                  </ol>
+                </article>
+              ))}
+            </div>
+          </section>
+        ) : null}
+
         {activeGame && selectedGame ? (
           <section
             aria-labelledby="active-arcade-game-title"
@@ -442,6 +653,49 @@ export function DeveloperLab() {
               ) : null}
               {renderActiveGame(activeGame)}
             </div>
+
+            {lastScoreResult?.game === activeGame ? (
+              <aside className={styles.scoreResultPanel} aria-live="polite">
+                <div className={styles.scoreResultSummary}>
+                  <p className={styles.eyebrow}>{copy.scoreSubmitted}</p>
+                  <div className={styles.scoreResultMetrics}>
+                    <div>
+                      <span>{copy.yourScore}</span>
+                      <strong>{lastScoreResult.score}</strong>
+                    </div>
+                    <div>
+                      <span>{copy.aliasLabel}</span>
+                      <strong>{displayAlias(lastScoreResult.alias)}</strong>
+                    </div>
+                    <div>
+                      <span>{copy.yourPosition}</span>
+                      <strong>{lastScoreResult.rank ? `#${lastScoreResult.rank}` : "--"}</strong>
+                    </div>
+                  </div>
+                </div>
+
+                <div className={styles.scoreResultLeaderboard}>
+                  <h3>{copy.leaderboardSummary}</h3>
+                  <ol className={styles.leaderboardList}>
+                    {lastScoreResult.leaderboard.length > 0 ? (
+                      lastScoreResult.leaderboard.map((entry, index) => (
+                        <li className={styles.leaderboardRow} key={`${lastScoreResult.game}-result-${entry.createdAt}-${index}`}>
+                          <span className={styles.leaderboardRank}>#{index + 1}</span>
+                          <span className={styles.leaderboardAlias}>{entry.alias}</span>
+                          <strong className={styles.leaderboardScore}>{entry.score}</strong>
+                        </li>
+                      ))
+                    ) : (
+                      <li className={styles.leaderboardEmpty}>{copy.leaderboardEmpty}</li>
+                    )}
+                  </ol>
+                </div>
+
+                <button className={styles.actionPrimary} onClick={playAgain} type="button">
+                  {copy.playAgain}
+                </button>
+              </aside>
+            ) : null}
           </section>
         ) : null}
 
