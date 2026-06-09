@@ -5,6 +5,7 @@ build/
 dist/
 .vercel
 .vercel/
+supabase/.temp/
 .DS_Store
 *.tsbuildinfo
 .next-dev.*.log

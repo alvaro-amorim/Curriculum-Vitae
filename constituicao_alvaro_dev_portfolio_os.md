@@ -209,6 +209,7 @@ R1-E.12.0  — Game Systems, Leaderboard & Database Architecture Plan
 R1-E.12.1  — Game Score Contract v2
 R1-E.12.2  — Supabase/DB Foundation
 R1-E.12.3  — Apply Supabase DB Foundation
+R1-E.12.4  — Anonymous Player Session
 R1-E.11.4  — Final Mobile Polish
 R1-E.11.5  — Public QA Final
 R1-F.0     — Project Assets Admin Planning
@@ -784,7 +785,7 @@ Estado revisado antes do fechamento R1-E.9:
 - `/curriculo` e downloads preservados.
 - `/api/score` permanece mock/local não persistente. O contrato ativo aceita apenas `runtime`, `bug-maze`, `code-snake` e `stack-tetris`; `debug-arena`, `latency-lab`, `debug`, `architecture`, `latency`, `terminal` e `portfolio` foram removidos da compatibilidade e devem retornar validação inválida.
 - R1-E.12.1 elevou o contrato para score v2: payload válido exige `durationMs`, `gameVersion`, `deviceType` opcional e `metadata` estrita por jogo. A API continua sem banco e retorna modo local/mock.
-- R1-E.12.2 adiciona uma migration draft versionada para `arcade_sessions` e `arcade_scores`, com RLS habilitado e sem policies públicas. A migration ainda não foi aplicada ao Supabase remoto.
+- R1-E.12.3 aplicou a migration versionada `20260608154425_arcade_scores_foundation.sql` no Supabase remoto `fkiuecyohcyjwygedncx`. `arcade_sessions` e `arcade_scores` existem remotamente, com RLS habilitado, sem policies públicas e sem seed.
 - Sitemap, robots, metadata, links, idiomas, tema, acessibilidade, reduced motion e mobile validados.
 - Produção deve ser validada por leitura quando disponível, sem deploy manual nesta fase.
 
@@ -965,7 +966,7 @@ Se a ferramenta visual falhar, isso deve ser relatado. A entrega visual não dev
 
 Supabase ainda **não deve ser integrado ao código sem fase explícita**.
 
-O usuário criou manualmente o projeto Supabase básico `alvaro-portfolio-arcade`. A R1-E.12.2 cria apenas uma migration draft local e versionada para a fundação de scores do Arcade; o app ainda não possui client Supabase, tabelas remotas aplicadas pelo app, Storage, Auth, Admin ou uso de service role em runtime. Banco real, ranking real e persistência devem começar somente depois da aplicação controlada da migration em fase própria.
+O usuário criou manualmente o projeto Supabase básico `alvaro-portfolio-arcade`. A R1-E.12.3 aplicou a fundação remota de banco para scores do Arcade, mas o app ainda não possui client Supabase, leaderboard, sessão anônima no runtime, Storage, Auth, Admin ou uso de service role em componentes. Ranking real e persistência real devem começar somente em fase própria de API server-side.
 
 ---
 
@@ -1671,7 +1672,7 @@ Regras:
 - Rejeitar payload v1 sem `durationMs`, `gameVersion` ou `metadata`.
 - Rejeitar metadata de jogo errado, campos desconhecidos e valores fora de faixa.
 - Não permitir score, duração, versão ou metadata absurdos.
-- Manter modo local/mock até R1-E.12.3 aplicar banco versionado e uma fase posterior trocar a API para persistência real.
+- Manter modo local/mock até uma fase posterior criar sessão anônima, client server-side e persistência real.
 - Não usar service role nem Supabase client em componentes client.
 
 ---
@@ -1680,25 +1681,26 @@ Regras:
 
 ### 13.0 Developer Arcade DB Foundation
 
-R1-E.12.2 cria a migration draft `supabase/migrations/20260608154425_arcade_scores_foundation.sql`.
+R1-E.12.3 aplicou a migration `supabase/migrations/20260608154425_arcade_scores_foundation.sql`.
 
 Estado:
 
-- Project ref esperado: `fkiuecyohcyjwygedncx`.
-- Migration versionada no repositório, ainda não aplicada remotamente.
+- Project ref aplicado: `fkiuecyohcyjwygedncx`.
+- Migration versionada aplicada remotamente: `20260608154425_arcade_scores_foundation.sql`.
 - `/api/score` continua local/mock.
 - Nenhum Supabase client foi criado no código.
-- Nenhuma tabela, policy, bucket, Auth ou Admin foi criado remotamente por esta fase.
+- Tabelas remotas criadas: `arcade_sessions` e `arcade_scores`.
+- Nenhuma policy pública, bucket, Auth ou Admin foi criado por esta fase.
 
 Tabelas planejadas:
 
 - `arcade_sessions`: sessão anônima por `session_hash`, alias opcional e timestamps.
 - `arcade_scores`: score v2 dos quatro jogos finais, `duration_ms`, `game_version`, `contract_version`, `device_type`, `metadata_json` e referência a `session_hash`.
 
-Segurança planejada:
+Segurança aplicada:
 
 - RLS habilitado nas duas tabelas.
-- Nenhuma policy pública criada na migration draft.
+- Nenhuma policy pública criada.
 - Escrita e leitura de leaderboard devem passar por Route Handlers server-side.
 - `SUPABASE_SERVICE_ROLE_KEY` nunca deve ir para client component ou `NEXT_PUBLIC_*`.
 - Respostas públicas de ranking não devem expor `session_hash`.

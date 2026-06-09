@@ -1,15 +1,16 @@
 # Arcade DB Foundation
 
-R1-E.12.2 prepares the database foundation for the Developer Arcade without
-applying any remote SQL.
+R1-E.12.2 prepared the database foundation draft for the Developer Arcade.
+R1-E.12.3 applied that migration to the Supabase remote project.
 
 ## Scope
 
 - Project ref expected: `fkiuecyohcyjwygedncx`.
-- Migration draft: `supabase/migrations/20260608154425_arcade_scores_foundation.sql`.
+- Applied migration: `supabase/migrations/20260608154425_arcade_scores_foundation.sql`.
 - Runtime status: `/api/score` remains local/mock.
 - No Supabase client is created in application code in this phase.
-- No remote table, policy, bucket, Auth or Admin feature is created in this phase.
+- Remote tables created: `arcade_sessions` and `arcade_scores`.
+- No public policy, bucket, Auth, Leaderboard or Admin feature is created in this phase.
 
 ## Planned Tables
 
@@ -42,7 +43,7 @@ The table stores `score`, `duration_ms`, `game_version`, `contract_version`,
 ## Security Model
 
 - RLS is enabled on both tables.
-- No public policy is created in the draft.
+- No public policy was created.
 - Public inserts are intentionally not allowed.
 - Future reads and writes should go through Next.js Route Handlers.
 - `SUPABASE_SERVICE_ROLE_KEY` must stay server-only.
@@ -50,12 +51,22 @@ The table stores `score`, `duration_ms`, `game_version`, `contract_version`,
 - Aliases are display-only and should reject emails, phone numbers or other PII
   in the API layer before insert.
 
+## Remote Verification
+
+- Project ref: `fkiuecyohcyjwygedncx`.
+- `npx supabase db push --dry-run` reported the remote database up to date after
+  apply.
+- `supabase_migrations.schema_migrations` contains version `20260608154425`.
+- Read-only catalog checks confirmed both tables, RLS enabled, expected
+  constraints and indexes, no public policies and zero seed rows.
+
 ## Next Phase
 
-R1-E.12.3 should apply the migration only after reviewing this SQL and confirming
-tooling/authentication. The expected implementation order is:
+R1-E.12.4 should add anonymous player identity before score persistence. The
+expected implementation order is:
 
-1. Confirm Supabase tooling and permissions.
-2. Apply the migration to project `fkiuecyohcyjwygedncx`.
-3. Verify tables, constraints, indexes and RLS.
-4. Keep `/api/score` local/mock until the persistent API phase is approved.
+1. Create a local anonymous player session id without collecting PII.
+2. Hash the session id server-side before database writes.
+3. Add optional alias validation.
+4. Keep `/api/score` local/mock until the persistent score API phase is
+   approved.
