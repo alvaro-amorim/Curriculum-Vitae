@@ -161,7 +161,7 @@ const copy = {
     idleText:
       "Mobile: deslize para mover/descer e para cima para rotacionar. Desktop: setas/WASD e Space.",
     gameOverTitle: "Build quebrado.",
-    gameOverText: "A pilha saturou. O melhor score local foi salvo e o resultado foi enviado sem bloquear a interface.",
+    gameOverText: "A pilha saturou. O melhor local foi salvo e o score persistente foi enviado sem bloquear a interface.",
     controlsTitle: "Controles",
     swipeHint: "Swipe: esquerda/direita move, baixo desce, cima rotaciona.",
     rulesTitle: "Regras",
@@ -218,7 +218,7 @@ const copy = {
     idleText:
       "Mobile: swipe to move/drop and swipe up to rotate. Desktop: arrows/WASD and Space.",
     gameOverTitle: "Build broken.",
-    gameOverText: "The stack saturated. Local best score was saved and the result was submitted without blocking the UI.",
+    gameOverText: "The stack saturated. Local best was saved and the persistent score was submitted without blocking the UI.",
     controlsTitle: "Controls",
     swipeHint: "Swipe: left/right moves, down drops, up rotates.",
     rulesTitle: "Rules",

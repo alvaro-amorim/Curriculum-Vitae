@@ -100,13 +100,13 @@ const copy = {
     idleTitle: "Desvie dos erros antes do build cair.",
     idleText: "Mobile: deslize para cima ou toque para pular. Desktop: Space ou ArrowUp. Sobreviva aos bugs.",
     gameOverTitle: "Pipeline quebrado.",
-    gameOverText: "Reinicie para tentar um score maior. O score local é mantido sem depender de banco ou ranking real.",
+    gameOverText: "Reinicie para tentar um score maior. O resultado é enviado ao ranking e o melhor local segue salvo no navegador.",
     rulesTitle: "Regras",
     rules: [
       "Space ou ArrowUp fazem o runtime saltar.",
       "No mobile, swipe up ou toque no palco funciona como salto.",
       "A velocidade aumenta com o tempo.",
-      "Colisão encerra a rodada e salva o melhor score local.",
+      "Colisão encerra a rodada, salva o melhor local e envia o score persistente.",
     ],
     reduced: "Modo reduced motion: animações decorativas reduzidas e velocidade mais controlada.",
     pulses: {
@@ -136,13 +136,13 @@ const copy = {
     idleTitle: "Avoid errors before the build fails.",
     idleText: "Mobile: swipe up or tap to jump. Desktop: Space or ArrowUp. Survive the bugs.",
     gameOverTitle: "Pipeline failed.",
-    gameOverText: "Restart to chase a higher score. Local score is kept without a database or real ranking.",
+    gameOverText: "Restart to chase a higher score. The result is submitted to the ranking and the local best stays in the browser.",
     rulesTitle: "Rules",
     rules: [
       "Space or ArrowUp make the runtime jump.",
       "On mobile, swipe up or tap the stage to jump.",
       "Speed increases over time.",
-      "Collision ends the run and saves the local best score.",
+      "Collision ends the run, saves the local best, and submits the persistent score.",
     ],
     reduced: "Reduced motion mode: decorative animation is reduced and speed is more controlled.",
     pulses: {

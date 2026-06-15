@@ -103,7 +103,7 @@ const copy = {
     idleText:
       "Mobile: deslize para mudar direção. Paredes OFF por padrão: atravesse bordas. Desktop: setas ou WASD.",
     gameOverTitle: "Pipeline colidiu.",
-    gameOverText: "A colisão salva o melhor score local e envia o resultado sem bloquear a interface.",
+    gameOverText: "A colisão salva o melhor local e envia o score persistente sem bloquear a interface.",
     controlsTitle: "Controles",
     rulesTitle: "Regras",
     rules: [
@@ -170,7 +170,7 @@ const copy = {
     idleText:
       "Mobile: swipe to turn. Walls are OFF by default: cross edges with wrap-around. Desktop: arrows or WASD.",
     gameOverTitle: "Pipeline collided.",
-    gameOverText: "The collision saves the local best score and submits the result without blocking the interface.",
+    gameOverText: "The collision saves the local best and submits the persistent score without blocking the interface.",
     controlsTitle: "Controls",
     rulesTitle: "Rules",
     rules: [

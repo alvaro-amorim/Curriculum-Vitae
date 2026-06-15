@@ -271,16 +271,25 @@ Roadmap proposto:
 - R1-F.5 — Public Rendering Integration: consumir imagens reais quando existirem e manter placeholders quando não existirem.
 - R1-F.6 — Admin QA & Security Gate: validar auth, upload, permissões, produção e documentação.
 
-## Fase Atual: R1-E.12.7A
+## Fase Atual: R1-E.12.7
 
-R1-E.12.7A — Security & Config Hygiene corrige divergências de segurança/configuração antes do balanceamento dos jogos.
+R1-E.12.7 — Game Balance & Leaderboard QA valida ranking, distribuição de score e coerência de UX após dados reais.
 
 Objetivo da rodada atual:
 
-- Adicionar migration defensiva para remover grants diretos das roles públicas `anon` e `authenticated` nas tabelas Arcade.
-- Manter `service_role` como único caminho de leitura/escrita via Route Handlers server-side.
-- Atualizar `.env.example` para refletir o estado real persistente do Arcade.
-- Sincronizar docs sem marcar R1-E.12.7 inteira, balanceamento, Admin, Storage, Upload, CMS ou Auth permanente como concluídos.
+- Auditar distribuição real de score por jogo sem imprimir aliases, hashes ou dados individuais.
+- Validar endpoints de leaderboard e rotas públicas com dados persistidos.
+- Corrigir copy dos jogos que ainda sugeria score apenas local ou ausência de ranking real.
+- Não alterar gameplay, balanceamento profundo, Admin, Storage, Upload, CMS ou Auth permanente nesta rodada.
+
+Snapshot agregado de QA da R1-E.12.7:
+
+- `arcade_sessions`: 18 registros.
+- `arcade_scores`: 10 registros.
+- Runtime Runner: 4 scores, faixa 80-99.
+- Bug Maze: 2 scores, faixa 91-91.
+- Code Snake: 2 scores, faixa 73-73.
+- Stack Tetris: 2 scores, faixa 65-65.
 
 ## Plano Atual de Fases
 
@@ -320,6 +329,7 @@ R1-E.12.4  — Anonymous Player Session
 R1-E.12.5  — Persistent Score API
 R1-E.12.6  — Leaderboard API & UI
 R1-E.12.7A — Security & Config Hygiene
+R1-E.12.7  — Game Balance & Leaderboard QA
 R1-E.11.4  — Final Mobile Polish
 R1-E.11.5  — Public QA Final
 R1-F.0     — Project Assets Admin Planning

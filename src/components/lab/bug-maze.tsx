@@ -167,7 +167,7 @@ const copy = {
     idleText:
       "Mobile: deslize para mover. Colete tokens, fuja dos vírus e faça deploy. Desktop: setas ou WASD.",
     wonTitle: "Deploy seguro.",
-    wonText: "Todos os tokens foram aplicados e o score local foi registrado sem ranking real.",
+    wonText: "Todos os tokens foram aplicados, o melhor local foi salvo e o score entrou no ranking.",
     failedTitle: "Vidas esgotadas.",
     failedText: "Reinicie o mapa, colete tokens e use os becos para escapar dos vírus.",
     blocked: "parede de execução",
@@ -224,7 +224,7 @@ const copy = {
     idleText:
       "Mobile: swipe to move. Collect tokens, avoid viruses, and deploy. Desktop: arrows or WASD.",
     wonTitle: "Safe deploy.",
-    wonText: "Every token was applied and the local score was recorded without a real ranking.",
+    wonText: "Every token was applied, the local best was saved, and the score entered the ranking.",
     failedTitle: "Lives depleted.",
     failedText: "Restart the map, collect tokens, and use dead ends to escape viruses.",
     blocked: "execution wall",

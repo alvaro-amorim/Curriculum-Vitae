@@ -7,6 +7,7 @@ R1-E.12.4 adds the server-side anonymous player session that writes only to
 R1-E.12.5 persists validated Score Contract v2 submissions to `arcade_scores`.
 R1-E.12.6 adds sanitized leaderboard read APIs and Lab UI cards.
 R1-E.12.7A adds defensive grant hygiene for public Supabase roles.
+R1-E.12.7 validates leaderboard behavior and aggregate score distribution using real data.
 
 ## Scope
 
@@ -140,9 +141,22 @@ raw cookie values or internal database ids.
 - Read-only catalog checks confirmed both tables, RLS enabled, expected
   constraints and indexes, no public policies and zero seed rows.
 
+## R1-E.12.7 QA Snapshot
+
+Aggregated read-only data observed during R1-E.12.7:
+
+- `arcade_sessions`: 18 records.
+- `arcade_scores`: 10 records.
+- Runtime Runner: 4 scores, range 80-99.
+- Bug Maze: 2 scores, range 91-91.
+- Code Snake: 2 scores, range 73-73.
+- Stack Tetris: 2 scores, range 65-65.
+
+No aliases, session hashes, row ids or individual timestamps should be printed in QA reports.
+
 ## Next Phase
 
-After R1-E.12.7A security/config hygiene, R1-E.12.7 should focus on game balance and leaderboard QA using real score data.
+Future balance work should use a larger score sample before changing game rules.
 Recommended scope:
 
 1. Validate ranking UX on real mobile sizes.
