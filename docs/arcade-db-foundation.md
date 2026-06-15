@@ -145,7 +145,7 @@ raw cookie values or internal database ids.
 
 Aggregated read-only data observed during R1-E.12.7:
 
-- `arcade_sessions`: 18 records.
+- `arcade_sessions`: 19 records.
 - `arcade_scores`: 10 records.
 - Runtime Runner: 4 scores, range 80-99.
 - Bug Maze: 2 scores, range 91-91.

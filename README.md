@@ -284,7 +284,7 @@ Objetivo da rodada atual:
 
 Snapshot agregado de QA da R1-E.12.7:
 
-- `arcade_sessions`: 18 registros.
+- `arcade_sessions`: 19 registros.
 - `arcade_scores`: 10 registros.
 - Runtime Runner: 4 scores, faixa 80-99.
 - Bug Maze: 2 scores, faixa 91-91.
