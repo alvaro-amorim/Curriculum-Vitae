@@ -1059,6 +1059,41 @@
   text-transform: uppercase;
 }
 
+.runnerStageBadge {
+  position: absolute;
+  top: 4.35rem;
+  left: 0.75rem;
+  z-index: 5;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.36rem;
+  max-width: calc(100% - 1.5rem);
+  border: 1px solid rgba(103, 232, 249, 0.24);
+  border-radius: 999px;
+  padding: 0.34rem 0.54rem;
+  background: rgba(4, 9, 18, 0.56);
+  color: rgba(237, 246, 255, 0.76);
+  font-size: 0.64rem;
+  font-weight: 800;
+  line-height: 1;
+  pointer-events: none;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.24);
+  backdrop-filter: blur(12px);
+}
+
+.runnerStageBadge span {
+  color: rgba(237, 246, 255, 0.56);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.runnerStageBadge strong {
+  color: #e0fbff;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.68rem;
+  font-weight: 900;
+}
+
 .pipelineTrack {
   position: absolute;
   inset: auto 0 5.8rem;
@@ -3472,6 +3507,18 @@
 
   .runnerHud span {
     font-size: 0.52rem;
+  }
+
+  .runnerStageBadge {
+    top: 5.55rem;
+    left: 0.5rem;
+    max-width: calc(100% - 1rem);
+    padding: 0.28rem 0.44rem;
+    font-size: 0.52rem;
+  }
+
+  .runnerStageBadge strong {
+    font-size: 0.58rem;
   }
 
   .stageMessage {

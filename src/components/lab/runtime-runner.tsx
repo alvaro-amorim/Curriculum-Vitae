@@ -9,6 +9,8 @@ import type { GameScorePayloadV2, Locale } from "@/types/portfolio";
 import styles from "./developer-lab.module.css";
 
 type RunnerStatus = "idle" | "running" | "paused" | "gameOver";
+type RunnerStage = "dev-server" | "staging" | "production" | "incident-mode" | "zero-downtime";
+type RunnerPulseKind = "clear" | "milestone" | "near" | null;
 
 type Obstacle = {
   id: number;
@@ -28,9 +30,10 @@ type RunnerFrame = {
   velocity: number;
   obstacles: Obstacle[];
   cleared: number;
+  nearMisses: number;
   spawnIn: number;
   pulse: number;
-  pulseKind: "clear" | "milestone" | null;
+  pulseKind: RunnerPulseKind;
 };
 
 type RuntimeRunnerProps = {
@@ -69,12 +72,35 @@ const obstacleToneClasses: Record<Obstacle["tone"], string> = {
   rate: styles.obstacleToneRate,
 };
 
-function runnerStageReached(elapsed: number) {
+function runnerStageReached(elapsed: number): RunnerStage {
   if (elapsed >= 90) return "zero-downtime";
   if (elapsed >= 62) return "incident-mode";
   if (elapsed >= 38) return "production";
   if (elapsed >= 18) return "staging";
   return "dev-server";
+}
+
+function runnerDifficulty(elapsed: number, mobilePlayfield: boolean, reducedMotion: boolean) {
+  const stage = runnerStageReached(elapsed);
+  const stageLevel: Record<RunnerStage, number> = {
+    "dev-server": 0,
+    staging: 1,
+    production: 2,
+    "incident-mode": 3,
+    "zero-downtime": 4,
+  };
+  const level = stageLevel[stage];
+
+  return {
+    acceleration: (reducedMotion ? 0.46 : mobilePlayfield ? 0.38 : 0.7) + level * (reducedMotion ? 0.02 : mobilePlayfield ? 0.045 : 0.075),
+    baseSpeed: reducedMotion ? 16.5 : mobilePlayfield ? 14.8 : 18.5,
+    cadenceDecay: mobilePlayfield ? 0.0075 : 0.0125,
+    jitter: mobilePlayfield ? 0.5 : 0.42,
+    maxSpeed: reducedMotion ? 32 : mobilePlayfield ? 30.5 : 43.5,
+    minCadence: Math.max(reducedMotion ? 1.34 : mobilePlayfield ? 1.32 : 1.08, (mobilePlayfield ? 1.42 : 1.16) - level * (mobilePlayfield ? 0.02 : 0.035)),
+    startCadence: (mobilePlayfield ? 1.9 : 1.72) - level * (mobilePlayfield ? 0.025 : 0.04),
+    stage,
+  };
 }
 
 const copy = {
@@ -95,6 +121,7 @@ const copy = {
     score: "score",
     best: "melhor",
     speed: "velocidade",
+    stage: "fase",
     cleared: "erros evitados",
     near: "quase colisão",
     idleTitle: "Desvie dos erros antes do build cair.",
@@ -112,6 +139,14 @@ const copy = {
     pulses: {
       clear: "+18 erro evitado",
       milestone: "checkpoint +100",
+      near: "quase colisão",
+    },
+    stages: {
+      "dev-server": "Dev server",
+      staging: "Staging",
+      production: "Produção",
+      "incident-mode": "Incidente",
+      "zero-downtime": "Zero downtime",
     },
   },
   en: {
@@ -131,6 +166,7 @@ const copy = {
     score: "score",
     best: "best",
     speed: "speed",
+    stage: "stage",
     cleared: "errors avoided",
     near: "near miss",
     idleTitle: "Avoid errors before the build fails.",
@@ -148,6 +184,14 @@ const copy = {
     pulses: {
       clear: "+18 error avoided",
       milestone: "checkpoint +100",
+      near: "near miss",
+    },
+    stages: {
+      "dev-server": "Dev server",
+      staging: "Staging",
+      production: "Production",
+      "incident-mode": "Incident",
+      "zero-downtime": "Zero downtime",
     },
   },
 } as const;
@@ -162,6 +206,7 @@ function createInitialFrame(): RunnerFrame {
     velocity: 0,
     obstacles: [],
     cleared: 0,
+    nearMisses: 0,
     spawnIn: 1.18,
     pulse: 0,
     pulseKind: null,
@@ -204,6 +249,7 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
   const lastGroundedAtRef = useRef(0);
   const pendingJumpAtRef = useRef<number | null>(null);
   const touchStartRef = useRef<{ x: number; y: number } | null>(null);
+  const nearMissedObstacleIdsRef = useRef<Set<number>>(new Set());
 
   useEffect(() => {
     statusRef.current = status;
@@ -228,6 +274,8 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
   }, []);
 
   const speedLabel = useMemo(() => `${Math.round(frame.speed)}x`, [frame.speed]);
+  const currentStage = runnerStageReached(frame.elapsed);
+  const currentStageLabel = t.stages[currentStage];
   const isDanger = useMemo(
     () =>
       status === "running" &&
@@ -249,6 +297,7 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
     };
     completedRef.current = false;
     obstacleIdRef.current = 1;
+    nearMissedObstacleIdsRef.current.clear();
     lastGroundedAtRef.current = performance.now();
     pendingJumpAtRef.current = null;
     commitFrame(next);
@@ -280,6 +329,7 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
           collisions: 1,
           distance: Math.max(0, Math.round(next.elapsed * next.speed * 10)),
           maxSpeed: Number(next.speed.toFixed(1)),
+          nearMisses: next.nearMisses,
           stageReached: runnerStageReached(next.elapsed),
         },
         score: next.apiScore,
@@ -445,10 +495,8 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
       }
 
       const elapsed = current.elapsed + delta;
-      const baseSpeed = reducedMotion ? 16.5 : mobilePlayfield ? 14.8 : 18.5;
-      const maxSpeed = reducedMotion ? 32 : mobilePlayfield ? 29 : 41;
-      const acceleration = reducedMotion ? 0.48 : mobilePlayfield ? 0.36 : 0.68;
-      const speed = Math.min(maxSpeed, baseSpeed + elapsed * acceleration);
+      const difficulty = runnerDifficulty(elapsed, mobilePlayfield, reducedMotion);
+      const speed = Math.min(difficulty.maxSpeed, difficulty.baseSpeed + elapsed * difficulty.acceleration);
       const moved = current.obstacles.map((obstacle) => ({
         ...obstacle,
         x: obstacle.x - speed * delta,
@@ -461,12 +509,30 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
       if (spawnIn <= 0) {
         obstacleIdRef.current += 1;
         obstacles.push(createObstacle(obstacleIdRef.current));
-        const cadence = Math.max(
-          reducedMotion ? 1.34 : mobilePlayfield ? 1.42 : 1.16,
-          (mobilePlayfield ? 1.9 : 1.72) - elapsed * (mobilePlayfield ? 0.007 : 0.012),
-        );
-        spawnIn = cadence + Math.random() * (mobilePlayfield ? 0.5 : 0.42);
+        const cadence = Math.max(difficulty.minCadence, difficulty.startCadence - elapsed * difficulty.cadenceDecay);
+        spawnIn = cadence + Math.random() * difficulty.jitter;
       }
+
+      const nearMissNow = obstacles.reduce((count, obstacle) => {
+        if (nearMissedObstacleIdsRef.current.has(obstacle.id)) {
+          return count;
+        }
+
+        const hitsNearWindow = mobilePlayfield
+          ? obstacle.x < 21 && obstacle.x + obstacle.width > 10.8
+          : obstacle.x < 22.5 && obstacle.x + obstacle.width > 11.4;
+        const collisionHeight = obstacle.hitHeight * (mobilePlayfield ? 0.68 : 0.88);
+        const closeHeight = obstacle.hitHeight + (mobilePlayfield ? 0.17 : 0.22);
+        const isNearMiss =
+          elapsed > (mobilePlayfield ? 1.35 : 1) && hitsNearWindow && runnerY >= collisionHeight && runnerY < closeHeight;
+
+        if (!isNearMiss) {
+          return count;
+        }
+
+        nearMissedObstacleIdsRef.current.add(obstacle.id);
+        return count + 1;
+      }, 0);
 
       const collision = obstacles.some((obstacle) => {
         const hitsRunnerX = mobilePlayfield
@@ -476,10 +542,11 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
       });
 
       const cleared = current.cleared + clearedNow;
+      const nearMisses = current.nearMisses + nearMissNow;
       const runScore = Math.floor(elapsed * 8 + cleared * 22);
       const apiScore = clampScore(runScore / 6);
       const crossedMilestone = Math.floor(runScore / 100) > Math.floor(current.runScore / 100);
-      const shouldPulse = clearedNow > 0 || crossedMilestone;
+      const shouldPulse = nearMissNow > 0 || clearedNow > 0 || crossedMilestone;
       const next = {
         elapsed,
         runScore,
@@ -489,9 +556,10 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
         velocity,
         obstacles,
         cleared,
+        nearMisses,
         spawnIn,
         pulse: shouldPulse ? current.pulse + 1 : current.pulse,
-        pulseKind: crossedMilestone ? "milestone" : clearedNow > 0 ? "clear" : current.pulseKind,
+        pulseKind: crossedMilestone ? "milestone" : nearMissNow > 0 ? "near" : clearedNow > 0 ? "clear" : current.pulseKind,
       };
 
       if (collision) {
@@ -571,6 +639,11 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
               <span>{t.cleared}</span>
               <strong>{frame.cleared}</strong>
             </div>
+          </div>
+
+          <div className={styles.runnerStageBadge}>
+            <span>{t.stage}</span>
+            <strong>{currentStageLabel}</strong>
           </div>
 
           <div aria-hidden="true" className={styles.pipelineTrack} />

@@ -8,6 +8,9 @@ R1-E.12.5 persists validated Score Contract v2 submissions to `arcade_scores`.
 R1-E.12.6 adds sanitized leaderboard read APIs and Lab UI cards.
 R1-E.12.7A adds defensive grant hygiene for public Supabase roles.
 R1-E.12.7 validates leaderboard behavior and aggregate score distribution using real data.
+R1-E.12.8 tunes Runtime Runner progression and sends optional `nearMisses`
+metadata without changing the score contract, game version, database schema or
+leaderboard API.
 
 ## Scope
 

@@ -271,16 +271,16 @@ Roadmap proposto:
 - R1-F.5 — Public Rendering Integration: consumir imagens reais quando existirem e manter placeholders quando não existirem.
 - R1-F.6 — Admin QA & Security Gate: validar auth, upload, permissões, produção e documentação.
 
-## Fase Atual: R1-E.12.7
+## Fase Atual: R1-E.12.8
 
-R1-E.12.7 — Game Balance & Leaderboard QA valida ranking, distribuição de score e coerência de UX após dados reais.
+R1-E.12.8 — Runtime Runner Balance & Progression inicia o balanceamento por jogo com uma fatia estreita no Runtime Runner.
 
 Objetivo da rodada atual:
 
-- Auditar distribuição real de score por jogo sem imprimir aliases, hashes ou dados individuais.
-- Validar endpoints de leaderboard e rotas públicas com dados persistidos.
-- Corrigir copy dos jogos que ainda sugeria score apenas local ou ausência de ranking real.
-- Não alterar gameplay, balanceamento profundo, Admin, Storage, Upload, CMS ou Auth permanente nesta rodada.
+- Adicionar marcos visuais de fase no Runtime Runner.
+- Ajustar progressão de velocidade/cadência sem alterar a fórmula pública de score.
+- Enviar `nearMisses` opcional no metadata v2 do Runtime Runner.
+- Não alterar banco, leaderboard, gameVersion, Admin, Storage, Upload, CMS, Auth permanente ou outros jogos nesta rodada.
 
 Snapshot agregado de QA da R1-E.12.7:
 
@@ -290,6 +290,8 @@ Snapshot agregado de QA da R1-E.12.7:
 - Bug Maze: 2 scores, faixa 91-91.
 - Code Snake: 2 scores, faixa 73-73.
 - Stack Tetris: 2 scores, faixa 65-65.
+
+R1-E.12.8 usa esse snapshot apenas como baseline. O contrato continua `runtime@2.0.0`, e o ranking existente permanece comparável porque a fórmula pública de score não foi alterada.
 
 ## Plano Atual de Fases
 
@@ -330,6 +332,7 @@ R1-E.12.5  — Persistent Score API
 R1-E.12.6  — Leaderboard API & UI
 R1-E.12.7A — Security & Config Hygiene
 R1-E.12.7  — Game Balance & Leaderboard QA
+R1-E.12.8  — Runtime Runner Balance & Progression
 R1-E.11.4  — Final Mobile Polish
 R1-E.11.5  — Public QA Final
 R1-F.0     — Project Assets Admin Planning

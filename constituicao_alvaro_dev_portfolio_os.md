@@ -212,6 +212,7 @@ R1-E.12.5  — Persistent Score API
 R1-E.12.6  — Leaderboard API & UI
 R1-E.12.7A — Security & Config Hygiene
 R1-E.12.7  — Game Balance & Leaderboard QA
+R1-E.12.8  — Runtime Runner Balance & Progression
 R1-E.11.4  — Final Mobile Polish
 R1-E.11.5  — Public QA Final
 R1-F.0     — Project Assets Admin Planning
@@ -793,6 +794,7 @@ Estado revisado antes do fechamento R1-E.9:
 - R1-E.12.6 adiciona `/api/leaderboard`, `/api/leaderboard/me` e a UI `Top Players` no Lab. A leitura continua server-side, não cria policies públicas, não cria grants novos e não expõe `session_hash`.
 - R1-E.12.7A adiciona higiene defensiva de grants: `anon` e `authenticated` não devem ter privilégios diretos nas tabelas Arcade; o acesso continua via Route Handlers server-side com `service_role`.
 - R1-E.12.7 valida leaderboard e distribuição agregada de score com dados reais, corrige copy desatualizada dos jogos sobre score/ranking e não altera mecânicas ou balanceamento profundo.
+- R1-E.12.8 inicia o balanceamento por jogo no Runtime Runner com estágios visuais, progressão de velocidade/cadência e `nearMisses` opcional no metadata v2, sem mudar fórmula pública de score, gameVersion, schema, leaderboard ou outros jogos.
 - Sitemap, robots, metadata, links, idiomas, tema, acessibilidade, reduced motion e mobile validados.
 - Produção deve ser validada por leitura quando disponível, sem deploy manual nesta fase.
 
