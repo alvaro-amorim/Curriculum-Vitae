@@ -6,11 +6,13 @@ R1-E.12.4 adds the server-side anonymous player session that writes only to
 `arcade_sessions`.
 R1-E.12.5 persists validated Score Contract v2 submissions to `arcade_scores`.
 R1-E.12.6 adds sanitized leaderboard read APIs and Lab UI cards.
+R1-E.12.7A adds defensive grant hygiene for public Supabase roles.
 
 ## Scope
 
 - Project ref expected: `fkiuecyohcyjwygedncx`.
 - Applied migration: `supabase/migrations/20260608154425_arcade_scores_foundation.sql`.
+- Applied grant hygiene migration: `supabase/migrations/20260609192453_arcade_public_role_grants_hygiene.sql`.
 - Runtime status: `/api/score` writes to Supabase through a server-side Route Handler.
 - Server-side Supabase client: `src/lib/supabase/server.ts`.
 - Anonymous session API: `/api/player-session`.
@@ -51,6 +53,7 @@ The table stores `score`, `duration_ms`, `game_version`, `contract_version`,
 - RLS is enabled on both tables.
 - No public policy was created.
 - Public inserts are intentionally not allowed.
+- Direct table privileges are revoked from `anon` and `authenticated`.
 - Future reads and writes should go through Next.js Route Handlers.
 - `SUPABASE_SERVICE_ROLE_KEY` must stay server-only.
 - `ARCADE_SESSION_SECRET` must stay server-only and is used for HMAC-SHA256
@@ -139,7 +142,7 @@ raw cookie values or internal database ids.
 
 ## Next Phase
 
-R1-E.12.7 should focus on game balance and leaderboard QA using real score data.
+After R1-E.12.7A security/config hygiene, R1-E.12.7 should focus on game balance and leaderboard QA using real score data.
 Recommended scope:
 
 1. Validate ranking UX on real mobile sizes.

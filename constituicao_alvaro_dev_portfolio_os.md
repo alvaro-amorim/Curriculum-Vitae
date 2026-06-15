@@ -153,7 +153,7 @@ Fase obrigatória em planejamento:
 - O admin futuro deve editar thumbnail, hero image e galeria conectados à estrutura `visuals`.
 - O armazenamento real deve ser definido em fase própria, provavelmente Supabase Storage/Auth ou solução equivalente.
 - Enquanto R1-F não existir, os placeholders de projeto continuam honestos.
-- Supabase ainda não está ativo.
+- Supabase já está ativo para o Arcade persistente; Supabase Storage/Auth/Admin continuam futuros e fora do runtime atual.
 - Não criar screenshots falsos.
 
 Estado de produção na R1-E.9:
@@ -210,6 +210,7 @@ R1-E.12.3  — Apply Supabase DB Foundation
 R1-E.12.4  — Anonymous Player Session
 R1-E.12.5  — Persistent Score API
 R1-E.12.6  — Leaderboard API & UI
+R1-E.12.7A — Security & Config Hygiene
 R1-E.11.4  — Final Mobile Polish
 R1-E.11.5  — Public QA Final
 R1-F.0     — Project Assets Admin Planning
@@ -264,7 +265,7 @@ As seções históricas abaixo explicam o diagnóstico e as decisões que levara
 
 ## Diagnóstico de Falha da Primeira Versão
 
-O desenvolvimento anterior priorizou segurança, validação, arquitetura incremental e baixo risco. Essa decisão produziu um MVP técnico correto, com build estável, rotas funcionais, dados estruturados e APIs mock/local.
+O desenvolvimento anterior priorizou segurança, validação, arquitetura incremental e baixo risco. Essa decisão produziu inicialmente um MVP técnico correto, com build estável, rotas funcionais, dados estruturados e APIs mock/local; o Arcade foi posteriormente evoluído para sessão, score e leaderboard persistentes.
 
 O problema é que a visão original exigia mais do que correção técnica. O objetivo era criar uma experiência memorável, premium e interativa que demonstrasse criatividade front-end, motion design, lógica de jogo, arquitetura visual e produto.
 
@@ -789,6 +790,7 @@ Estado revisado antes do fechamento R1-E.9:
 - R1-E.12.4 adiciona client Supabase server-side, cookie httpOnly `alvaro_arcade_session`, hash HMAC-SHA256 com `ARCADE_SESSION_SECRET` e `/api/player-session`. A API retorna apenas DTO público com alias e nunca expõe `session_hash` ou raw session id.
 - R1-E.12.5 reutiliza a sessão anônima, garante a FK em `arcade_sessions` e grava o score validado em `arcade_scores` sem expor `session_hash`, raw id, service role, metadata interna ou id de banco no response.
 - R1-E.12.6 adiciona `/api/leaderboard`, `/api/leaderboard/me` e a UI `Top Players` no Lab. A leitura continua server-side, não cria policies públicas, não cria grants novos e não expõe `session_hash`.
+- R1-E.12.7A adiciona higiene defensiva de grants: `anon` e `authenticated` não devem ter privilégios diretos nas tabelas Arcade; o acesso continua via Route Handlers server-side com `service_role`.
 - Sitemap, robots, metadata, links, idiomas, tema, acessibilidade, reduced motion e mobile validados.
 - Produção deve ser validada por leitura quando disponível, sem deploy manual nesta fase.
 
@@ -969,7 +971,7 @@ Se a ferramenta visual falhar, isso deve ser relatado. A entrega visual não dev
 
 Supabase ainda **não deve ser integrado ao código sem fase explícita**.
 
-O usuário criou manualmente o projeto Supabase básico `alvaro-portfolio-arcade`. A R1-E.12.3 aplicou a fundação remota de banco para scores do Arcade, a R1-E.12.4 adicionou sessão anônima server-side, a R1-E.12.5 ativou persistência real de score e a R1-E.12.6 adicionou ranking público sanitizado via Route Handlers. O app ainda não possui Storage, Auth, Admin ou uso de service role em componentes.
+O usuário criou manualmente o projeto Supabase básico `alvaro-portfolio-arcade`. A R1-E.12.3 aplicou a fundação remota de banco para scores do Arcade, a R1-E.12.4 adicionou sessão anônima server-side, a R1-E.12.5 ativou persistência real de score, a R1-E.12.6 adicionou ranking público sanitizado via Route Handlers e a R1-E.12.7A cria higiene defensiva de grants para roles públicas. O app ainda não possui Storage, Auth, Admin ou uso de service role em componentes.
 
 ---
 
@@ -1690,6 +1692,7 @@ Estado:
 
 - Project ref aplicado: `fkiuecyohcyjwygedncx`.
 - Migration versionada aplicada remotamente: `20260608154425_arcade_scores_foundation.sql`.
+- Migration defensiva aplicada para higiene de grants: `20260609192453_arcade_public_role_grants_hygiene.sql`.
 - `/api/score` persiste em `arcade_scores` com `mode: "persistent"`.
 - `/api/leaderboard` lê ranking público por jogo com `game`, `period` e `limit`.
 - `/api/leaderboard/me` lê a posição da sessão anônima atual.
@@ -1706,6 +1709,7 @@ Segurança aplicada:
 
 - RLS habilitado nas duas tabelas.
 - Nenhuma policy pública criada.
+- Roles públicas `anon` e `authenticated` não devem ter `SELECT`, `INSERT`, `UPDATE`, `DELETE`, `TRUNCATE`, `REFERENCES` ou `TRIGGER` nas tabelas Arcade.
 - Escrita e leitura de leaderboard devem passar por Route Handlers server-side.
 - `SUPABASE_SERVICE_ROLE_KEY` nunca deve ir para client component ou `NEXT_PUBLIC_*`.
 - `ARCADE_SESSION_SECRET` nunca deve ir para client component ou `NEXT_PUBLIC_*`.
@@ -1733,7 +1737,7 @@ Leaderboard:
 - Nenhuma resposta pública retorna `session_hash`, raw cookie, ids internos ou service role.
 - O client do Lab consome apenas Route Handlers; não usa Supabase diretamente.
 
-Caso Supabase seja usado, criar tabelas simples.
+Novas integrações Supabase futuras devem continuar usando tabelas simples, migrations versionadas, RLS explícito e acesso por Route Handlers server-side.
 
 ### 13.1 `portfolio_events`
 

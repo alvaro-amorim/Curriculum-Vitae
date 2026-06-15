@@ -257,7 +257,7 @@ Escopo previsto:
 - Preservação dos placeholders honestos enquanto imagens reais não existirem.
 - Nenhum screenshot falso.
 
-O projeto Supabase básico foi criado manualmente. A R1-E.12.3 aplicou a migration versionada de fundação de scores no projeto remoto `fkiuecyohcyjwygedncx`, a R1-E.12.4 adicionou sessão anônima, a R1-E.12.5 tornou `/api/score` persistente e a R1-E.12.6 adicionou leaderboard público sanitizado via Route Handlers server-side. Storage, Auth e Admin continuam fora do runtime atual.
+O projeto Supabase básico foi criado manualmente. A R1-E.12.3 aplicou a migration versionada de fundação de scores no projeto remoto `fkiuecyohcyjwygedncx`, a R1-E.12.4 adicionou sessão anônima, a R1-E.12.5 tornou `/api/score` persistente e a R1-E.12.6 adicionou leaderboard público sanitizado via Route Handlers server-side. A R1-E.12.7A adiciona higiene defensiva de grants para manter roles públicas sem acesso direto às tabelas Arcade. Storage, Auth e Admin continuam fora do runtime atual.
 
 R1-F.0 não cria `/admin`, storage, banco, autenticação ou upload. A implementação deve começar somente em R1-F.1 ou fase posterior aprovada.
 
@@ -271,17 +271,16 @@ Roadmap proposto:
 - R1-F.5 — Public Rendering Integration: consumir imagens reais quando existirem e manter placeholders quando não existirem.
 - R1-F.6 — Admin QA & Security Gate: validar auth, upload, permissões, produção e documentação.
 
-## Fase Atual: R1-E.12.6
+## Fase Atual: R1-E.12.7A
 
-R1-E.12.6 — Leaderboard API & UI cria ranking público conectado ao Supabase, sem alterar gameplay.
+R1-E.12.7A — Security & Config Hygiene corrige divergências de segurança/configuração antes do balanceamento dos jogos.
 
 Objetivo da rodada atual:
 
-- Criar `GET /api/leaderboard` com filtros `game`, `period` e `limit`.
-- Criar `GET /api/leaderboard/me` para posição da sessão anônima atual.
-- Mostrar `Top Players` no Lab com top 3 dos quatro jogos finais.
-- Mostrar resumo pós-score com `Your Score`/alias/ranking e botão `Play Again`.
-- Manter Supabase apenas server-side, sem policies públicas, grants novos, migration nova ou alteração de gameplay.
+- Adicionar migration defensiva para remover grants diretos das roles públicas `anon` e `authenticated` nas tabelas Arcade.
+- Manter `service_role` como único caminho de leitura/escrita via Route Handlers server-side.
+- Atualizar `.env.example` para refletir o estado real persistente do Arcade.
+- Sincronizar docs sem marcar R1-E.12.7 inteira, balanceamento, Admin, Storage, Upload, CMS ou Auth permanente como concluídos.
 
 ## Plano Atual de Fases
 
@@ -320,6 +319,7 @@ R1-E.12.3  — Apply Supabase DB Foundation
 R1-E.12.4  — Anonymous Player Session
 R1-E.12.5  — Persistent Score API
 R1-E.12.6  — Leaderboard API & UI
+R1-E.12.7A — Security & Config Hygiene
 R1-E.11.4  — Final Mobile Polish
 R1-E.11.5  — Public QA Final
 R1-F.0     — Project Assets Admin Planning
