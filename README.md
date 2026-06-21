@@ -1,150 +1,158 @@
 # Álvaro.dev Portfolio OS
 
-Portfólio profissional de Álvaro Amorim em Next.js, com home premium, projetos em formato de case study, currículo tradicional preservado e Developer Lab em replanejamento para um arcade final mais forte.
+Portfólio profissional de Álvaro Amorim construído em Next.js. O produto reúne uma home interativa, currículo tradicional, projetos em formato de case study e um Developer Arcade com quatro jogos.
 
-O projeto deixou de ser apenas um currículo digital e passou a funcionar como uma demonstração prática de front-end, arquitetura de interface, motion, acessibilidade, SEO, conteúdo estruturado e APIs locais seguras.
+Este README descreve o estado versionado do repositório. Histórico de decisões não deve ser confundido com funcionalidade concluída nem com validação de produção.
 
-## Estado Atual
+## Estado confirmado do repositório
 
-Checkpoint atual publicado:
+Baseline documental desta Fase 0:
 
 ```txt
-e69e771 feat: enhance motion system and mobile arcade
+branch: main
+commit: 7ab0ae09d5bd25746f245460fed87ca9ff3247e8
+message: feat: tune runtime runner progression
 ```
 
-Estado real do produto após a revisão humana que abriu a R1-E.9.3.0:
+Confirmado no código:
 
-- A home oficial `/` usa a experiência visual premium aprovada.
-- `/visual-final-candidate` continua preservada temporariamente como rota de comparação.
-- `/projetos` foi elevado para hub premium de projetos.
-- `/projetos/[slug]` foi elevado para case study visual premium.
-- `/lab` agora reúne os quatro jogos finais jogáveis do Developer Arcade.
-- Runtime Runner, Bug Maze, Code Snake e Stack Tetris formam a vitrine jogável atual do Developer Arcade.
-- Debug Arena e Latency Lab não devem continuar como jogos finais principais: ainda parecem quiz/teste e dashboard/formulário em uso real.
-- Os módulos antigos de quiz/foundation continuam úteis como treino, mas não devem ser vendidos como jogos finais.
-- `/curriculo` continua preservado para leitura objetiva e downloads.
-- PDFs e DOCX continuam em `public/resume/`.
-- A imagem de perfil continua em `public/profile/`.
-- SEO básico, metadata por rota, sitemap e robots estão implementados.
-- R1-E.9.6 foi checkpointada em `69cc377` com QA final documental do Developer Arcade.
-- R1-E.9.1 e R1-E.9.2 foram hardening local sem checkpoint.
-- R1-E.9.3.1.1/R1-E.9.3.1.2 foram checkpointadas em `1d8cf1b` com navbar premium, tema claro real, transições, currículo polido e contraste light.
-- R1-E.9.3.2 foi checkpointada em `4ececc9` com o reset da direção do Arcade.
-- R1-E.9.4/R1-E.9.4.1 foram checkpointadas em `9bcf7a3` com Code Snake como terceiro jogo final.
-- R1-E.9.5/R1-E.9.5.1 foram checkpointadas em `73b3d69` com Stack Tetris como quarto jogo final.
-- R1-F.0 foi checkpointada em `9adaa48` com o planejamento do Admin de Imagens.
-- R1-E.10.0 foi checkpointada em `febd33c` com a estratégia de polish público antes da R1-F.1.
-- R1-E.10.1 foi checkpointada em `31e7306` com clean UI pass e Smart Navbar funcional.
-- R1-E.10.2 foi checkpointada em `4fc0581` com Arcade Hub, um jogo ativo por vez e Game Focus Mode desktop/mobile.
-- R1-E.10.3/R1-E.10.3.1 foram checkpointadas em `fce20dd` com Bug Maze expandido, gestos mobile nos quatro jogos e calibração de densidade do Lab sem `zoom` global.
-- R1-E.10.4 foi checkpointada em `18f38f2` com walls on/off no Code Snake, polish visual leve de Runtime Runner/Stack Tetris e limpeza da UI principal do Lab.
-- R1-E.10.5/R1-E.10.5.1/R1-E.10.5.2 foram checkpointadas em `e69e771` com Signature Motion & Interaction System, transições fortes de rota/tema/idioma e polish mobile do Arcade para teste real em celular.
-- R1-E.11.0 foi executada como auditoria geral sem alterações no worktree.
-- O projeto ainda não deve ser tratado como fechamento final enquanto Admin de Imagens, storage real e mídia real dos projetos estiverem pendentes.
-
-## Auditoria R1-E.11.0
-
-A auditoria confirmou que o site público está em estado avançado, mas ainda não final. Home, projetos/cases, currículo, Lab, Smart Navbar, motion/transições e Arcade estão fortes; ainda faltam limpeza cautelosa, QA real, imagens reais dos projetos e Admin de Imagens.
-
-Estado das rotas:
-
+- A aplicação usa Next.js App Router, React e TypeScript.
 - `/`, `/projetos`, `/projetos/[slug]`, `/lab` e `/curriculo` são as rotas públicas principais.
-- `/curriculo` está aprovado e deve ser preservado sem redesign salvo solicitação explícita.
-- `/visual-final-candidate` é rota experimental/legada de comparação; avaliar remoção ou arquivamento futuro com cautela.
-- `/admin` não existe.
-- APIs existentes combinam foundations locais e rotas persistentes do Arcade: `/api/health`, `/api/score`, `/api/leaderboard`, `/api/leaderboard/me`, `/api/player-session`, `/api/contact`, `/api/analytics` e `/api/terminal`.
+- `/visual-final-candidate` permanece acessível como rota experimental de comparação.
+- O Developer Arcade possui Runtime Runner, Bug Maze, Code Snake e Stack Tetris.
+- `/api/score` valida o Score Contract v2 e persiste submissions em `arcade_scores` por um Route Handler server-side.
+- `/api/player-session` mantém uma sessão anônima em cookie `httpOnly` e persiste o hash HMAC em `arcade_sessions`.
+- `/api/leaderboard` e `/api/leaderboard/me` retornam DTOs sanitizados sem expor `session_hash` ou ids internos.
+- O navegador consome apenas Route Handlers; a service role do Supabase permanece no servidor.
+- `/api/contact` e `/api/analytics` ainda operam em modo local/mock.
+- `/api/health` ainda retorna `mode: "local"` de forma fixa.
+- PDFs e DOCX estão preservados em `public/resume/`.
+- A imagem de perfil está em `public/profile/`.
+- Metadata, sitemap, robots e página de not-found estão implementados.
+- Não existe script formal de testes automatizados no `package.json`.
 
-Componentes legados do Lab tratados pela limpeza R1-E.11.3:
+## Limites do estado atual
 
-- `debug-arena.tsx` removido na R1-E.11.3.8.
-- `latency-lab.tsx` removido na R1-E.11.3.8.
+O código versionado não comprova, por si só, o estado da infraestrutura externa.
 
-R1-E.11.3.3 removeu os módulos legados zero-import `api-latency-game.tsx`, `architecture-builder.tsx`, `debug-challenge.tsx`, `interactive-terminal.tsx` e `skill-radar.tsx`. A rota `/visual-final-candidate` continua preservada para fase própria.
+Precisam de validação externa antes de qualquer declaração de produção:
 
-R1-E.11.3.6 definiu a estratégia de depreciação e R1-E.11.3.7 documentou `DebugArena` e `LatencyLab` como deprecated. R1-E.11.3.8 removeu os componentes `debug-arena.tsx` e `latency-lab.tsx`. R1-E.11.3.9 removeu o CSS `.arena*`/`.latency*`. R1-E.11.3.10 removeu a compatibilidade legada de score/types/validators/API: `/api/score` agora aceita apenas os quatro jogos finais.
+- commit efetivamente publicado pela Vercel;
+- variáveis de ambiente configuradas na Vercel;
+- conectividade das APIs persistentes com o Supabase remoto;
+- migrations e grants efetivamente aplicados no projeto remoto;
+- funcionamento público de sessão, score e leaderboard;
+- comportamento em dispositivo móvel real;
+- acessibilidade, performance e experiência visual em produção;
+- links e downloads públicos.
 
-Ruídos e cuidados:
-
-- `.next/`, `node_modules/`, logs `.next-dev*`, logs `.next-start*` e `tsconfig.tsbuildinfo` são artefatos locais ignorados.
-- `next-env.d.ts` é versionado pelo Next e não deve ser removido.
-- R1-E.11.2 removeu `imagem.png` da raiz após confirmar que era duplicata byte-a-byte de `public/profile/imagem.png` e que o código usa `/profile/imagem.png`.
-- Não remover `/visual-final-candidate`, módulos antigos do Lab ou CSS aparentemente órfão sem fase própria e validação.
-
-## Rotas Principais
+A URL prevista para metadata e validação é:
 
 ```txt
-/                         Home premium
-/?boot=1                  Home com loading cinematográfico forçado
-/visual-final-candidate   Rota preservada de comparação visual
-/projetos                 Hub premium de projetos
-/projetos/[slug]          Case studies premium
+https://curriculum-vitae-babr.vercel.app
+```
+
+Ela não deve ser tratada como validada apenas por estar documentada aqui.
+
+## Developer Arcade e ranking
+
+O Arcade possui persistência server-side, mas o ranking atual ainda não representa um ranking final por jogador único.
+
+Estado implementado:
+
+- cada submission válida gera uma linha em `arcade_scores`;
+- o leaderboard ordena linhas por score e data;
+- a posição pessoal usa o melhor score da sessão, mas calcula a posição contando linhas de score;
+- o alias também é copiado para a linha do score no momento da submission;
+- os períodos suportados são `all`, `month` e `week`;
+- o contrato aceita apenas `runtime`, `bug-maze`, `code-snake` e `stack-tetris`.
+
+Limitações conhecidas para uma fase posterior:
+
+- um jogador pode ocupar mais de uma posição com submissions diferentes;
+- a posição pessoal não é calculada sobre jogadores únicos;
+- alterar o alias da sessão não reescreve aliases copiados para scores anteriores;
+- o cliente ainda pode fabricar payloads estruturalmente válidos;
+- não há rate limit funcional, assinatura de rodada, nonce ou proteção contra replay;
+- balanceamento e integridade do ranking ainda exigem dados e QA adicionais.
+
+Essas limitações são roadmap. Esta Fase 0 não altera API, banco, contrato ou ranking.
+
+## Projetos e mídia
+
+Existem seis projetos em `src/content/projects.ts`. Todos ainda usam:
+
+```txt
+thumbnail: null
+heroImage: null
+gallery: []
+```
+
+A interface mantém placeholders honestos enquanto imagens reais não existem. Screenshots, métricas ou resultados não devem ser inventados.
+
+## O que ainda é roadmap
+
+Os itens abaixo não estão implementados:
+
+- área administrativa e rota `/admin`;
+- autenticação administrativa com Supabase Auth;
+- Supabase Storage para imagens;
+- GitHub App e sincronização de repositórios;
+- seleção de projetos importados do GitHub;
+- pipeline de análise de repositório por IA;
+- geração de copy PT/EN por IA;
+- editor, preview, publicação e histórico de versões;
+- cadastro de credenciais de provedores de IA;
+- criptografia de credenciais com `AI_CREDENTIALS_MASTER_KEY` e AES-256-GCM;
+- rate limit e antiabuso robusto;
+- analytics persistente;
+- imagens reais dos projetos;
+- ranking final por melhor score de jogador único.
+
+## Rotas
+
+```txt
+/                         Home
+/?boot=1                  Home com sequência de boot forçada
+/visual-final-candidate   Comparação visual experimental preservada
+/projetos                 Índice de projetos
+/projetos/[slug]          Case study de cada projeto
 /lab                      Developer Arcade
-/curriculo                Currículo tradicional e downloads
-/api/health               Health check local
-/api/score                Score persistente no Supabase via Route Handler server-side
-/api/leaderboard          Ranking público sanitizado por jogo
-/api/leaderboard/me       Posição da sessão anônima atual
+/curriculo                Currículo e downloads
+
+/api/health               Health check atual
+/api/contact              Contato local/mock
+/api/analytics            Analytics local/mock
+/api/terminal             Comandos permitidos do terminal
+/api/player-session       Sessão anônima do Arcade
+/api/score                Persistência de Score Contract v2
+/api/leaderboard          Top submissions sanitizadas por jogo
+/api/leaderboard/me       Posição da sessão atual
+
 /sitemap.xml              Sitemap
 /robots.txt               Robots
 ```
 
-## Developer Arcade — Direção Revisada
-
-A revisão humana da R1-E.9.3.0 redefiniu os jogos finais desejados:
-
-1. Runtime Runner / Bug Runner.
-2. Bug Maze.
-3. Code Snake.
-4. Stack Tetris.
-
-Estado atual:
-
-- Runtime Runner, Bug Maze, Code Snake e Stack Tetris existem como jogos principais jogáveis.
-- Debug Arena está deprecated, com componente, CSS e contrato de score removidos; não deve voltar como jogo final.
-- Latency Lab está deprecated, com componente, CSS e contrato de score removidos; não deve voltar como jogo final.
-- Quiz/foundation challenge não é jogo final.
-
-Desde a R1-E.9.3.2, o `/lab` não deve vender Debug Arena, Latency Lab e quiz/foundation como jogos principais. Depois da R1-E.11.3.10, Debug Arena e Latency Lab seguem apenas como histórico deprecated sem componentes ativos, sem CSS dedicado e sem ids aceitos no contrato ativo de score.
-
-## Interface, Motion e Navegação
-
-A home premium foi aprovada como direção e a navegação global já recebeu um checkpoint de polish:
-
-```txt
-1d8cf1b feat: polish premium ui theme and transitions
-```
-
-Esse checkpoint consolidou navbar/topbar premium, navegação direta da home, tema claro real, transições entre páginas/tema/idioma, lazy/defer seguro e `/curriculo` mais alinhado ao Portfolio OS. A etapa atual não reabre esse escopo salvo regressão visual.
-
-## Projetos e Case Studies
-
-Os projetos usam conteúdo real e placeholders visuais honestos enquanto screenshots reais ainda não existem.
-
-Quando uma imagem ainda está pendente, a interface informa isso explicitamente:
-
-- PT: "Imagem do projeto em preparação"
-- EN: "Project image in preparation"
-
-Não há screenshots falsos, métricas inventadas, clientes inventados ou resultados artificiais.
-
 ## Stack
 
-- Next.js App Router
-- React
-- TypeScript
-- Tailwind CSS
-- Zod
-- ESLint
-- npm
+- Next.js 16.2.6
+- React 19.2.6
+- React DOM 19.2.6
+- TypeScript 6.0.3
+- Tailwind CSS 4.3.0
+- Zod 4
+- Supabase JS 2
+- ESLint 9
+- npm com `package-lock.json`
 
-## Como Rodar Localmente
+## Como executar localmente
 
 ```powershell
 npm install
 npm run dev
 ```
 
-Depois acesse:
+Rotas locais principais:
 
 ```txt
 http://localhost:3000
@@ -153,9 +161,29 @@ http://localhost:3000/lab
 http://localhost:3000/curriculo
 ```
 
+## Variáveis de ambiente
+
+Use `.env.example` como referência. Valores reais devem existir somente em `.env.local` ou no ambiente de deploy.
+
+```env
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+SUPABASE_SERVICE_ROLE_KEY=
+ARCADE_SESSION_SECRET=
+```
+
+Regras:
+
+- `SUPABASE_SERVICE_ROLE_KEY` e `ARCADE_SESSION_SECRET` são server-only;
+- nenhum segredo pode usar prefixo `NEXT_PUBLIC_`;
+- valores reais não devem ser versionados;
+- a futura `AI_CREDENTIALS_MASTER_KEY` ainda não existe e só deve ser introduzida na fase aprovada de credenciais criptografadas.
+
 ## Scripts
 
 ```powershell
+npm run dev
 npm run lint
 npm run typecheck
 npm run build
@@ -163,219 +191,78 @@ npm run validate:foundation
 npm run start
 ```
 
-`npm run typecheck` executa `tsc --noEmit`.
+`npm run validate:foundation` depende de uma aplicação em execução. A variável opcional `PORTFOLIO_BASE_URL` permite apontar o script para outra origem.
 
-## APIs
+Não há script `test` formal no estado atual.
 
-As APIs atuais validam entrada e retornam respostas padronizadas. O Arcade já usa persistência real server-side para score e ranking, sem acesso direto do client ao Supabase.
+## Banco versionado
 
-Rotas existentes:
-
-```txt
-/api/health
-/api/contact
-/api/analytics
-/api/terminal
-/api/score
-/api/leaderboard
-/api/leaderboard/me
-/api/player-session
-```
-
-`/api/score` aceita os jogos finais do Developer Arcade:
+Migrations presentes no repositório:
 
 ```txt
-runtime
-bug-maze
-code-snake
-stack-tetris
+supabase/migrations/20260608154425_arcade_scores_foundation.sql
+supabase/migrations/20260608222025_arcade_service_role_grants.sql
+supabase/migrations/20260609192453_arcade_public_role_grants_hygiene.sql
 ```
 
-Ids legados removidos do contrato ativo e agora rejeitados:
+Elas definem `arcade_sessions`, `arcade_scores`, RLS e grants server-side. A presença dos arquivos não comprova aplicação remota. Consulte `docs/arcade-db-foundation.md` para o desenho e valide o projeto remoto antes de promover produção.
 
-```txt
-debug-arena
-latency-lab
-debug
-architecture
-latency
-terminal
-portfolio
-```
+## Critérios para produção
 
-Esse contrato reflete a implementação atual. `debug-arena`, `latency-lab`, `debug`, `architecture`, `latency`, `terminal` e `portfolio` não são mais game ids válidos para `/api/score`. A rota `/api/terminal` continua existindo separadamente e `terminal` não é mais score game id.
+Antes de considerar o site pronto:
 
-Contrato atual esperado:
+1. Confirmar o commit publicado e as variáveis da Vercel.
+2. Validar migrations, grants e RLS no Supabase remoto.
+3. Validar sessão, score e leaderboard por HTTP em produção.
+4. Corrigir o health check para representar o ambiente real.
+5. Corrigir o ranking para melhor score por jogador único.
+6. Implementar rate limit e controles antiabuso proporcionais.
+7. Criar testes automatizados para contratos e fluxos críticos.
+8. Adicionar imagens reais e revisar todos os projetos.
+9. Validar mobile, PT/EN, temas, teclado e reduced motion.
+10. Executar lint, typecheck, build, testes e smoke tests públicos.
+11. Revisar headers de segurança, SEO, acessibilidade e performance.
+12. Obter aprovação visual humana antes do fechamento final.
 
-- `GET /api/score`: retorna `405`.
-- `POST /api/score` válido: retorna `202`.
-- `POST /api/score` inválido: retorna `400`.
-- O contrato ativo é `v2` e exige `durationMs`, `gameVersion` e `metadata` validável por jogo.
-- O retorno válido persiste em `arcade_scores`, segue `contractVersion: "v2"` e retorna `mode: "persistent"`.
-- `GET /api/leaderboard?game=<id>&period=all|month|week&limit=10`: retorna top scores sanitizados, sem `session_hash` ou ids internos.
-- `GET /api/leaderboard/me`: retorna alias público e posição da sessão anônima atual por jogo, sem expor hash.
+## Roadmap futuro
 
-Game versions atuais:
+O roadmap é sequencial e não representa funcionalidade concluída:
 
-```txt
-runtime@2.0.0
-bug-maze@2.0.0
-code-snake@2.0.0
-stack-tetris@2.0.0
-```
+1. **Fase 0 — documentação e estrutura:** alinhar documentação ao código e separar estado, histórico e futuro.
+2. **Fase 1 — estabilização:** validar produção, corrigir Arcade persistente, ranking, antiabuso, testes e observabilidade.
+3. **Fase 2 — Admin protegido:** autenticação, autorização, RLS, audit log e estados de publicação.
+4. **Fase 3 — GitHub:** GitHub App, seleção de repositórios e leitura com menor privilégio.
+5. **Fase 4 — IA:** provedores configuráveis, credenciais criptografadas, análise seletiva e rascunhos com evidências.
+6. **Fase 5 — editor e imagens:** edição PT/EN, Storage, mídia, preview, versionamento e rollback.
+7. **Fase 6 — integração pública:** conteúdo publicado, cache, revalidação e migração dos projetos atuais.
+8. **Fase 7 — acabamento premium:** mídia real, storytelling, motion, mobile, acessibilidade, performance e QA final.
 
-Exemplo v2:
+## Coordenação de trabalho
 
-```powershell
-curl.exe --% -X POST http://localhost:3000/api/score -H "Content-Type: application/json" -d "{\"game\":\"runtime\",\"score\":85,\"durationMs\":12000,\"gameVersion\":\"runtime@2.0.0\",\"deviceType\":\"desktop\",\"metadata\":{\"distance\":1800,\"cleared\":8,\"maxSpeed\":24.4,\"stageReached\":\"staging\",\"collisions\":1}}"
-```
+O projeto pode ser mantido por ChatGPT conectado ao GitHub e Codex local, mas nunca com edições simultâneas.
 
-## O Que Ainda Não Existe
+- ChatGPT: auditoria remota, documentação, planejamento e mudanças pequenas previamente autorizadas.
+- Codex: implementação estrutural, segurança, APIs, banco, migrations, Auth, Storage, GitHub, IA e validações locais.
+- Proprietário: coordenação do agente ativo, aprovação de escopo, decisões de produto, configuração externa e validação visual.
 
-Não marcar como concluído:
+Antes de editar:
 
-- Analytics persistente real.
-- Admin dashboard.
-- Autenticação.
-- Requests externos para jogos.
-- Provider/LLM em jogos.
-- Screenshots reais dos projetos.
-- Admin de imagens dos projetos.
-- Deploy manual nesta fase.
+1. confirmar que não há outro agente trabalhando;
+2. atualizar e verificar a branch principal;
+3. inspecionar o worktree;
+4. limitar o commit ao escopo autorizado;
+5. não reverter mudanças alheias.
 
-## Fase Obrigatória em Planejamento: R1-F
+## Histórico e documentação
 
-R1-F — Project Assets Admin / Project Media Manager ainda não existe como implementação. A R1-F.0 é apenas auditoria e planejamento técnico para essa área.
+- `constituicao_alvaro_dev_portfolio_os.md` preserva decisões, fases antigas, direção visual e critérios históricos.
+- `docs/arcade-db-foundation.md` documenta a fundação de dados do Arcade.
+- O histórico real de implementação deve ser consultado em `git log`.
 
-Escopo previsto:
+Em caso de divergência, a ordem de confiança é:
 
-- Página admin protegida.
-- Cadastro/upload de imagens reais dos projetos.
-- Edição de thumbnail, hero image e galeria.
-- Integração com a estrutura `visuals` de `src/content/projects.ts`.
-- Armazenamento real, provavelmente Supabase Storage/Auth ou solução equivalente.
-- Preservação dos placeholders honestos enquanto imagens reais não existirem.
-- Nenhum screenshot falso.
-
-O projeto Supabase básico foi criado manualmente. A R1-E.12.3 aplicou a migration versionada de fundação de scores no projeto remoto `fkiuecyohcyjwygedncx`, a R1-E.12.4 adicionou sessão anônima, a R1-E.12.5 tornou `/api/score` persistente e a R1-E.12.6 adicionou leaderboard público sanitizado via Route Handlers server-side. A R1-E.12.7A adiciona higiene defensiva de grants para manter roles públicas sem acesso direto às tabelas Arcade. Storage, Auth e Admin continuam fora do runtime atual.
-
-R1-F.0 não cria `/admin`, storage, banco, autenticação ou upload. A implementação deve começar somente em R1-F.1 ou fase posterior aprovada.
-
-Roadmap proposto:
-
-- R1-F.0 — Project Assets Admin Planning: auditoria, plano técnico, segurança e UX, sem implementação.
-- R1-F.1 — Protected Admin Shell: criar `/admin` protegido e layout base, ainda sem upload real.
-- R1-F.2 — Project Media Data Model: decidir persistência e manter fallback para `projects.ts`/placeholders.
-- R1-F.3 — Upload & Storage Integration: integrar Supabase Storage/Auth ou alternativa aprovada.
-- R1-F.4 — Project Media Manager UI: editor por projeto para thumbnail, hero, galeria, alt PT/EN e status.
-- R1-F.5 — Public Rendering Integration: consumir imagens reais quando existirem e manter placeholders quando não existirem.
-- R1-F.6 — Admin QA & Security Gate: validar auth, upload, permissões, produção e documentação.
-
-## Fase Atual: R1-E.12.8
-
-R1-E.12.8 — Runtime Runner Balance & Progression inicia o balanceamento por jogo com uma fatia estreita no Runtime Runner.
-
-Objetivo da rodada atual:
-
-- Adicionar marcos visuais de fase no Runtime Runner.
-- Ajustar progressão de velocidade/cadência sem alterar a fórmula pública de score.
-- Enviar `nearMisses` opcional no metadata v2 do Runtime Runner.
-- Não alterar banco, leaderboard, gameVersion, Admin, Storage, Upload, CMS, Auth permanente ou outros jogos nesta rodada.
-
-Snapshot agregado de QA da R1-E.12.7:
-
-- `arcade_sessions`: 19 registros.
-- `arcade_scores`: 10 registros.
-- Runtime Runner: 4 scores, faixa 80-99.
-- Bug Maze: 2 scores, faixa 91-91.
-- Code Snake: 2 scores, faixa 73-73.
-- Stack Tetris: 2 scores, faixa 65-65.
-
-R1-E.12.8 usa esse snapshot apenas como baseline. O contrato continua `runtime@2.0.0`, e o ranking existente permanece comparável porque a fórmula pública de score não foi alterada.
-
-## Plano Atual de Fases
-
-```txt
-R1-E.9.3.0 — Arcade Replan, Navigation Strategy & Cleanup Plan
-R1-E.9.3.1 — Premium Interface, Motion & Navigation Polish
-R1-E.9.3.1.1 — Premium UI, Theme & Transition Polish
-R1-E.9.3.2 — Arcade Reset & Runtime/Bug Maze Action Polish
-R1-E.9.4   — Code Snake
-R1-E.9.4.1 — Code Snake Action Polish
-R1-E.9.5   — Stack Tetris
-R1-E.9.5.1 — Stack Tetris Action Polish
-R1-E.9.6   — Developer Arcade Final QA
-R1-E.10.0  — Premium Product Polish Strategy
-R1-E.10.1  — Clean UI Pass & Smart Navbar
-R1-E.10.2  — Arcade Hub & Game Focus Mode
-R1-E.10.3  — Bug Maze Expansion & Mobile Gesture Controls
-R1-E.10.3.1 — Lab Density & Scale Calibration
-R1-E.10.4  — Snake/Runner/Tetris Polish
-R1-E.10.5  — Motion & Interaction System
-R1-E.10.5.1 — Strong Route, Theme & Language Transitions
-R1-E.10.5.2 — Mobile Arcade Final Polish
-R1-E.11.0  — Full Project Audit Before Finalization
-R1-E.11.1  — Audit Documentation Sync
-R1-E.11.2  — Safe Cleanup
-R1-E.11.3  — Cautious Legacy Cleanup
-R1-E.11.3.6 — Debug/Latency Deprecation Decision
-R1-E.11.3.7 — Debug/Latency Deprecation Docs
-R1-E.11.3.8 — Remove Debug/Latency Components
-R1-E.11.3.9 — Remove Debug/Latency CSS
-R1-E.11.3.10 — Score Compat Cleanup
-R1-E.12.0  — Game Systems, Leaderboard & Database Architecture Plan
-R1-E.12.1  — Game Score Contract v2
-R1-E.12.2  — Supabase/DB Foundation
-R1-E.12.3  — Apply Supabase DB Foundation
-R1-E.12.4  — Anonymous Player Session
-R1-E.12.5  — Persistent Score API
-R1-E.12.6  — Leaderboard API & UI
-R1-E.12.7A — Security & Config Hygiene
-R1-E.12.7  — Game Balance & Leaderboard QA
-R1-E.12.8  — Runtime Runner Balance & Progression
-R1-E.11.4  — Final Mobile Polish
-R1-E.11.5  — Public QA Final
-R1-F.0     — Project Assets Admin Planning
-R1-F.1     — Protected Admin Shell
-R1-F.2     — Project Media Data Model
-R1-F.3     — Upload & Storage Integration
-R1-F.4     — Project Media Manager UI
-R1-F.5     — Public Rendering Integration
-R1-F.6     — Admin QA & Security Gate
-```
-
-Nenhuma dessas fases futuras deve ser marcada como concluída até implementação, validação e checkpoint próprios.
-
-## Produção
-
-URL pública usada para validação HTTP da R1-E.9:
-
-```txt
-https://curriculum-vitae-babr.vercel.app/
-```
-
-Na R1-E.9 a produção foi verificada somente por leitura, sem deploy manual.
-
-Resultado observado:
-
-- Rotas principais, `/api/health`, `sitemap.xml`, `robots.txt` e PDF PT responderam com HTTP 200.
-- Metadata e canonical de produção apontam para `https://curriculum-vitae-babr.vercel.app`.
-- A home de produção ainda não reflete a correção local R1-E.9 do teaser do Developer Lab; essa divergência deve ser resolvida pelo checkpoint/push e pelo deploy automático posterior.
-- A sincronização exata com o commit `5f94f83` não é exposta pelo app; quando necessário, confirmar pelo painel/CLI da Vercel antes de declarar paridade exata.
-
-## Variável Recomendada
-
-```txt
-NEXT_PUBLIC_APP_URL=https://curriculum-vitae-babr.vercel.app
-```
-
-## Próximos Passos Reais
-
-- Executar R1-E.11.2 — Safe Cleanup com mudanças pequenas e reversíveis.
-- Manter `public/profile/imagem.png`, `public/resume`, PDFs e DOCX preservados.
-- Executar R1-E.11.3 — Cautious Legacy Cleanup somente depois de provar imports, UI, score e docs dos módulos rebaixados.
-- Executar R1-E.11.4 — Final Mobile Polish com teste real em celular, especialmente Runtime Runner e Code Snake.
-- Executar R1-E.11.5 — Public QA Final antes de chamar o site de final.
-- Depois, iniciar R1-F.1 — Protected Admin Shell em fase própria.
-- Executar R1-E.12.7 — Game Balance & Leaderboard QA para calibrar ranking e UX após dados reais.
-- Planejar storage, analytics real ou Admin somente em fase futura explícita.
+1. código e migrations versionados;
+2. validação local reproduzível;
+3. validação externa da infraestrutura;
+4. documentação atual;
+5. registros históricos.
