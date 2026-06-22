@@ -10,19 +10,6 @@ const rankingKeys = {
   "stack-tetris": "stackTetris",
 } as const satisfies Record<LabGameId, keyof PlayerLeaderboardResponse["rankings"]>;
 
-export const leaderboardGameIds = ["runtime", "bug-maze", "code-snake", "stack-tetris"] as const satisfies LabGameId[];
-
-function periodCutoff(period: LeaderboardPeriod) {
-  if (period === "all") {
-    return null;
-  }
-
-  const now = Date.now();
-  const days = period === "week" ? 7 : 30;
-
-  return new Date(now - days * 24 * 60 * 60 * 1000).toISOString();
-}
-
 function displayAlias(alias: string | null) {
   const normalizedAlias = alias?.trim();
 
@@ -47,67 +34,21 @@ export async function getLeaderboardEntries({
   period: LeaderboardPeriod;
 }): Promise<LeaderboardEntry[]> {
   const supabase = getSupabaseServerClient();
-  const cutoff = periodCutoff(period);
-  let query = supabase
-    .from("arcade_scores")
-    .select("created_at, player_alias, score")
-    .eq("game_id", game)
-    .order("score", { ascending: false })
-    .order("created_at", { ascending: true })
-    .limit(limit);
-
-  if (cutoff) {
-    query = query.gte("created_at", cutoff);
-  }
-
-  const { data, error } = await query;
+  const { data, error } = await supabase.rpc("get_arcade_leaderboard", {
+    p_game_id: game,
+    p_limit: limit,
+    p_period: period,
+  });
 
   if (error) {
     throw new Error("Could not read arcade leaderboard.");
   }
 
   return (data ?? []).map((entry) => ({
-    alias: displayAlias(entry.player_alias),
+    alias: displayAlias(entry.alias),
     createdAt: entry.created_at,
     score: entry.score,
   }));
-}
-
-async function getPlayerRankingForGame(game: LabGameId, sessionHash: string): Promise<PlayerGameRanking> {
-  const supabase = getSupabaseServerClient();
-  const { data: bestScore, error: bestScoreError } = await supabase
-    .from("arcade_scores")
-    .select("created_at, score")
-    .eq("game_id", game)
-    .eq("session_hash", sessionHash)
-    .order("score", { ascending: false })
-    .order("created_at", { ascending: true })
-    .limit(1)
-    .maybeSingle();
-
-  if (bestScoreError) {
-    throw new Error("Could not read player leaderboard position.");
-  }
-
-  if (!bestScore) {
-    return emptyRanking();
-  }
-
-  const { count, error: rankError } = await supabase
-    .from("arcade_scores")
-    .select("id", { count: "exact", head: true })
-    .eq("game_id", game)
-    .or(`score.gt.${bestScore.score},and(score.eq.${bestScore.score},created_at.lt.${bestScore.created_at})`);
-
-  if (rankError) {
-    throw new Error("Could not calculate player leaderboard position.");
-  }
-
-  return {
-    createdAt: bestScore.created_at,
-    rank: (count ?? 0) + 1,
-    score: bestScore.score,
-  };
 }
 
 export async function getPlayerLeaderboard({
@@ -117,16 +58,25 @@ export async function getPlayerLeaderboard({
   alias: string | null;
   sessionHash: string;
 }): Promise<PlayerLeaderboardResponse> {
-  const rankings = await Promise.all(
-    leaderboardGameIds.map(async (game) => [game, await getPlayerRankingForGame(game, sessionHash)] as const),
-  );
+  const supabase = getSupabaseServerClient();
+  const { data, error } = await supabase.rpc("get_arcade_player_rankings", {
+    p_session_hash: sessionHash,
+  });
+
+  if (error) {
+    throw new Error("Could not read player leaderboard positions.");
+  }
 
   return {
     alias,
-    rankings: rankings.reduce<PlayerLeaderboardResponse["rankings"]>(
-      (current, [game, ranking]) => ({
+    rankings: (data ?? []).reduce<PlayerLeaderboardResponse["rankings"]>(
+      (current, ranking) => ({
         ...current,
-        [rankingKeys[game]]: ranking,
+        [rankingKeys[ranking.game_id]]: {
+          createdAt: ranking.created_at,
+          rank: ranking.rank,
+          score: ranking.score,
+        },
       }),
       {
         bugMaze: emptyRanking(),

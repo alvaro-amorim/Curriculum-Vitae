@@ -52,7 +52,31 @@ type ArcadeDatabase = {
       };
     };
     Views: Record<string, never>;
-    Functions: Record<string, never>;
+    Functions: {
+      get_arcade_leaderboard: {
+        Args: {
+          p_game_id: "runtime" | "bug-maze" | "code-snake" | "stack-tetris";
+          p_limit: number;
+          p_period: "all" | "month" | "week";
+        };
+        Returns: {
+          alias: string;
+          created_at: string;
+          score: number;
+        }[];
+      };
+      get_arcade_player_rankings: {
+        Args: {
+          p_session_hash: string;
+        };
+        Returns: {
+          created_at: string;
+          game_id: "runtime" | "bug-maze" | "code-snake" | "stack-tetris";
+          rank: number;
+          score: number;
+        }[];
+      };
+    };
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;
   };
