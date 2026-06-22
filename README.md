@@ -25,7 +25,7 @@ Confirmado no código:
 - `/api/leaderboard` e `/api/leaderboard/me` retornam DTOs sanitizados sem expor `session_hash` ou ids internos.
 - O navegador consome apenas Route Handlers; a service role do Supabase permanece no servidor.
 - `/api/contact` e `/api/analytics` ainda operam em modo local/mock.
-- `/api/health` ainda retorna `mode: "local"` de forma fixa.
+- `/api/health` informa o ambiente por `VERCEL_ENV` ou `NODE_ENV` e inclui o commit abreviado quando a Vercel o disponibiliza.
 - PDFs e DOCX estão preservados em `public/resume/`.
 - A imagem de perfil está em `public/profile/`.
 - Metadata, sitemap, robots e página de not-found estão implementados.
@@ -205,7 +205,20 @@ supabase/migrations/20260608222025_arcade_service_role_grants.sql
 supabase/migrations/20260609192453_arcade_public_role_grants_hygiene.sql
 ```
 
-Elas definem `arcade_sessions`, `arcade_scores`, RLS e grants server-side. A presença dos arquivos não comprova aplicação remota. Consulte `docs/arcade-db-foundation.md` para o desenho e valide o projeto remoto antes de promover produção.
+Elas definem `arcade_sessions`, `arcade_scores`, RLS e grants server-side.
+
+Supabase operacional atual, validado em 22/06/2026:
+
+```txt
+project: curriculo
+account/organization: alvaroamorimom.jf@gmail.com
+project ref: dgtwxzznoszrhflblddn
+project URL: https://dgtwxzznoszrhflblddn.supabase.co
+```
+
+As três migrations acima foram aplicadas ao projeto novo e as APIs persistentes `/api/player-session`, `/api/leaderboard` e `/api/leaderboard/me` voltaram a responder em produção. O ref anterior `fkiuecyohcyjwygedncx` está abandonado/não localizado e permanece apenas em registros históricos. Ranking por jogador único, rate limit e antiabuso continuam pendentes.
+
+Consulte `docs/arcade-db-foundation.md` para o desenho operacional do Arcade.
 
 ## Critérios para produção
 

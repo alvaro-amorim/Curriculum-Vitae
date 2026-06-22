@@ -14,8 +14,12 @@ leaderboard API.
 
 ## Scope
 
-- Project ref expected: `fkiuecyohcyjwygedncx`.
+- Current project: `curriculo`.
+- Current project ref: `dgtwxzznoszrhflblddn`.
+- Current project URL: `https://dgtwxzznoszrhflblddn.supabase.co`.
+- Previous ref `fkiuecyohcyjwygedncx` is abandoned/not located and is retained only in historical records.
 - Applied migration: `supabase/migrations/20260608154425_arcade_scores_foundation.sql`.
+- Applied service role migration: `supabase/migrations/20260608222025_arcade_service_role_grants.sql`.
 - Applied grant hygiene migration: `supabase/migrations/20260609192453_arcade_public_role_grants_hygiene.sql`.
 - Runtime status: `/api/score` writes to Supabase through a server-side Route Handler.
 - Server-side Supabase client: `src/lib/supabase/server.ts`.
@@ -137,14 +141,16 @@ raw cookie values or internal database ids.
 
 ## Remote Verification
 
-- Project ref: `fkiuecyohcyjwygedncx`.
-- `npx supabase db push --dry-run` reported the remote database up to date after
-  apply.
-- `supabase_migrations.schema_migrations` contains version `20260608154425`.
-- Read-only catalog checks confirmed both tables, RLS enabled, expected
-  constraints and indexes, no public policies and zero seed rows.
+- Project ref: `dgtwxzznoszrhflblddn`.
+- All three versioned Arcade migrations were applied to the new project on 2026-06-22.
+- Production session and leaderboard APIs returned HTTP 200 after the migration apply.
+- `npx supabase migration list` reported all three local and remote versions aligned.
+- Schema introspection confirmed both tables for `service_role` and no direct exposure for `anon`.
+- RLS and grant hygiene were applied by the versioned migrations. A future direct catalog audit may independently recheck ACLs.
 
-## R1-E.12.7 QA Snapshot
+## Historical R1-E.12.7 QA Snapshot
+
+The snapshot below belongs to the previous Supabase project and is not a data baseline for `dgtwxzznoszrhflblddn`.
 
 Aggregated read-only data observed during R1-E.12.7:
 
