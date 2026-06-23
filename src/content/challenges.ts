@@ -22,16 +22,16 @@ export const labPageCopy: LabPageCopy = {
     en: "Completed",
   },
   apiSynced: {
-    pt: "Score enviado para API mock.",
-    en: "Score sent to mock API.",
+    pt: "Score registrado.",
+    en: "Score saved.",
   },
   apiPending: {
-    pt: "Enviando score para API mock.",
-    en: "Sending score to mock API.",
+    pt: "Registrando score...",
+    en: "Saving score...",
   },
   apiFailed: {
-    pt: "Score local mantido; API mock não respondeu agora.",
-    en: "Local score kept; mock API did not respond now.",
+    pt: "Score local mantido; tente novamente depois.",
+    en: "Local score kept; try again later.",
   },
   backLinksLabel: {
     pt: "Links principais",

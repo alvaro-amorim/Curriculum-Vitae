@@ -1,8 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import dynamic from "next/dynamic";
-import type { PointerEvent } from "react";
+import type { FormEvent, PointerEvent } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { usePortfolioUi } from "@/components/layout/app-shell";
@@ -16,6 +15,12 @@ type ScoreStatus = "idle" | "syncing" | "synced" | "failed";
 type ArcadeGameId = Extract<LabGameId, "runtime" | "bug-maze" | "code-snake" | "stack-tetris">;
 type LeaderboardStatus = "idle" | "loading" | "ready" | "failed";
 type LeaderboardState = Record<ArcadeGameId, LeaderboardEntry[]>;
+type AliasStatus = "loading" | "ready" | "saving" | "success" | "error";
+type PlayerSession = {
+  alias: string | null;
+  maxAliasLength: number;
+  ready: true;
+};
 type LastScoreResult = {
   alias: string | null;
   game: ArcadeGameId;
@@ -74,16 +79,16 @@ const StackTetris = dynamic(() => import("@/components/lab/stack-tetris").then((
 const labCopy = {
   pt: {
     eyebrow: "Developer Arcade",
-    title: "Arcade Hub, um jogo por vez.",
-    description:
-      "Escolha um dos quatro jogos finais, entre em modo foco e mantenha os treinos fora do caminho principal.",
-    primary: "Jogar Runtime Runner",
-    mazePrimary: "Jogar Bug Maze",
-    snakePrimary: "Jogar Code Snake",
-    tetrisPrimary: "Jogar Stack Tetris",
-    hubEyebrow: "hub jogável",
-    hubTitle: "Escolha o módulo ativo.",
-    hubText: "Os quatro jogos continuam disponíveis, mas a tela abre somente um por vez para reduzir ruído e dar mais área para jogar.",
+    title: "Developer Arcade",
+    description: "Mini-games técnicos para testar reflexo, lógica e debugging.",
+    heroLead: "Jogue, registre seu melhor score e compare no ranking.",
+    howItWorks: "Como participar",
+    chooseStep: "Escolha um dos 4 jogos",
+    playStep: "Jogue e envie seu score",
+    rankStep: "Vale seu melhor resultado",
+    hubEyebrow: "Jogos",
+    hubTitle: "Escolha um jogo",
+    hubText: "Abra um jogo por vez. O jogo selecionado aparece em uma área dedicada logo abaixo.",
     openGame: "Abrir jogo",
     activeGame: "Jogo ativo",
     backToHub: "Voltar ao Hub",
@@ -92,11 +97,12 @@ const labCopy = {
     focusHint: "HUD compacto, controles visíveis e troca rápida entre jogos.",
     focusLoading: "Carregando arena",
     controlsLabel: "controles",
-    secondary: "Ver projetos",
-    tertiary: "Abrir currículo",
-    panelLabel: "arcade jogável",
-    panelTitle: "4 jogos ativos",
-    panelText: "Reflexo, caminho, código vivo e montagem de stack em uma vitrine enxuta.",
+    panelLabel: "Regras rápidas",
+    panelTitle: "Seu melhor score conta",
+    panelText: "Cada jogo tem seu próprio ranking. Você pode editar o alias a qualquer momento.",
+    gameCount: "4 mini-games",
+    rankingRule: "1 melhor score por jogo",
+    editableAlias: "Alias editável",
     runtimeCardText: "Runner de pipeline com pulo, colisão e score.",
     mazeCardText: "Maze dev com tokens, vírus, 3 vidas e Safe Deploy bloqueado.",
     snakeCardText: "Snake de programação com wrap-around, paredes opcionais, tokens e bugs.",
@@ -106,18 +112,37 @@ const labCopy = {
     snakeControls: "Swipe no mobile / Setas no desktop",
     tetrisControls: "Swipe no mobile / Space no desktop",
     session: "score da sessão",
-    topPlayersEyebrow: "ranking público",
-    topPlayersTitle: "Top Players",
-    topPlayersText: "Recordes reais gravados no Supabase pelos quatro jogos finais.",
+    topPlayersEyebrow: "Ranking geral",
+    topPlayersTitle: "Melhores jogadores",
+    topPlayersText: "Top 3 de cada jogo, considerando o melhor score de cada jogador.",
     leaderboardLoading: "Carregando ranking",
     leaderboardEmpty: "Sem scores ainda",
-    anonymousAlias: "Dev anônimo",
-    scoreSubmitted: "Score persistido",
+    anonymousAlias: "Anonymous Dev",
+    scoreSubmitted: "Resultado registrado",
     yourScore: "Seu score",
     aliasLabel: "Alias",
     yourPosition: "Sua posição",
-    leaderboardSummary: "Leaderboard resumido",
-    playAgain: "Play Again",
+    leaderboardSummary: "Ranking deste jogo",
+    playAgain: "Jogar novamente",
+    playerEyebrow: "Seu jogador",
+    playerTitle: "Seu nome no ranking",
+    playerDescription: "Escolha como você aparece no Developer Arcade.",
+    playerAnonymous: "Você ainda está como Anonymous Dev",
+    playerCurrent: "Jogando como",
+    aliasPlaceholder: "Ex: Álvaro Dev",
+    saveAlias: "Salvar alias",
+    savingAlias: "Salvando...",
+    aliasUpdated: "Alias atualizado.",
+    aliasRequired: "Digite um alias antes de salvar.",
+    aliasError: "Não foi possível atualizar o alias agora.",
+    aliasLoading: "Carregando seu jogador...",
+    characterLimit: "caracteres",
+    performanceEyebrow: "Ranking pessoal",
+    performanceTitle: "Seu desempenho",
+    performanceText: "Sua melhor pontuação e posição em cada jogo.",
+    bestScore: "Melhor score",
+    position: "Posição",
+    topThree: "Top 3",
     arcadeStatus: "Arcade final jogável",
     futureStatus: "em preparação",
     archivedNote:
@@ -129,16 +154,16 @@ const labCopy = {
   },
   en: {
     eyebrow: "Developer Arcade",
-    title: "Arcade Hub, one game at a time.",
-    description:
-      "Pick one of the four final games, enter focus mode, and keep training material out of the main path.",
-    primary: "Play Runtime Runner",
-    mazePrimary: "Play Bug Maze",
-    snakePrimary: "Play Code Snake",
-    tetrisPrimary: "Play Stack Tetris",
-    hubEyebrow: "playable hub",
-    hubTitle: "Choose the active module.",
-    hubText: "All four games remain available, but the screen opens only one at a time to reduce noise and give gameplay more room.",
+    title: "Developer Arcade",
+    description: "Technical mini-games that test reflexes, logic, and debugging.",
+    heroLead: "Play, save your best score, and compare it on the ranking.",
+    howItWorks: "How to join",
+    chooseStep: "Choose one of 4 games",
+    playStep: "Play and submit your score",
+    rankStep: "Your best result counts",
+    hubEyebrow: "Games",
+    hubTitle: "Choose a game",
+    hubText: "Open one game at a time. The selected game appears in a dedicated area below.",
     openGame: "Open game",
     activeGame: "Active game",
     backToHub: "Back to Hub",
@@ -147,11 +172,12 @@ const labCopy = {
     focusHint: "Compact HUD, visible controls, and fast switching between games.",
     focusLoading: "Loading arena",
     controlsLabel: "controls",
-    secondary: "View projects",
-    tertiary: "Open resume",
-    panelLabel: "playable arcade",
-    panelTitle: "4 active games",
-    panelText: "Reflex, pathfinding, living code, and stack assembly in a cleaner showcase.",
+    panelLabel: "Quick rules",
+    panelTitle: "Your best score counts",
+    panelText: "Each game has its own ranking. You can edit your alias at any time.",
+    gameCount: "4 mini-games",
+    rankingRule: "1 best score per game",
+    editableAlias: "Editable alias",
     runtimeCardText: "Pipeline runner with jump, collision, and score.",
     mazeCardText: "Dev maze with tokens, viruses, 3 lives, and locked Safe Deploy.",
     snakeCardText: "Programming snake with wrap-around, optional walls, tokens, and bugs.",
@@ -161,18 +187,37 @@ const labCopy = {
     snakeControls: "Mobile swipe / desktop arrows",
     tetrisControls: "Mobile swipe / desktop Space",
     session: "session score",
-    topPlayersEyebrow: "public ranking",
-    topPlayersTitle: "Top Players",
-    topPlayersText: "Real records stored in Supabase from the four final games.",
+    topPlayersEyebrow: "Overall ranking",
+    topPlayersTitle: "Top players",
+    topPlayersText: "Top 3 for each game, using every player's best score.",
     leaderboardLoading: "Loading ranking",
     leaderboardEmpty: "No scores yet",
     anonymousAlias: "Anonymous Dev",
-    scoreSubmitted: "Score persisted",
+    scoreSubmitted: "Result saved",
     yourScore: "Your Score",
     aliasLabel: "Alias",
     yourPosition: "Your position",
-    leaderboardSummary: "Short leaderboard",
-    playAgain: "Play Again",
+    leaderboardSummary: "This game's ranking",
+    playAgain: "Play again",
+    playerEyebrow: "Your player",
+    playerTitle: "Your ranking name",
+    playerDescription: "Choose how you appear in the Developer Arcade.",
+    playerAnonymous: "You are still playing as Anonymous Dev",
+    playerCurrent: "Playing as",
+    aliasPlaceholder: "E.g. Álvaro Dev",
+    saveAlias: "Save alias",
+    savingAlias: "Saving...",
+    aliasUpdated: "Alias updated.",
+    aliasRequired: "Enter an alias before saving.",
+    aliasError: "The alias could not be updated right now.",
+    aliasLoading: "Loading your player...",
+    characterLimit: "characters",
+    performanceEyebrow: "Personal ranking",
+    performanceTitle: "Your performance",
+    performanceText: "Your best score and position in each game.",
+    bestScore: "Best score",
+    position: "Position",
+    topThree: "Top 3",
     arcadeStatus: "Playable final arcade",
     futureStatus: "in preparation",
     archivedNote:
@@ -184,23 +229,8 @@ const labCopy = {
   },
 } as const;
 
-const roadmap = {
-  pt: [
-    ["Runtime Runner", "Jogo ativo: runner de pipeline com salto, colisão, score, pause e dificuldade progressiva."],
-    ["Bug Maze", "Jogo ativo: maze de debug com tokens, vírus perseguidores, 3 vidas e Safe Deploy bloqueado."],
-    ["Code Snake", "Jogo ativo: snake de programação com coleta de tokens, bugs perigosos e score persistente."],
-    ["Stack Tetris", "Jogo ativo: montagem de stack técnica com peças em queda, linhas compiladas e score persistente."],
-  ],
-  en: [
-    ["Runtime Runner", "Active game: pipeline runner with jump, collision, score, pause, and progressive difficulty."],
-    ["Bug Maze", "Active game: debug maze with tokens, chasing viruses, 3 lives, and locked Safe Deploy."],
-    ["Code Snake", "Active game: programming snake with code token collection, bug hazards, and persistent score."],
-    ["Stack Tetris", "Active game: technical stack assembly with falling modules, compiled lines, and persistent score."],
-  ],
-} as const;
-
 export function DeveloperLab() {
-  const { locale, t } = usePortfolioUi();
+  const { locale } = usePortfolioUi();
   const copy = labCopy[locale];
   const [scores, setScores] = useState(initialLabScores);
   const [scoreStatus, setScoreStatus] = useState<Record<LabGameId, ScoreStatus>>({
@@ -212,6 +242,10 @@ export function DeveloperLab() {
   const [leaderboards, setLeaderboards] = useState<LeaderboardState>(emptyLeaderboardState);
   const [leaderboardStatus, setLeaderboardStatus] = useState<LeaderboardStatus>("idle");
   const [playerLeaderboard, setPlayerLeaderboard] = useState<PlayerLeaderboardResponse | null>(null);
+  const [playerSession, setPlayerSession] = useState<PlayerSession | null>(null);
+  const [aliasInput, setAliasInput] = useState("");
+  const [aliasStatus, setAliasStatus] = useState<AliasStatus>("loading");
+  const [aliasMessage, setAliasMessage] = useState("");
   const [lastScoreResult, setLastScoreResult] = useState<LastScoreResult | null>(null);
   const [activeGame, setActiveGame] = useState<ArcadeGameId | null>(null);
   const [isSwitchingGame, setIsSwitchingGame] = useState(false);
@@ -323,6 +357,27 @@ export function DeveloperLab() {
     return body.data;
   }, []);
 
+  const refreshPlayerSession = useCallback(async () => {
+    const response = await fetch("/api/player-session", {
+      cache: "no-store",
+    });
+
+    if (!response.ok) {
+      throw new Error("Player session API rejected the request.");
+    }
+
+    const body = (await response.json()) as { data?: PlayerSession; ok: boolean };
+
+    if (!body.ok || !body.data) {
+      throw new Error("Player session API returned an invalid response.");
+    }
+
+    setPlayerSession(body.data);
+    setAliasInput(body.data.alias ?? "");
+
+    return body.data;
+  }, []);
+
   useEffect(() => {
     return () => {
       if (switchTimerRef.current) {
@@ -339,10 +394,16 @@ export function DeveloperLab() {
       void refreshPlayerLeaderboard().catch(() => {
         // The player position is optional until a score exists for this session.
       });
+      void refreshPlayerSession()
+        .then(() => setAliasStatus("ready"))
+        .catch(() => {
+          setAliasStatus("error");
+          setAliasMessage(copy.aliasError);
+        });
     }, 0);
 
     return () => window.clearTimeout(timer);
-  }, [refreshLeaderboards, refreshPlayerLeaderboard]);
+  }, [copy.aliasError, refreshLeaderboards, refreshPlayerLeaderboard, refreshPlayerSession]);
 
   useEffect(() => {
     if (!activeGame) {
@@ -433,6 +494,52 @@ export function DeveloperLab() {
     setGameRunKey((current) => current + 1);
   }, []);
 
+  const saveAlias = useCallback(async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const alias = aliasInput.trim();
+
+    if (!alias) {
+      setAliasStatus("error");
+      setAliasMessage(copy.aliasRequired);
+      return;
+    }
+
+    setAliasStatus("saving");
+    setAliasMessage("");
+
+    try {
+      const response = await fetch("/api/player-session", {
+        body: JSON.stringify({ alias }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "POST",
+      });
+      const body = (await response.json()) as {
+        data?: PlayerSession;
+        error?: { message?: string };
+        ok: boolean;
+      };
+
+      if (!response.ok || !body.ok || !body.data) {
+        throw new Error(body.error?.message || copy.aliasError);
+      }
+
+      const [freshSession] = await Promise.all([
+        refreshPlayerSession(),
+        refreshPlayerLeaderboard(),
+        refreshLeaderboards(activeGame ?? undefined),
+      ]);
+
+      setLastScoreResult((current) => current ? { ...current, alias: freshSession.alias } : current);
+      setAliasStatus("success");
+      setAliasMessage(copy.aliasUpdated);
+    } catch (error) {
+      setAliasStatus("error");
+      setAliasMessage(error instanceof Error ? error.message : copy.aliasError);
+    }
+  }, [activeGame, aliasInput, copy.aliasError, copy.aliasRequired, copy.aliasUpdated, refreshLeaderboards, refreshPlayerLeaderboard, refreshPlayerSession]);
+
   function statusLabel(game: LabGameId) {
     const score = scores[game];
 
@@ -499,28 +606,84 @@ export function DeveloperLab() {
             <p className={styles.eyebrow}>{copy.eyebrow}</p>
             <h1 className={styles.heroTitle}>{copy.title}</h1>
             <p className={styles.heroText}>{copy.description}</p>
+            <p className={styles.heroLead}>{copy.heroLead}</p>
 
-            <nav className={styles.heroActions} aria-label={labPageCopy.backLinksLabel[locale]}>
-              <button className={styles.actionPrimary} onClick={() => openGame("runtime")} type="button">
-                {copy.primary}
-              </button>
-              <Link className={styles.actionSecondary} href="/projetos">
-                {copy.secondary}
-              </Link>
-              <Link className={styles.actionGhost} href="/curriculo">
-                {copy.tertiary}
-              </Link>
-            </nav>
+            <ol className={styles.heroSteps} aria-label={copy.howItWorks}>
+              {[copy.chooseStep, copy.playStep, copy.rankStep].map((step, index) => (
+                <li key={step}>
+                  <span>{String(index + 1).padStart(2, "0")}</span>
+                  {step}
+                </li>
+              ))}
+            </ol>
           </div>
 
           <div className={styles.heroPanel}>
-            <div aria-hidden="true" className={styles.systemCore} />
             <div className={styles.heroPanelCopy}>
               <p className={styles.panelLabel}>{copy.panelLabel}</p>
               <h2>{copy.panelTitle}</h2>
               <p className={styles.panelText}>{copy.panelText}</p>
+              <ul className={styles.heroFacts}>
+                <li>{copy.gameCount}</li>
+                <li>{copy.rankingRule}</li>
+                <li>{copy.editableAlias}</li>
+              </ul>
             </div>
           </div>
+        </section>
+
+        <section className={styles.playerShell} aria-labelledby="arcade-player-title">
+          <div className={styles.playerIntro}>
+            <div>
+              <p className={styles.eyebrow}>{copy.playerEyebrow}</p>
+              <h2 className={styles.sectionTitle} id="arcade-player-title">{copy.playerTitle}</h2>
+              <p className={styles.trainingNote}>{copy.playerDescription}</p>
+            </div>
+            <div className={styles.playerIdentity} data-anonymous={playerSession?.alias ? "false" : "true"}>
+              <span>{playerSession?.alias ? copy.playerCurrent : copy.playerAnonymous}</span>
+              <strong>{displayAlias(playerSession?.alias)}</strong>
+            </div>
+          </div>
+
+          <form className={styles.aliasForm} onSubmit={saveAlias}>
+            <div className={styles.aliasField}>
+              <label htmlFor="arcade-player-alias">{copy.playerTitle}</label>
+              <div className={styles.aliasInputRow}>
+                <input
+                  autoComplete="nickname"
+                  disabled={aliasStatus === "loading" || aliasStatus === "saving"}
+                  id="arcade-player-alias"
+                  maxLength={playerSession?.maxAliasLength ?? 24}
+                  onChange={(event) => {
+                    setAliasInput(event.target.value);
+                    if (aliasStatus === "error" || aliasStatus === "success") {
+                      setAliasStatus("ready");
+                      setAliasMessage("");
+                    }
+                  }}
+                  placeholder={copy.aliasPlaceholder}
+                  type="text"
+                  value={aliasInput}
+                />
+                <span>{aliasInput.length}/{playerSession?.maxAliasLength ?? 24} {copy.characterLimit}</span>
+              </div>
+            </div>
+            <button
+              className={styles.actionPrimary}
+              disabled={aliasStatus === "loading" || aliasStatus === "saving" || !aliasInput.trim()}
+              type="submit"
+            >
+              {aliasStatus === "saving" ? copy.savingAlias : copy.saveAlias}
+            </button>
+          </form>
+
+          <p
+            aria-live="polite"
+            className={styles.aliasFeedback}
+            data-status={aliasStatus}
+          >
+            {aliasStatus === "loading" ? copy.aliasLoading : aliasMessage}
+          </p>
         </section>
 
         <section className={styles.arcadeHub} data-mode={activeGame ? "focus" : "hub"} ref={hubRef}>
@@ -562,42 +725,68 @@ export function DeveloperLab() {
         </section>
 
         {!activeGame ? (
-          <section className={styles.leaderboardShell} aria-labelledby="arcade-leaderboard-title">
-            <div className={styles.sectionHeader}>
-              <div>
-                <p className={styles.eyebrow}>{copy.topPlayersEyebrow}</p>
-                <h2 className={styles.sectionTitle} id="arcade-leaderboard-title">
-                  {copy.topPlayersTitle}
-                </h2>
+          <>
+            <section className={styles.performanceShell} aria-labelledby="arcade-performance-title">
+              <div className={styles.sectionHeader}>
+                <div>
+                  <p className={styles.eyebrow}>{copy.performanceEyebrow}</p>
+                  <h2 className={styles.sectionTitle} id="arcade-performance-title">{copy.performanceTitle}</h2>
+                </div>
+                <p className={styles.trainingNote}>{copy.performanceText}</p>
               </div>
-              <p className={styles.trainingNote}>{copy.topPlayersText}</p>
-            </div>
 
-            <div className={styles.leaderboardGrid}>
-              {arcadeGames.map((game) => (
-                <article className={styles.leaderboardCard} key={game.id}>
-                  <div className={styles.leaderboardCardHeader}>
-                    <h3>{game.title}</h3>
-                    <span>{playerRankLabel(game.id)}</span>
-                  </div>
+              <div className={styles.performanceGrid}>
+                {arcadeGames.map((game) => {
+                  const ranking = playerLeaderboard?.rankings[rankingKeyByGame[game.id]];
 
-                  <ol className={styles.leaderboardList}>
-                    {leaderboards[game.id].length > 0 ? (
-                      leaderboards[game.id].map((entry, index) => (
-                        <li className={styles.leaderboardRow} key={`${game.id}-${entry.createdAt}-${index}`}>
-                          <span className={styles.leaderboardRank}>#{index + 1}</span>
-                          <span className={styles.leaderboardAlias}>{entry.alias}</span>
-                          <strong className={styles.leaderboardScore}>{entry.score}</strong>
-                        </li>
-                      ))
-                    ) : (
-                      <li className={styles.leaderboardEmpty}>{leaderboardFallbackLabel()}</li>
-                    )}
-                  </ol>
-                </article>
-              ))}
-            </div>
-          </section>
+                  return (
+                    <article className={styles.performanceCard} key={game.id}>
+                      <h3>{game.title}</h3>
+                      <dl>
+                        <div><dt>{copy.bestScore}</dt><dd>{ranking?.score ?? "--"}</dd></div>
+                        <div><dt>{copy.position}</dt><dd>{playerRankLabel(game.id)}</dd></div>
+                      </dl>
+                    </article>
+                  );
+                })}
+              </div>
+            </section>
+
+            <section className={styles.leaderboardShell} aria-labelledby="arcade-leaderboard-title">
+              <div className={styles.sectionHeader}>
+                <div>
+                  <p className={styles.eyebrow}>{copy.topPlayersEyebrow}</p>
+                  <h2 className={styles.sectionTitle} id="arcade-leaderboard-title">{copy.topPlayersTitle}</h2>
+                </div>
+                <p className={styles.trainingNote}>{copy.topPlayersText}</p>
+              </div>
+
+              <div className={styles.leaderboardGrid}>
+                {arcadeGames.map((game) => (
+                  <article className={styles.leaderboardCard} key={game.id}>
+                    <div className={styles.leaderboardCardHeader}>
+                      <h3>{game.title}</h3>
+                      <span>{copy.topThree}</span>
+                    </div>
+
+                    <ol className={styles.leaderboardList}>
+                      {leaderboards[game.id].length > 0 ? (
+                        leaderboards[game.id].map((entry, index) => (
+                          <li className={styles.leaderboardRow} key={`${game.id}-${entry.createdAt}-${index}`}>
+                            <span className={styles.leaderboardRank}>#{index + 1}</span>
+                            <span className={styles.leaderboardAlias}>{entry.alias}</span>
+                            <strong className={styles.leaderboardScore}>{entry.score}</strong>
+                          </li>
+                        ))
+                      ) : (
+                        <li className={styles.leaderboardEmpty}>{leaderboardFallbackLabel()}</li>
+                      )}
+                    </ol>
+                  </article>
+                ))}
+              </div>
+            </section>
+          </>
         ) : null}
 
         {activeGame && selectedGame ? (
@@ -699,49 +888,6 @@ export function DeveloperLab() {
           </section>
         ) : null}
 
-        {!activeGame ? (
-          <>
-        <section className={styles.trainingShell}>
-          <div className={styles.sectionHeader}>
-            <div>
-              <p className={styles.eyebrow}>{copy.roadmapEyebrow}</p>
-              <h2 className={styles.sectionTitle}>{copy.roadmapTitle}</h2>
-            </div>
-            <p className={styles.trainingNote}>
-              {locale === "pt"
-                ? "A UI principal agora fica concentrada nos quatro jogos finais. Treinos antigos permanecem fora da vitrine."
-                : "The main UI now stays focused on the four final games. Legacy training stays out of the showcase."}
-            </p>
-          </div>
-
-          <div className={styles.moduleGrid}>
-            {roadmap[locale].map(([title, description]) => (
-              <article className={styles.moduleCard} key={title}>
-                <p className={styles.moduleMeta}>
-                  {title === "Runtime Runner" || title === "Bug Maze" || title === "Code Snake" || title === "Stack Tetris" ? copy.playable : copy.pending}
-                </p>
-                <h3>{title}</h3>
-                <p className={styles.moduleText}>{description}</p>
-              </article>
-            ))}
-          </div>
-
-          <p className={styles.archiveNote}>{copy.archivedNote}</p>
-
-          <nav className={styles.backLinks} aria-label={labPageCopy.backLinksLabel[locale]}>
-            <Link className={styles.actionSecondary} href="/">
-              {t.nav.home}
-            </Link>
-            <Link className={styles.actionSecondary} href="/projetos">
-              {t.nav.projects}
-            </Link>
-            <Link className={styles.actionGhost} href="/curriculo">
-              {t.nav.resume}
-            </Link>
-          </nav>
-        </section>
-          </>
-        ) : null}
       </div>
     </main>
   );
