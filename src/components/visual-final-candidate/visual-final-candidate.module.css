@@ -61,12 +61,12 @@
 :global(html[data-theme="light"]) .candidate {
   --bg: #f8fbff;
   --ink: #0f172a;
-  --muted: rgba(15, 23, 42, 0.68);
-  --soft: rgba(15, 23, 42, 0.48);
-  --line: rgba(15, 23, 42, 0.12);
-  --line-strong: rgba(15, 23, 42, 0.2);
-  --panel: rgba(255, 255, 255, 0.72);
-  --panel-strong: rgba(255, 255, 255, 0.92);
+  --muted: rgba(15, 23, 42, 0.76);
+  --soft: rgba(15, 23, 42, 0.62);
+  --line: rgba(15, 23, 42, 0.18);
+  --line-strong: rgba(15, 23, 42, 0.3);
+  --panel: rgba(255, 255, 255, 0.88);
+  --panel-strong: rgba(255, 255, 255, 0.98);
   --cyan: #0891b2;
   --blue: #2563eb;
   --violet: #7c3aed;
@@ -82,12 +82,12 @@
   :global(html:not([data-theme="dark"])) .candidate {
     --bg: #f8fbff;
     --ink: #0f172a;
-    --muted: rgba(15, 23, 42, 0.68);
-    --soft: rgba(15, 23, 42, 0.48);
-    --line: rgba(15, 23, 42, 0.12);
-    --line-strong: rgba(15, 23, 42, 0.2);
-    --panel: rgba(255, 255, 255, 0.72);
-    --panel-strong: rgba(255, 255, 255, 0.92);
+    --muted: rgba(15, 23, 42, 0.76);
+    --soft: rgba(15, 23, 42, 0.62);
+    --line: rgba(15, 23, 42, 0.18);
+    --line-strong: rgba(15, 23, 42, 0.3);
+    --panel: rgba(255, 255, 255, 0.88);
+    --panel-strong: rgba(255, 255, 255, 0.98);
     --cyan: #0891b2;
     --blue: #2563eb;
     --violet: #7c3aed;
@@ -574,11 +574,11 @@
   display: grid;
   grid-template-columns: minmax(18rem, 0.66fr) minmax(42rem, 1.34fr);
   align-items: center;
-  gap: clamp(2.4rem, 5vw, 6.5rem);
-  width: min(100% - clamp(2rem, 5vw, 5.5rem), 112rem);
+  gap: clamp(2rem, 4vw, 4.8rem);
+  width: min(100% - clamp(2.5rem, 8vw, 9rem), 96rem);
   min-height: 100vh;
   margin: 0 auto;
-  padding: clamp(7rem, 12vh, 8.5rem) 0 clamp(3.5rem, 6vh, 5rem);
+  padding: clamp(6.5rem, 11vh, 8rem) 0 clamp(3rem, 5vh, 4.25rem);
 }
 
 .heroCopy {
@@ -633,7 +633,7 @@
   max-width: 12.4ch;
   margin: 1rem 0 0;
   color: var(--ink);
-  font-size: clamp(2.75rem, 4.25vw, 4.95rem);
+  font-size: clamp(2.6rem, 3.8vw, 4.45rem);
   font-weight: 850;
   letter-spacing: -0.026em;
   line-height: 0.98;
@@ -665,14 +665,14 @@
 :global(html[data-theme="light"]) .sectionHeading > span,
 :global([data-theme="light"]) .finalCta > span,
 :global(html[data-theme="light"]) .finalCta > span {
-  color: rgba(15, 23, 42, 0.68);
+  color: rgba(15, 23, 42, 0.76);
 }
 
 :global([data-theme="light"]) .ghost,
 :global(html[data-theme="light"]) .ghost {
-  border-color: rgba(15, 23, 42, 0.11) !important;
-  background: rgba(255, 255, 255, 0.68);
-  color: rgba(15, 23, 42, 0.82) !important;
+  border-color: rgba(15, 23, 42, 0.18) !important;
+  background: rgba(255, 255, 255, 0.88);
+  color: rgba(15, 23, 42, 0.9) !important;
   box-shadow: 0 18px 54px rgba(15, 23, 42, 0.07);
 }
 
@@ -686,13 +686,13 @@
   :global(html:not([data-theme="dark"])) .heroCopy > span,
   :global(html:not([data-theme="dark"])) .sectionHeading > span,
   :global(html:not([data-theme="dark"])) .finalCta > span {
-    color: rgba(15, 23, 42, 0.68);
+    color: rgba(15, 23, 42, 0.76);
   }
 
   :global(html:not([data-theme="dark"])) .ghost {
-    border-color: rgba(15, 23, 42, 0.11) !important;
-    background: rgba(255, 255, 255, 0.68);
-    color: rgba(15, 23, 42, 0.82) !important;
+    border-color: rgba(15, 23, 42, 0.18) !important;
+    background: rgba(255, 255, 255, 0.88);
+    color: rgba(15, 23, 42, 0.9) !important;
     box-shadow: 0 18px 54px rgba(15, 23, 42, 0.07);
   }
 }
@@ -2044,14 +2044,14 @@
 }
 
 .productMeta h3 {
-  max-width: 8ch;
+  max-width: 12ch;
   margin: 1rem 0 0;
   color: var(--ink);
   font-size: clamp(2.05rem, 3.8vw, 4rem);
   font-weight: 900;
   letter-spacing: 0;
   line-height: 0.95;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
   text-wrap: balance;
 }
 
@@ -2111,11 +2111,11 @@
 .narrative,
 .finalCta {
   position: relative;
-  width: min(100% - clamp(2rem, 7vw, 8rem), 104rem);
+  width: min(100% - clamp(2.5rem, 9vw, 10rem), 90rem);
   min-height: 100vh;
   margin: 0 auto;
   overflow: clip;
-  padding: clamp(5rem, 9vh, 8rem) 0;
+  padding: clamp(4.5rem, 8vh, 6.5rem) 0;
 }
 
 .narrative::before,
@@ -2195,7 +2195,7 @@
 .finalCta h2 {
   margin: 0.9rem 0 0;
   color: var(--ink);
-  font-size: clamp(2.35rem, 3.9vw, 4.45rem);
+  font-size: clamp(2.2rem, 3.4vw, 3.9rem);
   font-weight: 880;
   letter-spacing: -0.024em;
   line-height: 0.98;
@@ -2216,7 +2216,7 @@
 .productStories {
   display: grid;
   position: relative;
-  gap: clamp(4rem, 8vw, 7.5rem);
+  gap: clamp(3.5rem, 6vw, 5.5rem);
   padding-top: clamp(0.5rem, 3vw, 2rem);
 }
 
@@ -3396,7 +3396,7 @@
   .hero,
   .narrative,
   .finalCta {
-    width: min(100% - 0.9rem, 24rem);
+    width: min(100% - 1.5rem, 24rem);
   }
 
   .hero {
@@ -3462,7 +3462,7 @@
   }
 
   .heroStage {
-    min-height: 32rem;
+    min-height: 29rem;
     border-radius: 1.35rem;
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.12),
@@ -3704,7 +3704,7 @@
 
   .sectionHeading h2,
   .finalCta h2 {
-    font-size: clamp(1.9rem, 8vw, 2.72rem);
+    font-size: clamp(1.8rem, 7.4vw, 2.45rem);
     line-height: 1.02;
   }
 
@@ -3717,7 +3717,7 @@
   .narrative,
   .finalCta {
     min-height: auto;
-    padding: 4rem 0;
+    padding: 3.5rem 0;
   }
 
   .stackSystem {

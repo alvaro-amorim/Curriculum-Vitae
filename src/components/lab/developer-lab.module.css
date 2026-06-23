@@ -11,7 +11,7 @@
   isolation: isolate;
   overflow: hidden;
   min-height: calc(100vh - 4rem);
-  padding: clamp(1.4rem, 4vw, 4rem) clamp(1rem, 3vw, 2.25rem) clamp(2.25rem, 5vw, 4.5rem);
+  padding: clamp(1.4rem, 4vw, 3.25rem) clamp(1.25rem, 4vw, 3.5rem) clamp(2.25rem, 5vw, 4.5rem);
   background:
     radial-gradient(circle at var(--lab-px) var(--lab-py), rgba(103, 232, 249, 0.14), transparent 28rem),
     radial-gradient(circle at 18% 52%, rgba(139, 92, 246, 0.14), transparent 34rem),
@@ -28,7 +28,7 @@
   --lab-accent-c: #047857;
   --lab-ink: #0f172a;
   --lab-muted: rgba(15, 23, 42, 0.76);
-  --lab-panel: rgba(255, 255, 255, 0.82);
+  --lab-panel: rgba(255, 255, 255, 0.9);
   background:
     radial-gradient(circle at var(--lab-px) var(--lab-py), rgba(8, 145, 178, 0.11), transparent 28rem),
     radial-gradient(circle at 18% 52%, rgba(109, 40, 217, 0.1), transparent 34rem),
@@ -72,7 +72,7 @@
 }
 
 .shell {
-  width: min(100%, 82rem);
+  width: min(100%, var(--container-xl));
   margin: 0 auto;
 }
 
@@ -112,7 +112,7 @@
   max-width: 12ch;
   margin: 0.65rem 0 0;
   color: var(--lab-ink);
-  font-size: clamp(2.1rem, 3.8vw, 4rem);
+  font-size: clamp(2rem, 3.4vw, 3.5rem);
   font-weight: 920;
   line-height: 1;
   letter-spacing: 0;

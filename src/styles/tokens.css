@@ -26,9 +26,9 @@
 
   --container-sm: 42rem;
   --container-md: 56rem;
-  --container-lg: 72rem;
-  --container-xl: 80rem;
-  --container-padding: clamp(1rem, 3vw, 2rem);
+  --container-lg: 68rem;
+  --container-xl: 76rem;
+  --container-padding: clamp(1.25rem, 4vw, 3.5rem);
 
   --duration-fast: 140ms;
   --duration-base: 200ms;

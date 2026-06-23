@@ -3,24 +3,24 @@
   --resume-ink: var(--text);
   --resume-muted: var(--muted);
   --resume-soft: var(--muted-soft);
-  width: min(100% - 2rem, 72rem);
+  width: min(var(--container-lg), calc(100% - (var(--container-padding) * 2)));
   margin: 0 auto;
-  padding: clamp(7rem, 11vh, 8.5rem) 0 clamp(3rem, 7vw, 5rem);
+  padding: clamp(1.5rem, 4vw, 3rem) 0 clamp(3rem, 7vw, 5rem);
   color: var(--resume-ink);
 }
 
 :global([data-theme="light"]) .resumePage,
 :global(html[data-theme="light"]) .resumePage {
   --resume-ink: rgba(15, 23, 42, 0.94);
-  --resume-muted: rgba(15, 23, 42, 0.7);
-  --resume-soft: rgba(15, 23, 42, 0.52);
+  --resume-muted: rgba(15, 23, 42, 0.76);
+  --resume-soft: rgba(15, 23, 42, 0.62);
 }
 
 @media (prefers-color-scheme: light) {
   :global(html:not([data-theme="dark"])) .resumePage {
     --resume-ink: rgba(15, 23, 42, 0.94);
-    --resume-muted: rgba(15, 23, 42, 0.7);
-    --resume-soft: rgba(15, 23, 42, 0.52);
+    --resume-muted: rgba(15, 23, 42, 0.76);
+    --resume-soft: rgba(15, 23, 42, 0.62);
   }
 }
 
@@ -44,7 +44,7 @@
 }
 
 .resumeHeroGrid {
-  grid-template-columns: minmax(0, 1.35fr) minmax(18rem, 0.65fr);
+  grid-template-columns: minmax(0, 1.2fr) minmax(20rem, 0.8fr);
   align-items: stretch;
 }
 
@@ -280,9 +280,9 @@
 .contactValue {
   display: block;
   margin-top: 0.22rem;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
   color: var(--resume-ink);
-  font-size: 0.9rem;
+  font-size: clamp(0.82rem, 1vw, 0.9rem);
   text-decoration: none;
 }
 
@@ -377,8 +377,8 @@
 
 @media (max-width: 920px) {
   .resumePage {
-    width: min(100% - 1rem, 45rem);
-    padding-top: 6.25rem;
+    width: min(100% - 2rem, 45rem);
+    padding-top: 1.5rem;
   }
 
   .resumeHeroGrid,
@@ -390,7 +390,7 @@
 
 @media (max-width: 560px) {
   .resumePage {
-    width: min(100% - 0.85rem, 24rem);
+    width: min(100% - 1.25rem, 24rem);
     padding-bottom: 3rem;
   }
 
