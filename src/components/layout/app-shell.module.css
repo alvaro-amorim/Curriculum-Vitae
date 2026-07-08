@@ -1,5 +1,5 @@
 .appShell {
-  --topbar-clearance: clamp(5rem, 7vw, 6.2rem);
+  --topbar-clearance: clamp(4.35rem, 5vw, 5.15rem);
   --route-accent-a: var(--accent-cyan);
   --route-accent-b: var(--accent-violet);
   position: relative;
@@ -33,7 +33,7 @@
   position: relative;
   z-index: 1;
   min-height: 100vh;
-  padding-top: var(--topbar-clearance);
+  padding-top: 0;
   transform-origin: 50% 0;
   animation: pageEnter var(--motion-slow) var(--ease-signature) both;
 }
@@ -457,6 +457,6 @@
 
 @media (max-width: 560px) {
   .appShell {
-    --topbar-clearance: 6.55rem;
+    --topbar-clearance: 3.05rem;
   }
 }

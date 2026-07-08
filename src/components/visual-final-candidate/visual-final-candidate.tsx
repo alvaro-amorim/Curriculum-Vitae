@@ -51,7 +51,7 @@ type HomeProject = {
 };
 
 const AUTO_MS = 7000;
-const FIRST_AUTO_MS = 12000;
+const FIRST_AUTO_MS = 30000;
 
 const copy = {
   pt: {
@@ -77,6 +77,13 @@ const copy = {
       ["Dados e métricas", "Decisões mais claras", "line-chart"],
       ["Segurança", "Proteção desde a base", "shield"],
     ],
+    capabilityMobile: [
+      ["Aplicações", "Produtos web", "code"],
+      ["Automações", "Fluxos inteligentes", "zap"],
+      ["IA", "Uso prático", "brain"],
+      ["Dados", "Decisões claras", "line-chart"],
+      ["Segurança", "Base protegida", "shield"],
+    ],
     projectsEyebrow: "PROJETOS EM DESTAQUE",
     projectsTitle: "Produtos construídos do conceito à entrega.",
     projectsIntro: "Projetos reais com contexto, stack e decisão técnica.",
@@ -96,6 +103,34 @@ const copy = {
     allProjects: "Ver todos",
     openLab: "Entrar no Arcade",
     contact: "Entrar em contato",
+    stackDetails: {
+      next: "App Router, RSC e edge",
+      react: "Interfaces componíveis",
+      typescript: "Type-safety ponta a ponta",
+      tailwind: "Design system rápido",
+      supabase: "Auth, dados e realtime",
+      prisma: "ORM type-safe",
+      postgres: "Banco relacional sólido",
+      node: "APIs e serviços",
+      python: "Automação e IA",
+      go: "Serviços de performance",
+      rabbitmq: "Eventos e mensageria",
+      vite: "DX moderno",
+    },
+    processSteps: [
+      ["Descoberta", "Entender o problema, o público e o contexto antes de qualquer linha de código.", "compass"],
+      ["Arquitetura", "Decisões técnicas claras: dados, fluxos, integrações e trade-offs.", "layers"],
+      ["Interface", "Design system funcional, foco em clareza e velocidade de iteração.", "palette"],
+      ["Entrega", "Deploy contínuo, observabilidade e iteração baseada em uso real.", "rocket"],
+    ],
+    arcadeLeaderboard: "Top jogadores",
+    arcadeLive: "ao vivo",
+    arcadeYou: "você?",
+    aboutStats: [
+      ["6+", "Produtos em produção"],
+      ["5+", "Anos construindo software"],
+      ["100%", "Foco em entrega real"],
+    ],
   },
   en: {
     available: "AVAILABLE FOR NEW CHALLENGES",
@@ -120,6 +155,13 @@ const copy = {
       ["Data and metrics", "Clearer decisions", "line-chart"],
       ["Security", "Protection from the base", "shield"],
     ],
+    capabilityMobile: [
+      ["Apps", "Web products", "code"],
+      ["Automation", "Smart flows", "zap"],
+      ["AI", "Practical use", "brain"],
+      ["Data", "Clear decisions", "line-chart"],
+      ["Security", "Protected base", "shield"],
+    ],
     projectsEyebrow: "FEATURED PROJECTS",
     projectsTitle: "Products built from concept to delivery.",
     projectsIntro: "Real projects with context, stack and technical decisions.",
@@ -139,6 +181,34 @@ const copy = {
     allProjects: "View all",
     openLab: "Enter Arcade",
     contact: "Contact",
+    stackDetails: {
+      next: "App Router, RSC and edge",
+      react: "Composable interfaces",
+      typescript: "End-to-end type safety",
+      tailwind: "Fast design system",
+      supabase: "Auth, data and realtime",
+      prisma: "Type-safe ORM",
+      postgres: "Solid relational database",
+      node: "APIs and services",
+      python: "Automation and AI",
+      go: "Performance services",
+      rabbitmq: "Events and messaging",
+      vite: "Modern DX",
+    },
+    processSteps: [
+      ["Discovery", "Understanding the problem, audience and context before any line of code.", "compass"],
+      ["Architecture", "Clear technical decisions: data, flows, integrations and trade-offs.", "layers"],
+      ["Interface", "Functional design system focused on clarity and iteration speed.", "palette"],
+      ["Delivery", "Continuous deployment, observability and iteration based on real usage.", "rocket"],
+    ],
+    arcadeLeaderboard: "Top players",
+    arcadeLive: "live",
+    arcadeYou: "you?",
+    aboutStats: [
+      ["6+", "Products in production"],
+      ["5+", "Years building software"],
+      ["100%", "Focus on real delivery"],
+    ],
   },
 } as const;
 
@@ -355,7 +425,6 @@ function ProjectIcon({ iconKey, accent, size = "lg" }: { iconKey: ProjectIconKey
 
 function useReveal() {
   useEffect(() => {
-    const root = document.querySelector<HTMLElement>("[data-lovable-home]");
     const elements = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
     const observer = new IntersectionObserver(
       (entries) => {
@@ -365,7 +434,7 @@ function useReveal() {
           observer.unobserve(entry.target);
         }
       },
-      { root, rootMargin: "0px 0px -12% 0px", threshold: 0.12 },
+      { root: null, rootMargin: "0px 0px -12% 0px", threshold: 0.12 },
     );
 
     elements.forEach((element) => observer.observe(element));
@@ -466,6 +535,11 @@ function ProjectCarousel({ locale }: { locale: Locale }) {
                     <span>{tech}</span>
                   </div>
                 ))}
+                {project.carouselStack.length > 4 ? (
+                  <div className={styles.stackMore} aria-hidden="true">
+                    +{project.carouselStack.length - 4}
+                  </div>
+                ) : null}
               </div>
             </div>
           </article>
@@ -543,8 +617,8 @@ function HeroSection({ locale }: { locale: Locale }) {
               {t.available}
             </div>
 
-            <h1>
-              {t.titleA}
+            <h1 aria-label={`${t.titleA} ${t.titleBPrefix} ${t.titleBHighlight}`}>
+              {t.titleA}{" "}
               <br />
               <span className={styles.titleLine}>
                 {t.titleBPrefix} <span className={styles.titleGradient}>{t.titleBHighlight}</span>
@@ -581,21 +655,33 @@ function HeroSection({ locale }: { locale: Locale }) {
 }
 
 function CapabilityBar({ locale }: { locale: Locale }) {
+  const t = copy[locale];
+
   return (
     <section className={styles.capabilitySection}>
       <Reveal className={styles.capabilityShell}>
         <ul>
-          {copy[locale].capability.map(([title, description, icon], index) => (
+          {t.capability.map(([title, description, icon], index) => {
+            const [mobileTitle, mobileDescription] = t.capabilityMobile[index];
+
+            return (
             <li key={title} className={index !== copy[locale].capability.length - 1 ? styles.withDivider : undefined}>
               <div>
                 <Icon name={icon as IconName} />
               </div>
               <span>
-                <strong>{title}</strong>
-                <small>{description}</small>
+                <strong>
+                  <span className={styles.capabilityFull}>{title}</span>
+                  <span className={styles.capabilityCompact}>{mobileTitle}</span>
+                </strong>
+                <small>
+                  <span className={styles.capabilityFull}>{description}</span>
+                  <span className={styles.capabilityCompact}>{mobileDescription}</span>
+                </small>
               </span>
             </li>
-          ))}
+            );
+          })}
         </ul>
       </Reveal>
     </section>
@@ -660,19 +746,20 @@ function FeaturedProjects({ locale }: { locale: Locale }) {
 
 function StackSection({ locale }: { locale: Locale }) {
   const t = copy[locale];
+  const stackDetails = t.stackDetails;
   const stacks = [
-    ["Next.js", "App Router, RSC, edge"],
-    ["React", "Interfaces componíveis"],
-    ["TypeScript", "Type-safety end-to-end"],
-    ["Tailwind CSS", "Design system rápido"],
-    ["Supabase", "Auth, dados, realtime"],
-    ["Prisma", "ORM type-safe"],
-    ["PostgreSQL", "Banco relacional sólido"],
-    ["Node.js", "APIs e serviços"],
-    ["Python", "Automação e IA"],
-    ["Go", "Serviços de performance"],
-    ["RabbitMQ", "Eventos e mensageria"],
-    ["Vite", "DX moderno"],
+    ["Next.js", stackDetails.next],
+    ["React", stackDetails.react],
+    ["TypeScript", stackDetails.typescript],
+    ["Tailwind CSS", stackDetails.tailwind],
+    ["Supabase", stackDetails.supabase],
+    ["Prisma", stackDetails.prisma],
+    ["PostgreSQL", stackDetails.postgres],
+    ["Node.js", stackDetails.node],
+    ["Python", stackDetails.python],
+    ["Go", stackDetails.go],
+    ["RabbitMQ", stackDetails.rabbitmq],
+    ["Vite", stackDetails.vite],
   ];
   const marquee = [...stacks, ...stacks];
 
@@ -711,12 +798,7 @@ function StackSection({ locale }: { locale: Locale }) {
 
 function ProcessSection({ locale }: { locale: Locale }) {
   const t = copy[locale];
-  const steps = [
-    ["Descoberta", "Entender o problema, o público e o contexto antes de qualquer linha de código.", "compass"],
-    ["Arquitetura", "Decisões técnicas claras: dados, fluxos, integrações e trade-offs.", "layers"],
-    ["Interface", "Design system funcional, foco em clareza e velocidade de iteração.", "palette"],
-    ["Entrega", "Deploy contínuo, observabilidade e iteração baseada em uso real.", "rocket"],
-  ] as const;
+  const steps = t.processSteps;
 
   return (
     <section className={styles.section}>
@@ -726,7 +808,7 @@ function ProcessSection({ locale }: { locale: Locale }) {
           <Reveal as="li" delay={index * 90} key={title}>
             <div>
               <span>
-                <Icon name={icon} />
+                <Icon name={icon as IconName} />
               </span>
               <strong>0{index + 1}</strong>
             </div>
@@ -745,7 +827,7 @@ function ArcadeSection({ locale }: { locale: Locale }) {
   const rows = [
     ["lena.codes", 9820],
     ["marcos.dev", 8740],
-    ["you?", 7920],
+    [t.arcadeYou, 7920],
     ["aria.ts", 7110],
     ["bruno.io", 6480],
   ];
@@ -774,13 +856,13 @@ function ArcadeSection({ locale }: { locale: Locale }) {
             <div>
               <strong>
                 <Icon name="trophy" />
-                Top jogadores
+                {t.arcadeLeaderboard}
               </strong>
-              <span>ao vivo</span>
+              <span>{t.arcadeLive}</span>
             </div>
             <ul>
               {rows.map(([name, score], index) => (
-                <li key={name} data-you={name === "you?" ? "true" : "false"} style={{ "--score": `${((score as number) / max) * 100}%` } as StyleVars}>
+                <li key={name} data-you={name === t.arcadeYou ? "true" : "false"} style={{ "--score": `${((score as number) / max) * 100}%` } as StyleVars}>
                   <span>{index + 1}</span>
                   <strong>{name}</strong>
                   <small>{String(score).replace(/\B(?=(\d{3})+(?!\d))/g, ".")}</small>
@@ -810,11 +892,7 @@ function AboutSection({ locale }: { locale: Locale }) {
           <h2>{t.aboutTitle}</h2>
           <span>{t.aboutText}</span>
           <div className={styles.aboutStats}>
-            {[
-              ["6+", "Produtos em produção"],
-              ["5+", "Anos construindo software"],
-              ["100%", "Foco em entrega real"],
-            ].map(([value, label]) => (
+            {t.aboutStats.map(([value, label]) => (
               <article key={label}>
                 <strong>{value}</strong>
                 <small>{label}</small>

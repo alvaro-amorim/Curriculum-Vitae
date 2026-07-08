@@ -18,7 +18,9 @@
   width: calc(100% - 2rem);
   max-width: 1400px;
   transform: translateX(-50%);
-  transition: top 500ms ease, transform 500ms ease;
+  opacity: 1;
+  transition: top 500ms ease, transform 360ms cubic-bezier(0.22, 1, 0.36, 1), opacity 240ms ease;
+  will-change: transform, opacity;
 }
 
 :global([data-theme="light"]) .topbar,
@@ -38,6 +40,20 @@
 
 .topbar[data-scrolled="true"] {
   top: 0.75rem;
+}
+
+.topbar[data-hidden="true"] {
+  opacity: 0;
+  transform: translate(-50%, -145%);
+  pointer-events: none;
+}
+
+.topbar[data-menu-open="true"],
+.topbar:focus-within,
+.topbar:hover {
+  opacity: 1;
+  transform: translateX(-50%);
+  pointer-events: auto;
 }
 
 .navShell,
@@ -223,10 +239,13 @@
 
 .themeToggle {
   position: relative;
-  width: 4.25rem;
+  display: grid;
+  width: 4.4rem;
   height: 2.45rem;
-  justify-content: space-between;
-  padding: 0 0.5rem;
+  grid-template-columns: 1.75rem 1.75rem;
+  gap: 0.28rem;
+  place-items: center;
+  padding: 0 0.32rem;
   border-radius: 999px;
 }
 
@@ -259,18 +278,47 @@
 .themeToggle > span {
   position: absolute;
   z-index: 1;
-  left: 0.25rem;
+  top: 50%;
+  left: 0.32rem;
   width: 1.75rem;
   height: 1.75rem;
   border-radius: 999px;
   background: var(--gradient-brand);
   box-shadow: var(--shadow-glow);
-  transform: translateX(0) rotate(0deg);
+  transform: translate(0, -50%) rotate(0deg);
   transition: transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .themeToggle[data-theme-state="dark"] > span {
-  transform: translateX(1.5rem) rotate(180deg);
+  transform: translate(calc(1.75rem + 0.28rem), -50%) rotate(180deg);
+}
+
+:global(html[data-theme="light"]) .themeToggle > span {
+  transform: translate(0, -50%) rotate(0deg);
+}
+
+:global(html[data-theme="light"]) .themeToggle svg:first-child {
+  color: #f59e0b;
+  transform: scale(1) rotate(0);
+}
+
+:global(html[data-theme="light"]) .themeToggle svg:last-child {
+  color: rgba(165, 180, 252, 0.45);
+  transform: scale(1) rotate(0);
+}
+
+:global(html[data-theme="dark"]) .themeToggle > span {
+  transform: translate(calc(1.75rem + 0.28rem), -50%) rotate(180deg);
+}
+
+:global(html[data-theme="dark"]) .themeToggle svg:first-child {
+  color: rgba(251, 191, 36, 0.4);
+  transform: scale(0.9) rotate(-45deg);
+}
+
+:global(html[data-theme="dark"]) .themeToggle svg:last-child {
+  color: #c4b5fd;
+  transform: scale(1) rotate(0);
 }
 
 .locale {
@@ -301,8 +349,21 @@
   overflow: hidden;
   margin-top: 0.5rem;
   border-radius: 1rem;
+  background:
+    radial-gradient(circle at 18% 0%, color-mix(in srgb, var(--brand) 12%, transparent), transparent 12rem),
+    rgba(8, 12, 24, 0.99);
   color: var(--foreground);
-  transition: max-height 500ms ease, opacity 500ms ease, padding 500ms ease, border-color 500ms ease;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.38);
+  transform-origin: 50% 0;
+  transition: max-height 360ms ease, opacity 260ms ease, padding 360ms ease, border-color 360ms ease, transform 360ms ease, visibility 360ms ease;
+}
+
+:global([data-theme="light"]) .mobilePanel,
+:global(html[data-theme="light"]) .mobilePanel {
+  background:
+    radial-gradient(circle at 18% 0%, color-mix(in srgb, var(--brand) 9%, transparent), transparent 12rem),
+    rgba(255, 255, 255, 0.99);
+  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.16);
 }
 
 .mobilePanel a,
@@ -314,8 +375,9 @@
   border: 0;
   border-radius: 0.5rem;
   background: transparent;
-  color: var(--muted-foreground);
+  color: color-mix(in srgb, var(--foreground) 82%, var(--muted-foreground));
   font-size: 0.875rem;
+  font-weight: 650;
 }
 
 .mobilePanel .mobileActive {
@@ -335,7 +397,13 @@
   justify-content: center;
   gap: 0.5rem;
   border: 1px solid var(--glass-border);
-  background: var(--glass);
+  background: color-mix(in srgb, var(--foreground) 7%, transparent);
+}
+
+.mobilePanel svg {
+  flex: 0 0 auto;
+  width: 1rem;
+  height: 1rem;
 }
 
 @media (max-width: 1024px) {
@@ -352,33 +420,40 @@
   }
 
   .mobilePanel[data-open="true"] {
+    visibility: visible;
     max-height: 600px;
     padding: 0.75rem;
     opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
   }
 
   .mobilePanel[data-open="false"] {
+    visibility: hidden;
     max-height: 0;
     padding: 0;
     border-color: transparent;
     opacity: 0;
+    transform: translateY(-0.45rem) scale(0.98);
+    pointer-events: none;
   }
 }
 
 @media (max-width: 768px) {
   .topbar {
-    top: 0.75rem;
-    width: calc(100% - 1rem);
+    top: 0.45rem;
+    width: calc(100% - 0.72rem);
   }
 
   .navShell {
-    min-height: 3.5rem;
-    gap: 0.5rem;
-    padding: 0.5rem 0.625rem;
+    min-height: 2.82rem;
+    gap: 0.36rem;
+    padding: 0.35rem 0.44rem;
+    border-radius: 0.84rem;
   }
 
   .brand {
-    gap: 0.625rem;
+    gap: 0.5rem;
   }
 
   .brand > span:last-child {
@@ -386,8 +461,21 @@
   }
 
   .monogram {
-    width: 2.5rem;
-    height: 2.5rem;
+    width: 2rem;
+    height: 2rem;
+  }
+
+  .monogram > span {
+    border-radius: 0.72rem;
+  }
+
+  .monogram i {
+    border-radius: 0.64rem;
+  }
+
+  .monogram svg {
+    width: 1.22rem;
+    height: 1.22rem;
   }
 
   .download {
@@ -399,7 +487,123 @@
   }
 
   .themeToggle {
-    width: 4rem;
+    width: 3.25rem;
+    height: 1.96rem;
+    grid-template-columns: 1.28rem 1.28rem;
+    gap: 0.1rem;
+    padding-inline: 0.25rem;
+  }
+
+  .themeToggle svg {
+    width: 0.82rem;
+    height: 0.82rem;
+  }
+
+  .themeToggle > span {
+    left: 0.25rem;
+    width: 1.28rem;
+    height: 1.28rem;
+  }
+
+  .themeToggle[data-theme-state="dark"] > span {
+    transform: translate(calc(1.28rem + 0.1rem), -50%) rotate(180deg);
+  }
+
+  :global(html[data-theme="light"]) .themeToggle > span {
+    transform: translate(0, -50%) rotate(0deg);
+  }
+
+  :global(html[data-theme="dark"]) .themeToggle > span {
+    transform: translate(calc(1.28rem + 0.1rem), -50%) rotate(180deg);
+  }
+
+  .menuButton {
+    width: 1.96rem;
+    height: 1.96rem;
+    border-radius: 0.62rem;
+  }
+
+  .menuButton svg {
+    width: 0.95rem;
+    height: 0.95rem;
+  }
+
+  .mobilePanel[data-open="true"] {
+    padding: 0.55rem;
+  }
+
+  .mobilePanel a,
+  .mobilePanel button {
+    min-height: 2.25rem;
+    padding: 0.5rem 0.65rem;
+    font-size: 0.82rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .topbar {
+    top: 0.38rem;
+    width: calc(100% - 0.55rem);
+  }
+
+  .navShell {
+    min-height: 2.55rem;
+    padding: 0.28rem 0.34rem;
+    border-radius: 0.78rem;
+    box-shadow: 0 16px 42px -30px rgba(15, 23, 42, 0.42);
+  }
+
+  .monogram {
+    width: 1.78rem;
+    height: 1.78rem;
+  }
+
+  .monogram > span {
+    border-radius: 0.62rem;
+  }
+
+  .monogram i {
+    border-radius: 0.54rem;
+  }
+
+  .monogram svg {
+    width: 1.05rem;
+    height: 1.05rem;
+  }
+
+  .themeToggle {
+    width: 2.92rem;
+    height: 1.78rem;
+    grid-template-columns: 1.12rem 1.12rem;
+    gap: 0.08rem;
+    padding-inline: 0.22rem;
+  }
+
+  .themeToggle svg {
+    width: 0.72rem;
+    height: 0.72rem;
+  }
+
+  .themeToggle > span {
+    left: 0.22rem;
+    width: 1.12rem;
+    height: 1.12rem;
+  }
+
+  .themeToggle[data-theme-state="dark"] > span,
+  :global(html[data-theme="dark"]) .themeToggle > span {
+    transform: translate(calc(1.12rem + 0.08rem), -50%) rotate(180deg);
+  }
+
+  .menuButton {
+    width: 1.78rem;
+    height: 1.78rem;
+    border-radius: 0.58rem;
+  }
+
+  .menuButton svg {
+    width: 0.82rem;
+    height: 0.82rem;
   }
 }
 

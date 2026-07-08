@@ -13,21 +13,58 @@ type ProjectGridProps = {
   projects: Project[];
 };
 
+type ProjectFilter = {
+  id: string;
+  label: string;
+  matches: (project: Project) => boolean;
+};
+
 export function ProjectGrid({ projects }: ProjectGridProps) {
   const { locale, t } = usePortfolioUi();
   const [activeCategory, setActiveCategory] = useState<string>("all");
 
-  const categories = useMemo(
-    () =>
-      Array.from(new Set(projects.flatMap((project) => project.category))).sort((a, b) =>
-        formatProjectCategory(a, locale).localeCompare(formatProjectCategory(b, locale), locale),
-      ),
-    [locale, projects],
+  const filters = useMemo<ProjectFilter[]>(
+    () => [
+      {
+        id: "saas",
+        label: "SaaS",
+        matches: (project) => project.category.includes("SaaS"),
+      },
+      {
+        id: "ai",
+        label: locale === "pt" ? "IA" : "AI",
+        matches: (project) => project.category.includes("IA") || project.stack.some((tech) => tech.includes("OpenAI") || tech.includes("IA")),
+      },
+      {
+        id: "data",
+        label: locale === "pt" ? "Dados" : "Data",
+        matches: (project) =>
+          project.category.some((category) => ["Dados", "Métricas"].includes(category)) ||
+          project.stack.some((tech) => ["PostgreSQL", "Supabase", "Prisma"].includes(tech)),
+      },
+      {
+        id: "frontend",
+        label: "Front-end",
+        matches: (project) => project.stack.some((tech) => ["React", "Next.js", "Tailwind CSS", "Vite", "Bootstrap"].includes(tech)),
+      },
+      {
+        id: "fullstack",
+        label: "Full Stack",
+        matches: (project) => project.stack.some((tech) => ["Supabase", "PostgreSQL", "Prisma", "Node.js", "Edge Functions"].includes(tech)),
+      },
+    ],
+    [locale],
   );
 
   const visibleProjects = useMemo(
-    () => (activeCategory === "all" ? projects : projects.filter((project) => project.category.includes(activeCategory))),
-    [activeCategory, projects],
+    () => {
+      if (activeCategory === "all") {
+        return projects;
+      }
+
+      return projects.filter((project) => filters.find((filter) => filter.id === activeCategory)?.matches(project));
+    },
+    [activeCategory, filters, projects],
   );
 
   return (
@@ -41,15 +78,15 @@ export function ProjectGrid({ projects }: ProjectGridProps) {
         >
           {t.projectsPage.allCategories}
         </button>
-        {categories.map((category) => (
+        {filters.map((filter) => (
           <button
-            aria-pressed={activeCategory === category}
-            className={cn(styles.filterButton, activeCategory === category && styles.filterButtonActive)}
-            key={category}
-            onClick={() => setActiveCategory(category)}
+            aria-pressed={activeCategory === filter.id}
+            className={cn(styles.filterButton, activeCategory === filter.id && styles.filterButtonActive)}
+            key={filter.id}
+            onClick={() => setActiveCategory(filter.id)}
             type="button"
           >
-            {formatProjectCategory(category, locale)}
+            {formatProjectCategory(filter.label, locale)}
           </button>
         ))}
       </div>

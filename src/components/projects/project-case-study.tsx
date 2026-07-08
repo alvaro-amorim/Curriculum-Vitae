@@ -84,9 +84,11 @@ export function ProjectCaseStudy({ project }: ProjectCaseStudyProps) {
       <div className={styles.shell}>
         <section className={styles.caseHero}>
           <div className={styles.reveal}>
-            <Link className={styles.actionGhost} href="/projetos">
-              {copy.back}
-            </Link>
+            <nav className={styles.breadcrumb} aria-label={locale === "pt" ? "Caminho do projeto" : "Project breadcrumb"}>
+              <Link href="/projetos">{locale === "pt" ? "Projetos" : "Projects"}</Link>
+              <span aria-hidden="true">/</span>
+              <strong>{project.title[locale]}</strong>
+            </nav>
             <p className={styles.eyebrow}>{copy.eyebrow}</p>
             <h1 className={styles.caseTitle}>{project.title[locale]}</h1>
             <p className={styles.caseLead}>{project.fullDescription[locale]}</p>

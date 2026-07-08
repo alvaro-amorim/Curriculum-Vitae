@@ -46,7 +46,7 @@ function handlePointer(event: PointerEvent<HTMLElement>) {
 
 export function ProjectCard({ project, compact = false, index = 0 }: ProjectCardProps) {
   const { locale, t } = usePortfolioUi();
-  const viewCase = locale === "pt" ? "Ver estudo" : t.projectsPage.viewCase;
+  const viewCase = locale === "pt" ? "Ver case" : t.projectsPage.viewCase;
 
   return (
     <article

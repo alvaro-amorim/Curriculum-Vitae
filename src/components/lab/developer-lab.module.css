@@ -4237,7 +4237,201 @@
 .mazeGoal::after,
 .mazePatch::after,
 .mazeHazard::after,
-.mazeVirus {
+  .mazeVirus {
     animation: none;
+  }
+}
+
+.labExperience {
+  padding-top: clamp(5.35rem, 6vw, 6rem);
+}
+
+.hero {
+  min-height: auto;
+  padding-bottom: clamp(1rem, 2vw, 1.6rem);
+}
+
+.heroTitle {
+  font-size: clamp(1.85rem, 3vw, 3.05rem);
+  letter-spacing: -0.045em;
+}
+
+.heroText,
+.panelText,
+.moduleText {
+  font-size: clamp(0.84rem, 1vw, 0.96rem);
+}
+
+.heroPanel,
+.playerShell,
+.trainingShell,
+.focusShell,
+.leaderboardShell,
+.performanceShell,
+.arcadeHub,
+.leaderboardCard,
+.performanceCard,
+.moduleCard {
+  border-radius: 1.08rem;
+}
+
+.heroPanel,
+.playerShell,
+.leaderboardShell,
+.performanceShell,
+.arcadeHub {
+  padding: clamp(0.72rem, 1.6vw, 1.08rem);
+}
+
+.hubCard,
+.leaderboardCard,
+.moduleCard,
+.performanceCard {
+  padding: clamp(0.72rem, 1.4vw, 1rem);
+}
+
+.hubCard {
+  min-height: 8.4rem;
+}
+
+:global([data-theme="light"]) .labExperience {
+  background:
+    radial-gradient(circle at var(--lab-px) var(--lab-py), rgba(8, 145, 178, 0.075), transparent 23rem),
+    radial-gradient(circle at 18% 52%, rgba(109, 40, 217, 0.07), transparent 28rem),
+    linear-gradient(180deg, #fbfdff 0%, #f2f6fb 50%, #edf3f8 100%);
+}
+
+@media (max-width: 980px) {
+  .labExperience {
+    padding-top: 5.1rem;
+  }
+
+  .hero {
+    gap: 0.95rem;
+  }
+
+  .heroTitle {
+    font-size: clamp(1.65rem, 5.8vw, 2.35rem);
+  }
+
+  .heroSteps {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .labExperience {
+    padding: 3.65rem 0.68rem 2rem;
+  }
+
+  .hero {
+    gap: 0.48rem;
+    padding-bottom: 0.42rem;
+  }
+
+  .heroTitle {
+    max-width: 100%;
+    font-size: clamp(1.38rem, 7vw, 1.82rem);
+    line-height: 1.03;
+  }
+
+  .heroText,
+  .heroLead,
+  .panelText,
+  .moduleText {
+    font-size: 0.76rem;
+    line-height: 1.42;
+  }
+
+  .heroSteps {
+    grid-template-columns: 1fr;
+    gap: 0.32rem;
+    margin-top: 0.58rem;
+  }
+
+  .heroSteps li {
+    padding: 0.34rem 0 0;
+    font-size: 0.62rem;
+    line-height: 1.22;
+  }
+
+  .heroSteps li:nth-child(3) {
+    display: none;
+  }
+
+  .heroPanel {
+    display: none;
+  }
+
+  .heroActions,
+  .backLinks,
+  .runnerControls {
+    display: flex;
+    gap: 0.38rem;
+  }
+
+  .actionPrimary,
+  .actionSecondary,
+  .actionGhost {
+    width: auto;
+    min-height: 2.18rem;
+    flex: 0 1 auto;
+    padding: 0.48rem 0.66rem;
+    font-size: 0.68rem;
+  }
+
+  .playerShell,
+  .trainingShell,
+  .leaderboardShell,
+  .performanceShell,
+  .arcadeHub {
+    padding: 0.5rem;
+  }
+
+  .playerIntro {
+    gap: 0.48rem;
+  }
+
+  .aliasForm button,
+  .aliasInputRow input {
+    min-height: 2.16rem;
+    font-size: 0.74rem;
+  }
+
+  .hubCard {
+    min-height: 7.4rem;
+    padding: 0.58rem;
+  }
+
+  .moduleGrid,
+  .hubGrid,
+  .leaderboardGrid,
+  .performanceGrid {
+    gap: 0.5rem;
+  }
+
+  .leaderboardRow {
+    padding: 0.44rem;
+  }
+
+  .scoreResultPanel .actionPrimary {
+    width: auto;
+  }
+}
+
+@media (max-width: 390px) {
+  .labExperience {
+    padding-inline: 0.58rem;
+  }
+
+  .heroTitle {
+    font-size: clamp(1.28rem, 6.8vw, 1.68rem);
+  }
+
+  .hubCard,
+  .leaderboardCard,
+  .moduleCard,
+  .performanceCard {
+    border-radius: 0.82rem;
   }
 }

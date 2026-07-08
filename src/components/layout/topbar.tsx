@@ -81,20 +81,152 @@ export function Topbar({ onNavigateStart }: TopbarProps) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [hidden, setHidden] = useState(false);
+  const [pointerInside, setPointerInside] = useState(false);
+  const [focusInside, setFocusInside] = useState(false);
   const indicatorRef = useRef<HTMLSpanElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
+  const topbarRef = useRef<HTMLElement>(null);
+  const openRef = useRef(open);
+  const pointerInsideRef = useRef(pointerInside);
+  const focusInsideRef = useRef(focusInside);
+  const lastScrollY = useRef(0);
+  const idleTimer = useRef<number | null>(null);
+  const ticking = useRef(false);
   const activeDownload = downloads[locale].pdf;
   const items = navItems[locale];
 
   useEffect(() => {
-    function syncScrolled() {
-      setScrolled(window.scrollY > 12);
+    openRef.current = open;
+  }, [open]);
+
+  useEffect(() => {
+    pointerInsideRef.current = pointerInside;
+  }, [pointerInside]);
+
+  useEffect(() => {
+    focusInsideRef.current = focusInside;
+  }, [focusInside]);
+
+  useEffect(() => {
+    const frame = window.requestAnimationFrame(() => setOpen(false));
+    return () => window.cancelAnimationFrame(frame);
+  }, [pathname]);
+
+  useEffect(() => {
+    function isNearTop(scrollY = window.scrollY) {
+      return scrollY < Math.max(120, window.innerHeight * 0.15);
     }
 
-    syncScrolled();
-    window.addEventListener("scroll", syncScrolled, { passive: true });
-    return () => window.removeEventListener("scroll", syncScrolled);
+    function shouldStayVisible() {
+      return openRef.current || pointerInsideRef.current || focusInsideRef.current;
+    }
+
+    function clearIdleTimer() {
+      if (idleTimer.current) {
+        window.clearTimeout(idleTimer.current);
+        idleTimer.current = null;
+      }
+    }
+
+    function scheduleIdleHide() {
+      clearIdleTimer();
+      idleTimer.current = window.setTimeout(() => {
+        if (!isNearTop() && !shouldStayVisible()) {
+          setHidden(true);
+        }
+      }, 2800);
+    }
+
+    function syncScrollState() {
+      const currentY = Math.max(0, window.scrollY);
+      setScrolled(currentY > 12);
+
+      if (isNearTop(currentY)) {
+        setHidden(false);
+        clearIdleTimer();
+        lastScrollY.current = currentY;
+        return;
+      }
+
+      if (shouldStayVisible()) {
+        setHidden(false);
+        scheduleIdleHide();
+        lastScrollY.current = currentY;
+        return;
+      }
+
+      const delta = currentY - lastScrollY.current;
+
+      if (delta > 8) {
+        setHidden(true);
+      } else if (delta < -6) {
+        setHidden(false);
+      }
+
+      scheduleIdleHide();
+      lastScrollY.current = currentY;
+    }
+
+    function handleScroll() {
+      if (ticking.current) return;
+      ticking.current = true;
+      window.requestAnimationFrame(() => {
+        ticking.current = false;
+        syncScrollState();
+      });
+    }
+
+    lastScrollY.current = Math.max(0, window.scrollY);
+    syncScrollState();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      clearIdleTimer();
+      window.removeEventListener("scroll", handleScroll);
+    };
   }, []);
+
+  useEffect(() => {
+    if (open || pointerInside || focusInside || window.scrollY < Math.max(120, window.innerHeight * 0.15)) {
+      const frame = window.requestAnimationFrame(() => setHidden(false));
+      return () => window.cancelAnimationFrame(frame);
+    }
+
+    return undefined;
+  }, [focusInside, open, pointerInside]);
+
+  useEffect(() => {
+    if (!open) return;
+
+    function handlePointerDown(event: PointerEvent) {
+      const target = event.target instanceof Node ? event.target : null;
+      if (target && topbarRef.current?.contains(target)) return;
+      setOpen(false);
+    }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setOpen(false);
+      }
+    }
+
+    function handleResize() {
+      if (window.innerWidth > 1024) {
+        setOpen(false);
+      }
+    }
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [open]);
 
   useEffect(() => {
     const list = listRef.current;
@@ -113,7 +245,22 @@ export function Topbar({ onNavigateStart }: TopbarProps) {
   }, [items, pathname, scrolled]);
 
   return (
-    <header className={styles.topbar} data-scrolled={scrolled ? "true" : "false"} data-topbar="global">
+    <header
+      className={styles.topbar}
+      data-hidden={hidden ? "true" : "false"}
+      data-menu-open={open ? "true" : "false"}
+      data-scrolled={scrolled ? "true" : "false"}
+      data-topbar="global"
+      onBlurCapture={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) {
+          setFocusInside(false);
+        }
+      }}
+      onFocusCapture={() => setFocusInside(true)}
+      onPointerEnter={() => setPointerInside(true)}
+      onPointerLeave={() => setPointerInside(false)}
+      ref={topbarRef}
+    >
       <nav className={styles.navShell} aria-label={t.nav.mainNavigation}>
         <Link
           aria-label="Álvaro.dev Portfolio OS"
@@ -185,7 +332,7 @@ export function Topbar({ onNavigateStart }: TopbarProps) {
           </button>
           <button
             aria-expanded={open}
-            aria-label={open ? "Fechar menu" : "Menu"}
+            aria-label={open ? (locale === "pt" ? "Fechar menu" : "Close menu") : "Menu"}
             className={styles.menuButton}
             onClick={() => setOpen((current) => !current)}
             type="button"
@@ -211,7 +358,11 @@ export function Topbar({ onNavigateStart }: TopbarProps) {
           </Link>
         ))}
         <div>
-          <a href={activeDownload.href} download={activeDownload.fileName}>
+          <a
+            href={activeDownload.href}
+            download={activeDownload.fileName}
+            onClick={() => setOpen(false)}
+          >
             <Icon name="download" />
             {t.actions.downloadPdf}
           </a>

@@ -1167,3 +1167,509 @@
     line-height: 1.03;
   }
 }
+
+.projectsHeader {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(14rem, 0.34fr);
+  gap: clamp(1rem, 2.4vw, 2rem);
+  align-items: end;
+  padding: clamp(3.25rem, 4.2vw, 4.1rem) 0 clamp(1.3rem, 3vw, 2rem);
+}
+
+.projectsHeader .heroTitle {
+  max-width: none;
+  margin-top: 0.45rem;
+  font-size: clamp(2.05rem, 3.9vw, 3.55rem);
+  line-height: 1;
+  letter-spacing: -0.045em;
+}
+
+.projectsHeader .heroText {
+  max-width: 38rem;
+  margin-top: 0.65rem;
+  font-size: clamp(0.92rem, 1vw, 1.04rem);
+  line-height: 1.56;
+}
+
+.projectsHeaderMeta {
+  display: grid;
+  gap: 0.35rem;
+  border: 1px solid color-mix(in srgb, var(--accent-a) 18%, rgba(255, 255, 255, 0.12));
+  border-radius: 1.05rem;
+  padding: 0.9rem 1rem;
+  background: color-mix(in srgb, var(--project-panel) 78%, transparent);
+  box-shadow: 0 18px 58px rgba(0, 0, 0, 0.18);
+}
+
+.projectsHeaderMeta strong {
+  color: var(--project-ink);
+  font-size: 0.9rem;
+  font-weight: 850;
+}
+
+.projectsHeaderMeta span {
+  color: var(--project-muted);
+  font-size: 0.78rem;
+  font-weight: 650;
+  line-height: 1.4;
+}
+
+.projectsListBlock {
+  padding-bottom: clamp(2.2rem, 5vw, 4rem);
+}
+
+.projectsListHeader {
+  display: grid;
+  grid-template-columns: minmax(0, 0.7fr) minmax(16rem, 0.4fr);
+  gap: clamp(1rem, 2.8vw, 2rem);
+  align-items: end;
+  margin-bottom: 1rem;
+}
+
+.projectsListHeader .sectionTitle {
+  max-width: none;
+  margin-top: 0.35rem;
+  font-size: clamp(1.35rem, 2.5vw, 2.25rem);
+  letter-spacing: -0.04em;
+}
+
+.projectsListHeader .sectionIntro {
+  font-size: clamp(0.86rem, 1vw, 0.96rem);
+  line-height: 1.5;
+}
+
+.projectScenes {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(0.75rem, 1.7vw, 1.15rem);
+  margin-top: 1rem;
+}
+
+.scene,
+.scene:nth-child(even) {
+  grid-template-columns: 1fr;
+  gap: 0.82rem;
+  min-height: auto;
+  border-radius: 1.12rem;
+  padding: 0.74rem;
+  background:
+    linear-gradient(145deg, color-mix(in srgb, var(--accent-a) 9%, transparent), transparent 44%),
+    color-mix(in srgb, var(--project-panel) 78%, transparent);
+  box-shadow:
+    0 20px 64px rgba(0, 0, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.scene:nth-child(even) .sceneInfo {
+  order: 1;
+}
+
+.scene .visualFrame.compact {
+  order: 0;
+  min-height: clamp(8.9rem, 15vw, 11.5rem);
+  border-radius: 0.92rem;
+}
+
+.scene .frameContent {
+  right: 0.82rem;
+  bottom: 0.78rem;
+  left: 0.82rem;
+}
+
+.scene .frameTitle {
+  max-width: 16ch;
+  margin-top: 0.32rem;
+  font-size: clamp(1.02rem, 1.8vw, 1.42rem);
+  line-height: 1.02;
+}
+
+.scene .frameHint,
+.scene .framePending {
+  display: none;
+}
+
+.sceneInfo {
+  order: 1;
+  justify-content: flex-start;
+  padding: 0.12rem 0.1rem 0.18rem;
+}
+
+.sceneNumber {
+  font-size: 0.68rem;
+}
+
+.sceneKicker {
+  margin-top: 0.35rem;
+  font-size: 0.62rem;
+}
+
+.sceneTitle {
+  max-width: none;
+  margin-top: 0.35rem;
+  font-size: clamp(1.06rem, 1.8vw, 1.36rem);
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+}
+
+.sceneText {
+  display: -webkit-box;
+  margin-top: 0.42rem;
+  overflow: hidden;
+  font-size: 0.78rem;
+  line-height: 1.42;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.categoryList,
+.techRail {
+  gap: 0.34rem;
+  margin-top: 0.58rem;
+}
+
+.categoryPill,
+.techNode {
+  padding: 0.26rem 0.45rem;
+  font-size: 0.62rem;
+}
+
+.sceneActions,
+.navActions {
+  gap: 0.42rem;
+  margin-top: 0.72rem;
+}
+
+.sceneActions .actionPrimary,
+.sceneActions .actionGhost,
+.navActions .actionPrimary,
+.navActions .actionSecondary {
+  min-height: 2.18rem;
+  padding: 0.5rem 0.72rem;
+  font-size: 0.72rem;
+}
+
+.filters {
+  gap: 0.4rem;
+  margin-top: 0.85rem;
+}
+
+.filterButton {
+  min-height: 2rem;
+  border: 1px solid color-mix(in srgb, var(--accent-a) 20%, rgba(255, 255, 255, 0.12));
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--project-panel) 72%, transparent);
+  color: var(--project-muted);
+  font-size: 0.72rem;
+  font-weight: 780;
+}
+
+.filterButton:hover,
+.filterButtonActive {
+  background: color-mix(in srgb, var(--accent-a) 16%, rgba(255, 255, 255, 0.08));
+  color: var(--project-ink);
+}
+
+.breadcrumb {
+  display: inline-flex;
+  max-width: 100%;
+  align-items: center;
+  gap: 0.45rem;
+  margin-bottom: 1rem;
+  border: 1px solid color-mix(in srgb, var(--accent-a) 18%, rgba(255, 255, 255, 0.12));
+  border-radius: 999px;
+  padding: 0.38rem 0.58rem;
+  background: color-mix(in srgb, var(--project-panel) 68%, transparent);
+  color: var(--project-muted);
+  font-size: 0.72rem;
+  font-weight: 760;
+}
+
+.breadcrumb a {
+  color: color-mix(in srgb, var(--accent-a) 88%, white);
+  text-decoration: none;
+}
+
+.breadcrumb strong {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--project-ink);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.caseHero {
+  grid-template-columns: minmax(0, 0.72fr) minmax(22rem, 0.78fr);
+  min-height: auto;
+  padding-top: clamp(3.25rem, 4.2vw, 4.1rem);
+  padding-bottom: clamp(1.2rem, 3vw, 2.2rem);
+}
+
+.caseHero .caseTitle {
+  max-width: 14ch;
+  margin-top: 0.55rem;
+  font-size: clamp(2rem, 3.4vw, 3.35rem);
+  letter-spacing: -0.045em;
+}
+
+.caseLead {
+  margin-top: 0.85rem;
+  font-size: clamp(0.9rem, 1.05vw, 1rem);
+  line-height: 1.58;
+}
+
+.caseStage .visualFrame {
+  min-height: clamp(18rem, 28vw, 25rem);
+}
+
+.casePlate,
+.stagePlate {
+  border-radius: 1.08rem;
+  padding: clamp(1rem, 2vw, 1.35rem);
+}
+
+.caseMeta {
+  gap: 0.78rem;
+  margin-top: 1.05rem;
+}
+
+.caseMetaGrid {
+  gap: 0.38rem;
+}
+
+.sections {
+  gap: clamp(1.5rem, 4.5vw, 3rem);
+  margin-top: clamp(1rem, 3vw, 2rem);
+}
+
+.sectionHeader {
+  margin-bottom: clamp(0.9rem, 2.4vw, 1.35rem);
+}
+
+.sectionTitle {
+  letter-spacing: -0.045em;
+}
+
+.flowCard,
+.moduleCard,
+.assetPanel,
+.nextCard {
+  border-radius: 1.08rem;
+  padding: clamp(0.95rem, 1.6vw, 1.25rem);
+}
+
+.flowCard h2,
+.moduleCard h2,
+.assetPanel h2,
+.nextCard h2 {
+  font-size: clamp(1rem, 1.8vw, 1.42rem);
+}
+
+.flowText,
+.moduleCard li,
+.assetPanel p,
+.assetPanel li,
+.nextCard p {
+  font-size: 0.86rem;
+  line-height: 1.52;
+}
+
+.nextCard {
+  min-height: 11rem;
+}
+
+:global([data-theme="light"]) .projectsHeaderMeta,
+:global([data-theme="light"]) .breadcrumb,
+:global([data-theme="light"]) .filterButton {
+  border-color: rgba(15, 23, 42, 0.16);
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: 0 16px 46px rgba(15, 23, 42, 0.08);
+}
+
+:global([data-theme="light"]) .experience {
+  background:
+    radial-gradient(circle at var(--px) var(--py), color-mix(in srgb, var(--accent-a) 8%, transparent), transparent 22rem),
+    radial-gradient(circle at 82% 12%, color-mix(in srgb, var(--accent-c) 7%, transparent), transparent 28rem),
+    linear-gradient(180deg, #fbfdff 0%, #f1f5fb 48%, #eef3f8 100%);
+}
+
+@media (max-width: 1180px) {
+  .projectScenes {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 980px) {
+  .projectsHeader,
+  .projectsListHeader,
+  .caseHero {
+    grid-template-columns: 1fr;
+  }
+
+  .projectsHeader {
+    padding-top: 3.15rem;
+  }
+
+  .projectsHeaderMeta {
+    max-width: 22rem;
+  }
+
+  .caseStage .visualFrame {
+    min-height: 20rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .experience {
+    padding: 3.45rem 0.72rem 2.4rem;
+  }
+
+  .shell {
+    width: min(100%, 28rem);
+  }
+
+  .projectsHeader {
+    gap: 0.8rem;
+    padding-top: 0.35rem;
+    padding-bottom: 1rem;
+  }
+
+  .projectsHeader .heroTitle,
+  .caseHero .caseTitle {
+    max-width: 100%;
+    font-size: clamp(1.72rem, 8vw, 2.25rem);
+    line-height: 1.02;
+  }
+
+  .projectsHeader .heroText,
+  .caseLead,
+  .projectsListHeader .sectionIntro {
+    max-width: 100%;
+    font-size: 0.82rem;
+    line-height: 1.45;
+  }
+
+  .projectsHeaderMeta {
+    padding: 0.62rem 0.68rem;
+  }
+
+  .projectsListHeader .sectionTitle,
+  .sectionTitle {
+    max-width: 100%;
+    font-size: clamp(1.16rem, 5.7vw, 1.55rem);
+  }
+
+  .projectScenes {
+    grid-template-columns: 1fr;
+    gap: 0.72rem;
+  }
+
+  .scene {
+    padding: 0.72rem;
+  }
+
+  .scene .visualFrame.compact {
+    display: none;
+  }
+
+  .sceneNumber {
+    display: none;
+  }
+
+  .sceneTitle {
+    font-size: 1.04rem;
+  }
+
+  .sceneText {
+    font-size: 0.74rem;
+    -webkit-line-clamp: 2;
+  }
+
+  .categoryList,
+  .techRail {
+    margin-top: 0.45rem;
+  }
+
+  .sceneActions,
+  .navActions,
+  .heroActions,
+  .caseActions,
+  .finalActions {
+    display: flex;
+  }
+
+  .actionPrimary,
+  .actionSecondary,
+  .actionGhost,
+  .sceneActions .actionPrimary,
+  .sceneActions .actionGhost,
+  .navActions .actionPrimary,
+  .navActions .actionSecondary {
+    width: auto;
+    min-height: 2.18rem;
+    flex: 0 1 auto;
+    padding: 0.5rem 0.68rem;
+    font-size: 0.72rem;
+  }
+
+  .filters {
+    margin-right: -0.72rem;
+    margin-left: -0.72rem;
+    padding-inline: 0.72rem;
+  }
+
+  .filterButton {
+    min-height: 1.9rem;
+    padding: 0.38rem 0.6rem;
+    font-size: 0.68rem;
+  }
+
+  .caseHero {
+    gap: 1rem;
+    padding-top: 0.55rem;
+  }
+
+  .caseStage .visualFrame {
+    display: none;
+  }
+
+  .stagePlate,
+  .casePlate {
+    position: relative;
+    inset: auto;
+    margin: 0;
+    padding: 0.78rem;
+  }
+
+  .flowGrid,
+  .moduleGrid,
+  .assetGrid,
+  .navigationGrid,
+  .honestResult {
+    gap: 0.72rem;
+  }
+
+  .flowCard,
+  .moduleCard,
+  .assetPanel,
+  .nextCard {
+    padding: 0.82rem;
+  }
+
+  .nextCard {
+    min-height: 8.5rem;
+  }
+}
+
+@media (max-width: 390px) {
+  .scene .visualFrame.compact {
+    min-height: 7.6rem;
+  }
+
+  .scene .frameTitle {
+    font-size: 0.96rem;
+  }
+
+  .categoryList .categoryPill:nth-child(n + 3),
+  .techRail .techNode:nth-child(n + 5) {
+    display: none;
+  }
+}
