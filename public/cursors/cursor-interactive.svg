@@ -1,15 +1,11 @@
-<svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="cursorInteractiveFill" x1="4" y1="3" x2="22" y2="24" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#67E8F9"/>
-      <stop offset="0.45" stop-color="#3B82F6"/>
-      <stop offset="1" stop-color="#E879F9"/>
-    </linearGradient>
-  </defs>
-  <path d="M20.5 4.5h3v3h-3v-3Zm3 3h3v3h-3v-3Zm-3 3h3v3h-3v-3Z" fill="#A855F7" fill-opacity="0.5"/>
-  <path d="M5 4h4v2h2v2h2v2h2v2h2v4h-5v2h-2v6H7v-6H5V4Z" fill="#0F172A" fill-opacity="0.34"/>
-  <path d="M3 2h4v2h2v2h2v2h2v2h2v4h-5v2H8v6H5v-6H3V2Z" fill="url(#cursorInteractiveFill)"/>
-  <path d="M3 2h4v2h2v2h2v2h2v2h2v4h-5v2H8v6H5v-6H3V2Z" stroke="white" stroke-opacity="0.94" stroke-width="1.35" stroke-linejoin="miter"/>
-  <path d="M20 18.5h9.5M24.75 13.75v9.5" stroke="#22D3EE" stroke-width="2" stroke-linecap="square"/>
-  <path d="M6 6h2v2H6V6Zm3 3h2v2H9V9Z" fill="white" fill-opacity="0.38"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none" shape-rendering="crispEdges">
+  <path d="M17 4H24V23H26V16H32V25H34V19H40V28H42V23H46V36L41 46H22L12 34V28H17V4Z" fill="#7C3AED" opacity="0.85"/>
+  <path d="M14 1H23V20H25V13H32V22H34V16H41V25H43V20H48V35L42 48H20L9 35V25H14V1Z" fill="#020617"/>
+  <path d="M17 4H20V25H25V16H29V27H34V19H38V30H43V23H45V34L40 45H22L12 33V28H17V4Z" fill="#FFFFFF"/>
+  <path d="M20 4H23V24H20V4Z" fill="#EAFBFF"/>
+  <path d="M25 16H29V27H25V16Z" fill="#EAFBFF"/>
+  <path d="M34 19H38V30H34V19Z" fill="#EAFBFF"/>
+  <path d="M40 31H43V35H40V31Z" fill="#22D3EE"/>
+  <path d="M39 42H42V45H39V42Z" fill="#F472B6"/>
+  <path d="M43 23H45V31H43V23Z" fill="#38BDF8"/>
 </svg>

@@ -1,12 +1,7 @@
-<svg width="24" height="32" viewBox="0 0 24 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="cursorTextStroke" x1="5" y1="4" x2="19" y2="28" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#22D3EE"/>
-      <stop offset="0.52" stop-color="#3B82F6"/>
-      <stop offset="1" stop-color="#D946EF"/>
-    </linearGradient>
-  </defs>
-  <path d="M7 4h10M12 4v24M7 28h10" stroke="#0F172A" stroke-opacity="0.26" stroke-width="5" stroke-linecap="square" stroke-linejoin="miter"/>
-  <path d="M7 4h10M12 4v24M7 28h10" stroke="url(#cursorTextStroke)" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter"/>
-  <path d="M9 8h6M9 24h6" stroke="white" stroke-opacity="0.72" stroke-width="1.5" stroke-linecap="square"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="48" viewBox="0 0 32 48" fill="none" shape-rendering="crispEdges">
+  <path d="M8 4H24V8H18V40H24V44H8V40H14V8H8V4Z" fill="#020617"/>
+  <path d="M10 5H22V7H17V41H22V43H10V41H15V7H10V5Z" fill="#FFFFFF"/>
+  <path d="M18 8H20V40H18V8Z" fill="#22D3EE"/>
+  <path d="M22 5H24V8H22V5Z" fill="#7C3AED"/>
+  <path d="M22 40H24V43H22V40Z" fill="#F472B6"/>
 </svg>
