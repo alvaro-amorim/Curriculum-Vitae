@@ -1,0 +1,183 @@
+.root {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 2147483000;
+  pointer-events: none;
+}
+
+@media (pointer: fine) and (hover: hover) {
+  .root[data-enabled="true"] {
+    display: block;
+  }
+
+  :global(html[data-custom-cursor="active"] body),
+  :global(html[data-custom-cursor="active"] a[href]),
+  :global(html[data-custom-cursor="active"] button),
+  :global(html[data-custom-cursor="active"] [role="button"]),
+  :global(html[data-custom-cursor="active"] summary),
+  :global(html[data-custom-cursor="active"] label),
+  :global(html[data-custom-cursor="active"] [data-cursor]),
+  :global(html[data-custom-cursor="active"] input),
+  :global(html[data-custom-cursor="active"] textarea),
+  :global(html[data-custom-cursor="active"] select),
+  :global(html[data-custom-cursor="active"] [contenteditable="true"]) {
+    cursor: none;
+  }
+}
+
+.cursor {
+  --cursor-x: -80px;
+  --cursor-y: -80px;
+  --cursor-offset-x: 0px;
+  --cursor-offset-y: 0px;
+  --cursor-scale: 1;
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 2rem;
+  height: 2rem;
+  opacity: 1;
+  transform:
+    translate3d(
+      calc(var(--cursor-x) + var(--cursor-offset-x)),
+      calc(var(--cursor-y) + var(--cursor-offset-y)),
+      0
+    )
+    scale(var(--cursor-scale));
+  transition:
+    opacity 80ms linear,
+    filter 90ms linear;
+  will-change: transform;
+}
+
+.cursor[data-state="hidden"] {
+  opacity: 0;
+}
+
+.cursorImage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 2rem;
+  height: 2rem;
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  background-size: contain;
+  user-select: none;
+  opacity: 0;
+  image-rendering: pixelated;
+  transition: opacity 70ms linear;
+}
+
+.defaultCursor {
+  background-image: url("/cursors/cursor-default.svg");
+  opacity: 1;
+  filter:
+    drop-shadow(0 1px 0 rgba(15, 23, 42, 0.5))
+    drop-shadow(0 0 7px rgba(59, 130, 246, 0.34));
+}
+
+.textCursor {
+  width: 1.5rem;
+  height: 2rem;
+  background-image: url("/cursors/cursor-text.svg");
+}
+
+.interactiveCursor {
+  background-image: url("/cursors/cursor-interactive.svg");
+  filter:
+    drop-shadow(0 1px 0 rgba(15, 23, 42, 0.45))
+    drop-shadow(0 0 11px rgba(168, 85, 247, 0.36));
+}
+
+.halo {
+  position: absolute;
+  top: -0.45rem;
+  left: -0.45rem;
+  width: 1.65rem;
+  height: 1.65rem;
+  border: 1px solid rgba(96, 165, 250, 0.4);
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 32% 32%, rgba(34, 211, 238, 0.18), transparent 44%),
+    radial-gradient(circle at 72% 72%, rgba(168, 85, 247, 0.2), transparent 56%);
+  opacity: 0;
+  transition:
+    opacity 90ms linear,
+    transform 90ms linear;
+}
+
+.cursor[data-state="text"] {
+  --cursor-offset-x: -12px;
+  --cursor-offset-y: -16px;
+}
+
+.cursor[data-state="text"] .defaultCursor,
+.cursor[data-state="text"] .interactiveCursor {
+  opacity: 0;
+}
+
+.cursor[data-state="text"] .textCursor {
+  opacity: 1;
+}
+
+.cursor[data-state="interactive"],
+.cursor[data-state="primary"] {
+  --cursor-offset-x: -2px;
+  --cursor-offset-y: -2px;
+}
+
+.cursor[data-state="interactive"] .defaultCursor,
+.cursor[data-state="primary"] .defaultCursor,
+.cursor[data-state="interactive"] .textCursor,
+.cursor[data-state="primary"] .textCursor {
+  opacity: 0;
+}
+
+.cursor[data-state="interactive"] .interactiveCursor,
+.cursor[data-state="primary"] .interactiveCursor {
+  opacity: 1;
+}
+
+.cursor[data-state="interactive"] .halo,
+.cursor[data-state="primary"] .halo {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.cursor[data-state="primary"] {
+  --cursor-scale: 1.04;
+}
+
+.cursor[data-state="primary"] .halo {
+  border-color: rgba(216, 180, 254, 0.68);
+  box-shadow:
+    0 0 18px rgba(168, 85, 247, 0.28),
+    0 0 26px rgba(37, 99, 235, 0.18);
+  transform: scale(1.14);
+}
+
+:global(html[data-theme="light"]) .defaultCursor,
+:global(html[data-theme="light"]) .interactiveCursor {
+  filter:
+    drop-shadow(0 1px 0 rgba(15, 23, 42, 0.14))
+    drop-shadow(0 0 6px rgba(37, 99, 235, 0.2));
+}
+
+:global(html[data-theme="light"]) .halo {
+  border-color: rgba(37, 99, 235, 0.38);
+  background:
+    radial-gradient(circle at 32% 32%, rgba(14, 165, 233, 0.14), transparent 44%),
+    radial-gradient(circle at 72% 72%, rgba(124, 58, 237, 0.16), transparent 56%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cursor,
+  .cursorImage,
+  .halo {
+    transition: none;
+  }
+}

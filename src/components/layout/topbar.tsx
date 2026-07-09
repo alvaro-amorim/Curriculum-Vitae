@@ -5,8 +5,6 @@ import { usePathname } from "next/navigation";
 import type { CSSProperties } from "react";
 import { useEffect, useRef, useState } from "react";
 
-import { downloads } from "@/content/downloads";
-
 import { usePortfolioUi } from "./app-shell";
 import styles from "./topbar.module.css";
 
@@ -37,12 +35,10 @@ function isActiveRoute(pathname: string, href: string) {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
-function Icon({ name, className }: { name: "download" | "globe" | "menu" | "moon" | "sun" | "x"; className?: string }) {
+function Icon({ name, className }: { name: "globe" | "menu" | "moon" | "sun" | "x"; className?: string }) {
   const common = { className, viewBox: "0 0 24 24", fill: "none", focusable: false, "aria-hidden": true };
 
   switch (name) {
-    case "download":
-      return <svg {...common}><path d="M12 4v10m0 0 4-4m-4 4-4-4M5 18h14" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>;
     case "globe":
       return <svg {...common}><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm-8-9h16M12 3c2.3 2.4 3.4 5.4 3.4 9S14.3 18.6 12 21c-2.3-2.4-3.4-5.4-3.4-9S9.7 5.4 12 3Z" stroke="currentColor" strokeWidth="1.55" strokeLinecap="round" strokeLinejoin="round" /></svg>;
     case "menu":
@@ -93,7 +89,6 @@ export function Topbar({ onNavigateStart }: TopbarProps) {
   const lastScrollY = useRef(0);
   const idleTimer = useRef<number | null>(null);
   const ticking = useRef(false);
-  const activeDownload = downloads[locale].pdf;
   const items = navItems[locale];
 
   useEffect(() => {
@@ -303,10 +298,6 @@ export function Topbar({ onNavigateStart }: TopbarProps) {
         </ul>
 
         <div className={styles.controls}>
-          <a className={styles.download} href={activeDownload.href} download={activeDownload.fileName}>
-            <Icon name="download" />
-            <span>{t.actions.downloadPdf}</span>
-          </a>
           <button
             aria-label={t.nav.theme}
             className={styles.themeToggle}
@@ -358,14 +349,6 @@ export function Topbar({ onNavigateStart }: TopbarProps) {
           </Link>
         ))}
         <div>
-          <a
-            href={activeDownload.href}
-            download={activeDownload.fileName}
-            onClick={() => setOpen(false)}
-          >
-            <Icon name="download" />
-            {t.actions.downloadPdf}
-          </a>
           <button onClick={toggleLocale} type="button">
             <Icon name="globe" />
             {locale === "pt" ? "PT" : "EN"}

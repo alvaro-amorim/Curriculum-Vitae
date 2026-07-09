@@ -9,6 +9,7 @@ import { STORAGE_KEYS } from "@/lib/constants";
 import type { Locale, ThemeName } from "@/types/portfolio";
 import { CommandPalette } from "@/components/lab/command-palette";
 
+import { CustomCursor } from "./custom-cursor";
 import { Topbar } from "./topbar";
 import styles from "./app-shell.module.css";
 
@@ -218,6 +219,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       >
         <Topbar />
         <CommandPalette />
+        <CustomCursor />
         <div
           className={styles.pageFrame}
           data-route={pathname === "/" || pathname === "/visual-final-candidate" ? "immersive" : "standard"}

@@ -286,7 +286,7 @@ const projects: HomeProject[] = [
     title: "Portfolio OS",
     category: { pt: "Portfolio • Design", en: "Portfolio • Design" },
     description: {
-      pt: "Sistema modular para portfólios de desenvolvedores, com temas e seções configuráveis.",
+      pt: "Sistema modular para portfólio de dev, com temas e seções configuráveis.",
       en: "Modular portfolio system with configurable themes and sections.",
     },
     projectIconKey: "portfolio-os",
@@ -327,7 +327,7 @@ function Icon({ name, className }: { name: IconName; className?: string }) {
     case "external":
       return <svg {...common}><path d="M8 7h9v9M17 7 7 17" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>;
     case "gamepad":
-      return <svg {...common}><path d="M8 13h.01M16 13h.01M10 10H8v2m6-2h2m-4 2v2M7 8h10a4 4 0 0 1 3.8 2.7l.9 4.5a3 3 0 0 1-5 2.8l-1.9-1.9H9.2L7.3 18a3 3 0 0 1-5-2.8l.9-4.5A4 4 0 0 1 7 8Z" stroke="currentColor" strokeWidth="1.45" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+      return <svg {...common}><path d="M7.1 8.2h9.8c2 0 3.7 1.35 4.15 3.28l.78 3.36c.48 2.08-1.08 4.06-3.18 4.06-.86 0-1.69-.34-2.3-.95l-1.4-1.4h-5.9l-1.4 1.4c-.61.61-1.44.95-2.3.95-2.1 0-3.66-1.98-3.18-4.06l.78-3.36A4.27 4.27 0 0 1 7.1 8.2Z" stroke="currentColor" strokeWidth="1.55" strokeLinecap="round" strokeLinejoin="round" /><path d="M8.2 11.4v3.2M6.6 13h3.2M15.55 12.25h.01M18.05 14.25h.01" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" /><path d="M10.1 8.2c.18-1.18.84-1.9 1.9-1.9s1.72.72 1.9 1.9" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" /><path d="M17.95 4.4v1.4m-.7-.7h1.4" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" opacity="0.72" /></svg>;
     case "github":
       return <svg {...common}><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.9a3.4 3.4 0 0 0-.9-2.6c3-.3 6.1-1.5 6.1-6.6a5.2 5.2 0 0 0-1.4-3.6 4.8 4.8 0 0 0-.1-3.6s-1.1-.3-3.7 1.4a12.8 12.8 0 0 0-6.7 0C6.7.4 5.6.7 5.6.7a4.8 4.8 0 0 0-.1 3.6 5.2 5.2 0 0 0-1.4 3.6c0 5.1 3.1 6.3 6.1 6.6a3 3 0 0 0-.8 1.9V22" stroke="currentColor" strokeWidth="1.35" strokeLinecap="round" strokeLinejoin="round" /></svg>;
     case "layout":
@@ -341,13 +341,13 @@ function Icon({ name, className }: { name: IconName; className?: string }) {
     case "palette":
       return <svg {...common}><path d="M12 21a9 9 0 1 1 9-9 3 3 0 0 1-3 3h-1.5a1.5 1.5 0 0 0 0 3H17a5 5 0 0 1-5 3ZM7.5 11h.01M9.5 7.5h.01M14.5 7.5h.01M16.5 11h.01" stroke="currentColor" strokeWidth="1.65" strokeLinecap="round" strokeLinejoin="round" /></svg>;
     case "rocket":
-      return <svg {...common}><path d="M14 4c2.6.3 4.7 2.4 5 5l-4 4-4-4 3-5ZM9 15l-4 4m5-3-2 4-4-4 4-2m1-5-4 2 4 4 2-4m3 1 3 3" stroke="currentColor" strokeWidth="1.55" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+      return <svg {...common}><rect x="4.2" y="5" width="15.6" height="12.6" rx="2.4" stroke="currentColor" strokeWidth="1.6" /><path d="M4.9 8.75h14.2" stroke="currentColor" strokeWidth="1.45" strokeLinecap="round" opacity="0.66" /><path d="M9.2 13.4 12 10.6l2.8 2.8M12 10.75v5.4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /><path d="m14.55 18.25 1.45 1.45 3.25-3.55" stroke="currentColor" strokeWidth="1.65" strokeLinecap="round" strokeLinejoin="round" /><circle cx="7.1" cy="6.9" r=".52" fill="currentColor" opacity="0.72" /><circle cx="9.05" cy="6.9" r=".52" fill="currentColor" opacity="0.45" /></svg>;
     case "shield":
       return <svg {...common}><path d="M12 3 5 6v5c0 4.5 2.8 8.2 7 10 4.2-1.8 7-5.5 7-10V6l-7-3Zm-3 9 2 2 4-5" stroke="currentColor" strokeWidth="1.65" strokeLinecap="round" strokeLinejoin="round" /></svg>;
     case "sparkles":
       return <svg {...common}><path d="m12 2 1.9 6.1L20 10l-6.1 1.9L12 18l-1.9-6.1L4 10l6.1-1.9L12 2Zm6 12 .9 3.1L22 18l-3.1.9L18 22l-.9-3.1L14 18l3.1-.9L18 14Z" stroke="currentColor" strokeWidth="1.45" strokeLinecap="round" strokeLinejoin="round" /></svg>;
     case "trophy":
-      return <svg {...common}><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4Zm10 2h3v2a3 3 0 0 1-3 3M7 6H4v2a3 3 0 0 0 3 3" stroke="currentColor" strokeWidth="1.65" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+      return <svg {...common}><path d="M8 4.5h8v4.8a4 4 0 0 1-8 0V4.5Z" stroke="currentColor" strokeWidth="1.55" strokeLinecap="round" strokeLinejoin="round" /><path d="M16 6.3h3.2v1.6A3.2 3.2 0 0 1 16 11.1M8 6.3H4.8v1.6A3.2 3.2 0 0 0 8 11.1" stroke="currentColor" strokeWidth="1.55" strokeLinecap="round" strokeLinejoin="round" opacity="0.86" /><path d="M12 13.4v3.1M8.9 20h6.2M10 16.5h4l.8 3.5H9.2l.8-3.5Z" stroke="currentColor" strokeWidth="1.55" strokeLinecap="round" strokeLinejoin="round" /><path d="m10.55 8.85.88.88 2.02-2.16" stroke="currentColor" strokeWidth="1.35" strokeLinecap="round" strokeLinejoin="round" /><path d="M6.1 17.2c-1.1-.75-1.85-1.78-2.25-3.1M17.9 17.2c1.1-.75 1.85-1.78 2.25-3.1" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" opacity="0.58" /></svg>;
     case "user":
       return <svg {...common}><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm7 8a7 7 0 0 0-14 0" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" /></svg>;
     case "users":
@@ -515,7 +515,6 @@ function ProjectCarousel({ locale }: { locale: Locale }) {
               <ProjectIcon iconKey={project.projectIconKey} accent={project.brandAccent} />
               <h3>{project.title}</h3>
               <p>{project.description[locale]}</p>
-              <span>{project.category[locale]}</span>
             </div>
 
             <div className={styles.stackVisual}>
@@ -586,26 +585,21 @@ function ProjectCarousel({ locale }: { locale: Locale }) {
   );
 }
 
+function FirstFold({ locale }: { locale: Locale }) {
+  return (
+    <div id="home" className={styles.firstFold}>
+      <HeroSection locale={locale} />
+      <CapabilityBar locale={locale} />
+      <ScrollIndicator locale={locale} />
+    </div>
+  );
+}
+
 function HeroSection({ locale }: { locale: Locale }) {
-  const ref = useRef<HTMLElement>(null);
   const t = copy[locale];
 
-  function onMove(event: MouseEvent<HTMLElement>) {
-    const element = ref.current;
-    if (!element) return;
-    const rect = element.getBoundingClientRect();
-    element.style.setProperty("--hx", `${((event.clientX - rect.left) / rect.width) * 100}%`);
-    element.style.setProperty("--hy", `${((event.clientY - rect.top) / rect.height) * 100}%`);
-  }
-
   return (
-    <section id="home" className={styles.heroSection} ref={ref} onMouseMove={onMove} style={{ "--hx": "50%", "--hy": "0%" } as StyleVars}>
-      <div className={styles.gridBg} aria-hidden="true" />
-      <div className={styles.radialBg} aria-hidden="true" />
-      <div className={styles.spotlight} aria-hidden="true" />
-      <div className={styles.orbA} aria-hidden="true" />
-      <div className={styles.orbB} aria-hidden="true" />
-
+    <section className={styles.heroSection}>
       <div className={styles.container}>
         <div className={styles.heroGrid}>
           <div className={styles.heroCopy} data-reveal data-visible="true">
@@ -628,7 +622,7 @@ function HeroSection({ locale }: { locale: Locale }) {
             <p>{t.subtitle}</p>
 
             <div className={styles.heroActions}>
-              <Link href="/projetos" className={styles.primaryButton}>
+              <Link href="/projetos" className={styles.primaryButton} data-cursor="primary" data-cursor-label={locale === "pt" ? "Projetos" : "Projects"}>
                 <span>{t.primary}</span>
                 <Icon name="arrow" />
               </Link>
@@ -805,7 +799,7 @@ function ProcessSection({ locale }: { locale: Locale }) {
       <SectionHeading eyebrow={t.processEyebrow} title={t.processTitle} />
       <ol className={styles.processGrid}>
         {steps.map(([title, desc, icon], index) => (
-          <Reveal as="li" delay={index * 90} key={title}>
+          <Reveal as="li" delay={index * 90} key={`process-step-${index}-${icon}`}>
             <div>
               <span>
                 <Icon name={icon as IconName} />
@@ -861,13 +855,22 @@ function ArcadeSection({ locale }: { locale: Locale }) {
               <span>{t.arcadeLive}</span>
             </div>
             <ul>
-              {rows.map(([name, score], index) => (
-                <li key={name} data-you={name === t.arcadeYou ? "true" : "false"} style={{ "--score": `${((score as number) / max) * 100}%` } as StyleVars}>
-                  <span>{index + 1}</span>
-                  <strong>{name}</strong>
-                  <small>{String(score).replace(/\B(?=(\d{3})+(?!\d))/g, ".")}</small>
-                </li>
-              ))}
+              {rows.map(([name, score], index) => {
+                const isCurrentUser = name === t.arcadeYou;
+
+                return (
+                  <li
+                    className={isCurrentUser ? styles.leaderboardUserRow : undefined}
+                    data-you={isCurrentUser ? "true" : "false"}
+                    key={name}
+                    style={{ "--score": `${((score as number) / max) * 100}%` } as StyleVars}
+                  >
+                    <span>{index + 1}</span>
+                    <strong>{name}</strong>
+                    <small>{String(score).replace(/\B(?=(\d{3})+(?!\d))/g, ".")}</small>
+                  </li>
+                );
+              })}
             </ul>
           </aside>
         </div>
@@ -930,14 +933,27 @@ function FinalCta({ locale }: { locale: Locale }) {
 }
 
 export function VisualFinalCandidate() {
+  const ref = useRef<HTMLElement>(null);
   const { locale } = usePortfolioUi();
   useReveal();
 
+  function onMove(event: MouseEvent<HTMLElement>) {
+    const element = ref.current;
+    if (!element) return;
+    const rect = element.getBoundingClientRect();
+    element.style.setProperty("--hx", `${((event.clientX - rect.left) / rect.width) * 100}%`);
+    element.style.setProperty("--hy", `${((event.clientY - rect.top) / rect.height) * 100}%`);
+  }
+
   return (
-    <main className={styles.home} data-lovable-home>
-      <HeroSection locale={locale} />
-      <CapabilityBar locale={locale} />
-      <ScrollIndicator locale={locale} />
+    <main className={styles.home} data-lovable-home onMouseMove={onMove} ref={ref} style={{ "--hx": "50%", "--hy": "0%" } as StyleVars}>
+      <div className={styles.gridBg} aria-hidden="true" />
+      <div className={styles.radialBg} aria-hidden="true" />
+      <div className={styles.spotlight} aria-hidden="true" />
+      <div className={styles.orbA} aria-hidden="true" />
+      <div className={styles.orbB} aria-hidden="true" />
+
+      <FirstFold locale={locale} />
       <FeaturedProjects locale={locale} />
       <StackSection locale={locale} />
       <ProcessSection locale={locale} />
