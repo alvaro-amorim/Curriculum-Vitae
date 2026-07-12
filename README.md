@@ -14,10 +14,16 @@ commit: b72236baf3e90c0dbdb1fdb04d115e6ba8c624e6
 message: style: update custom cursor assets
 ```
 
-A execução das próximas fases ocorre na branch:
+A Fase 1 está sendo executada na branch:
 
 ```txt
 refactor/foundation-stabilization
+```
+
+Pull Request de acompanhamento:
+
+```txt
+#1 refactor: stabilize portfolio foundation
 ```
 
 ## Estado confirmado no código
@@ -84,7 +90,7 @@ https://curriculum-vitae-babr.vercel.app
 
 ## Conteúdo e projetos
 
-A página `/projetos` usa `src/content/projects.ts` como catálogo principal. A Home ainda possui uma segunda estrutura própria de projetos e stacks, que será removida durante a estabilização para existir uma única fonte de verdade.
+A página `/projetos` usa `src/content/projects.ts` como catálogo principal. A Home ainda possui uma estrutura própria de apresentação dos projetos dentro do componente visual. A consolidação será feita junto com a divisão segura desse componente para evitar alteração visual acidental.
 
 Os projetos usam placeholders honestos enquanto imagens reais não estiverem disponíveis:
 
@@ -100,7 +106,6 @@ Screenshots, métricas ou resultados não devem ser inventados.
 
 ```txt
 /                         Home
-/visual-final-candidate   Rota experimental duplicada, candidata a remoção
 /projetos                 Índice de projetos
 /projetos/[slug]          Case study de cada projeto
 /lab                      Developer Arcade
@@ -118,6 +123,8 @@ Screenshots, métricas ou resultados não devem ser inventados.
 /sitemap.xml              Sitemap
 /robots.txt               Robots
 ```
+
+A rota experimental duplicada `/visual-final-candidate` foi removida durante a estabilização. O componente visual continua sendo a implementação oficial da Home.
 
 ## Stack
 
@@ -154,7 +161,6 @@ Use `.env.example` como referência. Valores reais devem existir somente em `.en
 ```env
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
 SUPABASE_SERVICE_ROLE_KEY=
 ARCADE_SESSION_SECRET=
 ```
@@ -163,6 +169,7 @@ Regras:
 
 - `SUPABASE_SERVICE_ROLE_KEY` e `ARCADE_SESSION_SECRET` são server-only;
 - nenhum segredo pode usar prefixo `NEXT_PUBLIC_`;
+- o projeto não usa uma anon key no navegador para acessar o Arcade;
 - valores reais não devem ser versionados;
 - credenciais futuras de provedores de IA só poderão ser introduzidas em uma fase específica de segurança.
 
@@ -204,24 +211,34 @@ O ref anterior `fkiuecyohcyjwygedncx` está abandonado e deve aparecer somente e
 
 Consulte `docs/arcade-db-foundation.md` para o desenho operacional do Arcade.
 
-## Ordem de execução aprovada
+## Fase 1 — estabilização da fundação
 
-### Fase 1 — estabilização da fundação
-
-Branch atual:
+Branch:
 
 ```txt
 refactor/foundation-stabilization
 ```
 
-Escopo:
+### Concluído na branch
 
-1. alinhar documentação, validações e textos antigos;
-2. consolidar projetos em uma única fonte de dados;
-3. separar copy, ícones e seções excessivamente grandes;
-4. remover código morto somente após confirmar todas as referências;
-5. corrigir inconsistências PT/EN;
-6. preparar a base para testes.
+- documentação alinhada ao ranking atual e ao roadmap aprovado;
+- textos antigos de backend local/mock substituídos pelo estado persistente real;
+- validação de fundação atualizada para as rotas e textos atuais;
+- rota visual experimental duplicada removida;
+- tratamento especial da rota removida eliminado do AppShell;
+- filtros de projetos normalizados para variações como `React 19`, `Tailwind` e `NestJS`;
+- logger local de score obsoleto removido;
+- variável pública de anon key não utilizada removida do exemplo de ambiente.
+
+### Próximos itens da fase
+
+1. consolidar projetos e apresentação da Home em uma fonte de dados coerente;
+2. separar copy, ícones e seções do componente visual principal;
+3. confirmar referências antes de remover APIs ou componentes antigos;
+4. corrigir demais inconsistências PT/EN;
+5. preparar a base para testes automatizados.
+
+## Próximas fases aprovadas
 
 ### Fase 2 — estabilidade do Arcade e banco
 
