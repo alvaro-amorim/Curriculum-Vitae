@@ -136,7 +136,7 @@ export function StackLogo({ name, className = styles.stackLogo }: { name: string
 }
 
 export function ProjectIcon({ iconKey, accent, size = "lg" }: { iconKey: ProjectIconKey; accent: Accent; size?: "sm" | "lg" }) {
-  const iconName: Record<ProjectIconKey, IconName> = {
+  const iconName: Record<ProjectIconKey, HomeIconName> = {
     margem: "bar-chart",
     comerc: "bot",
     gdash: "activity",
@@ -154,4 +154,3 @@ export function ProjectIcon({ iconKey, accent, size = "lg" }: { iconKey: Project
     </div>
   );
 }
-
