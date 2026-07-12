@@ -4,9 +4,11 @@ const routeChecks = [
   "/",
   "/curriculo",
   "/projetos",
+  "/projetos/margem-app",
   "/lab",
   "/api/health",
   "/resume/ALVARO.MARTINS-PT.pdf",
+  "/resume/ALVARO.MARTINS-PT.docx",
 ];
 
 const badEncodingPatterns = [
@@ -14,8 +16,24 @@ const badEncodingPatterns = [
   { label: "latin1 mojibake", pattern: /[ÃÂ][\u0080-\u00bf]/ },
   { label: "replacement character mojibake", pattern: /ï¿½/ },
 ];
-const requiredPtTokens = ["lang=\"pt-BR\"", "Currículo", "Projetos", "Baixar PDF", "Tema", "Álvaro.dev Portfolio OS"];
-const forbiddenPtNavTokens = ["Resume", "Download PDF", "Theme"];
+
+const requiredPtTokens = [
+  'lang="pt-BR"',
+  "Álvaro.dev Portfolio OS",
+  "Currículo",
+  "Projetos",
+  "Ver projetos",
+  "Como eu trabalho.",
+  "Um lab com ranking real.",
+];
+
+const forbiddenPtTokens = [
+  "Resume",
+  "View projects",
+  "Theme",
+  "How I work.",
+  "A lab with real ranking.",
+];
 
 async function requestRoute(path) {
   const url = `${baseUrl}${path}`;
@@ -57,9 +75,9 @@ async function validateHomeHtml() {
     }
   }
 
-  for (const token of forbiddenPtNavTokens) {
+  for (const token of forbiddenPtTokens) {
     if (html.includes(token)) {
-      throw new Error(`Rendered PT HTML contains unexpected EN navigation token: ${token}`);
+      throw new Error(`Rendered PT HTML contains unexpected EN token: ${token}`);
     }
   }
 }
