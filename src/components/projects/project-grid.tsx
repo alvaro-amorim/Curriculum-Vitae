@@ -19,6 +19,34 @@ type ProjectFilter = {
   matches: (project: Project) => boolean;
 };
 
+function normalizeTerm(value: string) {
+  return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim()
+    .toLowerCase();
+}
+
+function hasCategory(project: Project, categories: string[]) {
+  const normalizedCategories = project.category.map(normalizeTerm);
+  return categories.some((category) => normalizedCategories.includes(normalizeTerm(category)));
+}
+
+function hasTechnology(project: Project, technologies: string[]) {
+  const normalizedStack = project.stack.map(normalizeTerm);
+
+  return technologies.some((technology) => {
+    const normalizedTechnology = normalizeTerm(technology);
+
+    return normalizedStack.some(
+      (stackItem) =>
+        stackItem === normalizedTechnology ||
+        stackItem.startsWith(`${normalizedTechnology} `) ||
+        stackItem.includes(normalizedTechnology),
+    );
+  });
+}
+
 export function ProjectGrid({ projects }: ProjectGridProps) {
   const { locale, t } = usePortfolioUi();
   const [activeCategory, setActiveCategory] = useState<string>("all");
@@ -28,44 +56,46 @@ export function ProjectGrid({ projects }: ProjectGridProps) {
       {
         id: "saas",
         label: "SaaS",
-        matches: (project) => project.category.includes("SaaS"),
+        matches: (project) => hasCategory(project, ["SaaS"]),
       },
       {
         id: "ai",
         label: locale === "pt" ? "IA" : "AI",
-        matches: (project) => project.category.includes("IA") || project.stack.some((tech) => tech.includes("OpenAI") || tech.includes("IA")),
+        matches: (project) =>
+          hasCategory(project, ["IA", "AI"]) ||
+          hasTechnology(project, ["OpenAI", "Gemini", "APIs de IA", "AI APIs"]),
       },
       {
         id: "data",
         label: locale === "pt" ? "Dados" : "Data",
         matches: (project) =>
-          project.category.some((category) => ["Dados", "Métricas"].includes(category)) ||
-          project.stack.some((tech) => ["PostgreSQL", "Supabase", "Prisma"].includes(tech)),
+          hasCategory(project, ["Dados", "Métricas", "Data", "Metrics"]) ||
+          hasTechnology(project, ["PostgreSQL", "Supabase", "Prisma", "MongoDB", "RabbitMQ"]),
       },
       {
         id: "frontend",
         label: "Front-end",
-        matches: (project) => project.stack.some((tech) => ["React", "Next.js", "Tailwind CSS", "Vite", "Bootstrap"].includes(tech)),
+        matches: (project) =>
+          hasTechnology(project, ["React", "Next.js", "Tailwind", "Vite", "Bootstrap"]),
       },
       {
         id: "fullstack",
         label: "Full Stack",
-        matches: (project) => project.stack.some((tech) => ["Supabase", "PostgreSQL", "Prisma", "Node.js", "Edge Functions"].includes(tech)),
+        matches: (project) =>
+          hasTechnology(project, ["Supabase", "PostgreSQL", "Prisma", "Node.js", "NestJS", "MongoDB", "Edge Functions"]),
       },
     ],
     [locale],
   );
 
-  const visibleProjects = useMemo(
-    () => {
-      if (activeCategory === "all") {
-        return projects;
-      }
+  const visibleProjects = useMemo(() => {
+    if (activeCategory === "all") {
+      return projects;
+    }
 
-      return projects.filter((project) => filters.find((filter) => filter.id === activeCategory)?.matches(project));
-    },
-    [activeCategory, filters, projects],
-  );
+    const activeFilter = filters.find((filter) => filter.id === activeCategory);
+    return activeFilter ? projects.filter(activeFilter.matches) : projects;
+  }, [activeCategory, filters, projects]);
 
   return (
     <div>
