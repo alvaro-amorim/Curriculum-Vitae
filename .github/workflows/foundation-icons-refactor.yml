@@ -1,0 +1,95 @@
+name: One-off Home icon extraction
+
+on:
+  push:
+    branches:
+      - refactor/foundation-stabilization
+
+permissions:
+  contents: write
+
+jobs:
+  extract-home-icons:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout stabilization branch
+        uses: actions/checkout@v4
+        with:
+          ref: refactor/foundation-stabilization
+          fetch-depth: 0
+
+      - name: Extract Home visual primitives
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          source_path = Path("src/components/visual-final-candidate/visual-final-candidate.tsx")
+          icons_path = Path("src/components/visual-final-candidate/home-icons.tsx")
+          text = source_path.read_text(encoding="utf-8")
+
+          if icons_path.exists():
+              print("Home icons already extracted.")
+          else:
+              icon_type_start = text.find("type IconName =")
+              if icon_type_start == -1:
+                  raise RuntimeError("Could not locate IconName type")
+              icon_type_end = text.find(";\n", icon_type_start)
+              if icon_type_end == -1:
+                  raise RuntimeError("Could not locate IconName type end")
+              icon_type_end += 2
+              icon_type = text[icon_type_start:icon_type_end]
+              icon_type = icon_type.replace("type IconName =", "export type HomeIconName =", 1)
+
+              block_start = text.find("const accentGradient:")
+              block_end = text.find("function useReveal()", block_start)
+              if block_start == -1 or block_end == -1:
+                  raise RuntimeError("Could not locate Home icon block")
+              icon_block = text[block_start:block_end]
+              icon_block = icon_block.replace("function Icon(", "export function Icon(", 1)
+              icon_block = icon_block.replace("name: IconName", "name: HomeIconName", 1)
+              icon_block = icon_block.replace("function StackLogo(", "export function StackLogo(", 1)
+              icon_block = icon_block.replace("function ProjectIcon(", "export function ProjectIcon(", 1)
+
+              icons_content = (
+                  'import type { CSSProperties, ReactNode, SVGProps } from "react";\n\n'
+                  'import type { HomeProjectAccent as Accent, HomeProjectIconKey as ProjectIconKey } from "@/content/home-projects";\n\n'
+                  'import styles from "./visual-final-candidate.module.css";\n\n'
+                  'type StyleVars = CSSProperties & Record<`--${string}`, string | number>;\n'
+                  + icon_type
+                  + "\n"
+                  + icon_block
+              )
+              icons_path.write_text(icons_content, encoding="utf-8")
+
+              text = text[:icon_type_start] + text[icon_type_end:]
+              block_start = text.find("const accentGradient:")
+              block_end = text.find("function useReveal()", block_start)
+              text = text[:block_start] + text[block_end:]
+              text = text.replace(
+                  'import type { CSSProperties, ElementType, MouseEvent, ReactNode, SVGProps, TouchEvent } from "react";',
+                  'import type { CSSProperties, ElementType, MouseEvent, ReactNode, TouchEvent } from "react";',
+                  1,
+              )
+              marker = 'import styles from "./visual-final-candidate.module.css";\n'
+              imports = (
+                  'import { Icon, ProjectIcon, StackLogo } from "./home-icons";\n'
+                  'import type { HomeIconName as IconName } from "./home-icons";\n'
+              )
+              text = text.replace(marker, imports + marker, 1)
+              source_path.write_text(text, encoding="utf-8")
+          PY
+
+      - name: Commit extracted Home icons
+        run: |
+          if git diff --quiet; then
+            echo "No extraction changes required."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/components/visual-final-candidate/visual-final-candidate.tsx src/components/visual-final-candidate/home-icons.tsx
+          git commit -m "refactor: extract Home visual primitives"
+          git push origin HEAD:refactor/foundation-stabilization
