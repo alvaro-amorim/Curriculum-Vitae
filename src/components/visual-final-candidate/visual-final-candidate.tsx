@@ -7,13 +7,14 @@ import Link from "next/link";
 
 import { usePortfolioUi } from "@/components/layout/app-shell";
 import { profile } from "@/content/profile";
+import { homeCopy as copy } from "@/content/home-copy";
+import { homeProjects as projects } from "@/content/home-projects";
+import type { HomeProjectAccent as Accent, HomeProjectIconKey as ProjectIconKey } from "@/content/home-projects";
 import type { Locale } from "@/types/portfolio";
 
 import styles from "./visual-final-candidate.module.css";
 
 type StyleVars = CSSProperties & Record<`--${string}`, string | number>;
-type ProjectIconKey = "margem" | "comerc" | "gdash" | "sdr" | "arcade" | "portfolio-os";
-type Accent = "blue-purple" | "amber-pink" | "emerald-teal" | "rose-indigo" | "violet-cyan" | "sky-purple";
 type IconName =
   | "activity"
   | "arrow"
@@ -38,264 +39,9 @@ type IconName =
   | "users"
   | "zap";
 
-type HomeProject = {
-  title: string;
-  category: Record<Locale, string>;
-  description: Record<Locale, string>;
-  projectIconKey: ProjectIconKey;
-  brandLabel: string;
-  brandAccent: Accent;
-  carouselStack: string[];
-  caseHref: string;
-  liveHref?: string;
-};
 
 const AUTO_MS = 7000;
 const FIRST_AUTO_MS = 30000;
-
-const copy = {
-  pt: {
-    available: "DISPONÍVEL PARA NOVOS DESAFIOS",
-    titleA: "Transformo ideias",
-    titleBPrefix: "em",
-    titleBHighlight: "produtos digitais",
-    subtitle:
-      "Desenvolvo aplicações completas, automações e experiências com IA que geram valor real para negócios e pessoas.",
-    primary: "Ver projetos",
-    secondary: "Currículo",
-    lab: "Lab interativo com ranking real",
-    featured: "PROJETO EM DESTAQUE",
-    previous: "Anterior",
-    next: "Próximo",
-    viewCase: "Ver estudo",
-    openSite: "Abrir site",
-    scroll: "ROLE PARA EXPLORAR",
-    capability: [
-      ["Aplicações completas", "Produtos web escaláveis", "code"],
-      ["Automações", "Fluxos que economizam tempo", "zap"],
-      ["IA aplicada", "Inteligência com propósito", "brain"],
-      ["Dados e métricas", "Decisões mais claras", "line-chart"],
-      ["Segurança", "Proteção desde a base", "shield"],
-    ],
-    capabilityMobile: [
-      ["Aplicações", "Produtos web", "code"],
-      ["Automações", "Fluxos inteligentes", "zap"],
-      ["IA", "Uso prático", "brain"],
-      ["Dados", "Decisões claras", "line-chart"],
-      ["Segurança", "Base protegida", "shield"],
-    ],
-    projectsEyebrow: "PROJETOS EM DESTAQUE",
-    projectsTitle: "Produtos construídos do conceito à entrega.",
-    projectsIntro: "Projetos reais com contexto, stack e decisão técnica.",
-    stackEyebrow: "STACK APLICADA",
-    stackTitle: "Ferramentas que trabalham juntas.",
-    stackIntro: "Tecnologias escolhidas com critério para resolver problemas reais.",
-    processEyebrow: "PROCESSO DE CONSTRUÇÃO",
-    processTitle: "Como eu trabalho.",
-    arcadeEyebrow: "DEVELOPER ARCADE",
-    arcadeTitle: "Um lab com ranking real.",
-    arcadeIntro: "Desafios técnicos curtos, jogáveis no navegador, com leaderboard ao vivo.",
-    aboutEyebrow: "SOBRE",
-    aboutTitle: "Construo produtos que funcionam de verdade.",
-    aboutText: "Sou desenvolvedor Full Stack focado em produtos web, automações, dados e IA aplicada.",
-    finalTitle: "Vamos construir algo útil?",
-    finalSubtitle: "Se você tem uma ideia, um produto em andamento ou um problema que merece uma solução bem feita — vamos conversar.",
-    allProjects: "Ver todos",
-    openLab: "Entrar no Arcade",
-    contact: "Entrar em contato",
-    stackDetails: {
-      next: "App Router, RSC e edge",
-      react: "Interfaces componíveis",
-      typescript: "Type-safety ponta a ponta",
-      tailwind: "Design system rápido",
-      supabase: "Auth, dados e realtime",
-      prisma: "ORM type-safe",
-      postgres: "Banco relacional sólido",
-      node: "APIs e serviços",
-      python: "Automação e IA",
-      go: "Serviços de performance",
-      rabbitmq: "Eventos e mensageria",
-      vite: "DX moderno",
-    },
-    processSteps: [
-      ["Descoberta", "Entender o problema, o público e o contexto antes de qualquer linha de código.", "compass"],
-      ["Arquitetura", "Decisões técnicas claras: dados, fluxos, integrações e trade-offs.", "layers"],
-      ["Interface", "Design system funcional, foco em clareza e velocidade de iteração.", "palette"],
-      ["Entrega", "Deploy contínuo, observabilidade e iteração baseada em uso real.", "rocket"],
-    ],
-    arcadeLeaderboard: "Top jogadores",
-    arcadeLive: "ao vivo",
-    arcadeYou: "você?",
-    aboutStats: [
-      ["6+", "Produtos em produção"],
-      ["5+", "Anos construindo software"],
-      ["100%", "Foco em entrega real"],
-    ],
-  },
-  en: {
-    available: "AVAILABLE FOR NEW CHALLENGES",
-    titleA: "I turn ideas",
-    titleBPrefix: "into",
-    titleBHighlight: "digital products",
-    subtitle:
-      "I build full-stack applications, automations and AI experiences that create real value for businesses and people.",
-    primary: "View projects",
-    secondary: "Resume",
-    lab: "Interactive Lab with real ranking",
-    featured: "FEATURED PROJECT",
-    previous: "Previous",
-    next: "Next",
-    viewCase: "View case",
-    openSite: "Open site",
-    scroll: "SCROLL TO EXPLORE",
-    capability: [
-      ["Full applications", "Scalable web products", "code"],
-      ["Automations", "Flows that save time", "zap"],
-      ["Applied AI", "Purposeful intelligence", "brain"],
-      ["Data and metrics", "Clearer decisions", "line-chart"],
-      ["Security", "Protection from the base", "shield"],
-    ],
-    capabilityMobile: [
-      ["Apps", "Web products", "code"],
-      ["Automation", "Smart flows", "zap"],
-      ["AI", "Practical use", "brain"],
-      ["Data", "Clear decisions", "line-chart"],
-      ["Security", "Protected base", "shield"],
-    ],
-    projectsEyebrow: "FEATURED PROJECTS",
-    projectsTitle: "Products built from concept to delivery.",
-    projectsIntro: "Real projects with context, stack and technical decisions.",
-    stackEyebrow: "APPLIED STACK",
-    stackTitle: "Tools that work together.",
-    stackIntro: "Technologies selected carefully to solve real problems.",
-    processEyebrow: "BUILD PROCESS",
-    processTitle: "How I work.",
-    arcadeEyebrow: "DEVELOPER ARCADE",
-    arcadeTitle: "A lab with real ranking.",
-    arcadeIntro: "Short technical challenges, playable in the browser, with a live leaderboard.",
-    aboutEyebrow: "ABOUT",
-    aboutTitle: "I build products that actually work.",
-    aboutText: "I am a Full Stack developer focused on web products, automations, data and applied AI.",
-    finalTitle: "Let’s build something useful?",
-    finalSubtitle: "If you have an idea, a product in progress or a problem that deserves a well-built solution — let’s talk.",
-    allProjects: "View all",
-    openLab: "Enter Arcade",
-    contact: "Contact",
-    stackDetails: {
-      next: "App Router, RSC and edge",
-      react: "Composable interfaces",
-      typescript: "End-to-end type safety",
-      tailwind: "Fast design system",
-      supabase: "Auth, data and realtime",
-      prisma: "Type-safe ORM",
-      postgres: "Solid relational database",
-      node: "APIs and services",
-      python: "Automation and AI",
-      go: "Performance services",
-      rabbitmq: "Events and messaging",
-      vite: "Modern DX",
-    },
-    processSteps: [
-      ["Discovery", "Understanding the problem, audience and context before any line of code.", "compass"],
-      ["Architecture", "Clear technical decisions: data, flows, integrations and trade-offs.", "layers"],
-      ["Interface", "Functional design system focused on clarity and iteration speed.", "palette"],
-      ["Delivery", "Continuous deployment, observability and iteration based on real usage.", "rocket"],
-    ],
-    arcadeLeaderboard: "Top players",
-    arcadeLive: "live",
-    arcadeYou: "you?",
-    aboutStats: [
-      ["6+", "Products in production"],
-      ["5+", "Years building software"],
-      ["100%", "Focus on real delivery"],
-    ],
-  },
-} as const;
-
-const projects: HomeProject[] = [
-  {
-    title: "Margem App",
-    category: { pt: "SaaS • FoodTech", en: "SaaS • FoodTech" },
-    description: {
-      pt: "App de precificação inteligente de receitas com foco em clareza e ação.",
-      en: "Smart recipe pricing app focused on clarity and action.",
-    },
-    projectIconKey: "margem",
-    brandLabel: "MG",
-    brandAccent: "blue-purple",
-    carouselStack: ["Next.js", "React", "TypeScript", "Supabase", "Prisma", "Tailwind CSS"],
-    caseHref: "/projetos/margem-app",
-    liveHref: "https://margemapp.com.br/",
-  },
-  {
-    title: "Comerc IAs",
-    category: { pt: "AI • Vendas", en: "AI • Sales" },
-    description: {
-      pt: "Plataforma de agentes de IA para automatizar prospecção e qualificação comercial.",
-      en: "AI agent platform to automate prospecting and commercial qualification.",
-    },
-    projectIconKey: "comerc",
-    brandLabel: "CI",
-    brandAccent: "violet-cyan",
-    carouselStack: ["Next.js", "TypeScript", "Python", "PostgreSQL", "RabbitMQ"],
-    caseHref: "/projetos/comerc-ias",
-    liveHref: "https://www.comercias.com.br/",
-  },
-  {
-    title: "GDASH Dashboard",
-    category: { pt: "Analytics • B2B", en: "Analytics • B2B" },
-    description: {
-      pt: "Dashboard analítico em tempo real com métricas operacionais para times de operação.",
-      en: "Real-time analytics dashboard with operational metrics for teams.",
-    },
-    projectIconKey: "gdash",
-    brandLabel: "GD",
-    brandAccent: "emerald-teal",
-    carouselStack: ["React", "TypeScript", "Node.js", "PostgreSQL", "Tailwind CSS"],
-    caseHref: "/projetos/gdash-dashboard",
-    liveHref: "https://gdash.comercias.com.br",
-  },
-  {
-    title: "SDR Expert CRM",
-    category: { pt: "CRM • Sales", en: "CRM • Sales" },
-    description: {
-      pt: "CRM focado em SDRs com cadências automáticas e visão clara de pipeline.",
-      en: "CRM for SDR teams with automated cadences and a clear pipeline view.",
-    },
-    projectIconKey: "sdr",
-    brandLabel: "SDR",
-    brandAccent: "rose-indigo",
-    carouselStack: ["Next.js", "TypeScript", "Prisma", "PostgreSQL", "Tailwind CSS"],
-    caseHref: "/projetos/sdr-expert-crm",
-    liveHref: "https://sdr-crm-ai-wine.vercel.app/",
-  },
-  {
-    title: "Developer Arcade",
-    category: { pt: "Lab • Gamificação", en: "Lab • Gamification" },
-    description: {
-      pt: "Lab interativo de desafios técnicos com ranking real e telemetria de jogadores.",
-      en: "Interactive technical challenge lab with real ranking and player telemetry.",
-    },
-    projectIconKey: "arcade",
-    brandLabel: "LAB",
-    brandAccent: "amber-pink",
-    carouselStack: ["React", "TypeScript", "Vite", "Supabase", "Tailwind CSS"],
-    caseHref: "/lab",
-  },
-  {
-    title: "Portfolio OS",
-    category: { pt: "Portfolio • Design", en: "Portfolio • Design" },
-    description: {
-      pt: "Sistema modular para portfólio de dev, com temas e seções configuráveis.",
-      en: "Modular portfolio system with configurable themes and sections.",
-    },
-    projectIconKey: "portfolio-os",
-    brandLabel: "OS",
-    brandAccent: "sky-purple",
-    carouselStack: ["Next.js", "React", "TypeScript", "Tailwind CSS"],
-    caseHref: "/",
-  },
-];
 
 const accentGradient: Record<Accent, string> = {
   "blue-purple": "linear-gradient(135deg, #2563eb, #7c3aed)",
@@ -534,9 +280,9 @@ function ProjectCarousel({ locale }: { locale: Locale }) {
                     <span>{tech}</span>
                   </div>
                 ))}
-                {project.carouselStack.length > 4 ? (
+                {project.carouselStack.length > 6 ? (
                   <div className={styles.stackMore} aria-hidden="true">
-                    +{project.carouselStack.length - 4}
+                    +{project.carouselStack.length - 6}
                   </div>
                 ) : null}
               </div>
