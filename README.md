@@ -1,86 +1,92 @@
 # Álvaro.dev Portfolio OS
 
-Portfólio profissional de Álvaro Amorim construído em Next.js. O produto reúne uma home interativa, currículo tradicional, projetos em formato de case study e um Developer Arcade com quatro jogos.
+Portfólio profissional de Álvaro Amorim construído em Next.js. O produto reúne uma home interativa, currículo, projetos em formato de case study e um Developer Arcade com quatro jogos e ranking persistente.
 
-Este README descreve o estado versionado do repositório. Histórico de decisões não deve ser confundido com funcionalidade concluída nem com validação de produção.
+Este README descreve o estado versionado do repositório. Histórico de decisões, planos e infraestrutura externa não devem ser confundidos com funcionalidade concluída ou validação reproduzível.
 
-## Estado confirmado do repositório
+## Snapshot da auditoria
 
-Baseline documental desta Fase 0:
+Baseline usado na auditoria estrutural iniciada em 12/07/2026:
 
 ```txt
 branch: main
-commit: 7ab0ae09d5bd25746f245460fed87ca9ff3247e8
-message: feat: tune runtime runner progression
+commit: b72236baf3e90c0dbdb1fdb04d115e6ba8c624e6
+message: style: update custom cursor assets
 ```
 
-Confirmado no código:
+A execução das próximas fases ocorre na branch:
 
-- A aplicação usa Next.js App Router, React e TypeScript.
-- `/`, `/projetos`, `/projetos/[slug]`, `/lab` e `/curriculo` são as rotas públicas principais.
-- `/visual-final-candidate` permanece acessível como rota experimental de comparação.
+```txt
+refactor/foundation-stabilization
+```
+
+## Estado confirmado no código
+
+- Next.js App Router, React, TypeScript, Tailwind CSS, Zod e Supabase.
+- Rotas públicas principais: `/`, `/projetos`, `/projetos/[slug]`, `/lab` e `/curriculo`.
+- A Home possui carrossel de projetos, stack, processo, chamada para o Arcade, seção Sobre e CTA final.
 - O Developer Arcade possui Runtime Runner, Bug Maze, Code Snake e Stack Tetris.
-- `/api/score` valida o Score Contract v2 e persiste submissions em `arcade_scores` por um Route Handler server-side.
-- `/api/player-session` mantém uma sessão anônima em cookie `httpOnly` e persiste o hash HMAC em `arcade_sessions`.
-- `/api/leaderboard` e `/api/leaderboard/me` retornam DTOs sanitizados sem expor `session_hash` ou ids internos.
-- O navegador consome apenas Route Handlers; a service role do Supabase permanece no servidor.
-- `/api/contact` e `/api/analytics` ainda operam em modo local/mock.
-- `/api/health` informa o ambiente por `VERCEL_ENV` ou `NODE_ENV` e inclui o commit abreviado quando a Vercel o disponibiliza.
-- PDFs e DOCX estão preservados em `public/resume/`.
+- `/api/score` valida o Score Contract v2 e persiste scores em `arcade_scores` por Route Handler server-side.
+- `/api/player-session` mantém uma sessão anônima em cookie `httpOnly` e persiste somente um hash HMAC em `arcade_sessions`.
+- `/api/leaderboard` usa RPC para retornar o melhor score de cada jogador por jogo e período.
+- `/api/leaderboard/me` retorna a posição do jogador atual sem expor `session_hash` ou ids internos.
+- O navegador não acessa diretamente as tabelas do Arcade; a service role permanece no servidor.
+- RLS está habilitado e os privilégios diretos de `anon` e `authenticated` foram revogados para as tabelas do Arcade.
+- `/api/contact` e `/api/analytics` ainda operam em modo local/mock e não persistem dados em produção.
+- `/api/health` informa ambiente e commit quando a plataforma disponibiliza essas informações.
+- PDFs e DOCX estão em `public/resume/`.
 - A imagem de perfil está em `public/profile/`.
 - Metadata, sitemap, robots e página de not-found estão implementados.
-- Não existe script formal de testes automatizados no `package.json`.
+- Existe um cursor customizado para dispositivos com mouse preciso.
+- Ainda não existe script formal de testes automatizados no `package.json`.
 
-## Limites do estado atual
+## Limites atuais
 
-O código versionado não comprova, por si só, o estado da infraestrutura externa.
-
-Precisam de validação externa antes de qualquer declaração de produção:
+O código versionado não comprova sozinho o estado da infraestrutura externa. Antes de declarar produção estável, devem ser verificados:
 
 - commit efetivamente publicado pela Vercel;
-- variáveis de ambiente configuradas na Vercel;
-- conectividade das APIs persistentes com o Supabase remoto;
-- migrations e grants efetivamente aplicados no projeto remoto;
-- funcionamento público de sessão, score e leaderboard;
-- comportamento em dispositivo móvel real;
-- acessibilidade, performance e experiência visual em produção;
-- links e downloads públicos.
+- variáveis de ambiente configuradas no deploy;
+- conectividade com o Supabase remoto;
+- migrations, grants e RLS efetivamente aplicados;
+- sessão, score e leaderboard em produção;
+- downloads e links públicos;
+- comportamento em dispositivos móveis reais;
+- acessibilidade, performance e experiência visual.
 
-A URL prevista para metadata e validação é:
+URL pública atual:
 
 ```txt
 https://curriculum-vitae-babr.vercel.app
 ```
 
-Ela não deve ser tratada como validada apenas por estar documentada aqui.
-
 ## Developer Arcade e ranking
 
-O Arcade possui persistência server-side, mas o ranking atual ainda não representa um ranking final por jogador único.
+### Implementado
 
-Estado implementado:
-
-- cada submission válida gera uma linha em `arcade_scores`;
-- o leaderboard ordena linhas por score e data;
-- a posição pessoal usa o melhor score da sessão, mas calcula a posição contando linhas de score;
-- o alias também é copiado para a linha do score no momento da submission;
+- cada submission válida gera uma linha histórica em `arcade_scores`;
+- o leaderboard público seleciona o melhor score de cada sessão anônima;
+- a posição pessoal também é calculada sobre jogadores únicos;
 - os períodos suportados são `all`, `month` e `week`;
-- o contrato aceita apenas `runtime`, `bug-maze`, `code-snake` e `stack-tetris`.
+- os jogos válidos são `runtime`, `bug-maze`, `code-snake` e `stack-tetris`;
+- aliases são validados e não podem conter e-mail, URL, telefone ou caracteres de controle;
+- respostas públicas não expõem hash da sessão, cookie bruto, ids internos ou chaves.
 
-Limitações conhecidas para uma fase posterior:
+### Pendente
 
-- um jogador pode ocupar mais de uma posição com submissions diferentes;
-- a posição pessoal não é calculada sobre jogadores únicos;
-- alterar o alias da sessão não reescreve aliases copiados para scores anteriores;
-- o cliente ainda pode fabricar payloads estruturalmente válidos;
-- não há rate limit funcional, assinatura de rodada, nonce ou proteção contra replay;
-- balanceamento e integridade do ranking ainda exigem dados e QA adicionais.
+- criação de sessão totalmente atômica para requisições simultâneas;
+- endpoint agregado de bootstrap do Arcade;
+- redução de escritas desnecessárias em `last_seen_at`;
+- rate limit funcional;
+- identificador de partida, nonce e proteção contra replay;
+- validação mais forte contra scores fabricados pelo cliente;
+- retenção ou limpeza planejada do histórico;
+- testes automatizados dos contratos e fluxos críticos.
 
-Essas limitações são roadmap. Esta Fase 0 não altera API, banco, contrato ou ranking.
+## Conteúdo e projetos
 
-## Projetos e mídia
+A página `/projetos` usa `src/content/projects.ts` como catálogo principal. A Home ainda possui uma segunda estrutura própria de projetos e stacks, que será removida durante a estabilização para existir uma única fonte de verdade.
 
-Existem seis projetos em `src/content/projects.ts`. Todos ainda usam:
+Os projetos usam placeholders honestos enquanto imagens reais não estiverem disponíveis:
 
 ```txt
 thumbnail: null
@@ -88,46 +94,26 @@ heroImage: null
 gallery: []
 ```
 
-A interface mantém placeholders honestos enquanto imagens reais não existem. Screenshots, métricas ou resultados não devem ser inventados.
-
-## O que ainda é roadmap
-
-Os itens abaixo não estão implementados:
-
-- área administrativa e rota `/admin`;
-- autenticação administrativa com Supabase Auth;
-- Supabase Storage para imagens;
-- GitHub App e sincronização de repositórios;
-- seleção de projetos importados do GitHub;
-- pipeline de análise de repositório por IA;
-- geração de copy PT/EN por IA;
-- editor, preview, publicação e histórico de versões;
-- cadastro de credenciais de provedores de IA;
-- criptografia de credenciais com `AI_CREDENTIALS_MASTER_KEY` e AES-256-GCM;
-- rate limit e antiabuso robusto;
-- analytics persistente;
-- imagens reais dos projetos;
-- ranking final por melhor score de jogador único.
+Screenshots, métricas ou resultados não devem ser inventados.
 
 ## Rotas
 
 ```txt
 /                         Home
-/?boot=1                  Home com sequência de boot forçada
-/visual-final-candidate   Comparação visual experimental preservada
+/visual-final-candidate   Rota experimental duplicada, candidata a remoção
 /projetos                 Índice de projetos
 /projetos/[slug]          Case study de cada projeto
 /lab                      Developer Arcade
 /curriculo                Currículo e downloads
 
-/api/health               Health check atual
+/api/health               Health check
 /api/contact              Contato local/mock
 /api/analytics            Analytics local/mock
 /api/terminal             Comandos permitidos do terminal
 /api/player-session       Sessão anônima do Arcade
 /api/score                Persistência de Score Contract v2
-/api/leaderboard          Top submissions sanitizadas por jogo
-/api/leaderboard/me       Posição da sessão atual
+/api/leaderboard          Ranking por melhor score de jogador único
+/api/leaderboard/me       Posição do jogador atual
 
 /sitemap.xml              Sitemap
 /robots.txt               Robots
@@ -178,7 +164,7 @@ Regras:
 - `SUPABASE_SERVICE_ROLE_KEY` e `ARCADE_SESSION_SECRET` são server-only;
 - nenhum segredo pode usar prefixo `NEXT_PUBLIC_`;
 - valores reais não devem ser versionados;
-- a futura `AI_CREDENTIALS_MASTER_KEY` ainda não existe e só deve ser introduzida na fase aprovada de credenciais criptografadas.
+- credenciais futuras de provedores de IA só poderão ser introduzidas em uma fase específica de segurança.
 
 ## Scripts
 
@@ -193,82 +179,133 @@ npm run start
 
 `npm run validate:foundation` depende de uma aplicação em execução. A variável opcional `PORTFOLIO_BASE_URL` permite apontar o script para outra origem.
 
-Não há script `test` formal no estado atual.
+Ainda não há script `test` formal.
 
 ## Banco versionado
 
-Migrations presentes no repositório:
+Migrations principais do Arcade:
 
 ```txt
 supabase/migrations/20260608154425_arcade_scores_foundation.sql
 supabase/migrations/20260608222025_arcade_service_role_grants.sql
 supabase/migrations/20260609192453_arcade_public_role_grants_hygiene.sql
+supabase/migrations/20260622113650_arcade_unique_player_leaderboard.sql
 ```
 
-Elas definem `arcade_sessions`, `arcade_scores`, RLS e grants server-side.
-
-Supabase operacional atual, validado em 22/06/2026:
+Supabase operacional documentado:
 
 ```txt
 project: curriculo
-account/organization: alvaroamorimom.jf@gmail.com
 project ref: dgtwxzznoszrhflblddn
 project URL: https://dgtwxzznoszrhflblddn.supabase.co
 ```
 
-As três migrations acima foram aplicadas ao projeto novo e as APIs persistentes `/api/player-session`, `/api/leaderboard` e `/api/leaderboard/me` voltaram a responder em produção. O ref anterior `fkiuecyohcyjwygedncx` está abandonado/não localizado e permanece apenas em registros históricos. Ranking por jogador único, rate limit e antiabuso continuam pendentes.
+O ref anterior `fkiuecyohcyjwygedncx` está abandonado e deve aparecer somente em registros históricos.
 
 Consulte `docs/arcade-db-foundation.md` para o desenho operacional do Arcade.
 
-## Critérios para produção
+## Ordem de execução aprovada
 
-Antes de considerar o site pronto:
+### Fase 1 — estabilização da fundação
 
-1. Confirmar o commit publicado e as variáveis da Vercel.
-2. Validar migrations, grants e RLS no Supabase remoto.
-3. Validar sessão, score e leaderboard por HTTP em produção.
-4. Corrigir o health check para representar o ambiente real.
-5. Corrigir o ranking para melhor score por jogador único.
-6. Implementar rate limit e controles antiabuso proporcionais.
-7. Criar testes automatizados para contratos e fluxos críticos.
-8. Adicionar imagens reais e revisar todos os projetos.
-9. Validar mobile, PT/EN, temas, teclado e reduced motion.
-10. Executar lint, typecheck, build, testes e smoke tests públicos.
-11. Revisar headers de segurança, SEO, acessibilidade e performance.
-12. Obter aprovação visual humana antes do fechamento final.
+Branch atual:
 
-## Roadmap futuro
+```txt
+refactor/foundation-stabilization
+```
 
-O roadmap é sequencial e não representa funcionalidade concluída:
+Escopo:
 
-1. **Fase 0 — documentação e estrutura:** alinhar documentação ao código e separar estado, histórico e futuro.
-2. **Fase 1 — estabilização:** validar produção, corrigir Arcade persistente, ranking, antiabuso, testes e observabilidade.
-3. **Fase 2 — Admin protegido:** autenticação, autorização, RLS, audit log e estados de publicação.
-4. **Fase 3 — GitHub:** GitHub App, seleção de repositórios e leitura com menor privilégio.
-5. **Fase 4 — IA:** provedores configuráveis, credenciais criptografadas, análise seletiva e rascunhos com evidências.
-6. **Fase 5 — editor e imagens:** edição PT/EN, Storage, mídia, preview, versionamento e rollback.
-7. **Fase 6 — integração pública:** conteúdo publicado, cache, revalidação e migração dos projetos atuais.
-8. **Fase 7 — acabamento premium:** mídia real, storytelling, motion, mobile, acessibilidade, performance e QA final.
+1. alinhar documentação, validações e textos antigos;
+2. consolidar projetos em uma única fonte de dados;
+3. separar copy, ícones e seções excessivamente grandes;
+4. remover código morto somente após confirmar todas as referências;
+5. corrigir inconsistências PT/EN;
+6. preparar a base para testes.
+
+### Fase 2 — estabilidade do Arcade e banco
+
+```txt
+fix/arcade-data-stability
+```
+
+- sessão atômica;
+- bootstrap agregado;
+- menos requisições e escritas;
+- tratamento parcial de falhas;
+- rate limit inicial;
+- proteção contra replay;
+- tipos do Supabase gerados do schema.
+
+### Fase 3 — repaginação do Lab
+
+```txt
+feat/lab-redesign
+```
+
+Refatoração e redesign mantendo inicialmente as regras dos quatro jogos.
+
+### Fase 4 — Sobre e contatos
+
+```txt
+feat/about-contact
+```
+
+Ampliação da seção Sobre com apresentação, trajetória, disponibilidade, contatos e links diretos.
+
+### Fase 5 — testes e CI
+
+```txt
+test/project-foundation
+```
+
+Pipeline mínimo pretendido:
+
+```txt
+lint
+typecheck
+test
+build
+```
+
+### Fase 6 — Admin MVP
+
+```txt
+feat/admin-mvp
+```
+
+A área administrativa será iniciada somente depois que conteúdo, contratos e dados estiverem centralizados e testáveis.
+
+## Roadmap posterior
+
+- autenticação e autorização administrativa;
+- audit log e estados de publicação;
+- Supabase Storage para imagens;
+- editor e preview PT/EN;
+- histórico de versões e rollback;
+- GitHub App com leitura de menor privilégio;
+- análise seletiva de repositórios por IA;
+- credenciais criptografadas para provedores externos;
+- analytics persistente;
+- imagens reais dos projetos;
+- SEO indexável por idioma.
 
 ## Coordenação de trabalho
 
-O projeto pode ser mantido por ChatGPT conectado ao GitHub e Codex local, mas nunca com edições simultâneas.
-
-- ChatGPT: auditoria remota, documentação, planejamento e mudanças pequenas previamente autorizadas.
-- Codex: implementação estrutural, segurança, APIs, banco, migrations, Auth, Storage, GitHub, IA e validações locais.
-- Proprietário: coordenação do agente ativo, aprovação de escopo, decisões de produto, configuração externa e validação visual.
+O projeto pode ser mantido pelo ChatGPT conectado ao GitHub e pelo Codex local, mas não deve receber edições simultâneas.
 
 Antes de editar:
 
-1. confirmar que não há outro agente trabalhando;
-2. atualizar e verificar a branch principal;
-3. inspecionar o worktree;
-4. limitar o commit ao escopo autorizado;
-5. não reverter mudanças alheias.
+1. trabalhar a partir do estado mais recente da branch principal;
+2. confirmar que não há outro agente alterando os mesmos arquivos;
+3. limitar cada commit a um escopo específico;
+4. preservar mudanças existentes;
+5. nunca usar force push como fluxo normal;
+6. executar `lint`, `typecheck` e `build` para mudanças de código quando houver ambiente local ou CI disponível.
 
 ## Histórico e documentação
 
-- `constituicao_alvaro_dev_portfolio_os.md` preserva decisões, fases antigas, direção visual e critérios históricos.
+- `constituicao_alvaro_dev_portfolio_os.md` preserva decisões, fases antigas e critérios históricos.
 - `docs/arcade-db-foundation.md` documenta a fundação de dados do Arcade.
 - O histórico real de implementação deve ser consultado em `git log`.
 
