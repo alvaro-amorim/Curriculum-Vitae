@@ -1,4 +1,4 @@
-import { ProjectContentSchema } from "@/lib/projects/project-schema";
+import { ProjectContentSchema } from "./project-schema.ts";
 import type { Project } from "@/types/portfolio";
 
 export type PublicProjectOverlayRow = {
