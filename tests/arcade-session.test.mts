@@ -5,7 +5,7 @@ import {
   ARCADE_LAST_SEEN_REFRESH_INTERVAL_MS,
   shouldRefreshArcadeSessionLastSeen,
   validatePlayerAlias,
-} from "../src/lib/arcade/session.ts";
+} from "../src/lib/arcade/session-rules.ts";
 
 test("keeps recent Arcade sessions read-only", () => {
   const now = Date.parse("2026-07-13T12:00:00.000Z");
