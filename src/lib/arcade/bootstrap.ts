@@ -1,8 +1,9 @@
 import { getLeaderboardEntries, getPlayerLeaderboard } from "@/lib/arcade/leaderboard";
+import { ARCADE_GAME_IDS } from "@/lib/arcade/constants";
 import type { ArcadeBootstrapLeaderboards, ArcadeBootstrapResponse } from "@/types/arcade-bootstrap";
 import type { LabGameId } from "@/types/portfolio";
 
-export const ARCADE_BOOTSTRAP_GAME_IDS = ["runtime", "bug-maze", "code-snake", "stack-tetris"] as const satisfies readonly LabGameId[];
+export const ARCADE_BOOTSTRAP_GAME_IDS = ARCADE_GAME_IDS;
 
 type ArcadeBootstrapData = Omit<ArcadeBootstrapResponse, "session">;
 
