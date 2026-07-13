@@ -3,7 +3,6 @@ import { MongoClient, ServerApiVersion, type Db } from "mongodb";
 import { readMongoConfig } from "@/lib/mongodb/config";
 
 declare global {
-  // eslint-disable-next-line no-var -- Required for a typed global cache shared across Next.js server reloads.
   var __portfolioMongoClientPromise: Promise<MongoClient> | undefined;
 }
 
@@ -24,8 +23,7 @@ function createMongoClientPromise() {
     serverSelectionTimeoutMS: 8_000,
   });
 
-  let connection: Promise<MongoClient>;
-  connection = client.connect().catch(async (error) => {
+  const connection = client.connect().catch(async (error) => {
     if (globalThis.__portfolioMongoClientPromise === connection) {
       globalThis.__portfolioMongoClientPromise = undefined;
     }
