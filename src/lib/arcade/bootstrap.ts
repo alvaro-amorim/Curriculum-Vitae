@@ -1,18 +1,10 @@
 import { getLeaderboardEntries, getPlayerLeaderboard } from "@/lib/arcade/leaderboard";
-import type { LabGameId, LeaderboardEntry, PlayerLeaderboardResponse } from "@/types/portfolio";
+import type { ArcadeBootstrapLeaderboards, ArcadeBootstrapResponse } from "@/types/arcade-bootstrap";
+import type { LabGameId } from "@/types/portfolio";
 
 export const ARCADE_BOOTSTRAP_GAME_IDS = ["runtime", "bug-maze", "code-snake", "stack-tetris"] as const satisfies readonly LabGameId[];
 
-export type ArcadeBootstrapLeaderboards = Record<(typeof ARCADE_BOOTSTRAP_GAME_IDS)[number], LeaderboardEntry[]>;
-
-export type ArcadeBootstrapResult = {
-  leaderboards: ArcadeBootstrapLeaderboards;
-  partialFailures: {
-    leaderboards: LabGameId[];
-    playerLeaderboard: boolean;
-  };
-  playerLeaderboard: PlayerLeaderboardResponse | null;
-};
+type ArcadeBootstrapData = Omit<ArcadeBootstrapResponse, "session">;
 
 const emptyLeaderboards: ArcadeBootstrapLeaderboards = {
   runtime: [],
@@ -29,7 +21,7 @@ export async function getArcadeBootstrapData({
   alias: string | null;
   leaderboardLimit?: number;
   sessionHash: string;
-}): Promise<ArcadeBootstrapResult> {
+}): Promise<ArcadeBootstrapData> {
   const leaderboardResults = await Promise.allSettled(
     ARCADE_BOOTSTRAP_GAME_IDS.map(async (game) => [
       game,
