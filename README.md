@@ -14,13 +14,13 @@ commit: b72236baf3e90c0dbdb1fdb04d115e6ba8c624e6
 message: style: update custom cursor assets
 ```
 
-A Fase 1 está sendo executada na branch:
+A Fase 1 foi executada na branch:
 
 ```txt
 refactor/foundation-stabilization
 ```
 
-Pull Request de acompanhamento:
+Pull Request:
 
 ```txt
 #1 refactor: stabilize portfolio foundation
@@ -44,7 +44,7 @@ Pull Request de acompanhamento:
 - A imagem de perfil está em `public/profile/`.
 - Metadata, sitemap, robots e página de not-found estão implementados.
 - Existe um cursor customizado para dispositivos com mouse preciso.
-- Ainda não existe script formal de testes automatizados no `package.json`.
+- CI executa lint, typecheck, testes e build em Pull Requests para `main`.
 
 ## Limites atuais
 
@@ -86,11 +86,19 @@ https://curriculum-vitae-babr.vercel.app
 - identificador de partida, nonce e proteção contra replay;
 - validação mais forte contra scores fabricados pelo cliente;
 - retenção ou limpeza planejada do histórico;
-- testes automatizados dos contratos e fluxos críticos.
+- testes automatizados dos contratos e fluxos críticos do Arcade.
 
 ## Conteúdo e projetos
 
-A página `/projetos` usa `src/content/projects.ts` como catálogo principal. A Home ainda possui uma estrutura própria de apresentação dos projetos dentro do componente visual. A consolidação será feita junto com a divisão segura desse componente para evitar alteração visual acidental.
+A página `/projetos` usa `src/content/projects.ts` como catálogo principal. A Home usa estruturas extraídas para copy, ícones e apresentação dos projetos em:
+
+```txt
+src/content/home-copy.ts
+src/content/home-projects.ts
+src/components/visual-final-candidate/home-icons.tsx
+```
+
+A consolidação completa entre apresentação da Home e catálogo de cases permanece como refinamento futuro, porque exige revisão visual e de conteúdo projeto a projeto.
 
 Os projetos usam placeholders honestos enquanto imagens reais não estiverem disponíveis:
 
@@ -124,7 +132,7 @@ Screenshots, métricas ou resultados não devem ser inventados.
 /robots.txt               Robots
 ```
 
-A rota experimental duplicada `/visual-final-candidate` foi removida durante a estabilização. O componente visual continua sendo a implementação oficial da Home.
+A rota experimental duplicada `/visual-final-candidate` foi removida. O componente visual continua sendo a implementação oficial da Home.
 
 ## Stack
 
@@ -169,7 +177,7 @@ Regras:
 
 - `SUPABASE_SERVICE_ROLE_KEY` e `ARCADE_SESSION_SECRET` são server-only;
 - nenhum segredo pode usar prefixo `NEXT_PUBLIC_`;
-- o projeto não usa uma anon key no navegador para acessar o Arcade;
+- o projeto não usa anon key no navegador para acessar o Arcade;
 - valores reais não devem ser versionados;
 - credenciais futuras de provedores de IA só poderão ser introduzidas em uma fase específica de segurança.
 
@@ -179,14 +187,13 @@ Regras:
 npm run dev
 npm run lint
 npm run typecheck
+npm test
 npm run build
 npm run validate:foundation
 npm run start
 ```
 
 `npm run validate:foundation` depende de uma aplicação em execução. A variável opcional `PORTFOLIO_BASE_URL` permite apontar o script para outra origem.
-
-Ainda não há script `test` formal.
 
 ## Banco versionado
 
@@ -213,30 +220,22 @@ Consulte `docs/arcade-db-foundation.md` para o desenho operacional do Arcade.
 
 ## Fase 1 — estabilização da fundação
 
-Branch:
+Concluída com:
+
+- documentação e textos alinhados ao estado real;
+- validação de fundação atualizada;
+- rota experimental duplicada removida;
+- filtros de projetos normalizados e testados;
+- CI adicionada;
+- código morto confirmado removido;
+- Home parcialmente modularizada sem alterar o visual aprovado;
+- exemplo de ambiente simplificado e sem chave pública não utilizada.
+
+Relatório detalhado:
 
 ```txt
-refactor/foundation-stabilization
+docs/foundation-stabilization-audit.md
 ```
-
-### Concluído na branch
-
-- documentação alinhada ao ranking atual e ao roadmap aprovado;
-- textos antigos de backend local/mock substituídos pelo estado persistente real;
-- validação de fundação atualizada para as rotas e textos atuais;
-- rota visual experimental duplicada removida;
-- tratamento especial da rota removida eliminado do AppShell;
-- filtros de projetos normalizados para variações como `React 19`, `Tailwind` e `NestJS`;
-- logger local de score obsoleto removido;
-- variável pública de anon key não utilizada removida do exemplo de ambiente.
-
-### Próximos itens da fase
-
-1. consolidar projetos e apresentação da Home em uma fonte de dados coerente;
-2. separar copy, ícones e seções do componente visual principal;
-3. confirmar referências antes de remover APIs ou componentes antigos;
-4. corrigir demais inconsistências PT/EN;
-5. preparar a base para testes automatizados.
 
 ## Próximas fases aprovadas
 
@@ -270,20 +269,13 @@ feat/about-contact
 
 Ampliação da seção Sobre com apresentação, trajetória, disponibilidade, contatos e links diretos.
 
-### Fase 5 — testes e CI
+### Fase 5 — testes e CI ampliados
 
 ```txt
 test/project-foundation
 ```
 
-Pipeline mínimo pretendido:
-
-```txt
-lint
-typecheck
-test
-build
-```
+A CI inicial já existe. Essa fase amplia cobertura para Arcade, APIs e autorização futura.
 
 ### Fase 6 — Admin MVP
 
@@ -318,12 +310,13 @@ Antes de editar:
 3. limitar cada commit a um escopo específico;
 4. preservar mudanças existentes;
 5. nunca usar force push como fluxo normal;
-6. executar `lint`, `typecheck` e `build` para mudanças de código quando houver ambiente local ou CI disponível.
+6. executar `lint`, `typecheck`, `test` e `build` para mudanças de código.
 
 ## Histórico e documentação
 
 - `constituicao_alvaro_dev_portfolio_os.md` preserva decisões, fases antigas e critérios históricos.
 - `docs/arcade-db-foundation.md` documenta a fundação de dados do Arcade.
+- `docs/foundation-stabilization-audit.md` documenta a auditoria e as decisões da Fase 1.
 - O histórico real de implementação deve ser consultado em `git log`.
 
 Em caso de divergência, a ordem de confiança é:
