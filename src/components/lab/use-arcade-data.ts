@@ -77,7 +77,11 @@ export function useArcadeData() {
   }, []);
 
   useEffect(() => {
-    void loadBootstrap();
+    const timer = window.setTimeout(() => {
+      void loadBootstrap();
+    }, 0);
+
+    return () => window.clearTimeout(timer);
   }, [loadBootstrap]);
 
   const refreshGame = useCallback(async (game: LabGameId): Promise<LeaderboardEntry[]> => {
