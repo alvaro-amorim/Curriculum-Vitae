@@ -20,18 +20,17 @@ jobs:
           ref: refactor/foundation-stabilization
           fetch-depth: 0
 
-      - name: Extract project carousel
+      - name: Extract project carousel and retire workflow
         run: |
           python - <<'PY'
           from pathlib import Path
 
           source_path = Path("src/components/visual-final-candidate/visual-final-candidate.tsx")
           carousel_path = Path("src/components/visual-final-candidate/project-carousel.tsx")
+          workflow_path = Path(".github/workflows/foundation-carousel-refactor.yml")
           text = source_path.read_text(encoding="utf-8")
 
-          if carousel_path.exists():
-              print("Project carousel already extracted.")
-          else:
+          if not carousel_path.exists():
               start = text.find("function ProjectCarousel(")
               end = text.find("function FirstFold(", start)
               if start == -1 or end == -1:
@@ -42,24 +41,24 @@ jobs:
 
               carousel_content = f'''"use client";
 
-import type {{ CSSProperties, TouchEvent }} from "react";
-import {{ useEffect, useRef, useState }} from "react";
-import Link from "next/link";
+          import type {{ CSSProperties, TouchEvent }} from "react";
+          import {{ useEffect, useRef, useState }} from "react";
+          import Link from "next/link";
 
-import {{ homeCopy as copy }} from "@/content/home-copy";
-import {{ homeProjects as projects }} from "@/content/home-projects";
-import type {{ Locale }} from "@/types/portfolio";
+          import {{ homeCopy as copy }} from "@/content/home-copy";
+          import {{ homeProjects as projects }} from "@/content/home-projects";
+          import type {{ Locale }} from "@/types/portfolio";
 
-import {{ ProjectIcon, StackLogo }} from "./home-icons";
-import styles from "./visual-final-candidate.module.css";
+          import {{ ProjectIcon, StackLogo }} from "./home-icons";
+          import styles from "./visual-final-candidate.module.css";
 
-type StyleVars = CSSProperties & Record<`--${{string}}`, string | number>;
+          type StyleVars = CSSProperties & Record<`--${{string}}`, string | number>;
 
-const AUTO_MS = 7000;
-const FIRST_AUTO_MS = 30000;
+          const AUTO_MS = 7000;
+          const FIRST_AUTO_MS = 30000;
 
-{block}
-'''
+          {block}
+          '''
               carousel_path.write_text(carousel_content, encoding="utf-8")
 
               text = text[:start] + text[end:]
@@ -72,17 +71,14 @@ const FIRST_AUTO_MS = 30000;
               marker = 'import type { HomeIconName as IconName } from "./home-icons";\n'
               text = text.replace(marker, marker + 'import { ProjectCarousel } from "./project-carousel";\n', 1)
               source_path.write_text(text, encoding="utf-8")
+
+          workflow_path.unlink()
           PY
 
-      - name: Commit extracted carousel
+      - name: Commit extraction
         run: |
-          if git diff --quiet; then
-            echo "No extraction changes required."
-            exit 0
-          fi
-
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add src/components/visual-final-candidate/visual-final-candidate.tsx src/components/visual-final-candidate/project-carousel.tsx
+          git add src/components/visual-final-candidate/visual-final-candidate.tsx src/components/visual-final-candidate/project-carousel.tsx .github/workflows/foundation-carousel-refactor.yml
           git commit -m "refactor: extract Home project carousel"
           git push origin HEAD:refactor/foundation-stabilization
