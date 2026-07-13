@@ -20,7 +20,6 @@ type LastResult = {
   game: LabGameId;
   rank: number | null;
   score: number;
-  status: "synced" | "failed";
 };
 
 const RuntimeRunner = dynamic(
@@ -138,6 +137,7 @@ export function DeveloperLabV2() {
 
   useEffect(() => {
     if (session) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- Bootstrap data initializes the editable alias field after hydration.
       setAliasInput(session.alias ?? "");
     }
   }, [session]);
@@ -196,7 +196,6 @@ export function DeveloperLabV2() {
           game: payload.game,
           rank: ranking?.rank ?? null,
           score: result.score,
-          status: "synced",
         });
         setRankingGame(payload.game);
       })
@@ -209,7 +208,6 @@ export function DeveloperLabV2() {
           game: payload.game,
           rank: null,
           score: payload.score,
-          status: "failed",
         });
       });
   }, [submitScore]);
