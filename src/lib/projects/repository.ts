@@ -200,18 +200,40 @@ export async function archiveAdminProject(slug: string, updatedBy: string) {
 
 export async function importStaticProjects(updatedBy: string) {
   const supabase = getSupabaseServerClient();
+  const staticSlugs = staticProjects.map((project) => project.slug);
+  const { data: existingRows, error: existingError } = await supabase
+    .from("portfolio_projects")
+    .select("slug")
+    .in("slug", staticSlugs);
+
+  if (existingError) {
+    throw new Error("Nao foi possivel verificar o catalogo administrativo atual.");
+  }
+
+  const existingSlugs = new Set((existingRows ?? []).map((row) => row.slug));
   const now = new Date().toISOString();
-  const payload = staticProjects.map((project, index) => ({
-    content: project as unknown as Record<string, unknown>,
-    publication_status: "published" as const,
-    published_at: now,
-    slug: project.slug,
-    sort_order: index * 10,
-    updated_by: updatedBy,
-  }));
+  const payload = staticProjects.flatMap((project, index) => {
+    if (existingSlugs.has(project.slug)) {
+      return [];
+    }
+
+    return [{
+      content: project as unknown as Record<string, unknown>,
+      publication_status: "published" as const,
+      published_at: now,
+      slug: project.slug,
+      sort_order: index * 10,
+      updated_by: updatedBy,
+    }];
+  });
+
+  if (payload.length === 0) {
+    return 0;
+  }
+
   const { error } = await supabase
     .from("portfolio_projects")
-    .upsert(payload, { onConflict: "slug" });
+    .insert(payload);
 
   if (error) {
     throw new Error("Nao foi possivel importar o catalogo versionado.");
