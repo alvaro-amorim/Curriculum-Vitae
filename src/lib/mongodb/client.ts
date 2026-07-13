@@ -3,6 +3,7 @@ import { MongoClient, ServerApiVersion, type Db } from "mongodb";
 import { readMongoConfig } from "@/lib/mongodb/config";
 
 declare global {
+  // eslint-disable-next-line no-var -- Required for a typed global cache shared across Next.js server reloads.
   var __portfolioMongoClientPromise: Promise<MongoClient> | undefined;
 }
 
