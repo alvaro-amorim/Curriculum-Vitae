@@ -27,7 +27,7 @@ function cookieOptions(maxAge: number) {
   };
 }
 
-function setSessionCookies(response: NextResponse, session: Session) {
+function setResponseSessionCookies(response: NextResponse, session: Session) {
   response.cookies.set(
     ADMIN_ACCESS_COOKIE,
     session.access_token,
@@ -38,6 +38,11 @@ function setSessionCookies(response: NextResponse, session: Session) {
     session.refresh_token,
     cookieOptions(ADMIN_REFRESH_MAX_AGE_SECONDS),
   );
+}
+
+function setRequestSessionCookies(request: NextRequest, session: Session) {
+  request.cookies.set(ADMIN_ACCESS_COOKIE, session.access_token);
+  request.cookies.set(ADMIN_REFRESH_COOKIE, session.refresh_token);
 }
 
 function clearSessionCookies(response: NextResponse) {
@@ -100,10 +105,11 @@ export async function proxy(request: NextRequest) {
       });
 
       if (!error && data.session && isAllowedUser(data.user)) {
+        setRequestSessionCookies(request, data.session);
         const response = isLogin
           ? NextResponse.redirect(new URL("/admin", request.url))
           : NextResponse.next();
-        setSessionCookies(response, data.session);
+        setResponseSessionCookies(response, data.session);
         return response;
       }
     }
