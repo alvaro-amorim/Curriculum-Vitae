@@ -1,13 +1,14 @@
 import type { MetadataRoute } from "next";
 
-import { projects } from "@/content/projects";
 import { SITE_URL } from "@/lib/constants";
+import { getPublicProjects } from "@/lib/projects/repository";
 
 function absoluteUrl(path: string) {
   return new URL(path, `${SITE_URL}/`).toString();
 }
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const projects = await getPublicProjects();
   const staticRoutes: MetadataRoute.Sitemap = [
     {
       url: absoluteUrl("/"),
@@ -21,7 +22,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     {
       url: absoluteUrl("/projetos"),
-      changeFrequency: "monthly",
+      changeFrequency: "weekly",
       priority: 0.9,
     },
   ];
