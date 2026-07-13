@@ -1,7 +1,15 @@
 import { NextResponse } from "next/server";
 import { ZodError } from "zod";
 
-export type ApiErrorCode = "VALIDATION_ERROR" | "METHOD_NOT_ALLOWED" | "UNKNOWN_COMMAND" | "INTERNAL_ERROR" | "RATE_LIMITED";
+export type ApiErrorCode =
+  | "VALIDATION_ERROR"
+  | "METHOD_NOT_ALLOWED"
+  | "UNKNOWN_COMMAND"
+  | "INTERNAL_ERROR"
+  | "RATE_LIMITED"
+  | "UNAUTHORIZED"
+  | "FORBIDDEN"
+  | "NOT_FOUND";
 
 type ApiErrorBody = {
   ok: false;
@@ -64,10 +72,10 @@ export function methodNotAllowed(allowedMethods: string[]) {
   );
 }
 
-export async function readJsonPayload(request: Request) {
+export async function readJsonPayload(request: Request, maxBytes = MAX_JSON_BYTES) {
   const contentLength = Number(request.headers.get("content-length") ?? "0");
 
-  if (contentLength > MAX_JSON_BYTES) {
+  if (contentLength > maxBytes) {
     return {
       ok: false as const,
       response: apiError("VALIDATION_ERROR", "Payload muito grande.", 413),
@@ -78,7 +86,7 @@ export async function readJsonPayload(request: Request) {
     const rawBody = await request.text();
     const bodySize = new TextEncoder().encode(rawBody).byteLength;
 
-    if (bodySize > MAX_JSON_BYTES) {
+    if (bodySize > maxBytes) {
       return {
         ok: false as const,
         response: apiError("VALIDATION_ERROR", "Payload muito grande.", 413),
