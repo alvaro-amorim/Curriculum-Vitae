@@ -1,6 +1,6 @@
 import { projects } from "@/content/projects";
 import { ARCADE_GAME_IDS } from "@/lib/arcade/constants";
-import { getSupabaseServerClient } from "@/lib/supabase/server";
+import { getMongoCollections } from "@/lib/mongodb/collections";
 
 export type AdminDashboardMetrics = {
   arcadeGames: number;
@@ -12,19 +12,18 @@ export type AdminDashboardMetrics = {
 
 export async function getAdminDashboardMetrics(): Promise<AdminDashboardMetrics> {
   try {
-    const supabase = getSupabaseServerClient();
-    const [scoresResult, sessionsResult] = await Promise.all([
-      supabase.from("arcade_scores").select("id", { count: "exact", head: true }),
-      supabase.from("arcade_sessions").select("id", { count: "exact", head: true }),
+    const { arcadeScores, arcadeSessions } = await getMongoCollections();
+    const [scores, sessions] = await Promise.all([
+      arcadeScores.countDocuments(),
+      arcadeSessions.countDocuments(),
     ]);
-    const databaseAvailable = !scoresResult.error && !sessionsResult.error;
 
     return {
       arcadeGames: ARCADE_GAME_IDS.length,
-      databaseAvailable,
+      databaseAvailable: true,
       projects: projects.length,
-      scores: scoresResult.error ? null : scoresResult.count,
-      sessions: sessionsResult.error ? null : sessionsResult.count,
+      scores,
+      sessions,
     };
   } catch {
     return {
