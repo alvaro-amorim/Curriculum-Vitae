@@ -19,6 +19,7 @@ export const profile = {
   phone: "+55 32 99114-7944",
   email: "alvaroaom.jf@gmail.com",
   github: "https://github.com/alvaro-amorim",
+  linkedin: "https://www.linkedin.com/in/alvaro-amorim-fullstack",
   portfolio: "https://curriculum-vitae-babr.vercel.app/",
   avatar: "/profile/imagem.png",
   highlights: ["React", "Next.js", "TypeScript", "Node.js", "Python", "Supabase"],
