@@ -22,7 +22,7 @@ export function isAdminApiPath(pathname: string) {
   return pathname.startsWith("/api/admin/");
 }
 
-export function isSafeAdminNextPath(value: string | null | undefined) {
+export function isSafeAdminNextPath(value: string | null | undefined): value is string {
   if (!value) {
     return false;
   }
