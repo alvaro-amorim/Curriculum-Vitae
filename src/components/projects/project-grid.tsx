@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 
 import { usePortfolioUi } from "@/components/layout/app-shell";
 import { cn } from "@/lib/cn";
+import { filterProjects, getProjectFilters } from "@/lib/project-filters";
 import type { Project } from "@/types/portfolio";
 
 import { formatProjectCategory, ProjectCard } from "./project-card";
@@ -13,57 +14,13 @@ type ProjectGridProps = {
   projects: Project[];
 };
 
-type ProjectFilter = {
-  id: string;
-  label: string;
-  matches: (project: Project) => boolean;
-};
-
 export function ProjectGrid({ projects }: ProjectGridProps) {
   const { locale, t } = usePortfolioUi();
   const [activeCategory, setActiveCategory] = useState<string>("all");
 
-  const filters = useMemo<ProjectFilter[]>(
-    () => [
-      {
-        id: "saas",
-        label: "SaaS",
-        matches: (project) => project.category.includes("SaaS"),
-      },
-      {
-        id: "ai",
-        label: locale === "pt" ? "IA" : "AI",
-        matches: (project) => project.category.includes("IA") || project.stack.some((tech) => tech.includes("OpenAI") || tech.includes("IA")),
-      },
-      {
-        id: "data",
-        label: locale === "pt" ? "Dados" : "Data",
-        matches: (project) =>
-          project.category.some((category) => ["Dados", "Métricas"].includes(category)) ||
-          project.stack.some((tech) => ["PostgreSQL", "Supabase", "Prisma"].includes(tech)),
-      },
-      {
-        id: "frontend",
-        label: "Front-end",
-        matches: (project) => project.stack.some((tech) => ["React", "Next.js", "Tailwind CSS", "Vite", "Bootstrap"].includes(tech)),
-      },
-      {
-        id: "fullstack",
-        label: "Full Stack",
-        matches: (project) => project.stack.some((tech) => ["Supabase", "PostgreSQL", "Prisma", "Node.js", "Edge Functions"].includes(tech)),
-      },
-    ],
-    [locale],
-  );
-
+  const filters = useMemo(() => getProjectFilters(locale), [locale]);
   const visibleProjects = useMemo(
-    () => {
-      if (activeCategory === "all") {
-        return projects;
-      }
-
-      return projects.filter((project) => filters.find((filter) => filter.id === activeCategory)?.matches(project));
-    },
+    () => filterProjects(projects, activeCategory, filters),
     [activeCategory, filters, projects],
   );
 

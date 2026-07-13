@@ -64,7 +64,6 @@ function formatRouteLabel(pathname: string, locale: Locale) {
     "/projetos": { pt: "projetos", en: "projects" },
     "/lab": { pt: "lab", en: "lab" },
     "/curriculo": { pt: "currículo", en: "resume" },
-    "/visual-final-candidate": { pt: "visual", en: "visual" },
   };
   const route = routeNames[pathname] ?? (pathname.startsWith("/projetos/") ? { pt: "case", en: "case" } : { pt: "rota", en: "route" });
 
@@ -222,7 +221,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         <CustomCursor />
         <div
           className={styles.pageFrame}
-          data-route={pathname === "/" || pathname === "/visual-final-candidate" ? "immersive" : "standard"}
+          data-route={pathname === "/" ? "immersive" : "standard"}
           key={pathname}
         >
           {children}

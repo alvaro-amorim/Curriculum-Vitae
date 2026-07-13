@@ -1,4 +1,4 @@
-import type { AnalyticsPayload, ContactPayload, ScorePayload } from "@/lib/validators";
+import type { AnalyticsPayload, ContactPayload } from "@/lib/validators";
 
 function metadataKeys(metadata: Record<string, unknown> | undefined) {
   return metadata ? Object.keys(metadata).slice(0, 20) : [];
@@ -26,18 +26,6 @@ export function logLocalAnalytics(payload: AnalyticsPayload) {
 
   console.info("[api/analytics] local event received", {
     event: payload.event,
-    metadataKeys: metadataKeys(payload.metadata),
-  });
-}
-
-export function logLocalScore(payload: ScorePayload) {
-  if (process.env.NODE_ENV === "production") {
-    return;
-  }
-
-  console.info("[api/score] local score received", {
-    game: payload.game,
-    score: payload.score,
     metadataKeys: metadataKeys(payload.metadata),
   });
 }
