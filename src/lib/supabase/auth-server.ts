@@ -1,6 +1,4 @@
-import { createClient, type SupabaseClient } from "@supabase/supabase-js";
-
-let supabaseAuthClient: SupabaseClient | null = null;
+import { createClient } from "@supabase/supabase-js";
 
 function readServerEnv(name: "NEXT_PUBLIC_SUPABASE_URL" | "SUPABASE_ANON_KEY") {
   const value = process.env[name]?.trim();
@@ -13,11 +11,7 @@ function readServerEnv(name: "NEXT_PUBLIC_SUPABASE_URL" | "SUPABASE_ANON_KEY") {
 }
 
 export function getSupabaseAuthClient() {
-  if (supabaseAuthClient) {
-    return supabaseAuthClient;
-  }
-
-  supabaseAuthClient = createClient(
+  return createClient(
     readServerEnv("NEXT_PUBLIC_SUPABASE_URL"),
     readServerEnv("SUPABASE_ANON_KEY"),
     {
@@ -33,6 +27,4 @@ export function getSupabaseAuthClient() {
       },
     },
   );
-
-  return supabaseAuthClient;
 }
