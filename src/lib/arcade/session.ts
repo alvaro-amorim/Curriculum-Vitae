@@ -5,6 +5,7 @@ import { getSupabaseServerClient } from "@/lib/supabase/server";
 export const ARCADE_SESSION_COOKIE_NAME = "alvaro_arcade_session";
 export const ARCADE_SESSION_MAX_AGE_SECONDS = 60 * 60 * 24 * 90;
 export const ARCADE_ALIAS_MAX_LENGTH = 24;
+export const ARCADE_LAST_SEEN_REFRESH_INTERVAL_MS = 1000 * 60 * 60 * 6;
 
 type ArcadeCookieStore = {
   get(name: string): { value: string } | undefined;
@@ -157,6 +158,16 @@ export function validatePlayerAlias(alias: unknown): AliasValidationResult {
   };
 }
 
+export function shouldRefreshArcadeSessionLastSeen(lastSeenAt: string, nowMs = Date.now()) {
+  const lastSeenMs = Date.parse(lastSeenAt);
+
+  if (Number.isNaN(lastSeenMs)) {
+    return true;
+  }
+
+  return nowMs - lastSeenMs >= ARCADE_LAST_SEEN_REFRESH_INTERVAL_MS;
+}
+
 export async function upsertArcadeSession({
   alias,
   sessionHash,
@@ -167,29 +178,34 @@ export async function upsertArcadeSession({
   updateAlias?: boolean;
 }): Promise<PublicArcadeSession> {
   const supabase = getSupabaseServerClient();
+  const nowMs = Date.now();
+  const nowIso = new Date(nowMs).toISOString();
 
-  const { data: existingSession, error: selectError } = await supabase
+  const { error: ensureError } = await supabase
     .from("arcade_sessions")
-    .select("alias, created_at")
-    .eq("session_hash", sessionHash)
-    .maybeSingle();
+    .upsert(
+      {
+        alias: updateAlias ? (alias ?? null) : null,
+        last_seen_at: nowIso,
+        session_hash: sessionHash,
+      },
+      {
+        ignoreDuplicates: true,
+        onConflict: "session_hash",
+      },
+    );
 
-  if (selectError) {
-    throw new Error("Could not read arcade session.");
+  if (ensureError) {
+    throw new Error("Could not ensure arcade session.");
   }
 
-  if (existingSession) {
-    const nowMs = Date.now();
-    const createdAtMs = Date.parse(existingSession.created_at);
-    const lastSeenAt = new Date(Math.max(nowMs, Number.isNaN(createdAtMs) ? nowMs : createdAtMs)).toISOString();
-    const updatePayload = {
-      last_seen_at: lastSeenAt,
-      ...(updateAlias ? { alias: alias ?? null } : {}),
-    };
-
+  if (updateAlias) {
     const { data: updatedSession, error: updateError } = await supabase
       .from("arcade_sessions")
-      .update(updatePayload)
+      .update({
+        alias: alias ?? null,
+        last_seen_at: nowIso,
+      })
       .eq("session_hash", sessionHash)
       .select("alias")
       .single();
@@ -205,21 +221,31 @@ export async function upsertArcadeSession({
     };
   }
 
-  const { data: insertedSession, error: insertError } = await supabase
+  const { data: currentSession, error: selectError } = await supabase
     .from("arcade_sessions")
-    .insert({
-      alias: updateAlias ? (alias ?? null) : null,
-      session_hash: sessionHash,
-    })
-    .select("alias")
+    .select("alias, last_seen_at")
+    .eq("session_hash", sessionHash)
     .single();
 
-  if (insertError) {
-    throw new Error("Could not create arcade session.");
+  if (selectError) {
+    throw new Error("Could not read arcade session.");
+  }
+
+  if (shouldRefreshArcadeSessionLastSeen(currentSession.last_seen_at, nowMs)) {
+    const refreshBeforeIso = new Date(nowMs - ARCADE_LAST_SEEN_REFRESH_INTERVAL_MS).toISOString();
+    const { error: refreshError } = await supabase
+      .from("arcade_sessions")
+      .update({ last_seen_at: nowIso })
+      .eq("session_hash", sessionHash)
+      .lt("last_seen_at", refreshBeforeIso);
+
+    if (refreshError) {
+      throw new Error("Could not refresh arcade session activity.");
+    }
   }
 
   return {
-    alias: insertedSession.alias,
+    alias: currentSession.alias,
     maxAliasLength: ARCADE_ALIAS_MAX_LENGTH,
     ready: true,
   };
