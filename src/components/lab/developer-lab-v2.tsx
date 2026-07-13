@@ -2,12 +2,13 @@
 
 import dynamic from "next/dynamic";
 import type { FormEvent, PointerEvent } from "react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { usePortfolioUi } from "@/components/layout/app-shell";
 import { calculateSessionScore, initialLabScores } from "@/lib/lab-score";
 import type { GameScorePayloadV2, LabGameId, PlayerLeaderboardResponse } from "@/types/portfolio";
 
+import { ArcadeGameModal } from "./arcade-game-modal";
 import { labGames, labV2Copy } from "./lab-v2-copy";
 import styles from "./developer-lab-v2.module.css";
 import { useArcadeData } from "./use-arcade-data";
@@ -133,7 +134,6 @@ export function DeveloperLabV2() {
   const [scoreStatus, setScoreStatus] = useState<ScoreStatusMap>(initialScoreStatus);
   const [lastResult, setLastResult] = useState<LastResult | null>(null);
   const [gameRunKey, setGameRunKey] = useState(0);
-  const arenaRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     if (session) {
@@ -142,35 +142,26 @@ export function DeveloperLabV2() {
     }
   }, [session]);
 
-  useEffect(() => {
-    if (!activeGame) {
-      return;
-    }
-
-    const frame = window.requestAnimationFrame(() => {
-      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      arenaRef.current?.scrollIntoView({
-        behavior: reduceMotion ? "auto" : "smooth",
-        block: "start",
-      });
-    });
-
-    return () => window.cancelAnimationFrame(frame);
-  }, [activeGame]);
-
   const sessionScore = useMemo(() => calculateSessionScore(scores), [scores]);
   const completedGames = useMemo(
     () => Object.values(scores).filter((score) => score !== null).length,
     [scores],
   );
-  const selectedGame = labGames.find((game) => game.id === activeGame) ?? null;
   const selectedRanking = playerLeaderboard?.rankings[rankingKeyByGame[rankingGame]] ?? null;
   const selectedLeaderboard = leaderboards[rankingGame];
+  const activeGameRanking = activeGame
+    ? playerLeaderboard?.rankings[rankingKeyByGame[activeGame]] ?? null
+    : null;
+  const activeGameLeaderboard = activeGame ? leaderboards[activeGame] : [];
 
   const openGame = useCallback((game: LabGameId) => {
     setActiveGame(game);
     setRankingGame(game);
     setLastResult(null);
+  }, []);
+
+  const closeGame = useCallback(() => {
+    setActiveGame(null);
   }, []);
 
   const handleComplete = useCallback((payload: GameScorePayloadV2) => {
@@ -380,45 +371,21 @@ export function DeveloperLabV2() {
           </div>
         </section>
 
-        {activeGame && selectedGame ? (
-          <section className={styles.focusStage} ref={arenaRef} aria-labelledby="active-arena-title">
-            <div className={styles.focusHeader}>
-              <div>
-                <span className={styles.eyebrow}>{copy.focusEyebrow}</span>
-                <h2 id="active-arena-title">{selectedGame.title}</h2>
-                <p>{copy.focusHint}</p>
-              </div>
-              <div className={styles.focusActions}>
-                <button type="button" onClick={() => setGameRunKey((current) => current + 1)}>
-                  {copy.switchGame}
-                </button>
-                <button type="button" onClick={() => setActiveGame(null)}>
-                  {copy.closeGame}
-                </button>
-              </div>
-            </div>
-
-            <div className={styles.arenaFrame}>
-              {renderActiveGame()}
-            </div>
-
-            {scoreStatus[activeGame] !== "idle" ? (
-              <div className={styles.scoreFeedback} data-tone={scoreStatus[activeGame]}>
-                <span>
-                  {scoreStatus[activeGame] === "syncing"
-                    ? copy.submitting
-                    : scoreStatus[activeGame] === "synced"
-                      ? copy.submitted
-                      : copy.submitFailed}
-                </span>
-                {lastResult?.game === activeGame ? (
-                  <strong>
-                    {lastResult.score} · {copy.position} {formatRank(lastResult.rank, copy.rankPrefix)}
-                  </strong>
-                ) : null}
-              </div>
-            ) : null}
-          </section>
+        {activeGame ? (
+          <ArcadeGameModal
+            activeGame={activeGame}
+            lastResult={lastResult}
+            leaderboard={activeGameLeaderboard}
+            locale={locale}
+            onClose={closeGame}
+            onRestart={() => setGameRunKey((current) => current + 1)}
+            onSelectGame={openGame}
+            playerRanking={activeGameRanking}
+            scoreStatus={scoreStatus[activeGame]}
+            sessionAlias={session?.alias ?? null}
+          >
+            {renderActiveGame()}
+          </ArcadeGameModal>
         ) : null}
 
         <section className={styles.rankingSection} aria-labelledby="ranking-title">
