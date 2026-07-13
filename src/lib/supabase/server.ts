@@ -1,6 +1,6 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
-type ArcadeDatabase = {
+type PortfolioDatabase = {
   public: {
     Tables: {
       arcade_sessions: {
@@ -50,6 +50,60 @@ type ArcadeDatabase = {
         Update: never;
         Relationships: [];
       };
+      portfolio_projects: {
+        Insert: {
+          content: Record<string, unknown>;
+          publication_status?: "draft" | "published" | "archived";
+          published_at?: string | null;
+          slug: string;
+          sort_order?: number;
+          updated_by?: string | null;
+        };
+        Row: {
+          content: Record<string, unknown>;
+          created_at: string;
+          id: string;
+          publication_status: "draft" | "published" | "archived";
+          published_at: string | null;
+          slug: string;
+          sort_order: number;
+          updated_at: string;
+          updated_by: string | null;
+        };
+        Update: {
+          content?: Record<string, unknown>;
+          publication_status?: "draft" | "published" | "archived";
+          published_at?: string | null;
+          slug?: string;
+          sort_order?: number;
+          updated_by?: string | null;
+        };
+        Relationships: [];
+      };
+      portfolio_project_revisions: {
+        Insert: {
+          action: "update" | "delete";
+          changed_by?: string | null;
+          content: Record<string, unknown>;
+          project_id: string;
+          publication_status: "draft" | "published" | "archived";
+          slug: string;
+          sort_order: number;
+        };
+        Row: {
+          action: "update" | "delete";
+          changed_at: string;
+          changed_by: string | null;
+          content: Record<string, unknown>;
+          id: number;
+          project_id: string;
+          publication_status: "draft" | "published" | "archived";
+          slug: string;
+          sort_order: number;
+        };
+        Update: never;
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: {
@@ -82,7 +136,7 @@ type ArcadeDatabase = {
   };
 };
 
-let supabaseServerClient: SupabaseClient<ArcadeDatabase> | null = null;
+let supabaseServerClient: SupabaseClient<PortfolioDatabase> | null = null;
 
 function readServerEnv(name: string) {
   const value = process.env[name]?.trim();
@@ -99,7 +153,7 @@ export function getSupabaseServerClient() {
     return supabaseServerClient;
   }
 
-  supabaseServerClient = createClient<ArcadeDatabase>(
+  supabaseServerClient = createClient<PortfolioDatabase>(
     readServerEnv("NEXT_PUBLIC_SUPABASE_URL"),
     readServerEnv("SUPABASE_SERVICE_ROLE_KEY"),
     {
@@ -109,7 +163,7 @@ export function getSupabaseServerClient() {
       },
       global: {
         headers: {
-          "X-Client-Info": "alvaro-portfolio-arcade-server",
+          "X-Client-Info": "alvaro-portfolio-server",
         },
       },
     },
