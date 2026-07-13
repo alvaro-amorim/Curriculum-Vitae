@@ -1,8 +1,14 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { cache } from "react";
 
 import { ProjectCaseStudy } from "@/components/projects/project-case-study";
-import { getProjectBySlug, projects } from "@/content/projects";
+import { projects } from "@/content/projects";
+import { getPublicProjectBySlug } from "@/lib/projects/repository";
+
+export const dynamic = "force-dynamic";
+
+const loadProject = cache(getPublicProjectBySlug);
 
 type ProjectPageProps = {
   params: Promise<{
@@ -18,7 +24,7 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: ProjectPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const project = getProjectBySlug(slug);
+  const project = await loadProject(slug);
 
   if (!project) {
     return {
@@ -45,7 +51,7 @@ export async function generateMetadata({ params }: ProjectPageProps): Promise<Me
 
 export default async function ProjectPage({ params }: ProjectPageProps) {
   const { slug } = await params;
-  const project = getProjectBySlug(slug);
+  const project = await loadProject(slug);
 
   if (!project) {
     notFound();
