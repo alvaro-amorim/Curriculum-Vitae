@@ -3,7 +3,7 @@
 import type { CSSProperties, KeyboardEvent, TouchEvent } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { GAME_VERSIONS, clampScore, detectGameDeviceType } from "@/lib/lab-score";
+import { GAME_VERSIONS, detectGameDeviceType } from "@/lib/lab-score";
 import type { GameScorePayloadV2, Locale } from "@/types/portfolio";
 
 import styles from "./developer-lab.module.css";
@@ -347,7 +347,7 @@ function calculateMazeScore(input: {
   const itemBonus = input.itemCount * 11 + allItemsBonus;
   const lifeBonus = input.lives * 9;
   const base = input.won ? 92 : 42;
-  return clampScore(base + itemBonus + lifeBonus - input.moves * 1.25 - input.elapsed * 0.9);
+  return Math.max(0, Math.round(base + itemBonus + lifeBonus - input.moves * 1.25 - input.elapsed * 0.9));
 }
 
 function resetEnemies(maze: ParsedMaze) {

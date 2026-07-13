@@ -1,6 +1,7 @@
 import type { Document } from "mongodb";
 
 import { ARCADE_GAME_IDS } from "@/lib/arcade/constants";
+import { GAME_VERSIONS } from "@/lib/lab-score";
 import { getMongoCollections } from "@/lib/mongodb/collections";
 import type {
   LabGameId,
@@ -52,6 +53,7 @@ function buildBestScoresPipeline({
   const periodStart = getLeaderboardPeriodStart(period);
   const match: Document = {
     gameId: game,
+    gameVersion: GAME_VERSIONS[game],
   };
 
   if (periodStart) {

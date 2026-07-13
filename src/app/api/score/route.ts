@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { apiError, apiSuccess, methodNotAllowed, readJsonPayload, validationError } from "@/lib/api-response";
 import { consumeArcadeRateLimit } from "@/lib/arcade/rate-limit";
 import { resolveArcadeSessionContext } from "@/lib/arcade/session";
+import { GAME_SCORE_CONTRACT_VERSION } from "@/lib/lab-score";
 import { getMongoCollections } from "@/lib/mongodb/collections";
 import { ScorePayloadSchema } from "@/lib/validators";
 
@@ -51,7 +52,7 @@ export async function POST(request: Request) {
     const { arcadeScores } = await getMongoCollections();
     const scorePayload = parsed.data;
     const persistResult = await arcadeScores.insertOne({
-      contractVersion: "v2",
+      contractVersion: GAME_SCORE_CONTRACT_VERSION,
       createdAt: new Date(),
       deviceType: scorePayload.deviceType ?? "unknown",
       durationMs: scorePayload.durationMs,
@@ -70,7 +71,7 @@ export async function POST(request: Request) {
     return apiSuccess(
       {
         accepted: true,
-        contractVersion: "v2",
+        contractVersion: GAME_SCORE_CONTRACT_VERSION,
         game: scorePayload.game,
         mode: "persistent",
         score: scorePayload.score,

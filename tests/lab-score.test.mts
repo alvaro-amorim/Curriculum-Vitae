@@ -10,22 +10,22 @@ test("starts with an empty Lab session", () => {
 test("averages only completed games", () => {
   assert.equal(
     calculateSessionScore({
-      runtime: 80,
-      bugMaze: null,
-      codeSnake: 60,
-      stackTetris: null,
+      runtime: 600,
+      "bug-maze": null,
+      "code-snake": 3_000,
+      "stack-tetris": null,
     }),
-    70,
+    75,
   );
 });
 
 test("rounds the final session average", () => {
   assert.equal(
     calculateSessionScore({
-      runtime: 83,
-      bugMaze: 74,
-      codeSnake: 92,
-      stackTetris: 67,
+      runtime: 960,
+      "bug-maze": 142,
+      "code-snake": 2_370,
+      "stack-tetris": 19_750,
     }),
     79,
   );

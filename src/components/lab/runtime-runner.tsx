@@ -3,7 +3,7 @@
 import type { CSSProperties, KeyboardEvent, MouseEvent, PointerEvent, TouchEvent } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { GAME_VERSIONS, clampScore, detectGameDeviceType } from "@/lib/lab-score";
+import { GAME_VERSIONS, detectGameDeviceType } from "@/lib/lab-score";
 import type { GameScorePayloadV2, Locale } from "@/types/portfolio";
 
 import styles from "./developer-lab.module.css";
@@ -24,7 +24,6 @@ type Obstacle = {
 type RunnerFrame = {
   elapsed: number;
   runScore: number;
-  apiScore: number;
   speed: number;
   runnerY: number;
   velocity: number;
@@ -200,7 +199,6 @@ function createInitialFrame(): RunnerFrame {
   return {
     elapsed: 0,
     runScore: 0,
-    apiScore: 0,
     speed: 18.5,
     runnerY: 0,
     velocity: 0,
@@ -332,7 +330,7 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
           nearMisses: next.nearMisses,
           stageReached: runnerStageReached(next.elapsed),
         },
-        score: next.apiScore,
+        score: next.runScore,
       });
     },
     [commitFrame, onComplete],
@@ -544,13 +542,11 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
       const cleared = current.cleared + clearedNow;
       const nearMisses = current.nearMisses + nearMissNow;
       const runScore = Math.floor(elapsed * 8 + cleared * 22);
-      const apiScore = clampScore(runScore / 6);
       const crossedMilestone = Math.floor(runScore / 100) > Math.floor(current.runScore / 100);
       const shouldPulse = nearMissNow > 0 || clearedNow > 0 || crossedMilestone;
       const next = {
         elapsed,
         runScore,
-        apiScore,
         speed,
         runnerY,
         velocity,

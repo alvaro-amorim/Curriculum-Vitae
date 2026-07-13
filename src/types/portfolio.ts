@@ -136,7 +136,7 @@ export type PlayerLeaderboardResponse = {
 
 export type ScoreSubmitResponse = {
   accepted: true;
-  contractVersion: "v2";
+  contractVersion: "v3";
   game: LabGameId;
   mode: "persistent";
   score: number;
@@ -183,12 +183,12 @@ export type GameScoreMetadata =
   | CodeSnakeScoreMetadata
   | StackTetrisScoreMetadata;
 
-export type GameScorePayloadV2 =
+export type GameScorePayloadV3 =
   | {
       deviceType?: GameDeviceType;
       durationMs: number;
       game: "runtime";
-      gameVersion: "runtime@2.0.0";
+      gameVersion: "runtime@3.0.0";
       metadata: RuntimeScoreMetadata;
       score: number;
     }
@@ -196,7 +196,7 @@ export type GameScorePayloadV2 =
       deviceType?: GameDeviceType;
       durationMs: number;
       game: "bug-maze";
-      gameVersion: "bug-maze@2.0.0";
+      gameVersion: "bug-maze@3.0.0";
       metadata: BugMazeScoreMetadata;
       score: number;
     }
@@ -204,7 +204,7 @@ export type GameScorePayloadV2 =
       deviceType?: GameDeviceType;
       durationMs: number;
       game: "code-snake";
-      gameVersion: "code-snake@2.0.0";
+      gameVersion: "code-snake@3.0.0";
       metadata: CodeSnakeScoreMetadata;
       score: number;
     }
@@ -212,10 +212,12 @@ export type GameScorePayloadV2 =
       deviceType?: GameDeviceType;
       durationMs: number;
       game: "stack-tetris";
-      gameVersion: "stack-tetris@2.0.0";
+      gameVersion: "stack-tetris@3.0.0";
       metadata: StackTetrisScoreMetadata;
       score: number;
     };
+
+export type GameScorePayloadV2 = GameScorePayloadV3;
 
 export type LabPageCopy = {
   title: LocalizedText;

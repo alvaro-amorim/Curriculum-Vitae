@@ -3,7 +3,7 @@
 import type { CSSProperties, TouchEvent } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { GAME_VERSIONS, clampScore, detectGameDeviceType } from "@/lib/lab-score";
+import { GAME_VERSIONS, detectGameDeviceType } from "@/lib/lab-score";
 import type { GameScorePayloadV2, Locale } from "@/types/portfolio";
 
 import styles from "./developer-lab.module.css";
@@ -31,7 +31,6 @@ type SnakeFrame = {
   token: BoardItem<TokenKind>;
   hazards: BoardItem<HazardKind>[];
   score: number;
-  apiScore: number;
   collected: number;
   combo: number;
   maxCombo: number;
@@ -242,7 +241,6 @@ function createInitialFrame(): SnakeFrame {
       { id: 3, kind: "NULL", position: { x: 4, y: 10 } },
     ],
     score: 0,
-    apiScore: 0,
     collected: 0,
     combo: 0,
     maxCombo: 0,
@@ -454,7 +452,7 @@ export function CodeSnake({ locale, onComplete }: CodeSnakeProps) {
           wallsEnabled,
           wrapAround: !wallsEnabled,
         },
-        score: completedFrame.apiScore,
+        score: completedFrame.score,
       });
     },
     [commitFrame, onComplete, wallsEnabled],
@@ -591,7 +589,6 @@ export function CodeSnake({ locale, onComplete }: CodeSnakeProps) {
     }
 
     const nextMoves = current.moves + 1;
-    const nextApiScore = clampScore(nextScore / 4 + nextCollected * 3 + nextCombo * 2 + Math.min(18, nextMoves / 18));
     commitFrame({
       ...current,
       snake: nextSnake,
@@ -599,7 +596,6 @@ export function CodeSnake({ locale, onComplete }: CodeSnakeProps) {
       token: nextToken,
       hazards: nextHazards,
       score: nextScore,
-      apiScore: nextApiScore,
       collected: nextCollected,
       combo: nextCombo,
       maxCombo: nextMaxCombo,

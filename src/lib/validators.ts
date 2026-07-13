@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { GAME_SCORE_LIMITS, GAME_VERSIONS } from "./lab-score.ts";
+
 const metadataValueSchema = z.union([z.string().trim().max(500), z.number().finite(), z.boolean(), z.null()]);
 
 export const MetadataSchema = z
@@ -55,10 +57,16 @@ export const LeaderboardGameSchema = z.enum(["runtime", "bug-maze", "code-snake"
 export const LeaderboardPeriodSchema = z.enum(["all", "month", "week"]).default("all");
 export const LeaderboardLimitSchema = z.coerce.number().finite().int().min(1).max(50).default(10);
 
-const scoreSchema = z.number().finite().int("Score deve ser inteiro.").min(0, "Score minimo e 0.").max(100, "Score maximo e 100.");
 const durationSchema = z.number().finite().int("Duracao deve ser inteira.").min(250, "Duracao muito curta.").max(900_000, "Duracao muito longa.");
 const deviceTypeSchema = z.enum(["desktop", "mobile", "unknown"]).optional();
 const nonNegativeIntSchema = z.number().finite().int().min(0);
+const gameScoreSchema = (game: keyof typeof GAME_SCORE_LIMITS) =>
+  z
+    .number()
+    .finite()
+    .int("Score deve ser inteiro.")
+    .min(0, "Score minimo e 0.")
+    .max(GAME_SCORE_LIMITS[game], "Score acima do limite esperado para o jogo.");
 
 const runtimeMetadataSchema = z
   .object({
@@ -124,7 +132,6 @@ const stackTetrisMetadataSchema = z
 const baseScorePayload = {
   deviceType: deviceTypeSchema,
   durationMs: durationSchema,
-  score: scoreSchema,
 } as const;
 
 export const ScorePayloadSchema = z.discriminatedUnion("game", [
@@ -132,32 +139,36 @@ export const ScorePayloadSchema = z.discriminatedUnion("game", [
     .object({
       ...baseScorePayload,
       game: z.literal("runtime"),
-      gameVersion: z.literal("runtime@2.0.0"),
+      gameVersion: z.literal(GAME_VERSIONS.runtime),
       metadata: runtimeMetadataSchema,
+      score: gameScoreSchema("runtime"),
     })
     .strict(),
   z
     .object({
       ...baseScorePayload,
       game: z.literal("bug-maze"),
-      gameVersion: z.literal("bug-maze@2.0.0"),
+      gameVersion: z.literal(GAME_VERSIONS["bug-maze"]),
       metadata: bugMazeMetadataSchema,
+      score: gameScoreSchema("bug-maze"),
     })
     .strict(),
   z
     .object({
       ...baseScorePayload,
       game: z.literal("code-snake"),
-      gameVersion: z.literal("code-snake@2.0.0"),
+      gameVersion: z.literal(GAME_VERSIONS["code-snake"]),
       metadata: codeSnakeMetadataSchema,
+      score: gameScoreSchema("code-snake"),
     })
     .strict(),
   z
     .object({
       ...baseScorePayload,
       game: z.literal("stack-tetris"),
-      gameVersion: z.literal("stack-tetris@2.0.0"),
+      gameVersion: z.literal(GAME_VERSIONS["stack-tetris"]),
       metadata: stackTetrisMetadataSchema,
+      score: gameScoreSchema("stack-tetris"),
     })
     .strict(),
 ]);

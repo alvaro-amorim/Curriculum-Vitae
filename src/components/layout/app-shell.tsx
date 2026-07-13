@@ -114,11 +114,11 @@ export function AppShell({ children }: { children: ReactNode }) {
     const storedLocale = resolveInitialLocale();
 
     if (storedTheme !== "dark") {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- Applied after hydration to avoid server/client theme mismatch.
       setTheme(storedTheme);
     }
 
     if (storedLocale !== "pt") {
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- Applied after hydration to avoid server/client text mismatch.
       setLocaleState(storedLocale);
     }
   }, []);

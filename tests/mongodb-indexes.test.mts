@@ -16,8 +16,8 @@ test("keeps Arcade session hashes unique", () => {
 test("supports global and per-player Arcade ranking queries", () => {
   const names = MONGODB_INDEX_SPECS.arcadeScores.map((index) => index.name);
 
-  assert.ok(names.includes("arcade_scores_game_ranking"));
-  assert.ok(names.includes("arcade_scores_player_game_ranking"));
+  assert.ok(names.includes("arcade_scores_game_version_ranking"));
+  assert.ok(names.includes("arcade_scores_player_game_version_ranking"));
 });
 
 test("keeps project slugs unique and publication order indexed", () => {

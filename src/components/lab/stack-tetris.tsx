@@ -3,7 +3,7 @@
 import type { CSSProperties, TouchEvent } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { GAME_VERSIONS, clampScore, detectGameDeviceType } from "@/lib/lab-score";
+import { GAME_VERSIONS, detectGameDeviceType } from "@/lib/lab-score";
 import type { GameScorePayloadV2, Locale } from "@/types/portfolio";
 
 import styles from "./developer-lab.module.css";
@@ -43,7 +43,6 @@ type TetrisFrame = {
   next: Piece;
   combo: number;
   score: number;
-  apiScore: number;
   lines: number;
   level: number;
   pieces: number;
@@ -297,7 +296,6 @@ function createPiece(id: number): Piece {
 function createInitialFrame(): TetrisFrame {
   return {
     active: createPiece(1),
-    apiScore: 0,
     board: createWarmBoard(),
     combo: 0,
     feedback: null,
@@ -397,10 +395,6 @@ function getGhostPiece(board: Board, piece: Piece) {
   return ghost;
 }
 
-function calculateApiScore(input: { level: number; lines: number; pieces: number; score: number }) {
-  return clampScore(input.score / 18 + input.lines * 6 + input.level * 4 + Math.min(18, input.pieces * 1.4));
-}
-
 function lineScore(lines: number, level: number) {
   const table = [0, 120, 320, 620, 980];
   return (table[lines] ?? table[4]) * level;
@@ -488,7 +482,7 @@ export function StackTetris({ locale, onComplete }: StackTetrisProps) {
           maxCombo: completedFrame.maxCombo,
           piecesPlaced: completedFrame.pieces,
         },
-        score: completedFrame.apiScore,
+        score: completedFrame.score,
       });
     },
     [commitFrame, onComplete],
@@ -515,7 +509,6 @@ export function StackTetris({ locale, onComplete }: StackTetrisProps) {
       const nextFrame: TetrisFrame = {
         ...current,
         active: nextActive,
-        apiScore: calculateApiScore({ level: nextLevel, lines: totalLines, pieces: nextPieces, score: nextScore }),
         board: result.board,
         combo,
         feedback: result.cleared > 0 ? "clear" : "lock",
@@ -566,7 +559,6 @@ export function StackTetris({ locale, onComplete }: StackTetrisProps) {
         commitFrame({
           ...current,
           active: nextPiece,
-          apiScore: calculateApiScore({ level: current.level, lines: current.lines, pieces: current.pieces, score: nextScore }),
           feedback,
           lastClear: 0,
           lastDrop: dy > 0 ? 1 : 0,

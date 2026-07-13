@@ -20,7 +20,7 @@ export type ArcadeSessionDocument = {
 
 export type ArcadeScoreDocument = {
   _id?: ObjectId;
-  contractVersion: "v2";
+  contractVersion: "v2" | "v3";
   createdAt: Date;
   deviceType: "desktop" | "mobile" | "unknown";
   durationMs: number;

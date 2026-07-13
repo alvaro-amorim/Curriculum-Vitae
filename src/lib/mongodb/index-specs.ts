@@ -12,12 +12,12 @@ export const MONGODB_INDEX_SPECS = {
   ],
   arcadeScores: [
     {
-      key: { gameId: 1, score: -1, createdAt: 1 },
-      name: "arcade_scores_game_ranking",
+      key: { gameId: 1, gameVersion: 1, score: -1, createdAt: 1 },
+      name: "arcade_scores_game_version_ranking",
     },
     {
-      key: { sessionHash: 1, gameId: 1, score: -1, createdAt: 1 },
-      name: "arcade_scores_player_game_ranking",
+      key: { sessionHash: 1, gameId: 1, gameVersion: 1, score: -1, createdAt: 1 },
+      name: "arcade_scores_player_game_version_ranking",
     },
     {
       key: { createdAt: -1 },

@@ -232,7 +232,9 @@ export function ArcadeGameModal({
 
         <div className={styles.content}>
           <div className={styles.gameColumn}>
-            <div className={styles.arena}>{children}</div>
+            <div className={styles.arena} data-lab-game-arena="true">
+              {children}
+            </div>
 
             {scoreStatus !== "idle" ? (
               <div className={styles.feedback} data-tone={scoreStatus}>
