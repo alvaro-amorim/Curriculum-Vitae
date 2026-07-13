@@ -23,7 +23,8 @@ function createMongoClientPromise() {
     serverSelectionTimeoutMS: 8_000,
   });
 
-  const connection = client.connect().catch(async (error) => {
+  let connection: Promise<MongoClient>;
+  connection = client.connect().catch(async (error) => {
     if (globalThis.__portfolioMongoClientPromise === connection) {
       globalThis.__portfolioMongoClientPromise = undefined;
     }
@@ -44,10 +45,8 @@ export function getMongoClient() {
 }
 
 export async function getMongoDatabase(): Promise<Db> {
-  const [{ databaseName }, client] = await Promise.all([
-    Promise.resolve(readMongoConfig()),
-    getMongoClient(),
-  ]);
+  const { databaseName } = readMongoConfig();
+  const client = await getMongoClient();
 
   return client.db(databaseName);
 }
