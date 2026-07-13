@@ -114,7 +114,6 @@ export function AppShell({ children }: { children: ReactNode }) {
     const storedLocale = resolveInitialLocale();
 
     if (storedTheme !== "dark") {
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- Persisted client preference is applied only after deterministic hydration.
       setTheme(storedTheme);
     }
 
