@@ -1,24 +1,24 @@
 import type { Metadata } from "next";
 
-import { DeveloperLab } from "@/components/lab/developer-lab";
+import { DeveloperLabV2 } from "@/components/lab/developer-lab-v2";
 
 export const metadata: Metadata = {
   title: {
     absolute: "Developer Arcade — Álvaro Amorim",
   },
   description:
-    "Arcade Hub com Runtime Runner, Bug Maze expandido, Code Snake com paredes opcionais, Stack Tetris jogável, modo foco, gestos mobile e treinos antigos fora da UI principal.",
+    "Developer Arcade com quatro jogos técnicos, sessão anônima, score persistente, ranking por melhor resultado e experiência otimizada para desktop e mobile.",
   alternates: {
     canonical: "/lab",
   },
   openGraph: {
     title: "Developer Arcade — Álvaro Amorim",
     description:
-      "Arcade Hub com quatro jogos jogáveis, Code Snake com wrap-around, Bug Maze expandido, gestos mobile, score persistente e Top Players.",
+      "Jogue Runtime Runner, Bug Maze, Code Snake e Stack Tetris, registre seu melhor score e acompanhe sua posição no ranking.",
     url: "/lab",
   },
 };
 
 export default function LabPage() {
-  return <DeveloperLab />;
+  return <DeveloperLabV2 />;
 }
