@@ -1,15 +1,20 @@
 name: One-off Arcade bootstrap client refactor
 
 on:
-  push:
+  pull_request:
     branches:
-      - fix/arcade-data-stability
+      - main
+    types:
+      - opened
+      - synchronize
+      - reopened
 
 permissions:
   contents: write
 
 jobs:
   refactor-client:
+    if: github.head_ref == 'fix/arcade-data-stability'
     runs-on: ubuntu-latest
     timeout-minutes: 5
 
