@@ -85,7 +85,7 @@ function formatLocaleLabel(currentLocale: Locale, nextLocale: Locale) {
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const isAdminRoute = pathname.startsWith("/admin");
-  const [theme, setTheme] = useState<ThemeName>(() => resolveInitialTheme());
+  const [theme, setTheme] = useState<ThemeName>("dark");
   const [locale, setLocaleState] = useState<Locale>("pt");
   const [transitionKind, setTransitionKind] = useState<TransitionKind>("idle");
   const [transitionLabel, setTransitionLabel] = useState("");
@@ -110,7 +110,13 @@ export function AppShell({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
+    const storedTheme = resolveInitialTheme();
     const storedLocale = resolveInitialLocale();
+
+    if (storedTheme !== "dark") {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- Persisted client preference is applied only after deterministic hydration.
+      setTheme(storedTheme);
+    }
 
     if (storedLocale !== "pt") {
       // eslint-disable-next-line react-hooks/set-state-in-effect -- Applied after hydration to avoid server/client text mismatch.
