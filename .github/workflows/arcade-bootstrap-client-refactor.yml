@@ -1,0 +1,121 @@
+name: One-off Arcade bootstrap client refactor
+
+on:
+  push:
+    branches:
+      - fix/arcade-data-stability
+
+permissions:
+  contents: write
+
+jobs:
+  refactor-client:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          ref: fix/arcade-data-stability
+          fetch-depth: 0
+
+      - name: Replace initial Arcade requests with bootstrap
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path("src/components/lab/developer-lab.tsx")
+          text = path.read_text(encoding="utf-8")
+
+          old_import = 'import type { GameScorePayloadV2, LabGameId, LeaderboardEntry, LeaderboardResponse, PlayerLeaderboardResponse } from "@/types/portfolio";'
+          new_import = 'import type { ArcadeBootstrapResponse } from "@/types/arcade-bootstrap";\n' + old_import
+          if 'ArcadeBootstrapResponse' not in text:
+              if old_import not in text:
+                  raise RuntimeError("Portfolio type import not found")
+              text = text.replace(old_import, new_import, 1)
+
+          selected_marker = '  const selectedGame = activeGame ? arcadeGames.find((game) => game.id === activeGame) ?? null : null;\n\n'
+          bootstrap_block = '''  const selectedGame = activeGame ? arcadeGames.find((game) => game.id === activeGame) ?? null : null;
+
+  const loadArcadeBootstrap = useCallback(async () => {
+    setLeaderboardStatus("loading");
+    setAliasStatus("loading");
+
+    const response = await fetch("/api/arcade/bootstrap", {
+      cache: "no-store",
+    });
+
+    if (!response.ok) {
+      throw new Error("Arcade bootstrap API rejected the request.");
+    }
+
+    const body = (await response.json()) as { data?: ArcadeBootstrapResponse; ok: boolean };
+
+    if (!body.ok || !body.data) {
+      throw new Error("Arcade bootstrap API returned an invalid response.");
+    }
+
+    setLeaderboards(body.data.leaderboards);
+    setPlayerLeaderboard(body.data.playerLeaderboard);
+    setPlayerSession(body.data.session);
+    setAliasInput(body.data.session.alias ?? "");
+    setAliasStatus("ready");
+    setLeaderboardStatus(
+      body.data.partialFailures.leaderboards.length === arcadeGameIds.length ? "failed" : "ready",
+    );
+  }, []);
+
+'''
+          if 'const loadArcadeBootstrap = useCallback' not in text:
+              if selected_marker not in text:
+                  raise RuntimeError("Selected game marker not found")
+              text = text.replace(selected_marker, bootstrap_block, 1)
+
+          old_effect = '''  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      void refreshLeaderboards().catch(() => {
+        // The leaderboard is secondary; the games must remain playable if it fails.
+      });
+      void refreshPlayerLeaderboard().catch(() => {
+        // The player position is optional until a score exists for this session.
+      });
+      void refreshPlayerSession()
+        .then(() => setAliasStatus("ready"))
+        .catch(() => {
+          setAliasStatus("error");
+          setAliasMessage(copy.aliasError);
+        });
+    }, 0);
+
+    return () => window.clearTimeout(timer);
+  }, [copy.aliasError, refreshLeaderboards, refreshPlayerLeaderboard, refreshPlayerSession]);
+'''
+          new_effect = '''  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      void loadArcadeBootstrap().catch(() => {
+        setLeaderboardStatus("failed");
+        setAliasStatus("error");
+        setAliasMessage(copy.aliasError);
+      });
+    }, 0);
+
+    return () => window.clearTimeout(timer);
+  }, [copy.aliasError, loadArcadeBootstrap]);
+'''
+          if old_effect in text:
+              text = text.replace(old_effect, new_effect, 1)
+          elif new_effect not in text:
+              raise RuntimeError("Initial loading effect not found")
+
+          path.write_text(text, encoding="utf-8")
+          PY
+
+      - name: Remove one-off workflow and commit
+        run: |
+          rm .github/workflows/arcade-bootstrap-client-refactor.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/components/lab/developer-lab.tsx .github/workflows/arcade-bootstrap-client-refactor.yml
+          git commit -m "refactor: load initial Arcade state through bootstrap"
+          git push origin HEAD:fix/arcade-data-stability
