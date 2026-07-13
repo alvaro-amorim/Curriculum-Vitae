@@ -22,7 +22,7 @@ export function apiSuccess<T>(data: T, init?: ResponseInit) {
   return NextResponse.json<ApiSuccessBody<T>>({ ok: true, data }, init);
 }
 
-export function apiError(code: ApiErrorCode, message: string, status = 400) {
+export function apiError(code: ApiErrorCode, message: string, status = 400, init?: Omit<ResponseInit, "status">) {
   return NextResponse.json<ApiErrorBody>(
     {
       ok: false,
@@ -31,7 +31,10 @@ export function apiError(code: ApiErrorCode, message: string, status = 400) {
         message,
       },
     },
-    { status },
+    {
+      ...init,
+      status,
+    },
   );
 }
 

@@ -1,0 +1,62 @@
+import { getLeaderboardEntries, getPlayerLeaderboard } from "@/lib/arcade/leaderboard";
+import { ARCADE_GAME_IDS } from "@/lib/arcade/constants";
+import type { ArcadeBootstrapLeaderboards, ArcadeBootstrapResponse } from "@/types/arcade-bootstrap";
+import type { LabGameId } from "@/types/portfolio";
+
+export const ARCADE_BOOTSTRAP_GAME_IDS = ARCADE_GAME_IDS;
+
+type ArcadeBootstrapData = Omit<ArcadeBootstrapResponse, "session">;
+
+const emptyLeaderboards: ArcadeBootstrapLeaderboards = {
+  runtime: [],
+  "bug-maze": [],
+  "code-snake": [],
+  "stack-tetris": [],
+};
+
+export async function getArcadeBootstrapData({
+  alias,
+  leaderboardLimit = 3,
+  sessionHash,
+}: {
+  alias: string | null;
+  leaderboardLimit?: number;
+  sessionHash: string;
+}): Promise<ArcadeBootstrapData> {
+  const leaderboardResults = await Promise.allSettled(
+    ARCADE_BOOTSTRAP_GAME_IDS.map(async (game) => [
+      game,
+      await getLeaderboardEntries({
+        game,
+        limit: leaderboardLimit,
+        period: "all",
+      }),
+    ] as const),
+  );
+  const playerLeaderboardResult = await Promise.allSettled([
+    getPlayerLeaderboard({ alias, sessionHash }),
+  ]);
+
+  const failedGames: LabGameId[] = [];
+  const leaderboards = leaderboardResults.reduce<ArcadeBootstrapLeaderboards>((current, result, index) => {
+    const game = ARCADE_BOOTSTRAP_GAME_IDS[index];
+
+    if (result.status === "fulfilled") {
+      current[game] = result.value[1];
+    } else {
+      failedGames.push(game);
+    }
+
+    return current;
+  }, { ...emptyLeaderboards });
+  const playerResult = playerLeaderboardResult[0];
+
+  return {
+    leaderboards,
+    partialFailures: {
+      leaderboards: failedGames,
+      playerLeaderboard: playerResult.status === "rejected",
+    },
+    playerLeaderboard: playerResult.status === "fulfilled" ? playerResult.value : null,
+  };
+}
