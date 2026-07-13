@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 
 import { ProjectsIndex } from "@/components/projects/projects-index";
+import { getPublicProjects } from "@/lib/projects/repository";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: {
@@ -17,6 +20,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default function ProjectsPage() {
-  return <ProjectsIndex />;
+export default async function ProjectsPage() {
+  const projects = await getPublicProjects();
+  return <ProjectsIndex projects={projects} />;
 }
