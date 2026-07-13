@@ -2,6 +2,7 @@
 
 import type { ReactNode } from "react";
 import { useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 
 import type { ArcadeBootstrapResponse } from "@/types/arcade-bootstrap";
 import type { LabGameId, Locale, PlayerGameRanking } from "@/types/portfolio";
@@ -31,8 +32,24 @@ type ArcadeGameModalProps = {
   sessionAlias: string | null;
 };
 
+const FOCUSABLE_SELECTOR = [
+  "button:not([disabled])",
+  "[href]",
+  "input:not([disabled])",
+  "select:not([disabled])",
+  "textarea:not([disabled])",
+  '[tabindex]:not([tabindex="-1"])',
+].join(", ");
+
 function formatRank(rank: number | null, prefix: string) {
   return rank === null ? "—" : `${prefix}${rank}`;
+}
+
+function getFocusableElements(container: HTMLElement) {
+  return Array.from(container.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)).filter((element) => {
+    const styles = window.getComputedStyle(element);
+    return element.getClientRects().length > 0 && styles.visibility !== "hidden" && styles.display !== "none";
+  });
 }
 
 export function ArcadeGameModal({
@@ -57,31 +74,32 @@ export function ArcadeGameModal({
     const root = document.documentElement;
     const body = document.body;
     const previouslyFocused = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const scrollX = window.scrollX;
     const scrollY = window.scrollY;
     const scrollbarWidth = Math.max(0, window.innerWidth - root.clientWidth);
     const previousRootOverflow = root.style.overflow;
     const previousRootOverscroll = root.style.overscrollBehavior;
     const previousBodyOverflow = body.style.overflow;
     const previousBodyOverscroll = body.style.overscrollBehavior;
-    const previousBodyPosition = body.style.position;
-    const previousBodyTop = body.style.top;
-    const previousBodyLeft = body.style.left;
-    const previousBodyRight = body.style.right;
-    const previousBodyWidth = body.style.width;
     const previousBodyPaddingRight = body.style.paddingRight;
 
     root.style.overflow = "hidden";
     root.style.overscrollBehavior = "none";
     body.style.overflow = "hidden";
     body.style.overscrollBehavior = "none";
-    body.style.position = "fixed";
-    body.style.top = `-${scrollY}px`;
-    body.style.left = "0";
-    body.style.right = "0";
-    body.style.width = "100%";
     body.style.paddingRight = scrollbarWidth > 0 ? `${scrollbarWidth}px` : previousBodyPaddingRight;
     body.dataset.arcadeModalOpen = "true";
-    closeButtonRef.current?.focus();
+
+    const focusFrame = window.requestAnimationFrame(() => {
+      closeButtonRef.current?.focus();
+    });
+
+    function focusFirstElement() {
+      const dialog = dialogRef.current;
+      if (!dialog) return;
+      const first = getFocusableElements(dialog)[0];
+      (first ?? dialog).focus();
+    }
 
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
@@ -95,48 +113,68 @@ export function ArcadeGameModal({
       }
 
       const dialog = dialogRef.current;
-      const focusable = dialog?.querySelectorAll<HTMLElement>(
-        'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
-      );
+      if (!dialog) return;
 
-      if (!focusable || focusable.length === 0) {
+      const focusable = getFocusableElements(dialog);
+      if (focusable.length === 0) {
         event.preventDefault();
+        dialog.focus();
         return;
       }
 
       const first = focusable[0];
       const last = focusable[focusable.length - 1];
+      const activeElement = document.activeElement;
 
-      if (event.shiftKey && document.activeElement === first) {
+      if (!(activeElement instanceof Node) || !dialog.contains(activeElement)) {
+        event.preventDefault();
+        (event.shiftKey ? last : first).focus();
+        return;
+      }
+
+      if (event.shiftKey && activeElement === first) {
         event.preventDefault();
         last.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
+      } else if (!event.shiftKey && activeElement === last) {
         event.preventDefault();
         first.focus();
       }
     }
 
+    function handleFocusIn(event: FocusEvent) {
+      const dialog = dialogRef.current;
+      const target = event.target;
+
+      if (!dialog || !(target instanceof Node) || dialog.contains(target)) {
+        return;
+      }
+
+      focusFirstElement();
+    }
+
     window.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("focusin", handleFocusIn);
 
     return () => {
+      window.cancelAnimationFrame(focusFrame);
       root.style.overflow = previousRootOverflow;
       root.style.overscrollBehavior = previousRootOverscroll;
       body.style.overflow = previousBodyOverflow;
       body.style.overscrollBehavior = previousBodyOverscroll;
-      body.style.position = previousBodyPosition;
-      body.style.top = previousBodyTop;
-      body.style.left = previousBodyLeft;
-      body.style.right = previousBodyRight;
-      body.style.width = previousBodyWidth;
       body.style.paddingRight = previousBodyPaddingRight;
       delete body.dataset.arcadeModalOpen;
       window.removeEventListener("keydown", handleKeyDown);
-      window.scrollTo(0, scrollY);
+      document.removeEventListener("focusin", handleFocusIn);
+      window.scrollTo(scrollX, scrollY);
       previouslyFocused?.focus();
     };
   }, [onClose]);
 
-  return (
+  if (typeof document === "undefined") {
+    return null;
+  }
+
+  return createPortal(
     <div
       className={styles.overlay}
       onPointerDown={(event) => {
@@ -153,6 +191,7 @@ export function ArcadeGameModal({
         className={styles.dialog}
         ref={dialogRef}
         role="dialog"
+        tabIndex={-1}
       >
         <header className={styles.header}>
           <div className={styles.heading}>
@@ -254,6 +293,7 @@ export function ArcadeGameModal({
           </aside>
         </div>
       </section>
-    </div>
+    </div>,
+    document.body,
   );
 }
