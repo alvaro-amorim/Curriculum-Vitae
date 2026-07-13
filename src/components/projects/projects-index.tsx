@@ -3,7 +3,7 @@
 import type { PointerEvent } from "react";
 
 import { usePortfolioUi } from "@/components/layout/app-shell";
-import { projects } from "@/content/projects";
+import type { Project } from "@/types/portfolio";
 
 import { ProjectGrid } from "./project-grid";
 import styles from "./project-experience.module.css";
@@ -17,7 +17,7 @@ function handleExperiencePointer(event: PointerEvent<HTMLElement>) {
   event.currentTarget.style.setProperty("--py", `${(y * 100).toFixed(2)}%`);
 }
 
-export function ProjectsIndex() {
+export function ProjectsIndex({ projects }: { projects: Project[] }) {
   const { locale } = usePortfolioUi();
   const featuredProject = projects.find((project) => project.featured) ?? projects[0];
   const title = locale === "pt" ? "Projetos" : "Projects";
@@ -27,6 +27,24 @@ export function ProjectsIndex() {
       : "Cases, products and digital experiences built with real delivery in mind.";
   const countLabel = locale === "pt" ? `${projects.length} cases publicados` : `${projects.length} published cases`;
   const note = locale === "pt" ? "Escolha um projeto para abrir o estudo completo." : "Choose a project to open the full case study.";
+
+  if (!featuredProject) {
+    return (
+      <main className={styles.experience} onPointerMove={handleExperiencePointer}>
+        <div className={styles.shell}>
+          <section className={`${styles.projectsHeader} ${styles.reveal}`}>
+            <div>
+              <p className={styles.eyebrow}>portfolio / cases</p>
+              <h1 className={styles.heroTitle}>{title}</h1>
+              <p className={styles.heroText}>
+                {locale === "pt" ? "Nenhum projeto está publicado no momento." : "No projects are published right now."}
+              </p>
+            </div>
+          </section>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className={styles.experience} onPointerMove={handleExperiencePointer} style={projectAccentStyle(featuredProject)}>
