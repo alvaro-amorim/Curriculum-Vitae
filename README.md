@@ -231,6 +231,13 @@ Concluída com:
 - Home parcialmente modularizada sem alterar o visual aprovado;
 - exemplo de ambiente simplificado e sem chave pública não utilizada.
 
+Validação final da branch:
+
+```txt
+GitHub Actions CI: success
+Vercel preview build: success
+```
+
 Relatório detalhado:
 
 ```txt
