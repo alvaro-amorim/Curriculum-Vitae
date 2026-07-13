@@ -21,3 +21,23 @@ export function isAdminLoginPath(pathname: string) {
 export function isAdminApiPath(pathname: string) {
   return pathname.startsWith("/api/admin/");
 }
+
+export function isSafeAdminNextPath(value: string | null | undefined) {
+  if (!value) {
+    return false;
+  }
+
+  return value === "/admin" || value.startsWith("/admin/");
+}
+
+export function isSameOriginAdminRequest(requestUrl: string, originHeader: string | null) {
+  if (!originHeader) {
+    return true;
+  }
+
+  try {
+    return new URL(requestUrl).origin === new URL(originHeader).origin;
+  } catch {
+    return false;
+  }
+}
