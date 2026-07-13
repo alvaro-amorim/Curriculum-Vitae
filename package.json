@@ -11,7 +11,8 @@
     "test": "node --experimental-strip-types --test tests/*.test.mts",
     "validate:foundation": "node scripts/validate-foundation.mjs",
     "mongodb:ping": "node --env-file=.env.local scripts/check-mongodb.mjs",
-    "mongodb:setup": "node --experimental-strip-types --env-file=.env.local scripts/setup-mongodb.mjs"
+    "mongodb:setup": "node --experimental-strip-types --env-file=.env.local scripts/setup-mongodb.mjs",
+    "mongodb:import-projects": "node --experimental-strip-types --env-file=.env.local scripts/import-projects-mongodb.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.108.0",
