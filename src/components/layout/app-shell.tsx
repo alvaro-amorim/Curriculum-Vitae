@@ -4,10 +4,10 @@ import type { MouseEvent as ReactMouseEvent, ReactNode } from "react";
 import { createContext, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 
+import { CommandPalette } from "@/components/lab/command-palette";
 import { dictionary, type Dictionary } from "@/content/translations";
 import { STORAGE_KEYS } from "@/lib/constants";
 import type { Locale, ThemeName } from "@/types/portfolio";
-import { CommandPalette } from "@/components/lab/command-palette";
 
 import { CustomCursor } from "./custom-cursor";
 import { Topbar } from "./topbar";
@@ -84,6 +84,7 @@ function formatLocaleLabel(currentLocale: Locale, nextLocale: Locale) {
 
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
+  const isAdminRoute = pathname.startsWith("/admin");
   const [theme, setTheme] = useState<ThemeName>(() => resolveInitialTheme());
   const [locale, setLocaleState] = useState<Locale>("pt");
   const [transitionKind, setTransitionKind] = useState<TransitionKind>("idle");
@@ -135,8 +136,10 @@ export function AppShell({ children }: { children: ReactNode }) {
       return;
     }
 
-    triggerTransition("route", formatRouteLabel(pathname, localeRef.current));
-  }, [pathname, triggerTransition]);
+    if (!isAdminRoute) {
+      triggerTransition("route", formatRouteLabel(pathname, localeRef.current));
+    }
+  }, [isAdminRoute, pathname, triggerTransition]);
 
   useLayoutEffect(() => {
     document.documentElement.dataset.theme = theme;
@@ -165,7 +168,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   const handleShellClick = useCallback(
     (event: ReactMouseEvent<HTMLDivElement>) => {
-      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+      if (isAdminRoute || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
         return;
       }
 
@@ -191,7 +194,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
       triggerTransition("route", formatRouteLabel(url.pathname, locale));
     },
-    [locale, triggerTransition],
+    [isAdminRoute, locale, triggerTransition],
   );
 
   const value = useMemo<PortfolioUiContextValue>(
@@ -210,58 +213,67 @@ export function AppShell({ children }: { children: ReactNode }) {
     <PortfolioUiContext.Provider value={value}>
       <div
         className={styles.appShell}
+        data-admin={isAdminRoute ? "true" : "false"}
         data-locale={locale}
         data-transition-label={transitionLabel}
         data-transition-kind={transitionKind}
-        data-transitioning={transitionKind !== "idle" ? "true" : "false"}
+        data-transitioning={!isAdminRoute && transitionKind !== "idle" ? "true" : "false"}
         onClickCapture={handleShellClick}
       >
-        <Topbar />
-        <CommandPalette />
-        <CustomCursor />
+        {!isAdminRoute ? (
+          <>
+            <Topbar />
+            <CommandPalette />
+            <CustomCursor />
+          </>
+        ) : null}
         <div
           className={styles.pageFrame}
-          data-route={pathname === "/" ? "immersive" : "standard"}
+          data-route={isAdminRoute ? "admin" : pathname === "/" ? "immersive" : "standard"}
           key={pathname}
         >
           {children}
         </div>
-        <div
-          aria-hidden="true"
-          className={styles.transitionVeil}
-          data-active={transitionKind !== "idle"}
-          data-kind={transitionKind}
-          key={`veil-${transitionKind}-${transitionSequence}`}
-        />
-        <div
-          aria-hidden="true"
-          className={styles.themeSweep}
-          data-active={transitionKind === "theme"}
-          key={`theme-sweep-${transitionKind}-${transitionSequence}`}
-        />
-        <div
-          aria-hidden="true"
-          className={styles.localeScan}
-          data-active={transitionKind === "locale"}
-          key={`locale-scan-${transitionKind}-${transitionSequence}`}
-        />
-        <div
-          aria-hidden="true"
-          className={styles.transitionStatus}
-          data-active={transitionKind !== "idle"}
-          data-kind={transitionKind}
-          key={`status-${transitionKind}-${transitionSequence}`}
-        >
-          <span>{transitionLabel}</span>
-          <i />
-        </div>
-        <div
-          aria-hidden="true"
-          className={styles.motionRail}
-          data-active={transitionKind !== "idle"}
-          data-kind={transitionKind}
-          key={`rail-${transitionKind}-${transitionSequence}`}
-        />
+        {!isAdminRoute ? (
+          <>
+            <div
+              aria-hidden="true"
+              className={styles.transitionVeil}
+              data-active={transitionKind !== "idle"}
+              data-kind={transitionKind}
+              key={`veil-${transitionKind}-${transitionSequence}`}
+            />
+            <div
+              aria-hidden="true"
+              className={styles.themeSweep}
+              data-active={transitionKind === "theme"}
+              key={`theme-sweep-${transitionKind}-${transitionSequence}`}
+            />
+            <div
+              aria-hidden="true"
+              className={styles.localeScan}
+              data-active={transitionKind === "locale"}
+              key={`locale-scan-${transitionKind}-${transitionSequence}`}
+            />
+            <div
+              aria-hidden="true"
+              className={styles.transitionStatus}
+              data-active={transitionKind !== "idle"}
+              data-kind={transitionKind}
+              key={`status-${transitionKind}-${transitionSequence}`}
+            >
+              <span>{transitionLabel}</span>
+              <i />
+            </div>
+            <div
+              aria-hidden="true"
+              className={styles.motionRail}
+              data-active={transitionKind !== "idle"}
+              data-kind={transitionKind}
+              key={`rail-${transitionKind}-${transitionSequence}`}
+            />
+          </>
+        ) : null}
       </div>
     </PortfolioUiContext.Provider>
   );
