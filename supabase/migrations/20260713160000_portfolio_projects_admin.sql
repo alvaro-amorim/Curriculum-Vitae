@@ -51,7 +51,15 @@ language plpgsql
 security invoker
 set search_path = public
 as $$
+declare
+  actor_email text;
 begin
+  if tg_op = 'UPDATE' then
+    actor_email := coalesce(new.updated_by, old.updated_by);
+  else
+    actor_email := old.updated_by;
+  end if;
+
   insert into public.portfolio_project_revisions (
     project_id,
     slug,
@@ -68,7 +76,7 @@ begin
     old.publication_status,
     old.sort_order,
     lower(tg_op),
-    coalesce(new.updated_by, old.updated_by)
+    actor_email
   );
 
   if tg_op = 'UPDATE' then
