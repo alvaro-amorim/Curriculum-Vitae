@@ -307,12 +307,22 @@
   font-size: 0.56rem !important;
 }
 
+.live[data-tone="demo"] {
+  border-color: rgba(245, 158, 11, 0.28);
+  color: #f59e0b !important;
+}
+
 .live i {
   width: 0.38rem;
   height: 0.38rem;
   border-radius: 50%;
   background: var(--arcade-green);
   box-shadow: 0 0 0.65rem var(--arcade-green);
+}
+
+.live[data-tone="demo"] i {
+  background: #f59e0b;
+  box-shadow: 0 0 0.65rem rgba(245, 158, 11, 0.72);
 }
 
 .rankingList {

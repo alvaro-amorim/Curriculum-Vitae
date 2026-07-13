@@ -24,6 +24,7 @@ type ArcadeGameModalProps = {
   leaderboard: ArcadeBootstrapResponse["leaderboards"][LabGameId];
   lastResult: LastResult | null;
   locale: Locale;
+  leaderboardIsMock: boolean;
   onClose: () => void;
   onRestart: () => void;
   onSelectGame: (game: LabGameId) => void;
@@ -56,6 +57,7 @@ export function ArcadeGameModal({
   activeGame,
   children,
   leaderboard,
+  leaderboardIsMock,
   lastResult,
   locale,
   onClose,
@@ -260,7 +262,9 @@ export function ArcadeGameModal({
                 <span>{copy.topPlayers}</span>
                 <h3>{selectedGame.title}</h3>
               </div>
-              <span className={styles.live}><i />LIVE</span>
+              <span className={styles.live} data-tone={leaderboardIsMock ? "demo" : "live"}>
+                <i />{leaderboardIsMock ? copy.demoRanking : copy.liveRanking}
+              </span>
             </div>
 
             {leaderboard.length > 0 ? (

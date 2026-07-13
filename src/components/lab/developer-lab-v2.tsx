@@ -11,6 +11,7 @@ import type { GameScorePayloadV2, LabGameId, PlayerLeaderboardResponse } from "@
 import { ArcadeGameModal } from "./arcade-game-modal";
 import { labGames, labV2Copy } from "./lab-v2-copy";
 import styles from "./developer-lab-v2.module.css";
+import { getDisplayLeaderboard, isMockLeaderboard } from "./mock-leaderboards";
 import { useArcadeData } from "./use-arcade-data";
 
 type ScoreStatus = "idle" | "syncing" | "synced" | "failed";
@@ -148,11 +149,15 @@ export function DeveloperLabV2() {
     [scores],
   );
   const selectedRanking = playerLeaderboard?.rankings[rankingKeyByGame[rankingGame]] ?? null;
-  const selectedLeaderboard = leaderboards[rankingGame];
+  const selectedRawLeaderboard = leaderboards[rankingGame];
+  const selectedLeaderboard = getDisplayLeaderboard(rankingGame, selectedRawLeaderboard);
+  const selectedLeaderboardIsMock = isMockLeaderboard(selectedRawLeaderboard);
   const activeGameRanking = activeGame
     ? playerLeaderboard?.rankings[rankingKeyByGame[activeGame]] ?? null
     : null;
-  const activeGameLeaderboard = activeGame ? leaderboards[activeGame] : [];
+  const activeGameRawLeaderboard = activeGame ? leaderboards[activeGame] : [];
+  const activeGameLeaderboard = activeGame ? getDisplayLeaderboard(activeGame, activeGameRawLeaderboard) : [];
+  const activeGameLeaderboardIsMock = isMockLeaderboard(activeGameRawLeaderboard);
 
   const openGame = useCallback((game: LabGameId) => {
     setActiveGame(game);
@@ -376,6 +381,7 @@ export function DeveloperLabV2() {
             activeGame={activeGame}
             lastResult={lastResult}
             leaderboard={activeGameLeaderboard}
+            leaderboardIsMock={activeGameLeaderboardIsMock}
             locale={locale}
             onClose={closeGame}
             onRestart={() => setGameRunKey((current) => current + 1)}
@@ -420,7 +426,9 @@ export function DeveloperLabV2() {
                   <span>{copy.topPlayers}</span>
                   <h3>{labGames.find((game) => game.id === rankingGame)?.title}</h3>
                 </div>
-                <span className={styles.liveDot}><i />LIVE</span>
+                <span className={styles.liveDot} data-tone={selectedLeaderboardIsMock ? "demo" : "live"}>
+                  <i />{selectedLeaderboardIsMock ? copy.demoRanking : copy.liveRanking}
+                </span>
               </div>
 
               {selectedLeaderboard.length > 0 ? (
