@@ -9,7 +9,8 @@ export type ApiErrorCode =
   | "RATE_LIMITED"
   | "UNAUTHORIZED"
   | "FORBIDDEN"
-  | "NOT_FOUND";
+  | "NOT_FOUND"
+  | "CONFLICT";
 
 type ApiErrorBody = {
   ok: false;
