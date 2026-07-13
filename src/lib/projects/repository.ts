@@ -1,5 +1,11 @@
 import { getProjectBySlug, projects as staticProjects } from "@/content/projects";
-import { ProjectContentSchema, type AdminProjectMutation } from "@/lib/projects/project-schema";
+import {
+  applyPublicProjectDetailOverlay,
+  applyPublicProjectOverlay,
+  parseProjectContent,
+  type PublicProjectOverlayRow,
+} from "@/lib/projects/project-overlay";
+import type { AdminProjectMutation } from "@/lib/projects/project-schema";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
 import type { Project } from "@/types/portfolio";
 
@@ -38,13 +44,17 @@ type ProjectRow = {
   updated_by: string | null;
 };
 
-function parseProject(content: Record<string, unknown>) {
-  const parsed = ProjectContentSchema.safeParse(content);
-  return parsed.success ? (parsed.data as Project) : null;
+function toOverlayRow(row: Pick<ProjectRow, "content" | "publication_status" | "slug" | "sort_order">): PublicProjectOverlayRow {
+  return {
+    content: row.content,
+    publicationStatus: row.publication_status,
+    slug: row.slug,
+    sortOrder: row.sort_order,
+  };
 }
 
 function toAdminRecord(row: ProjectRow): AdminProjectRecord | null {
-  const project = parseProject(row.content);
+  const project = parseProjectContent(row.content);
 
   if (!project || project.slug !== row.slug) {
     return null;
@@ -79,59 +89,36 @@ export async function getPublicProjects(): Promise<Project[]> {
       return staticProjects;
     }
 
-    const projectMap = new Map(staticProjects.map((project, index) => [
-      project.slug,
-      { project, sortOrder: index * 10 },
-    ]));
-
-    for (const row of data as ProjectRow[]) {
-      if (row.publication_status !== "published") {
-        projectMap.delete(row.slug);
-        continue;
-      }
-
-      const project = parseProject(row.content);
-      if (project && project.slug === row.slug) {
-        projectMap.set(row.slug, {
-          project,
-          sortOrder: row.sort_order,
-        });
-      }
-    }
-
-    return [...projectMap.values()]
-      .sort((left, right) => left.sortOrder - right.sortOrder)
-      .map((entry) => entry.project);
+    return applyPublicProjectOverlay(
+      staticProjects,
+      (data as ProjectRow[]).map(toOverlayRow),
+    );
   } catch {
     return staticProjects;
   }
 }
 
 export async function getPublicProjectBySlug(slug: string): Promise<Project | null> {
+  const staticProject = getProjectBySlug(slug) ?? null;
+
   try {
     const supabase = getSupabaseServerClient();
     const { data, error } = await supabase
       .from("portfolio_projects")
-      .select("slug, content, publication_status")
+      .select("slug, content, publication_status, sort_order")
       .eq("slug", slug)
       .maybeSingle();
 
-    if (error) {
-      return getProjectBySlug(slug) ?? null;
+    if (error || !data) {
+      return staticProject;
     }
 
-    if (!data) {
-      return getProjectBySlug(slug) ?? null;
-    }
-
-    if (data.publication_status !== "published") {
-      return null;
-    }
-
-    const project = parseProject(data.content);
-    return project?.slug === slug ? project : null;
+    return applyPublicProjectDetailOverlay(
+      staticProject,
+      toOverlayRow(data as Pick<ProjectRow, "content" | "publication_status" | "slug" | "sort_order">),
+    );
   } catch {
-    return getProjectBySlug(slug) ?? null;
+    return staticProject;
   }
 }
 
@@ -169,7 +156,7 @@ export async function saveAdminProject(input: AdminProjectMutation, updatedBy: s
     .from("portfolio_projects")
     .upsert(
       {
-        content: input.project as Record<string, unknown>,
+        content: input.project as unknown as Record<string, unknown>,
         publication_status: input.publicationStatus,
         published_at: publishedAt,
         slug: input.project.slug,
@@ -215,7 +202,7 @@ export async function importStaticProjects(updatedBy: string) {
   const supabase = getSupabaseServerClient();
   const now = new Date().toISOString();
   const payload = staticProjects.map((project, index) => ({
-    content: project as Record<string, unknown>,
+    content: project as unknown as Record<string, unknown>,
     publication_status: "published" as const,
     published_at: now,
     slug: project.slug,
@@ -247,7 +234,7 @@ export async function getProjectRevisions(slug: string): Promise<ProjectRevision
   }
 
   return data.flatMap((row) => {
-    const project = parseProject(row.content);
+    const project = parseProjectContent(row.content);
     return project ? [{
       action: row.action,
       changedAt: row.changed_at,
