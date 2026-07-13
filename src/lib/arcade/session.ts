@@ -5,7 +5,7 @@ import {
   ARCADE_LAST_SEEN_REFRESH_INTERVAL_MS,
   shouldRefreshArcadeSessionLastSeen,
 } from "@/lib/arcade/session-rules";
-import { getSupabaseServerClient } from "@/lib/supabase/server";
+import { getMongoCollections } from "@/lib/mongodb/collections";
 
 export { ARCADE_ALIAS_MAX_LENGTH, validatePlayerAlias } from "@/lib/arcade/session-rules";
 
@@ -91,69 +91,87 @@ export async function upsertArcadeSession({
   sessionHash: string;
   updateAlias?: boolean;
 }): Promise<PublicArcadeSession> {
-  const supabase = getSupabaseServerClient();
-  const nowMs = Date.now();
-  const nowIso = new Date(nowMs).toISOString();
+  const { arcadeScores, arcadeSessions } = await getMongoCollections();
+  const now = new Date();
 
-  const { error: ensureError } = await supabase
-    .from("arcade_sessions")
-    .upsert(
-      {
-        alias: updateAlias ? (alias ?? null) : null,
-        last_seen_at: nowIso,
-        session_hash: sessionHash,
+  const ensureResult = await arcadeSessions.updateOne(
+    { sessionHash },
+    {
+      $setOnInsert: {
+        alias: null,
+        createdAt: now,
+        lastSeenAt: now,
+        sessionHash,
       },
-      {
-        ignoreDuplicates: true,
-        onConflict: "session_hash",
-      },
-    );
+    },
+    { upsert: true },
+  );
 
-  if (ensureError) {
+  if (!ensureResult.acknowledged) {
     throw new Error("Could not ensure arcade session.");
   }
 
   if (updateAlias) {
-    const { data: updatedSession, error: updateError } = await supabase
-      .from("arcade_sessions")
-      .update({
-        alias: alias ?? null,
-        last_seen_at: nowIso,
-      })
-      .eq("session_hash", sessionHash)
-      .select("alias")
-      .single();
+    const normalizedAlias = alias ?? null;
+    const updateResult = await arcadeSessions.updateOne(
+      { sessionHash },
+      {
+        $set: {
+          alias: normalizedAlias,
+          lastSeenAt: now,
+        },
+      },
+    );
 
-    if (updateError) {
+    if (!updateResult.acknowledged || updateResult.matchedCount !== 1) {
       throw new Error("Could not update arcade session.");
     }
 
+    await arcadeScores.updateMany(
+      { sessionHash },
+      {
+        $set: {
+          playerAlias: normalizedAlias,
+        },
+      },
+    );
+
     return {
-      alias: updatedSession.alias,
+      alias: normalizedAlias,
       maxAliasLength: ARCADE_ALIAS_MAX_LENGTH,
       ready: true,
     };
   }
 
-  const { data: currentSession, error: selectError } = await supabase
-    .from("arcade_sessions")
-    .select("alias, last_seen_at")
-    .eq("session_hash", sessionHash)
-    .single();
+  const currentSession = await arcadeSessions.findOne(
+    { sessionHash },
+    {
+      projection: {
+        alias: 1,
+        lastSeenAt: 1,
+      },
+    },
+  );
 
-  if (selectError) {
+  if (!currentSession) {
     throw new Error("Could not read arcade session.");
   }
 
-  if (shouldRefreshArcadeSessionLastSeen(currentSession.last_seen_at, nowMs)) {
-    const refreshBeforeIso = new Date(nowMs - ARCADE_LAST_SEEN_REFRESH_INTERVAL_MS).toISOString();
-    const { error: refreshError } = await supabase
-      .from("arcade_sessions")
-      .update({ last_seen_at: nowIso })
-      .eq("session_hash", sessionHash)
-      .lt("last_seen_at", refreshBeforeIso);
+  if (shouldRefreshArcadeSessionLastSeen(currentSession.lastSeenAt.toISOString(), now.getTime())) {
+    const refreshBefore = new Date(now.getTime() - ARCADE_LAST_SEEN_REFRESH_INTERVAL_MS);
+    const refreshResult = await arcadeSessions.updateOne(
+      {
+        lastSeenAt: { $lt: refreshBefore },
+        sessionHash,
+      },
+      {
+        $set: {
+          lastSeenAt: now,
+        },
+      },
+    );
 
-    if (refreshError) {
+    if (!refreshResult.acknowledged) {
       throw new Error("Could not refresh arcade session activity.");
     }
   }
