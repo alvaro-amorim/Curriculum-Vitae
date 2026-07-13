@@ -5,6 +5,7 @@ import { getMongoCollections } from "@/lib/mongodb/collections";
 export type AdminDashboardMetrics = {
   arcadeGames: number;
   databaseAvailable: boolean;
+  projectDatabaseAvailable: boolean;
   projects: number;
   scores: number | null;
   sessions: number | null;
@@ -12,16 +13,18 @@ export type AdminDashboardMetrics = {
 
 export async function getAdminDashboardMetrics(): Promise<AdminDashboardMetrics> {
   try {
-    const { arcadeScores, arcadeSessions } = await getMongoCollections();
-    const [scores, sessions] = await Promise.all([
+    const { arcadeScores, arcadeSessions, portfolioProjects } = await getMongoCollections();
+    const [scores, sessions, projectCount] = await Promise.all([
       arcadeScores.countDocuments(),
       arcadeSessions.countDocuments(),
+      portfolioProjects.countDocuments(),
     ]);
 
     return {
       arcadeGames: ARCADE_GAME_IDS.length,
       databaseAvailable: true,
-      projects: projects.length,
+      projectDatabaseAvailable: true,
+      projects: projectCount > 0 ? projectCount : projects.length,
       scores,
       sessions,
     };
@@ -29,6 +32,7 @@ export async function getAdminDashboardMetrics(): Promise<AdminDashboardMetrics>
     return {
       arcadeGames: ARCADE_GAME_IDS.length,
       databaseAvailable: false,
+      projectDatabaseAvailable: false,
       projects: projects.length,
       scores: null,
       sessions: null,
