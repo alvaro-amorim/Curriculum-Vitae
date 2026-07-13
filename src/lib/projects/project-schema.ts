@@ -3,7 +3,12 @@ import { z } from "zod";
 const SlugSchema = z.string().trim().min(2).max(80).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
 const ShortTextSchema = z.string().trim().min(1).max(180);
 const LongTextSchema = z.string().trim().min(1).max(4_000);
-const UrlSchema = z.string().trim().url().max(2_048);
+const UrlSchema = z
+  .string()
+  .trim()
+  .url()
+  .max(2_048)
+  .refine((value) => /^https?:\/\//i.test(value), "A URL precisa usar HTTP ou HTTPS.");
 const LocalizedShortTextSchema = z.object({
   en: ShortTextSchema,
   pt: ShortTextSchema,
