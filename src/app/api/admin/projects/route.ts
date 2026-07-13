@@ -1,7 +1,9 @@
+import { revalidatePath } from "next/cache";
+
 import { apiError, apiSuccess, methodNotAllowed, readJsonPayload, validationError } from "@/lib/api-response";
 import { requireAdminApiUser } from "@/lib/admin/api-auth";
 import { AdminProjectMutationSchema } from "@/lib/projects/project-schema";
-import { getAdminProjects, saveAdminProject } from "@/lib/projects/repository";
+import { getAdminProjectBySlug, getAdminProjects, saveAdminProject } from "@/lib/projects/repository";
 
 const ADMIN_PROJECT_MAX_BYTES = 64 * 1024;
 
@@ -48,7 +50,15 @@ export async function POST(request: Request) {
   }
 
   try {
+    const existingProject = await getAdminProjectBySlug(parsed.data.project.slug);
+
+    if (existingProject) {
+      return apiError("CONFLICT", "Ja existe um projeto administrativo com este slug.", 409);
+    }
+
     const project = await saveAdminProject(parsed.data, auth.user.email);
+    revalidatePath("/projetos");
+    revalidatePath(`/projetos/${project.project.slug}`);
     return apiSuccess({ project }, { status: 201 });
   } catch (error) {
     return apiError(
