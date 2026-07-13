@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 
 import Link from "next/link";
 
+import { AboutContactSection } from "@/components/home/about-contact-section";
 import { usePortfolioUi } from "@/components/layout/app-shell";
 import { profile } from "@/content/profile";
 import { homeCopy as copy } from "@/content/home-copy";
@@ -17,7 +18,6 @@ import type { HomeIconName as IconName } from "./home-icons";
 import styles from "./visual-final-candidate.module.css";
 
 type StyleVars = CSSProperties & Record<`--${string}`, string | number>;
-
 
 const AUTO_MS = 7000;
 const FIRST_AUTO_MS = 30000;
@@ -111,7 +111,7 @@ function ProjectCarousel({ locale }: { locale: Locale }) {
             key={project.title}
           >
             <div className={styles.projectSummary}>
-              <ProjectIcon iconKey={project.projectIconKey} accent={project.brandAccent} />
+              <ProjectIcon iconKey={project.projectIconKey as ProjectIconKey} accent={project.brandAccent as Accent} />
               <h3>{project.title}</h3>
               <p>{project.description[locale]}</p>
             </div>
@@ -258,21 +258,21 @@ function CapabilityBar({ locale }: { locale: Locale }) {
             const [mobileTitle, mobileDescription] = t.capabilityMobile[index];
 
             return (
-            <li key={title} className={index !== copy[locale].capability.length - 1 ? styles.withDivider : undefined}>
-              <div>
-                <Icon name={icon as IconName} />
-              </div>
-              <span>
-                <strong>
-                  <span className={styles.capabilityFull}>{title}</span>
-                  <span className={styles.capabilityCompact}>{mobileTitle}</span>
-                </strong>
-                <small>
-                  <span className={styles.capabilityFull}>{description}</span>
-                  <span className={styles.capabilityCompact}>{mobileDescription}</span>
-                </small>
-              </span>
-            </li>
+              <li key={title} className={index !== copy[locale].capability.length - 1 ? styles.withDivider : undefined}>
+                <div>
+                  <Icon name={icon as IconName} />
+                </div>
+                <span>
+                  <strong>
+                    <span className={styles.capabilityFull}>{title}</span>
+                    <span className={styles.capabilityCompact}>{mobileTitle}</span>
+                  </strong>
+                  <small>
+                    <span className={styles.capabilityFull}>{description}</span>
+                    <span className={styles.capabilityCompact}>{mobileDescription}</span>
+                  </small>
+                </span>
+              </li>
             );
           })}
         </ul>
@@ -313,7 +313,7 @@ function FeaturedProjects({ locale }: { locale: Locale }) {
           <Reveal className={styles.featuredCard} key={project.title} delay={(index % 3) * 90}>
             <Link href={project.caseHref}>
               <div>
-                <ProjectIcon iconKey={project.projectIconKey} accent={project.brandAccent} size="sm" />
+                <ProjectIcon iconKey={project.projectIconKey as ProjectIconKey} accent={project.brandAccent as Accent} size="sm" />
                 <span>
                   <Icon name="external" />
                 </span>
@@ -478,35 +478,6 @@ function ArcadeSection({ locale }: { locale: Locale }) {
   );
 }
 
-function AboutSection({ locale }: { locale: Locale }) {
-  const t = copy[locale];
-
-  return (
-    <section id="sobre" className={styles.aboutSection}>
-      <div className={styles.aboutGrid}>
-        <Reveal>
-          <div className={styles.aboutVisual}>
-            <span>Á</span>
-          </div>
-        </Reveal>
-        <Reveal delay={120}>
-          <p>{t.aboutEyebrow}</p>
-          <h2>{t.aboutTitle}</h2>
-          <span>{t.aboutText}</span>
-          <div className={styles.aboutStats}>
-            {t.aboutStats.map(([value, label]) => (
-              <article key={label}>
-                <strong>{value}</strong>
-                <small>{label}</small>
-              </article>
-            ))}
-          </div>
-        </Reveal>
-      </div>
-    </section>
-  );
-}
-
 function FinalCta({ locale }: { locale: Locale }) {
   const t = copy[locale];
 
@@ -557,7 +528,7 @@ export function VisualFinalCandidate() {
       <StackSection locale={locale} />
       <ProcessSection locale={locale} />
       <ArcadeSection locale={locale} />
-      <AboutSection locale={locale} />
+      <AboutContactSection locale={locale} />
       <FinalCta locale={locale} />
     </main>
   );
