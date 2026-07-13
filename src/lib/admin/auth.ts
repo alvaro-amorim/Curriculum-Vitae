@@ -80,41 +80,6 @@ export async function signInAdmin(email: string, password: string) {
     email: normalizeAdminEmail(email),
     password,
   });
-
-  if (error || !data.session || !toAdminUser(data.user)) {
-    return null;
-  }
-
-  return {
-    session: data.session,
-    user: toAdminUser(data.user) as AdminUser,
-  };
-}
-
-export async function getAdminUserFromAccessToken(accessToken: string | null | undefined) {
-  if (!accessToken) {
-    return null;
-  }
-
-  const supabase = getSupabaseAuthClient();
-  const { data, error } = await supabase.auth.getUser(accessToken);
-
-  if (error) {
-    return null;
-  }
-
-  return toAdminUser(data.user);
-}
-
-export async function refreshAdminSession(refreshToken: string | null | undefined) {
-  if (!refreshToken) {
-    return null;
-  }
-
-  const supabase = getSupabaseAuthClient();
-  const { data, error } = await supabase.auth.refreshSession({
-    refresh_token: refreshToken,
-  });
   const user = toAdminUser(data.user);
 
   if (error || !data.session || !user) {
@@ -125,6 +90,25 @@ export async function refreshAdminSession(refreshToken: string | null | undefine
     session: data.session,
     user,
   };
+}
+
+export async function getAdminUserFromAccessToken(accessToken: string | null | undefined) {
+  if (!accessToken) {
+    return null;
+  }
+
+  try {
+    const supabase = getSupabaseAuthClient();
+    const { data, error } = await supabase.auth.getUser(accessToken);
+
+    if (error) {
+      return null;
+    }
+
+    return toAdminUser(data.user);
+  } catch {
+    return null;
+  }
 }
 
 export async function getCurrentAdminUser() {
