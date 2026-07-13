@@ -3,7 +3,7 @@ import { cookies } from "next/headers";
 import { apiError, apiSuccess, methodNotAllowed, readJsonPayload, validationError } from "@/lib/api-response";
 import { consumeArcadeRateLimit } from "@/lib/arcade/rate-limit";
 import { resolveArcadeSessionContext } from "@/lib/arcade/session";
-import { getSupabaseServerClient } from "@/lib/supabase/server";
+import { getMongoCollections } from "@/lib/mongodb/collections";
 import { ScorePayloadSchema } from "@/lib/validators";
 
 const SCORE_RATE_LIMIT = 12;
@@ -48,25 +48,22 @@ export async function POST(request: Request) {
       });
     }
 
-    const supabase = getSupabaseServerClient();
+    const { arcadeScores } = await getMongoCollections();
     const scorePayload = parsed.data;
-    const { data: persistedScore, error: persistError } = await supabase
-      .from("arcade_scores")
-      .insert({
-        contract_version: "v2",
-        device_type: scorePayload.deviceType ?? "unknown",
-        duration_ms: scorePayload.durationMs,
-        game_id: scorePayload.game,
-        game_version: scorePayload.gameVersion,
-        metadata_json: scorePayload.metadata as Record<string, unknown>,
-        player_alias: publicSession.alias,
-        score: scorePayload.score,
-        session_hash: sessionHash,
-      })
-      .select("id")
-      .single();
+    const persistResult = await arcadeScores.insertOne({
+      contractVersion: "v2",
+      createdAt: new Date(),
+      deviceType: scorePayload.deviceType ?? "unknown",
+      durationMs: scorePayload.durationMs,
+      gameId: scorePayload.game,
+      gameVersion: scorePayload.gameVersion,
+      metadata: scorePayload.metadata as Record<string, unknown>,
+      playerAlias: publicSession.alias,
+      score: scorePayload.score,
+      sessionHash,
+    });
 
-    if (persistError || !persistedScore) {
+    if (!persistResult.acknowledged || !persistResult.insertedId) {
       return apiError("INTERNAL_ERROR", "Nao foi possivel persistir o score agora.", 500);
     }
 
