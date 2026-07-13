@@ -1,18 +1,29 @@
 .overlay {
+  --modal-gap: clamp(0.4rem, 1.2vw, 1rem);
   position: fixed;
   inset: 0;
   z-index: 1200;
   display: grid;
+  width: 100vw;
+  height: 100dvh;
+  max-height: 100dvh;
   place-items: stretch;
-  padding: clamp(0.4rem, 1.2vw, 1rem);
+  overflow: hidden;
+  overscroll-behavior: none;
+  padding: var(--modal-gap);
   background: rgba(1, 4, 12, 0.86);
   backdrop-filter: blur(18px) saturate(120%);
   animation: overlayIn 180ms ease-out both;
+  contain: layout paint;
 }
 
 .dialog {
   position: relative;
   display: grid;
+  width: 100%;
+  height: calc(100dvh - var(--modal-gap) - var(--modal-gap));
+  max-width: 100vw;
+  max-height: calc(100dvh - var(--modal-gap) - var(--modal-gap));
   min-width: 0;
   min-height: 0;
   grid-template-rows: auto auto minmax(0, 1fr);
@@ -128,6 +139,7 @@
   min-width: 0;
   gap: 0.45rem;
   overflow-x: auto;
+  overflow-y: hidden;
   border-bottom: 1px solid var(--arcade-line);
   padding: 0.6rem clamp(0.9rem, 2vw, 1.5rem);
   scrollbar-width: thin;
@@ -162,6 +174,7 @@
   min-height: 0;
   grid-template-columns: minmax(0, 1fr) minmax(17rem, 22rem);
   gap: 0;
+  overflow: hidden;
 }
 
 .gameColumn {
@@ -169,14 +182,18 @@
   min-width: 0;
   min-height: 0;
   grid-template-rows: minmax(0, 1fr) auto;
-  overflow: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   padding: clamp(0.65rem, 1.4vw, 1rem);
+  scrollbar-gutter: stable;
 }
 
 .arena {
   min-width: 0;
-  min-height: min(38rem, 68vh);
-  overflow: hidden;
+  min-height: clamp(24rem, 62dvh, 38rem);
+  overflow: auto;
+  overscroll-behavior: contain;
   border: 1px solid var(--arcade-line);
   border-radius: 1rem;
   background: #02040a;
@@ -210,10 +227,13 @@
 .rankingPanel {
   min-width: 0;
   min-height: 0;
+  overflow-x: hidden;
   overflow-y: auto;
+  overscroll-behavior: contain;
   border-left: 1px solid var(--arcade-line);
   padding: clamp(0.85rem, 1.6vw, 1.2rem);
   background: rgba(255, 255, 255, 0.018);
+  scrollbar-gutter: stable;
 }
 
 .rankingHeader {
@@ -359,13 +379,20 @@
 
 @media (max-width: 900px) {
   .content {
-    grid-template-columns: 1fr;
+    display: block;
+    overflow-x: hidden;
     overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
   }
 
   .gameColumn {
-    min-height: 70vh;
+    min-height: 0;
     overflow: visible;
+  }
+
+  .arena {
+    min-height: clamp(24rem, 58dvh, 34rem);
   }
 
   .rankingPanel {
@@ -377,16 +404,19 @@
 
 @media (max-width: 620px) {
   .overlay {
-    padding: 0;
+    --modal-gap: 0px;
   }
 
   .dialog {
+    height: 100dvh;
+    max-height: 100dvh;
     border: 0;
     border-radius: 0;
   }
 
   .header {
     align-items: flex-start;
+    padding: 0.75rem;
   }
 
   .heading p,
@@ -394,13 +424,17 @@
     display: none;
   }
 
+  .gameTabs {
+    padding: 0.5rem 0.65rem;
+  }
+
   .gameColumn {
-    min-height: 68vh;
+    min-height: 0;
     padding: 0.45rem;
   }
 
   .arena {
-    min-height: 62vh;
+    min-height: clamp(23rem, 56dvh, 30rem);
     border-radius: 0.75rem;
   }
 
