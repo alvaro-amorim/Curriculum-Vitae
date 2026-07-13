@@ -1,3 +1,5 @@
+import { revalidatePath } from "next/cache";
+
 import { apiError, apiSuccess, methodNotAllowed, readJsonPayload, validationError } from "@/lib/api-response";
 import { requireAdminApiUser } from "@/lib/admin/api-auth";
 import { AdminProjectMutationSchema } from "@/lib/projects/project-schema";
@@ -15,6 +17,11 @@ type RouteContext = {
     slug: string;
   }>;
 };
+
+function revalidatePublicProject(slug: string) {
+  revalidatePath("/projetos");
+  revalidatePath(`/projetos/${slug}`);
+}
 
 export async function GET(request: Request, context: RouteContext) {
   const auth = await requireAdminApiUser(request);
@@ -81,6 +88,7 @@ export async function PUT(request: Request, context: RouteContext) {
     }
 
     const project = await saveAdminProject(parsed.data, auth.user.email);
+    revalidatePublicProject(slug);
     return apiSuccess({ project });
   } catch (error) {
     return apiError(
@@ -108,6 +116,7 @@ export async function DELETE(request: Request, context: RouteContext) {
     }
 
     await archiveAdminProject(slug, auth.user.email);
+    revalidatePublicProject(slug);
     return apiSuccess({ archived: true, slug });
   } catch (error) {
     return apiError(
