@@ -51,30 +51,95 @@ export function ArcadeGameModal({
   const copy = labV2Copy[locale];
   const selectedGame = labGames.find((game) => game.id === activeGame) ?? labGames[0];
   const closeButtonRef = useRef<HTMLButtonElement | null>(null);
+  const dialogRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    const root = document.documentElement;
+    const body = document.body;
+    const previouslyFocused = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const scrollY = window.scrollY;
+    const scrollbarWidth = Math.max(0, window.innerWidth - root.clientWidth);
+    const previousRootOverflow = root.style.overflow;
+    const previousRootOverscroll = root.style.overscrollBehavior;
+    const previousBodyOverflow = body.style.overflow;
+    const previousBodyOverscroll = body.style.overscrollBehavior;
+    const previousBodyPosition = body.style.position;
+    const previousBodyTop = body.style.top;
+    const previousBodyLeft = body.style.left;
+    const previousBodyRight = body.style.right;
+    const previousBodyWidth = body.style.width;
+    const previousBodyPaddingRight = body.style.paddingRight;
+
+    root.style.overflow = "hidden";
+    root.style.overscrollBehavior = "none";
+    body.style.overflow = "hidden";
+    body.style.overscrollBehavior = "none";
+    body.style.position = "fixed";
+    body.style.top = `-${scrollY}px`;
+    body.style.left = "0";
+    body.style.right = "0";
+    body.style.width = "100%";
+    body.style.paddingRight = scrollbarWidth > 0 ? `${scrollbarWidth}px` : previousBodyPaddingRight;
+    body.dataset.arcadeModalOpen = "true";
     closeButtonRef.current?.focus();
 
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
+        event.preventDefault();
         onClose();
+        return;
+      }
+
+      if (event.key !== "Tab") {
+        return;
+      }
+
+      const dialog = dialogRef.current;
+      const focusable = dialog?.querySelectorAll<HTMLElement>(
+        'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+      );
+
+      if (!focusable || focusable.length === 0) {
+        event.preventDefault();
+        return;
+      }
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
       }
     }
 
     window.addEventListener("keydown", handleKeyDown);
 
     return () => {
-      document.body.style.overflow = previousOverflow;
+      root.style.overflow = previousRootOverflow;
+      root.style.overscrollBehavior = previousRootOverscroll;
+      body.style.overflow = previousBodyOverflow;
+      body.style.overscrollBehavior = previousBodyOverscroll;
+      body.style.position = previousBodyPosition;
+      body.style.top = previousBodyTop;
+      body.style.left = previousBodyLeft;
+      body.style.right = previousBodyRight;
+      body.style.width = previousBodyWidth;
+      body.style.paddingRight = previousBodyPaddingRight;
+      delete body.dataset.arcadeModalOpen;
       window.removeEventListener("keydown", handleKeyDown);
+      window.scrollTo(0, scrollY);
+      previouslyFocused?.focus();
     };
   }, [onClose]);
 
   return (
     <div
       className={styles.overlay}
-      onMouseDown={(event) => {
+      onPointerDown={(event) => {
         if (event.target === event.currentTarget) {
           onClose();
         }
@@ -82,20 +147,22 @@ export function ArcadeGameModal({
       role="presentation"
     >
       <section
+        aria-describedby="arcade-modal-description"
         aria-labelledby="arcade-modal-title"
         aria-modal="true"
         className={styles.dialog}
+        ref={dialogRef}
         role="dialog"
       >
         <header className={styles.header}>
           <div className={styles.heading}>
             <span>{copy.focusEyebrow}</span>
             <h2 id="arcade-modal-title">{selectedGame.title}</h2>
-            <p>{copy.focusHint}</p>
+            <p id="arcade-modal-description">{copy.focusHint}</p>
           </div>
           <div className={styles.headerActions}>
             <button className={styles.restartButton} onClick={onRestart} type="button">
-              {copy.switchGame}
+              {copy.restartGame}
             </button>
             <button
               aria-label={copy.closeGame}
