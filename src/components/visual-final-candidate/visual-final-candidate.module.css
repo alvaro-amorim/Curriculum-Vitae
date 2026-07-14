@@ -522,6 +522,9 @@
 .projectLogoIcon .projectLogoSurface {
   position: relative;
   overflow: hidden;
+  width: 3.58rem;
+  height: 3.58rem;
+  border-radius: 0.82rem;
   background:
     radial-gradient(circle at 72% 18%, rgba(255, 255, 255, 0.28), transparent 36%),
     var(--accent-gradient);
@@ -531,15 +534,21 @@
   display: block;
   width: 100%;
   height: 100%;
-  padding: 0.3rem;
-  border-radius: 0.62rem;
+  padding: 0.12rem;
+  border-radius: 0.66rem;
   background: rgba(3, 7, 18, 0.36);
   object-fit: contain;
 }
 
+.projectIconSm .projectLogoSurface {
+  width: 2.55rem;
+  height: 2.55rem;
+  border-radius: 0.62rem;
+}
+
 .projectIconSm .projectLogoImage {
-  padding: 0.22rem;
-  border-radius: 0.44rem;
+  padding: 0.08rem;
+  border-radius: 0.5rem;
 }
 
 .projectIcon svg {
@@ -1465,13 +1474,19 @@
   text-align: center;
 }
 
-.finalShell > div {
+.finalQuestionMark {
+  display: grid;
   width: 4rem;
   height: 4rem;
+  place-items: center;
   margin-bottom: 1.2rem;
   border-radius: 1.2rem;
   background: var(--gradient-brand);
   box-shadow: var(--shadow-glow);
+  color: #fff;
+  font-size: 2.3rem;
+  font-weight: 900;
+  line-height: 1;
 }
 
 .finalShell p {
@@ -2279,6 +2294,22 @@
     border-radius: 0.5rem;
   }
 
+  .projectLogoIcon {
+    width: 3rem;
+    height: 3rem;
+  }
+
+  .projectLogoIcon .projectLogoSurface {
+    width: 2.36rem;
+    height: 2.36rem;
+    border-radius: 0.58rem;
+  }
+
+  .projectLogoImage {
+    padding: 0.07rem;
+    border-radius: 0.48rem;
+  }
+
   .projectIcon svg {
     width: 1.1rem;
     height: 1.1rem;
@@ -2714,11 +2745,12 @@
     padding: 1.55rem 1rem;
   }
 
-  .finalShell > div {
+  .finalQuestionMark {
     width: 2.8rem;
     height: 2.8rem;
     margin-bottom: 0.82rem;
     border-radius: 0.85rem;
+    font-size: 1.65rem;
   }
 
   .finalShell nav {
@@ -2994,6 +3026,23 @@
   .projectIcon span {
     width: 1.42rem;
     height: 1.42rem;
+    border-radius: 0.42rem;
+  }
+
+  .projectLogoIcon {
+    width: 2.56rem;
+    height: 2.56rem;
+    border-radius: 0.62rem;
+  }
+
+  .projectLogoIcon .projectLogoSurface {
+    width: 2.04rem;
+    height: 2.04rem;
+    border-radius: 0.5rem;
+  }
+
+  .projectLogoImage {
+    padding: 0.05rem;
     border-radius: 0.42rem;
   }
 
@@ -3419,11 +3468,12 @@
     padding: 1.05rem 0.72rem;
   }
 
-  .finalShell > div {
+  .finalQuestionMark {
     width: 2.1rem;
     height: 2.1rem;
     margin-bottom: 0.55rem;
     border-radius: 0.62rem;
+    font-size: 1.22rem;
   }
 
   .finalShell nav {

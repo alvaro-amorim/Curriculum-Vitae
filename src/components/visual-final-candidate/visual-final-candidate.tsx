@@ -510,7 +510,9 @@ function FinalCta({ locale }: { locale: Locale }) {
   return (
     <section className={styles.finalSection}>
       <Reveal className={styles.finalShell}>
-        <div />
+        <div aria-hidden="true" className={styles.finalQuestionMark}>
+          ?
+        </div>
         <h2>{t.finalTitle}</h2>
         <p>{t.finalSubtitle}</p>
         <nav>
