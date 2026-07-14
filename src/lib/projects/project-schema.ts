@@ -11,6 +11,21 @@ const UrlSchema = z
   .url()
   .max(2_048)
   .refine((value) => /^https?:\/\//i.test(value), "A URL precisa usar HTTP ou HTTPS.");
+const OptionalUrlSchema = z
+  .string()
+  .trim()
+  .max(2_048)
+  .refine((value) => value === "" || /^https?:\/\//i.test(value), "A URL precisa usar HTTP ou HTTPS.")
+  .refine((value) => {
+    if (value === "") return true;
+
+    try {
+      new URL(value);
+      return true;
+    } catch {
+      return false;
+    }
+  }, "URL inválida.");
 const AssetPathSchema = z
   .string()
   .trim()
@@ -69,7 +84,7 @@ export const ProjectContentSchema = z.object({
   highlights: LocalizedListSchema,
   links: z.object({
     repository: UrlSchema.optional(),
-    website: UrlSchema,
+    website: OptionalUrlSchema,
   }).strict(),
   problem: LocalizedLongTextSchema,
   shortDescription: LocalizedLongTextSchema,

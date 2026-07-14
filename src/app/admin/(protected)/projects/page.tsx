@@ -29,7 +29,7 @@ export default async function AdminProjectsPage() {
         <div>
           <span className={styles.eyebrow}>ADMIN / PROJETOS</span>
           <h1>Conteúdo editorial dos cases.</h1>
-          <p>Importe o catálogo atual, edite versões bilíngues e controle o que é publicado pelo MongoDB.</p>
+          <p>Importe projetos via JSON, edite versões bilíngues e controle o que é publicado pelo MongoDB.</p>
         </div>
       </header>
 

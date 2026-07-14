@@ -14,9 +14,11 @@ export function ProjectLinks({ project }: ProjectLinksProps) {
 
   return (
     <div className={styles.navActions}>
-      <a className={styles.actionPrimary} href={project.links.website} rel="noreferrer" target="_blank">
-        {t.caseStudy.visitProject}
-      </a>
+      {project.links.website ? (
+        <a className={styles.actionPrimary} href={project.links.website} rel="noreferrer" target="_blank">
+          {t.caseStudy.visitProject}
+        </a>
+      ) : null}
       {project.links.repository ? (
         <a className={styles.actionSecondary} href={project.links.repository} rel="noreferrer" target="_blank">
           {t.caseStudy.viewRepository}

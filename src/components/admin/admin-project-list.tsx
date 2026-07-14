@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
+import { AdminProjectJsonImportModal } from "./admin-project-json-import-modal";
 import styles from "./admin-projects.module.css";
 
 type ProjectSummary = {
@@ -17,7 +18,7 @@ type ProjectSummary = {
 
 type ApiResponse = {
   data?: {
-    imported?: number;
+    archived?: boolean;
   };
   error?: {
     message?: string;
@@ -33,42 +34,12 @@ export function AdminProjectList({
   projects: ProjectSummary[];
 }) {
   const router = useRouter();
+  const importButtonRef = useRef<HTMLButtonElement | null>(null);
+  const [highlightedSlugs, setHighlightedSlugs] = useState<string[]>([]);
+  const [importModalOpen, setImportModalOpen] = useState(false);
   const [pendingSlug, setPendingSlug] = useState<string | null>(null);
-  const [importing, setImporting] = useState(false);
   const [message, setMessage] = useState("");
   const [tone, setTone] = useState<"error" | "success" | "warning">("warning");
-
-  async function importCatalog() {
-    setImporting(true);
-    setMessage("");
-
-    try {
-      const response = await fetch("/api/admin/projects/import", {
-        method: "POST",
-      });
-      const body = (await response.json()) as ApiResponse;
-
-      if (!response.ok || !body.ok) {
-        setTone("error");
-        setMessage(body.error?.message || "Não foi possível importar o catálogo.");
-        return;
-      }
-
-      const imported = body.data?.imported ?? 0;
-      setTone("success");
-      setMessage(
-        imported > 0
-          ? `${imported} projetos adicionados ao MongoDB. Registros existentes foram preservados.`
-          : "Nenhum projeto novo para importar. Os registros existentes foram preservados.",
-      );
-      router.refresh();
-    } catch {
-      setTone("error");
-      setMessage("Não foi possível conectar ao endpoint de importação.");
-    } finally {
-      setImporting(false);
-    }
-  }
 
   async function archiveProject(slug: string) {
     const confirmed = window.confirm(`Arquivar o projeto ${slug}? Ele deixará de aparecer publicamente.`);
@@ -122,11 +93,12 @@ export function AdminProjectList({
         <div className={styles.headerActions}>
           <button
             className={styles.secondaryButton}
-            disabled={!databaseReady || importing}
-            onClick={() => void importCatalog()}
+            disabled={!databaseReady}
+            onClick={() => setImportModalOpen(true)}
+            ref={importButtonRef}
             type="button"
           >
-            {importing ? "Importando..." : "Importar projetos ausentes"}
+            Importar via JSON
           </button>
           {databaseReady ? (
             <Link className={styles.primaryButton} href="/admin/projects/new">
@@ -143,7 +115,11 @@ export function AdminProjectList({
       {projects.length > 0 ? (
         <div className={styles.projectTable}>
           {projects.map((project) => (
-            <article className={styles.projectRow} key={project.slug}>
+            <article
+              className={styles.projectRow}
+              data-highlighted={highlightedSlugs.includes(project.slug)}
+              key={project.slug}
+            >
               <div className={styles.projectIdentity}>
                 <strong>{project.title}</strong>
                 <small>{project.subtitle}</small>
@@ -177,9 +153,30 @@ export function AdminProjectList({
         </div>
       ) : (
         <div className={styles.emptyState}>
-          <p>O MongoDB ainda não possui projetos. Importe o catálogo atual ou crie um novo case.</p>
+          <p>O MongoDB ainda não possui projetos. Importe um JSON administrativo ou crie um novo case.</p>
         </div>
       )}
+
+      {importModalOpen ? (
+        <AdminProjectJsonImportModal
+          onClose={() => {
+            setImportModalOpen(false);
+            window.setTimeout(() => importButtonRef.current?.focus(), 0);
+          }}
+          onImported={(slugs) => {
+            setHighlightedSlugs(slugs);
+            setTone("success");
+            setMessage(
+              slugs.length === 1
+                ? "Projeto importado com sucesso como rascunho. Agora você pode adicionar logo, capa, hero e galeria."
+                : `${slugs.length} projetos foram importados como rascunho. Agora você pode adicionar logo, capa, hero e galeria.`,
+            );
+            router.refresh();
+            window.setTimeout(() => setHighlightedSlugs([]), 12_000);
+          }}
+          open
+        />
+      ) : null}
     </>
   );
 }

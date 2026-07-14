@@ -1,6 +1,6 @@
 # Admin de projetos com MongoDB
 
-Esta fase move a camada editorial dos projetos para o MongoDB Atlas sem remover o catálogo estático versionado.
+Esta camada move a edição dos projetos para o MongoDB Atlas sem remover o catálogo estático versionado usado como fallback de segurança.
 
 ## Segurança do catálogo público
 
@@ -11,8 +11,7 @@ O portfólio continua funcional mesmo se o banco estiver temporariamente indispo
 - JSON publicado inválido não substitui um projeto estático válido;
 - documento `published` substitui o projeto estático com o mesmo slug;
 - documento `draft` ou `archived` oculta o slug correspondente;
-- um novo documento `published` adiciona um novo case ao catálogo;
-- a Home permanece versionada nesta fase.
+- um novo documento `published` adiciona um novo case ao catálogo.
 
 Toda leitura e escrita do MongoDB acontece no servidor. A URI nunca é enviada ao navegador.
 
@@ -30,22 +29,64 @@ Os índices são criados por:
 npm run mongodb:setup
 ```
 
-## Importação inicial
+## Importação estática de bootstrap
 
-A importação é aditiva: apenas slugs ausentes são criados. Edições administrativas existentes nunca são sobrescritas.
-
-Pelo terminal local:
+A importação estática continua disponível apenas pelo terminal local para bootstrap ou recuperação do catálogo versionado:
 
 ```bash
 npm run mongodb:import-projects
 ```
 
-Pelo painel:
+Esse fluxo é aditivo: apenas slugs ausentes são criados. Edições administrativas existentes nunca são sobrescritas.
+
+## Importação administrativa via JSON
+
+No painel:
 
 ```txt
 /admin/projects
-→ Importar projetos ausentes
+→ Importar via JSON
 ```
+
+O botão abre um modal protegido que permite baixar o modelo oficial, selecionar um arquivo `.json`, colar JSON manualmente, validar o conteúdo e importar projetos novos como `draft`.
+
+Contrato:
+
+- `schemaVersion` obrigatório: `1.0`;
+- máximo de 20 projetos por importação;
+- `publicationStatus` aceita somente `draft`;
+- slugs precisam estar em lowercase e kebab-case;
+- textos PT/EN são obrigatórios;
+- listas PT/EN de highlights e desafios precisam ter a mesma quantidade;
+- links aceitam somente HTTP/HTTPS quando preenchidos;
+- logo, thumbnail, hero, galeria, URLs Cloudinary, ids internos, datas, usuário administrativo e secrets não fazem parte do JSON.
+
+Rotas:
+
+```txt
+GET  /api/admin/projects/import/template
+POST /api/admin/projects/import
+```
+
+`GET /template` exige sessão Admin e retorna `portfolio-project-import.template.json` com `Content-Disposition: attachment`.
+
+`POST /import` aceita:
+
+```json
+{ "mode": "validate", "payload": {} }
+```
+
+ou:
+
+```json
+{ "mode": "import", "payload": {} }
+```
+
+O modo `validate` não altera o banco. Ele valida o schema, detecta duplicados e consulta slugs existentes para montar o preview.
+
+O modo `import` repete a validação no servidor, cria somente projetos válidos e inéditos como rascunho, grava revisão `create` e usa transação para evitar registros parciais.
+
+As imagens ficam fora desse fluxo. Depois da importação, o editor de mídias adiciona logo, capa, hero e galeria.
 
 ## Estados editoriais
 
@@ -77,6 +118,7 @@ POST   /api/admin/projects
 GET    /api/admin/projects/[slug]
 PUT    /api/admin/projects/[slug]
 DELETE /api/admin/projects/[slug]
+GET    /api/admin/projects/import/template
 POST   /api/admin/projects/import
 POST   /api/admin/media/signature
 POST   /api/admin/media/register

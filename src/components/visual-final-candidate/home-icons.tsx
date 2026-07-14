@@ -29,7 +29,7 @@ export type HomeIconName =
   | "users"
   | "zap";
 
-const accentGradient: Record<Accent, string> = {
+export const projectAccentGradient: Record<Accent, string> = {
   "blue-purple": "linear-gradient(135deg, #2563eb, #7c3aed)",
   "amber-pink": "linear-gradient(135deg, #f59e0b, #ec4899)",
   "emerald-teal": "linear-gradient(135deg, #10b981, #06b6d4)",
@@ -146,7 +146,7 @@ export function ProjectIcon({ iconKey, accent, size = "lg" }: { iconKey: Project
   };
 
   return (
-    <div className={`${styles.projectIcon} ${size === "sm" ? styles.projectIconSm : ""}`} style={{ "--accent-gradient": accentGradient[accent] } as StyleVars}>
+    <div className={`${styles.projectIcon} ${size === "sm" ? styles.projectIconSm : ""}`} style={{ "--accent-gradient": projectAccentGradient[accent] } as StyleVars}>
       <div />
       <span>
         <Icon name={iconName[iconKey]} />

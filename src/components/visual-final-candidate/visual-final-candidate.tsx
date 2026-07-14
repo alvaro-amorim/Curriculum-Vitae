@@ -15,7 +15,7 @@ import type { HomeProject, HomeProjectAccent as Accent, HomeProjectIconKey as Pr
 import { cloudinaryOptimizedImageUrl } from "@/lib/media/media-rules";
 import type { Locale } from "@/types/portfolio";
 
-import { Icon, ProjectIcon, StackLogo } from "./home-icons";
+import { Icon, projectAccentGradient, ProjectIcon, StackLogo } from "./home-icons";
 import type { HomeIconName as IconName } from "./home-icons";
 import styles from "./visual-final-candidate.module.css";
 
@@ -54,13 +54,20 @@ function Reveal({ children, as: Tag = "div", className = "", delay = 0 }: { chil
 function ProjectLogoOrIcon({ locale, project, size = "lg" }: { locale: Locale; project: HomeProject; size?: "sm" | "lg" }) {
   if (project.logo) {
     return (
-      <div className={`${styles.projectIcon} ${styles.projectLogoIcon} ${size === "sm" ? styles.projectIconSm : ""}`}>
-        <Image
-          alt={project.logoAlt?.[locale] ?? project.title}
-          height={size === "sm" ? 48 : 78}
-          src={cloudinaryOptimizedImageUrl(project.logo, size === "sm" ? 160 : 240)}
-          width={size === "sm" ? 48 : 78}
-        />
+      <div
+        className={`${styles.projectIcon} ${styles.projectLogoIcon} ${size === "sm" ? styles.projectIconSm : ""}`}
+        style={{ "--accent-gradient": projectAccentGradient[project.brandAccent as Accent] } as StyleVars}
+      >
+        <div />
+        <span className={styles.projectLogoSurface}>
+          <Image
+            alt={project.logoAlt?.[locale] ?? project.title}
+            className={styles.projectLogoImage}
+            height={size === "sm" ? 96 : 128}
+            src={cloudinaryOptimizedImageUrl(project.logo, size === "sm" ? 180 : 320)}
+            width={size === "sm" ? 96 : 128}
+          />
+        </span>
       </div>
     );
   }

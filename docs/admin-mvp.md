@@ -10,6 +10,8 @@ The Admin area uses a private MongoDB-backed owner account and a server-side ses
 /api/admin/login
 /api/admin/logout
 /api/admin/projects
+/api/admin/projects/import
+/api/admin/projects/import/template
 /api/admin/media/signature
 /api/admin/media/register
 /api/admin/media/rollback
@@ -70,3 +72,13 @@ Project media operations are protected by the same MongoDB Admin session used by
 - The Cloudinary API secret stays server-side and is never exposed with `NEXT_PUBLIC_`.
 - Supported uploads are JPEG, PNG, WebP and AVIF within the documented limits.
 - Delete operations use the persisted Cloudinary `publicId`, remove project references and keep local state unchanged if Cloudinary deletion fails.
+
+## Project JSON Import
+
+The Admin project list uses `Importar via JSON` for creating new draft projects from a strict `schemaVersion: "1.0"` payload.
+
+- The template download is protected and returns `portfolio-project-import.template.json`.
+- Validation mode does not write to MongoDB.
+- Import mode repeats validation, creates only new draft projects and records a `create` revision.
+- Existing slugs are blocked; updates by JSON are intentionally unsupported.
+- Media fields are not accepted. Logos, thumbnails, hero images and galleries are added later through the media manager.

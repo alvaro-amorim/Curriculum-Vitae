@@ -93,9 +93,11 @@ export function ProjectCard({ project, compact = false, index = 0 }: ProjectCard
           <Link className={styles.actionPrimary} href={`/projetos/${project.slug}`}>
             {viewCase}
           </Link>
-          <a className={styles.actionGhost} href={project.links.website} rel="noreferrer" target="_blank">
-            {t.actions.open}
-          </a>
+          {project.links.website ? (
+            <a className={styles.actionGhost} href={project.links.website} rel="noreferrer" target="_blank">
+              {t.actions.open}
+            </a>
+          ) : null}
         </div>
       </div>
       <ProjectVisualFrame index={index} locale={locale} mode="compact" project={project} />

@@ -376,7 +376,8 @@ test("public logo rendering keeps the generic fallback and uses contain for real
   assert.match(homeComponent, /ProjectIcon iconKey/);
   assert.match(homeComponent, /<Image/);
   assert.match(projectCard, /visuals\.logo/);
-  assert.match(homeStyles, /\.projectLogoIcon img[\s\S]*object-fit: contain/);
+  assert.match(homeStyles, /\.projectLogoIcon \.projectLogoSurface[\s\S]*overflow: hidden/);
+  assert.match(homeStyles, /\.projectLogoImage[\s\S]*border-radius[\s\S]*object-fit: contain/);
   assert.match(projectStyles, /\.sceneLogoTile img[\s\S]*object-fit: contain/);
   assert.match(projectStyles, /\.caseLogoTile img[\s\S]*object-fit: contain/);
 });
