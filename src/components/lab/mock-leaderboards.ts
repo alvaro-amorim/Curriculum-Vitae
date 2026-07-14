@@ -1,5 +1,7 @@
 import type { LabGameId, LeaderboardEntry } from "../../types/portfolio.ts";
 
+const DISPLAY_LEADERBOARD_LIMIT = 3;
+
 export const MOCK_ARCADE_LEADERBOARDS: Record<LabGameId, LeaderboardEntry[]> = {
   runtime: [
     { alias: "Demo Runner", createdAt: "2026-07-13T12:00:00.000Z", score: 1180 },
@@ -23,10 +25,8 @@ export const MOCK_ARCADE_LEADERBOARDS: Record<LabGameId, LeaderboardEntry[]> = {
   ],
 };
 
-export function isMockLeaderboard(leaderboard: LeaderboardEntry[]) {
-  return leaderboard.length === 0;
-}
-
 export function getDisplayLeaderboard(game: LabGameId, leaderboard: LeaderboardEntry[]) {
-  return isMockLeaderboard(leaderboard) ? MOCK_ARCADE_LEADERBOARDS[game] : leaderboard;
+  return [...MOCK_ARCADE_LEADERBOARDS[game], ...leaderboard]
+    .sort((left, right) => right.score - left.score || Date.parse(left.createdAt) - Date.parse(right.createdAt))
+    .slice(0, DISPLAY_LEADERBOARD_LIMIT);
 }

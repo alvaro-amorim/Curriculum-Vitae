@@ -733,15 +733,6 @@
   font-weight: 900;
 }
 
-.liveDot[data-tone="demo"] {
-  color: #f59e0b;
-}
-
-.liveDot[data-tone="demo"] i {
-  background: #f59e0b;
-  box-shadow: 0 0 0.75rem rgba(245, 158, 11, 0.72);
-}
-
 .leaderboardList {
   display: grid;
   gap: 0.55rem;
