@@ -259,7 +259,9 @@
 }
 
 .titleGradient {
-  display: inline;
+  display: inline-block;
+  padding-right: 0.08em;
+  margin-right: -0.08em;
   background: var(--gradient-text);
   background-clip: text;
   -webkit-background-clip: text;
