@@ -1,10 +1,12 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import type { PointerEvent } from "react";
 
 import { usePortfolioUi } from "@/components/layout/app-shell";
 import { projects } from "@/content/projects";
+import { cloudinaryOptimizedImageUrl } from "@/lib/media/media-rules";
 import type { Project } from "@/types/portfolio";
 
 import { formatProjectCategory } from "./project-card";
@@ -78,6 +80,9 @@ export function ProjectCaseStudy({ project }: ProjectCaseStudyProps) {
   const projectIndex = projects.findIndex((item) => item.slug === project.slug);
   const previousProject = projects[(projectIndex - 1 + projects.length) % projects.length];
   const nextProject = projects[(projectIndex + 1) % projects.length];
+  const galleryImages = project.visuals?.gallery ?? [];
+  const hasManagedMedia = galleryImages.length > 0;
+  const mediaAlt = project.visuals?.alt[locale] ?? project.title[locale];
 
   return (
     <main className={styles.experience} onPointerMove={handleExperiencePointer} style={projectAccentStyle(project)}>
@@ -90,6 +95,16 @@ export function ProjectCaseStudy({ project }: ProjectCaseStudyProps) {
               <strong>{project.title[locale]}</strong>
             </nav>
             <p className={styles.eyebrow}>{copy.eyebrow}</p>
+            {project.visuals?.logo ? (
+              <div className={styles.caseLogoTile}>
+                <Image
+                  alt={project.visuals.logoAlt?.[locale] ?? project.title[locale]}
+                  height={96}
+                  src={cloudinaryOptimizedImageUrl(project.visuals.logo, 240)}
+                  width={96}
+                />
+              </div>
+            ) : null}
             <h1 className={styles.caseTitle}>{project.title[locale]}</h1>
             <p className={styles.caseLead}>{project.fullDescription[locale]}</p>
             <div className={styles.caseMeta}>
@@ -208,12 +223,33 @@ export function ProjectCaseStudy({ project }: ProjectCaseStudyProps) {
               <article className={styles.assetPanel}>
                 <p className={styles.assetLabel}>{project.visuals?.status === "available" ? project.status[locale] : copy.pendingStatus}</p>
                 <h2>{project.visuals?.mockupHint[locale] ?? project.subtitle[locale]}</h2>
-                <p>{locale === "pt" ? "Imagem do projeto em preparação" : "Project image in preparation"}</p>
-                <div aria-hidden="true" className={styles.miniGallery}>
-                  <span className={styles.miniAsset} />
-                  <span className={styles.miniAsset} />
-                  <span className={styles.miniAsset} />
-                </div>
+                <p>
+                  {hasManagedMedia
+                    ? (locale === "pt" ? "Mídias reais administradas no painel privado." : "Real media managed from the private admin.")
+                    : (locale === "pt" ? "Imagem do projeto em preparação" : "Project image in preparation")}
+                </p>
+                {galleryImages.length > 0 ? (
+                  <div className={styles.realGallery}>
+                    {galleryImages.map((image, index) => (
+                      <figure className={styles.realGalleryItem} key={image}>
+                        <Image
+                          alt={`${mediaAlt} ${index + 1}`}
+                          height={480}
+                          loading="lazy"
+                          sizes="(max-width: 980px) 100vw, 24vw"
+                          src={cloudinaryOptimizedImageUrl(image, 720)}
+                          width={720}
+                        />
+                      </figure>
+                    ))}
+                  </div>
+                ) : (
+                  <div aria-hidden="true" className={styles.miniGallery}>
+                    <span className={styles.miniAsset} />
+                    <span className={styles.miniAsset} />
+                    <span className={styles.miniAsset} />
+                  </div>
+                )}
               </article>
             </div>
           </section>

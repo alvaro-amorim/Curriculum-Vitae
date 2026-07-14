@@ -100,7 +100,7 @@ const copy = {
     },
     idleTitle: "Colete tokens sem quebrar a cadeia.",
     idleText:
-      "Mobile: deslize para mudar direção. Paredes OFF por padrão: atravesse bordas. Desktop: setas ou WASD.",
+      "Deslize no palco para virar. Com paredes OFF, atravesse as bordas e continue a pipeline.",
     gameOverTitle: "Pipeline colidiu.",
     gameOverText: "A colisão salva o melhor local e envia o score persistente sem bloquear a interface.",
     controlsTitle: "Controles",
@@ -167,7 +167,7 @@ const copy = {
     },
     idleTitle: "Collect tokens without breaking the chain.",
     idleText:
-      "Mobile: swipe to turn. Walls are OFF by default: cross edges with wrap-around. Desktop: arrows or WASD.",
+      "Swipe on the stage to turn. With walls OFF, cross edges and keep the pipeline alive.",
     gameOverTitle: "Pipeline collided.",
     gameOverText: "The collision saves the local best and submits the persistent score without blocking the interface.",
     controlsTitle: "Controls",
@@ -526,7 +526,9 @@ export function CodeSnake({ locale, onComplete }: CodeSnakeProps) {
         return;
       }
 
-      event.preventDefault();
+      if (event.cancelable) {
+        event.preventDefault();
+      }
       queueDirection(Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? "right" : "left") : dy > 0 ? "down" : "up");
     },
     [queueDirection],

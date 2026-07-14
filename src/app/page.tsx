@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 
 import { VisualFinalCandidate } from "@/components/visual-final-candidate/visual-final-candidate";
+import { createHomeProjects } from "@/content/home-projects";
+import { getPublicProjects } from "@/lib/projects/repository";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: {
@@ -18,6 +22,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default function HomePage() {
-  return <VisualFinalCandidate />;
+export default async function HomePage() {
+  const projects = await getPublicProjects();
+  return <VisualFinalCandidate projects={createHomeProjects(projects)} />;
 }

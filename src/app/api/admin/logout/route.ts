@@ -1,15 +1,27 @@
 import { NextResponse } from "next/server";
 
-import { clearAdminSessionCookies } from "@/lib/admin/auth";
+import { clearAdminSessionCookie, readAdminSessionToken, revokeAdminSession } from "@/lib/admin/auth";
 import { isSameOriginAdminRequest } from "@/lib/admin/auth-rules";
+
+export const runtime = "nodejs";
+
+function jsonResponse(body: object, init?: ResponseInit) {
+  const headers = new Headers(init?.headers);
+  headers.set("Cache-Control", "no-store");
+
+  return NextResponse.json(body, {
+    ...init,
+    headers,
+  });
+}
 
 export async function POST(request: Request) {
   if (!isSameOriginAdminRequest(request.url, request.headers.get("origin"))) {
-    return NextResponse.json(
+    return jsonResponse(
       {
         error: {
           code: "FORBIDDEN",
-          message: "Origem da requisicao invalida.",
+          message: "Origem da requisição inválida.",
         },
         ok: false,
       },
@@ -17,23 +29,25 @@ export async function POST(request: Request) {
     );
   }
 
-  const response = NextResponse.json({
+  const token = await readAdminSessionToken();
+  await revokeAdminSession(token).catch(() => undefined);
+
+  const response = jsonResponse({
     data: {
       signedOut: true,
     },
     ok: true,
   });
-  clearAdminSessionCookies(response);
-  response.headers.set("Cache-Control", "no-store");
+  clearAdminSessionCookie(response);
   return response;
 }
 
 export function GET() {
-  return NextResponse.json(
+  return jsonResponse(
     {
       error: {
         code: "METHOD_NOT_ALLOWED",
-        message: "Metodo nao permitido.",
+        message: "Método não permitido.",
       },
       ok: false,
     },

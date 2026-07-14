@@ -6,8 +6,12 @@ const uri = process.env.MONGODB_URI?.trim();
 const databaseName = process.env.MONGODB_DB?.trim();
 
 const collectionSpecs = [
+  ["admin_users", MONGODB_INDEX_SPECS.adminUsers],
+  ["admin_sessions", MONGODB_INDEX_SPECS.adminSessions],
+  ["admin_login_attempts", MONGODB_INDEX_SPECS.adminLoginAttempts],
   ["arcade_sessions", MONGODB_INDEX_SPECS.arcadeSessions],
   ["arcade_scores", MONGODB_INDEX_SPECS.arcadeScores],
+  ["project_media_assets", MONGODB_INDEX_SPECS.projectMediaAssets],
   ["portfolio_projects", MONGODB_INDEX_SPECS.portfolioProjects],
   ["portfolio_project_revisions", MONGODB_INDEX_SPECS.portfolioProjectRevisions],
 ];

@@ -45,14 +45,14 @@ export default async function AdminLoginPage() {
 
           <div className={styles.securityNote}>
             <i />
-            <span>Autenticação processada no servidor, cookies HttpOnly e acesso limitado ao e-mail administrativo configurado.</span>
+            <span>Autenticação processada no servidor com sessão privada em cookie HttpOnly.</span>
           </div>
         </div>
 
         <div className={styles.loginCard}>
           <span>ACESSO RESTRITO</span>
           <h2 id="admin-login-title">Entrar</h2>
-          <p>Use o usuário criado no Supabase Auth e autorizado pela variável ADMIN_EMAIL.</p>
+          <p>Use o e-mail e a senha do administrador configurado no banco privado do portfólio.</p>
           <Suspense fallback={<p className={styles.formMessage}>Preparando formulário...</p>}>
             <AdminLoginForm />
           </Suspense>

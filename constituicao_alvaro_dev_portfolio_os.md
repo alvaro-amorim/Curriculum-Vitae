@@ -1690,7 +1690,7 @@ Regras:
 
 ### 13.0 Developer Arcade DB Foundation
 
-R1-E.12.3 aplicou a migration `supabase/migrations/20260608154425_arcade_scores_foundation.sql`.
+O runtime atual do Arcade usa MongoDB Atlas por Route Handlers server-side.
 
 Estado:
 
@@ -1700,8 +1700,8 @@ Estado:
 - `/api/score` persiste em `arcade_scores` com `mode: "persistent"`.
 - `/api/leaderboard` lê ranking público por jogo com `game`, `period` e `limit`.
 - `/api/leaderboard/me` lê a posição da sessão anônima atual.
-- Supabase client criado apenas em `src/lib/supabase/server.ts`, para uso server-side.
-- Tabelas remotas criadas: `arcade_sessions` e `arcade_scores`.
+- Cliente MongoDB criado apenas no servidor, para uso server-side.
+- Coleções remotas usadas: `arcade_sessions` e `arcade_scores`.
 - Nenhuma policy pública, bucket, Auth ou Admin foi criado por esta fase.
 
 Tabelas planejadas:
@@ -1715,7 +1715,7 @@ Segurança aplicada:
 - Nenhuma policy pública criada.
 - Roles públicas `anon` e `authenticated` não devem ter `SELECT`, `INSERT`, `UPDATE`, `DELETE`, `TRUNCATE`, `REFERENCES` ou `TRIGGER` nas tabelas Arcade.
 - Escrita e leitura de leaderboard devem passar por Route Handlers server-side.
-- `SUPABASE_SERVICE_ROLE_KEY` nunca deve ir para client component ou `NEXT_PUBLIC_*`.
+- `MONGODB_URI` nunca deve ir para client component ou `NEXT_PUBLIC_*`.
 - `ARCADE_SESSION_SECRET` nunca deve ir para client component ou `NEXT_PUBLIC_*`.
 - Respostas públicas de ranking não devem expor `session_hash`.
 
@@ -1786,12 +1786,12 @@ Não expor service role key no client.
 Usar variáveis:
 
 ```env
-NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
-SUPABASE_SERVICE_ROLE_KEY=
+MONGODB_URI=
+MONGODB_DB=portfolio_os
+ARCADE_SESSION_SECRET=
 ```
 
-O service role só pode ser usado no server.
+Essas variáveis só podem ser usadas no server.
 
 ---
 

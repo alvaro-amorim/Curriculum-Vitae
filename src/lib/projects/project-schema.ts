@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { ProjectMediaSelectionsSchema } from "../media/media-rules.ts";
+
 const SlugSchema = z.string().trim().min(2).max(80).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
 const ShortTextSchema = z.string().trim().min(1).max(180);
 const LongTextSchema = z.string().trim().min(1).max(4_000);
@@ -28,6 +30,38 @@ const LocalizedListSchema = z.object({
   pt: z.array(ShortTextSchema).min(1).max(24),
 }).strict();
 
+const ProjectVisualsSchema = z.preprocess((value) => {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return value;
+  }
+
+  const visuals = { ...(value as Record<string, unknown>) };
+  delete visuals[["demo", "Video"].join("")];
+  return visuals;
+}, z.object({
+  accent: z.object({
+    primary: z.string().trim().min(1).max(80),
+    secondary: z.string().trim().min(1).max(80),
+    tertiary: z.string().trim().min(1).max(80),
+  }).strict(),
+  alt: LocalizedShortTextSchema,
+  gallery: z.array(AssetPathSchema).max(12),
+  heroImage: AssetPathSchema.nullable(),
+  layout: z.enum([
+    "operational-saas",
+    "social-ai",
+    "crm-pipeline",
+    "institutional-site",
+    "data-monitoring",
+    "commerce-catalog",
+  ]),
+  logo: AssetPathSchema.nullable().optional(),
+  logoAlt: LocalizedShortTextSchema.optional(),
+  mockupHint: LocalizedLongTextSchema,
+  status: z.enum(["pending", "available"]),
+  thumbnail: AssetPathSchema.nullable(),
+}).strict());
+
 export const ProjectContentSchema = z.object({
   category: z.array(ShortTextSchema).min(1).max(12),
   featured: z.boolean().optional(),
@@ -46,31 +80,12 @@ export const ProjectContentSchema = z.object({
   subtitle: LocalizedShortTextSchema,
   technicalChallenges: LocalizedListSchema,
   title: LocalizedShortTextSchema,
-  visuals: z.object({
-    accent: z.object({
-      primary: z.string().trim().min(1).max(80),
-      secondary: z.string().trim().min(1).max(80),
-      tertiary: z.string().trim().min(1).max(80),
-    }).strict(),
-    alt: LocalizedShortTextSchema,
-    gallery: z.array(AssetPathSchema).max(12),
-    heroImage: AssetPathSchema.nullable(),
-    layout: z.enum([
-      "operational-saas",
-      "social-ai",
-      "crm-pipeline",
-      "institutional-site",
-      "data-monitoring",
-      "commerce-catalog",
-    ]),
-    mockupHint: LocalizedLongTextSchema,
-    status: z.enum(["pending", "available"]),
-    thumbnail: AssetPathSchema.nullable(),
-  }).strict().optional(),
+  visuals: ProjectVisualsSchema.optional(),
   whatItShows: LocalizedLongTextSchema,
 }).strict();
 
 export const AdminProjectMutationSchema = z.object({
+  mediaAssets: ProjectMediaSelectionsSchema.optional(),
   project: ProjectContentSchema,
   publicationStatus: z.enum(["draft", "published", "archived"]),
   sortOrder: z.coerce.number().int().min(0).max(10_000),

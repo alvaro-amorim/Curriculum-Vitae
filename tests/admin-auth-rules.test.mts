@@ -2,20 +2,23 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  adminSessionCookieOptions,
+  ADMIN_SESSION_COOKIE,
+  ADMIN_SESSION_MAX_AGE_SECONDS,
   isAdminApiPath,
   isAdminLoginPath,
-  isAllowedAdminEmail,
   isSafeAdminNextPath,
   isSameOriginAdminRequest,
+  isValidAdminEmail,
   normalizeAdminEmail,
 } from "../src/lib/admin/auth-rules.ts";
 
-test("normalizes and matches the configured Admin email exactly", () => {
+test("normalizes and validates Admin email values", () => {
   assert.equal(normalizeAdminEmail("  Admin@Example.COM "), "admin@example.com");
-  assert.equal(isAllowedAdminEmail("ADMIN@example.com", "admin@example.com"), true);
-  assert.equal(isAllowedAdminEmail("other@example.com", "admin@example.com"), false);
-  assert.equal(isAllowedAdminEmail("", "admin@example.com"), false);
-  assert.equal(isAllowedAdminEmail("admin@example.com", ""), false);
+  assert.equal(isValidAdminEmail("ADMIN@example.com"), true);
+  assert.equal(isValidAdminEmail("other@example.com"), true);
+  assert.equal(isValidAdminEmail(""), false);
+  assert.equal(isValidAdminEmail("not-an-email"), false);
 });
 
 test("recognizes public login and protected Admin API paths", () => {
@@ -31,6 +34,7 @@ test("accepts only internal Admin redirect targets", () => {
   assert.equal(isSafeAdminNextPath("/admin/projects"), true);
   assert.equal(isSafeAdminNextPath("https://evil.example/admin"), false);
   assert.equal(isSafeAdminNextPath("//evil.example"), false);
+  assert.equal(isSafeAdminNextPath("/api/admin/projects"), false);
   assert.equal(isSafeAdminNextPath("/projetos"), false);
 });
 
@@ -51,4 +55,17 @@ test("accepts same-origin Admin mutations and rejects foreign origins", () => {
     isSameOriginAdminRequest("invalid-url", "https://portfolio.example"),
     false,
   );
+});
+
+test("builds the Admin session cookie policy", () => {
+  assert.equal(ADMIN_SESSION_COOKIE, "alvaro_admin_session");
+  assert.equal(ADMIN_SESSION_MAX_AGE_SECONDS, 60 * 60 * 8);
+  assert.deepEqual(adminSessionCookieOptions(60, "development"), {
+    httpOnly: true,
+    maxAge: 60,
+    path: "/",
+    sameSite: "lax",
+    secure: false,
+  });
+  assert.equal(adminSessionCookieOptions(60, "production").secure, true);
 });

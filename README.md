@@ -28,16 +28,17 @@ Pull Request:
 
 ## Estado confirmado no código
 
-- Next.js App Router, React, TypeScript, Tailwind CSS, Zod e Supabase.
+- Next.js App Router, React, TypeScript, Tailwind CSS, Zod e MongoDB.
 - Rotas públicas principais: `/`, `/projetos`, `/projetos/[slug]`, `/lab` e `/curriculo`.
 - A Home possui carrossel de projetos, stack, processo, chamada para o Arcade, seção Sobre e CTA final.
 - O Developer Arcade possui Runtime Runner, Bug Maze, Code Snake e Stack Tetris.
 - `/api/score` valida o Score Contract v2 e persiste scores em `arcade_scores` por Route Handler server-side.
 - `/api/player-session` mantém uma sessão anônima em cookie `httpOnly` e persiste somente um hash HMAC em `arcade_sessions`.
-- `/api/leaderboard` usa RPC para retornar o melhor score de cada jogador por jogo e período.
+- `/api/leaderboard` usa MongoDB para retornar o melhor score de cada jogador por jogo e período.
 - `/api/leaderboard/me` retorna a posição do jogador atual sem expor `session_hash` ou ids internos.
-- O navegador não acessa diretamente as tabelas do Arcade; a service role permanece no servidor.
-- RLS está habilitado e os privilégios diretos de `anon` e `authenticated` foram revogados para as tabelas do Arcade.
+- O navegador não acessa diretamente as coleções do Arcade; todas as leituras e escritas passam por Route Handlers.
+- A autenticação administrativa usa usuário owner e sessões persistidas no MongoDB.
+- O Admin de projetos gerencia imagens com upload direto assinado para Cloudinary e metadados em MongoDB.
 - `/api/contact` e `/api/analytics` ainda operam em modo local/mock e não persistem dados em produção.
 - `/api/health` informa ambiente e commit quando a plataforma disponibiliza essas informações.
 - PDFs e DOCX estão em `public/resume/`.
@@ -52,8 +53,8 @@ O código versionado não comprova sozinho o estado da infraestrutura externa. A
 
 - commit efetivamente publicado pela Vercel;
 - variáveis de ambiente configuradas no deploy;
-- conectividade com o Supabase remoto;
-- migrations, grants e RLS efetivamente aplicados;
+- conectividade com o MongoDB Atlas;
+- índices e TTLs do MongoDB aplicados;
 - sessão, score e leaderboard em produção;
 - downloads e links públicos;
 - comportamento em dispositivos móveis reais;
@@ -100,12 +101,14 @@ src/components/visual-final-candidate/home-icons.tsx
 
 A consolidação completa entre apresentação da Home e catálogo de cases permanece como refinamento futuro, porque exige revisão visual e de conteúdo projeto a projeto.
 
-Os projetos usam placeholders honestos enquanto imagens reais não estiverem disponíveis:
+Os projetos usam placeholders honestos enquanto imagens reais não estiverem disponíveis. Quando mídias forem cadastradas no Admin, o MongoDB mantém metadados, vínculo, função e ordem, enquanto Cloudinary armazena os binários e entrega URLs públicas otimizadas.
 
 ```txt
 thumbnail: null
 heroImage: null
 gallery: []
+logo: null
+logoAlt: { pt: "...", en: "..." }
 ```
 
 Screenshots, métricas ou resultados não devem ser inventados.
@@ -142,7 +145,7 @@ A rota experimental duplicada `/visual-final-candidate` foi removida. O componen
 - TypeScript 6.0.3
 - Tailwind CSS 4.3.0
 - Zod 4
-- Supabase JS 2
+- MongoDB Node.js Driver 6
 - ESLint 9
 - npm com `package-lock.json`
 
@@ -168,16 +171,20 @@ Use `.env.example` como referência. Valores reais devem existir somente em `.en
 
 ```env
 NEXT_PUBLIC_APP_URL=http://localhost:3000
-NEXT_PUBLIC_SUPABASE_URL=
-SUPABASE_SERVICE_ROLE_KEY=
+MONGODB_URI=
+MONGODB_DB=portfolio_os
 ARCADE_SESSION_SECRET=
+CLOUDINARY_CLOUD_NAME=
+CLOUDINARY_API_KEY=
+CLOUDINARY_API_SECRET=
 ```
 
 Regras:
 
-- `SUPABASE_SERVICE_ROLE_KEY` e `ARCADE_SESSION_SECRET` são server-only;
+- `MONGODB_URI`, `ARCADE_SESSION_SECRET` e `CLOUDINARY_API_SECRET` são server-only;
 - nenhum segredo pode usar prefixo `NEXT_PUBLIC_`;
-- o projeto não usa anon key no navegador para acessar o Arcade;
+- o projeto não usa cliente de banco no navegador para acessar o Arcade;
+- o navegador recebe somente assinatura temporária, `api_key`, timestamp e `public_id` permitido para upload direto no Cloudinary;
 - valores reais não devem ser versionados;
 - credenciais futuras de provedores de IA só poderão ser introduzidas em uma fase específica de segurança.
 
@@ -190,33 +197,29 @@ npm run typecheck
 npm test
 npm run build
 npm run validate:foundation
+npm run mongodb:setup
+npm run admin:bootstrap -- --email "email@dominio.com"
 npm run start
 ```
 
 `npm run validate:foundation` depende de uma aplicação em execução. A variável opcional `PORTFOLIO_BASE_URL` permite apontar o script para outra origem.
 
-## Banco versionado
+## Banco operacional
 
-Migrations principais do Arcade:
+O runtime usa MongoDB Atlas para Arcade, projetos, autenticação administrativa e metadados de mídias dos projetos. O script `npm run mongodb:setup` cria índices e TTLs sem apagar dados.
 
-```txt
-supabase/migrations/20260608154425_arcade_scores_foundation.sql
-supabase/migrations/20260608222025_arcade_service_role_grants.sql
-supabase/migrations/20260609192453_arcade_public_role_grants_hygiene.sql
-supabase/migrations/20260622113650_arcade_unique_player_leaderboard.sql
-```
+Imagens de projetos:
 
-Supabase operacional documentado:
-
-```txt
-project: curriculo
-project ref: dgtwxzznoszrhflblddn
-project URL: https://dgtwxzznoszrhflblddn.supabase.co
-```
-
-O ref anterior `fkiuecyohcyjwygedncx` está abandonado e deve aparecer somente em registros históricos.
+- coleção: `project_media_assets`;
+- provider: Cloudinary;
+- pasta por projeto: `portfolio-os/projects/{projectSlug}/`;
+- imagens permitidas: JPEG, PNG, WebP e AVIF até 10 MB;
+- limite: 20 imagens por projeto;
+- funções separadas: logo, thumbnail, hero e galeria;
+- exclusão remove a referência do projeto, registra revisão e só marca o asset como deletado após confirmação do Cloudinary.
 
 Consulte `docs/arcade-db-foundation.md` para o desenho operacional do Arcade.
+Consulte `docs/admin-projects-mongodb.md` para o fluxo editorial de projetos e mídias.
 
 ## Fase 1 — estabilização da fundação
 
@@ -258,7 +261,7 @@ fix/arcade-data-stability
 - tratamento parcial de falhas;
 - rate limit inicial;
 - proteção contra replay;
-- tipos do Supabase gerados do schema.
+- contratos de coleções MongoDB cobertos por testes.
 
 ### Fase 3 — repaginação do Lab
 
@@ -296,7 +299,7 @@ A área administrativa será iniciada somente depois que conteúdo, contratos e 
 
 - autenticação e autorização administrativa;
 - audit log e estados de publicação;
-- Supabase Storage para imagens;
+- armazenamento privado para imagens;
 - editor e preview PT/EN;
 - histórico de versões e rollback;
 - GitHub App com leitura de menor privilégio;

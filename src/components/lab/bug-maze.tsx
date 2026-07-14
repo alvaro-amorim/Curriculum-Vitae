@@ -165,7 +165,7 @@ const copy = {
     },
     idleTitle: "Colete todos os tokens e libere o Safe Deploy.",
     idleText:
-      "Mobile: deslize para mover. Colete tokens, fuja dos vírus e faça deploy. Desktop: setas ou WASD.",
+      "Deslize no palco para mover. Colete tokens, fuja dos vírus e faça deploy seguro.",
     wonTitle: "Deploy seguro.",
     wonText: "Todos os tokens foram aplicados, o melhor local foi salvo e o score entrou no ranking.",
     failedTitle: "Vidas esgotadas.",
@@ -222,7 +222,7 @@ const copy = {
     },
     idleTitle: "Collect every token and unlock Safe Deploy.",
     idleText:
-      "Mobile: swipe to move. Collect tokens, avoid viruses, and deploy. Desktop: arrows or WASD.",
+      "Swipe on the stage to move. Collect tokens, avoid viruses, and ship a safe deploy.",
     wonTitle: "Safe deploy.",
     wonText: "Every token was applied, the local best was saved, and the score entered the ranking.",
     failedTitle: "Lives depleted.",
@@ -745,7 +745,9 @@ export function BugMaze({ locale, onComplete }: BugMazeProps) {
       return;
     }
 
-    event.preventDefault();
+    if (event.cancelable) {
+      event.preventDefault();
+    }
     move(direction);
   }
 

@@ -47,7 +47,12 @@ const GROUND_EPSILON = 0.08;
 const JUMP_BUFFER_MS = 145;
 const COYOTE_TIME_MS = 95;
 const JUMP_VELOCITY = 1.74;
+const MOBILE_JUMP_VELOCITY = 1.52;
 const REDUCED_JUMP_VELOCITY = 1.38;
+const MOBILE_REDUCED_JUMP_VELOCITY = 1.28;
+const RUNNER_GRAVITY = 2.82;
+const MOBILE_RUNNER_GRAVITY = 2.2;
+const REDUCED_RUNNER_GRAVITY = 2.28;
 const SWIPE_THRESHOLD = 34;
 const MOBILE_QUERY = "(max-width: 640px)";
 
@@ -91,15 +96,31 @@ function runnerDifficulty(elapsed: number, mobilePlayfield: boolean, reducedMoti
   const level = stageLevel[stage];
 
   return {
-    acceleration: (reducedMotion ? 0.46 : mobilePlayfield ? 0.38 : 0.7) + level * (reducedMotion ? 0.02 : mobilePlayfield ? 0.045 : 0.075),
-    baseSpeed: reducedMotion ? 16.5 : mobilePlayfield ? 14.8 : 18.5,
-    cadenceDecay: mobilePlayfield ? 0.0075 : 0.0125,
-    jitter: mobilePlayfield ? 0.5 : 0.42,
-    maxSpeed: reducedMotion ? 32 : mobilePlayfield ? 30.5 : 43.5,
-    minCadence: Math.max(reducedMotion ? 1.34 : mobilePlayfield ? 1.32 : 1.08, (mobilePlayfield ? 1.42 : 1.16) - level * (mobilePlayfield ? 0.02 : 0.035)),
-    startCadence: (mobilePlayfield ? 1.9 : 1.72) - level * (mobilePlayfield ? 0.025 : 0.04),
+    acceleration: (reducedMotion ? 0.46 : mobilePlayfield ? 0.54 : 0.7) + level * (reducedMotion ? 0.02 : mobilePlayfield ? 0.06 : 0.075),
+    baseSpeed: reducedMotion ? 16.5 : mobilePlayfield ? 18.2 : 18.5,
+    cadenceDecay: mobilePlayfield ? 0.0105 : 0.0125,
+    jitter: mobilePlayfield ? 0.34 : 0.42,
+    maxSpeed: reducedMotion ? 32 : mobilePlayfield ? 38 : 43.5,
+    minCadence: Math.max(reducedMotion ? 1.34 : mobilePlayfield ? 1.18 : 1.08, (mobilePlayfield ? 1.28 : 1.16) - level * (mobilePlayfield ? 0.025 : 0.035)),
+    startCadence: (mobilePlayfield ? 1.54 : 1.72) - level * (mobilePlayfield ? 0.03 : 0.04),
     stage,
   };
+}
+
+function runnerJumpVelocity(mobilePlayfield: boolean, reducedMotion: boolean) {
+  if (reducedMotion) {
+    return mobilePlayfield ? MOBILE_REDUCED_JUMP_VELOCITY : REDUCED_JUMP_VELOCITY;
+  }
+
+  return mobilePlayfield ? MOBILE_JUMP_VELOCITY : JUMP_VELOCITY;
+}
+
+function runnerGravity(mobilePlayfield: boolean, reducedMotion: boolean) {
+  if (reducedMotion) {
+    return REDUCED_RUNNER_GRAVITY;
+  }
+
+  return mobilePlayfield ? MOBILE_RUNNER_GRAVITY : RUNNER_GRAVITY;
 }
 
 const copy = {
@@ -124,7 +145,7 @@ const copy = {
     cleared: "erros evitados",
     near: "quase colisão",
     idleTitle: "Desvie dos erros antes do build cair.",
-    idleText: "Mobile: deslize para cima ou toque para pular. Desktop: Space ou ArrowUp. Sobreviva aos bugs.",
+    idleText: "Toque ou deslize para cima no palco para pular. Sobreviva aos bugs e supere seu melhor score.",
     gameOverTitle: "Pipeline quebrado.",
     gameOverText: "Reinicie para tentar um score maior. O resultado é enviado ao ranking e o melhor local segue salvo no navegador.",
     rulesTitle: "Regras",
@@ -169,7 +190,7 @@ const copy = {
     cleared: "errors avoided",
     near: "near miss",
     idleTitle: "Avoid errors before the build fails.",
-    idleText: "Mobile: swipe up or tap to jump. Desktop: Space or ArrowUp. Survive the bugs.",
+    idleText: "Tap or swipe up on the stage to jump. Survive the bugs and beat your best score.",
     gameOverTitle: "Pipeline failed.",
     gameOverText: "Restart to chase a higher score. The result is submitted to the ranking and the local best stays in the browser.",
     rulesTitle: "Rules",
@@ -290,8 +311,8 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
     const next = {
       ...createInitialFrame(),
       obstacles: [],
-      speed: reducedMotion ? 16.5 : mobilePlayfield ? 14.8 : 18.5,
-      spawnIn: reducedMotion ? 1.45 : mobilePlayfield ? 1.5 : 1.22,
+      speed: runnerDifficulty(0, mobilePlayfield, reducedMotion).baseSpeed,
+      spawnIn: reducedMotion ? 1.45 : mobilePlayfield ? 1.18 : 1.22,
     };
     completedRef.current = false;
     obstacleIdRef.current = 1;
@@ -360,14 +381,16 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
     commitFrame({
       ...current,
       runnerY: Math.max(current.runnerY, 0.03),
-      velocity: reducedMotion ? REDUCED_JUMP_VELOCITY : JUMP_VELOCITY,
+      velocity: runnerJumpVelocity(mobilePlayfield, reducedMotion),
     });
-  }, [commitFrame, reducedMotion, startRun]);
+  }, [commitFrame, mobilePlayfield, reducedMotion, startRun]);
 
   const handleStagePointerDown = useCallback(
     (event: PointerEvent<HTMLDivElement>) => {
       if (event.pointerType === "touch") {
-        event.preventDefault();
+        if (event.cancelable) {
+          event.preventDefault();
+        }
       }
 
       lastPointerActionRef.current = performance.now();
@@ -471,7 +494,7 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
       lastTime = now;
 
       const current = stateRef.current;
-      const gravity = reducedMotion ? 2.28 : 2.82;
+      const gravity = runnerGravity(mobilePlayfield, reducedMotion);
       let runnerY = current.runnerY + current.velocity * delta;
       let velocity = current.velocity - gravity * delta;
 
@@ -489,7 +512,7 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
       ) {
         pendingJumpAtRef.current = null;
         runnerY = Math.max(runnerY, 0.035);
-        velocity = reducedMotion ? REDUCED_JUMP_VELOCITY : JUMP_VELOCITY;
+        velocity = runnerJumpVelocity(mobilePlayfield, reducedMotion);
       }
 
       const elapsed = current.elapsed + delta;
@@ -519,8 +542,8 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
         const hitsNearWindow = mobilePlayfield
           ? obstacle.x < 21 && obstacle.x + obstacle.width > 10.8
           : obstacle.x < 22.5 && obstacle.x + obstacle.width > 11.4;
-        const collisionHeight = obstacle.hitHeight * (mobilePlayfield ? 0.68 : 0.88);
-        const closeHeight = obstacle.hitHeight + (mobilePlayfield ? 0.17 : 0.22);
+        const collisionHeight = obstacle.hitHeight * (mobilePlayfield ? 0.6 : 0.88);
+        const closeHeight = obstacle.hitHeight + (mobilePlayfield ? 0.2 : 0.22);
         const isNearMiss =
           elapsed > (mobilePlayfield ? 1.35 : 1) && hitsNearWindow && runnerY >= collisionHeight && runnerY < closeHeight;
 
@@ -536,7 +559,7 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
         const hitsRunnerX = mobilePlayfield
           ? obstacle.x < 15.7 && obstacle.x + obstacle.width > 13.2
           : obstacle.x < 17.2 && obstacle.x + obstacle.width > 14.4;
-        return elapsed > (mobilePlayfield ? 1.35 : 1) && hitsRunnerX && runnerY < obstacle.hitHeight * (mobilePlayfield ? 0.68 : 0.88);
+        return elapsed > (mobilePlayfield ? 1.15 : 1) && hitsRunnerX && runnerY < obstacle.hitHeight * (mobilePlayfield ? 0.6 : 0.88);
       });
 
       const cleared = current.cleared + clearedNow;
@@ -573,7 +596,9 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
 
   function handleKeyDown(event: KeyboardEvent<HTMLDivElement>) {
     if (event.code === "Space" || event.code === "ArrowUp") {
-      event.preventDefault();
+      if (event.cancelable) {
+        event.preventDefault();
+      }
       jump();
     }
 

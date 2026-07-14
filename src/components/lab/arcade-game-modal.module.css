@@ -21,14 +21,15 @@
 
 .dialog {
   --game-bg: #04101d;
-  --game-surface: rgba(255, 255, 255, 0.055);
-  --game-surface-strong: rgba(255, 255, 255, 0.1);
+  --game-surface: rgba(248, 251, 255, 0.075);
+  --game-surface-strong: rgba(248, 251, 255, 0.14);
   --game-text: #f8fbff;
-  --game-muted: rgba(226, 240, 255, 0.72);
-  --game-border: rgba(226, 240, 255, 0.14);
+  --game-muted: rgba(226, 240, 255, 0.86);
+  --game-border: rgba(226, 240, 255, 0.24);
   --game-accent: #67e8f9;
   --game-danger: #fb7185;
   --game-success: #34d399;
+  --game-warning: #fbbf24;
   --game-shadow: 0 24px 90px rgba(0, 0, 0, 0.36);
   position: relative;
   display: grid;
@@ -61,14 +62,15 @@
 
 :global([data-theme="light"]) .dialog {
   --game-bg: #f4f8fb;
-  --game-surface: rgba(255, 255, 255, 0.78);
-  --game-surface-strong: rgba(255, 255, 255, 0.94);
+  --game-surface: rgba(255, 255, 255, 0.86);
+  --game-surface-strong: rgba(255, 255, 255, 0.98);
   --game-text: #0f172a;
-  --game-muted: #475569;
-  --game-border: rgba(15, 23, 42, 0.14);
+  --game-muted: #334155;
+  --game-border: rgba(15, 23, 42, 0.2);
   --game-accent: #0e7490;
   --game-danger: #be123c;
   --game-success: #047857;
+  --game-warning: #b45309;
   --game-shadow: 0 18px 54px rgba(15, 23, 42, 0.12);
   background:
     radial-gradient(circle at 14% 0%, rgba(8, 145, 178, 0.09), transparent 28rem),
@@ -127,15 +129,85 @@
   flex: 0 0 auto;
   gap: 0.5rem;
   align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 .headerActions button,
 .gameTabs button {
-  border: 1px solid var(--arcade-line);
-  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid var(--game-border);
+  background: var(--game-surface);
   color: inherit;
   font: inherit;
   cursor: pointer;
+}
+
+.modalControls {
+  display: flex;
+  min-width: 0;
+  gap: 0.38rem;
+  align-items: center;
+}
+
+.themeButton,
+.localeSwitch {
+  min-height: 2.55rem;
+  border-radius: 0.75rem;
+}
+
+.themeButton {
+  display: inline-flex;
+  gap: 0.42rem;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0.68rem;
+  color: var(--game-text) !important;
+  font-family: var(--font-mono), ui-monospace, monospace !important;
+  font-size: 0.62rem !important;
+  font-weight: 900 !important;
+  text-transform: uppercase;
+}
+
+.themeButton svg,
+.localeSwitch svg {
+  width: 1rem;
+  height: 1rem;
+  flex: 0 0 auto;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  color: var(--game-accent);
+}
+
+.themeButton[data-theme-state="dark"] svg:first-child,
+.themeButton[data-theme-state="light"] svg:last-child {
+  opacity: 0.42;
+}
+
+.localeSwitch {
+  display: inline-flex;
+  gap: 0.18rem;
+  align-items: center;
+  border: 1px solid var(--game-border);
+  padding: 0 0.34rem;
+  background: var(--game-surface);
+}
+
+.localeSwitch button {
+  min-height: 1.75rem;
+  border-radius: 0.55rem;
+  padding: 0 0.44rem;
+  color: var(--game-muted);
+  font-family: var(--font-mono), ui-monospace, monospace !important;
+  font-size: 0.58rem !important;
+  font-weight: 900 !important;
+}
+
+.localeSwitch button[aria-pressed="true"] {
+  border-color: color-mix(in srgb, var(--game-accent) 58%, var(--game-border));
+  background: color-mix(in srgb, var(--game-accent) 16%, var(--game-surface-strong));
+  color: var(--game-text);
 }
 
 .restartButton {
@@ -161,14 +233,18 @@
   line-height: 1;
 }
 
+.themeButton:hover,
+.themeButton:focus-visible,
+.localeSwitch button:hover,
+.localeSwitch button:focus-visible,
 .headerActions button:hover,
 .headerActions button:focus-visible,
 .gameTabs button:hover,
 .gameTabs button:focus-visible,
 .gameTabs button[data-active="true"] {
-  border-color: color-mix(in srgb, var(--arcade-cyan) 56%, var(--arcade-line));
+  border-color: color-mix(in srgb, var(--game-accent) 56%, var(--game-border));
   outline: none;
-  background: color-mix(in srgb, var(--arcade-cyan) 9%, rgba(255, 255, 255, 0.045));
+  background: color-mix(in srgb, var(--game-accent) 12%, var(--game-surface));
 }
 
 .gameTabs {
@@ -190,17 +266,17 @@
   align-items: center;
   border-radius: 999px;
   padding: 0 0.75rem;
-  color: var(--arcade-muted);
+  color: var(--game-muted);
   font-size: 0.68rem;
   font-weight: 800;
 }
 
 .gameTabs button[data-active="true"] {
-  color: var(--arcade-ink);
+  color: var(--game-text);
 }
 
 .gameTabs b {
-  color: var(--arcade-cyan);
+  color: var(--game-accent);
   font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.58rem;
 }
@@ -214,10 +290,11 @@
 }
 
 .gameColumn {
+  position: relative;
   display: grid;
   min-width: 0;
   min-height: 0;
-  grid-template-rows: minmax(0, 1fr) auto;
+  grid-template-rows: minmax(0, 1fr);
   overflow: hidden;
   overscroll-behavior: contain;
   padding: clamp(0.65rem, 1.4vw, 1rem);
@@ -238,17 +315,23 @@
 }
 
 .feedback {
+  position: absolute;
+  right: clamp(0.9rem, 1.8vw, 1.3rem);
+  bottom: clamp(0.9rem, 1.8vw, 1.3rem);
+  left: clamp(0.9rem, 1.8vw, 1.3rem);
+  z-index: 8;
   display: flex;
   gap: 1rem;
   align-items: center;
   justify-content: space-between;
-  margin-top: 0.65rem;
-  border: 1px solid var(--arcade-line);
+  border: 1px solid var(--game-border);
   border-radius: 0.8rem;
   padding: 0.68rem 0.8rem;
-  background: rgba(255, 255, 255, 0.035);
-  color: var(--arcade-muted);
+  background: color-mix(in srgb, var(--game-surface-strong) 92%, var(--game-bg));
+  color: var(--game-muted);
   font-size: 0.72rem;
+  box-shadow: var(--game-shadow);
+  backdrop-filter: blur(16px);
 }
 
 .feedback[data-tone="synced"] {
@@ -267,9 +350,9 @@
   overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior: contain;
-  border-left: 1px solid var(--arcade-line);
+  border-left: 1px solid var(--game-border);
   padding: clamp(0.85rem, 1.6vw, 1.2rem);
-  background: rgba(255, 255, 255, 0.018);
+  background: color-mix(in srgb, var(--game-surface) 70%, transparent);
   scrollbar-gutter: stable;
 }
 
@@ -282,7 +365,7 @@
 
 .rankingHeader span,
 .personalRank span {
-  color: var(--arcade-muted);
+  color: var(--game-muted);
   font-size: 0.62rem;
   font-weight: 800;
   letter-spacing: 0.06em;
@@ -328,10 +411,10 @@
   grid-template-columns: 2rem 2.15rem minmax(0, 1fr) auto;
   gap: 0.55rem;
   align-items: center;
-  border: 1px solid var(--arcade-line);
+  border: 1px solid var(--game-border);
   border-radius: 0.8rem;
   padding: 0.58rem;
-  background: rgba(255, 255, 255, 0.025);
+  background: var(--game-surface);
 }
 
 .rankingList li:first-child {
@@ -340,7 +423,7 @@
 }
 
 .rankNumber {
-  color: var(--arcade-cyan);
+  color: var(--game-accent);
   font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.62rem;
   font-weight: 850;
@@ -353,7 +436,7 @@
   place-items: center;
   border-radius: 0.65rem;
   background: linear-gradient(135deg, rgba(103, 232, 249, 0.13), rgba(139, 92, 246, 0.15));
-  color: var(--arcade-cyan);
+  color: var(--game-accent);
   font-size: 0.62rem;
   font-weight: 900;
 }
@@ -372,10 +455,10 @@
 
 .empty {
   margin: 1rem 0 0;
-  border: 1px dashed var(--arcade-line);
+  border: 1px dashed var(--game-border);
   border-radius: 0.85rem;
   padding: 1.25rem;
-  color: var(--arcade-muted);
+  color: var(--game-muted);
   font-size: 0.72rem;
   line-height: 1.5;
   text-align: center;
@@ -385,7 +468,7 @@
   display: grid;
   gap: 0.55rem;
   margin-top: 1rem;
-  border-top: 1px solid var(--arcade-line);
+  border-top: 1px solid var(--game-border);
   padding-top: 1rem;
 }
 
@@ -444,27 +527,29 @@
 
 @media (max-width: 620px) {
   .overlay {
-    --modal-gap: 0.25rem;
+    --modal-gap: 0;
   }
 
   .dialog {
     height: calc(100dvh - (var(--modal-gap) * 2));
     max-height: calc(100dvh - (var(--modal-gap) * 2));
-    border-radius: 0.85rem;
+    border-radius: 0;
   }
 
   .header {
-    gap: 0.45rem;
-    align-items: start;
-    padding: 0.65rem;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.38rem;
+    align-items: center;
+    padding: 0.45rem 0.5rem;
   }
 
   .heading span {
-    font-size: 0.52rem;
+    display: none;
   }
 
   .heading h2 {
-    font-size: clamp(1rem, 5.2vw, 1.25rem);
+    font-size: clamp(0.96rem, 4.7vw, 1.12rem);
+    letter-spacing: 0;
   }
 
   .heading p {
@@ -472,40 +557,178 @@
   }
 
   .headerActions {
-    gap: 0.3rem;
+    flex-wrap: nowrap;
+    gap: 0.22rem;
+  }
+
+  .modalControls {
+    width: auto;
+    order: 0;
+    gap: 0.22rem;
+    justify-content: flex-end;
   }
 
   .restartButton {
-    min-height: 2.25rem;
-    border-radius: 0.65rem;
-    padding: 0 0.55rem;
-    font-size: 0.59rem !important;
+    display: none;
   }
 
   .closeButton {
-    width: 2.25rem;
-    height: 2.25rem;
-    border-radius: 0.65rem;
+    width: 2.05rem;
+    height: 2.05rem;
+    border-radius: 0.58rem;
   }
 
   .gameTabs {
-    padding: 0.5rem 0.65rem;
+    gap: 0.32rem;
+    padding: 0.36rem 0.5rem;
+  }
+
+  .gameTabs button {
+    min-height: 1.95rem;
+    gap: 0.32rem;
+    padding: 0 0.52rem;
+    font-size: 0.58rem;
+  }
+
+  .gameTabs b {
+    font-size: 0.52rem;
+  }
+
+  .content {
+    grid-template-rows: minmax(0, 1fr);
   }
 
   .gameColumn {
     min-height: 0;
-    padding: 0.45rem;
+    padding: 0.28rem;
   }
 
   .arena {
     min-height: 0;
     height: 100%;
-    border-radius: 0.75rem;
+    border-radius: 0.55rem;
+  }
+
+  .themeButton,
+  .localeSwitch {
+    min-height: 2.05rem;
+  }
+
+  .themeButton {
+    width: 2.05rem;
+    padding: 0;
+    font-size: 0.54rem !important;
+  }
+
+  .themeButton span {
+    display: none;
+  }
+
+  .themeButton[data-theme-state="dark"] svg:first-child,
+  .themeButton[data-theme-state="light"] svg:last-child {
+    display: none;
+  }
+
+  .themeButton svg,
+  .localeSwitch svg {
+    width: 0.86rem;
+    height: 0.86rem;
+  }
+
+  .localeSwitch {
+    padding: 0 0.22rem;
+  }
+
+  .localeSwitch button {
+    min-height: 1.42rem;
+    padding: 0 0.28rem;
+    font-size: 0.52rem !important;
   }
 
   .feedback {
+    right: 0.55rem;
+    bottom: 0.55rem;
+    left: 0.55rem;
     align-items: flex-start;
     flex-direction: column;
+    gap: 0.2rem;
+    border-radius: 0.58rem;
+    padding: 0.46rem 0.55rem;
+    font-size: 0.62rem;
+  }
+
+  .rankingPanel {
+    display: none;
+  }
+
+  .rankingHeader {
+    align-items: center;
+  }
+
+  .rankingHeader span,
+  .personalRank span {
+    font-size: 0.52rem;
+  }
+
+  .rankingHeader h3 {
+    margin-top: 0.12rem;
+    font-size: 0.9rem;
+  }
+
+  .live {
+    padding: 0.24rem 0.44rem;
+    font-size: 0.5rem !important;
+  }
+
+  .rankingList {
+    display: flex;
+    gap: 0.38rem;
+    margin-top: 0.42rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 0.08rem;
+    scrollbar-width: none;
+  }
+
+  .rankingList::-webkit-scrollbar {
+    display: none;
+  }
+
+  .rankingList li {
+    grid-template-columns: auto 1.7rem minmax(4.5rem, 1fr) auto;
+    min-width: 12.8rem;
+    border-radius: 0.62rem;
+    padding: 0.38rem;
+  }
+
+  .rankAvatar {
+    width: 1.7rem;
+    height: 1.7rem;
+    border-radius: 0.5rem;
+    font-size: 0.52rem;
+  }
+
+  .rankNumber,
+  .rankingList strong,
+  .rankingList b {
+    font-size: 0.58rem;
+  }
+
+  .personalRank {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.4rem;
+    margin-top: 0.42rem;
+    padding-top: 0.42rem;
+  }
+
+  .personalRank div {
+    display: grid;
+    gap: 0.12rem;
+  }
+
+  .personalRank strong {
+    max-width: 100%;
+    font-size: 0.62rem;
   }
 }
 

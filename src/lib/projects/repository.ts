@@ -10,6 +10,7 @@ import {
   type PortfolioProjectRevisionDocument,
 } from "@/lib/mongodb/collections";
 import { readMongoConfig } from "@/lib/mongodb/config";
+import { syncProjectMediaSelection } from "@/lib/media/repository";
 import {
   applyPublicProjectDetailOverlay,
   applyPublicProjectOverlay,
@@ -185,8 +186,20 @@ export async function createAdminProject(input: AdminProjectMutation, updatedBy:
       }
 
       const now = new Date();
+      const content = await syncProjectMediaSelection(
+        {
+          mediaAssets: input.mediaAssets,
+          project: input.project as Project,
+          projectSlug: input.project.slug,
+          publicationStatus: input.publicationStatus,
+        },
+        {
+          collections,
+          session,
+        },
+      );
       const document: PortfolioProjectDocument = {
-        content: input.project as Project,
+        content,
         createdAt: now,
         publicationStatus: input.publicationStatus,
         publishedAt: input.publicationStatus === "published" ? now : null,
@@ -240,12 +253,24 @@ export async function updateAdminProject(input: AdminProjectMutation, updatedBy:
       const publishedAt = input.publicationStatus === "published"
         ? existing.publishedAt ?? now
         : null;
+      const content = await syncProjectMediaSelection(
+        {
+          mediaAssets: input.mediaAssets,
+          project: input.project as Project,
+          projectSlug: input.project.slug,
+          publicationStatus: input.publicationStatus,
+        },
+        {
+          collections,
+          session,
+        },
+      );
 
       await collections.portfolioProjects.updateOne(
         { _id: existing._id },
         {
           $set: {
-            content: input.project as Project,
+            content,
             publicationStatus: input.publicationStatus,
             publishedAt,
             sortOrder: input.sortOrder,
@@ -258,7 +283,7 @@ export async function updateAdminProject(input: AdminProjectMutation, updatedBy:
 
       updated = {
         ...existing,
-        content: input.project as Project,
+        content,
         publicationStatus: input.publicationStatus,
         publishedAt,
         sortOrder: input.sortOrder,

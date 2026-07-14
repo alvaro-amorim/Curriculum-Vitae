@@ -1,6 +1,6 @@
 import { MongoClient, ServerApiVersion, type Db } from "mongodb";
 
-import { readMongoConfig } from "@/lib/mongodb/config";
+import { readMongoConfig } from "./config.ts";
 
 declare global {
   var __portfolioMongoClientPromise: Promise<MongoClient> | undefined;

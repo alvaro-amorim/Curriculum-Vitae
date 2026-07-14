@@ -902,10 +902,75 @@
 
   .gameGrid {
     grid-template-columns: 1fr;
+    gap: 0.68rem;
   }
 
-  .gameCard > p {
-    min-height: auto;
+  .gameCard {
+    border-radius: 1rem;
+    padding: 0.78rem;
+  }
+
+  .gameCard::after {
+    right: -7rem;
+    bottom: -7.5rem;
+    width: 10rem;
+    height: 10rem;
+  }
+
+  .gameCardTop {
+    gap: 0.48rem;
+  }
+
+  .gameIndex,
+  .gameCode {
+    font-size: 0.56rem;
+  }
+
+  .gameGlyph {
+    width: 2.15rem;
+    height: 2.15rem;
+    border-radius: 0.68rem;
+  }
+
+  .gameGlyph svg {
+    width: 1.05rem;
+    height: 1.05rem;
+  }
+
+  .gameCard h3 {
+    margin-top: 0.68rem;
+    font-size: clamp(1.08rem, 5.8vw, 1.32rem);
+  }
+
+  .gameCard > p,
+  .controlLine {
+    display: none;
+  }
+
+  .gameMetrics {
+    gap: 0.45rem;
+    margin-top: 0.58rem;
+  }
+
+  .gameMetrics div {
+    min-width: 0;
+    border-radius: 0.62rem;
+    padding: 0.5rem;
+  }
+
+  .gameMetrics span {
+    font-size: 0.54rem;
+  }
+
+  .gameMetrics strong {
+    font-size: 0.78rem;
+  }
+
+  .gameCard > button {
+    min-height: 2.6rem;
+    margin-top: 0.6rem;
+    border-radius: 0.72rem;
+    padding: 0.62rem 0.78rem;
   }
 
   .focusStage {

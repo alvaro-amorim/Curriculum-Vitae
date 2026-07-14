@@ -74,7 +74,7 @@ export function AdminLoginForm() {
         <input
           autoComplete="current-password"
           id="admin-password"
-          minLength={8}
+          minLength={14}
           name="password"
           required
           type="password"

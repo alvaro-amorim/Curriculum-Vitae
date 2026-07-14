@@ -1,4 +1,4 @@
-import { getProjectBySlug } from "@/content/projects";
+import { projects as staticProjects } from "@/content/projects";
 import type { Locale, Project } from "@/types/portfolio";
 
 export type HomeProjectIconKey = "margem" | "comerc" | "gdash" | "sdr" | "arcade" | "portfolio-os";
@@ -14,6 +14,8 @@ export type HomeProject = {
   carouselStack: string[];
   caseHref: string;
   liveHref?: string;
+  logo?: string | null;
+  logoAlt?: Record<Locale, string>;
 };
 
 type ProjectShowcaseOptions = {
@@ -27,8 +29,8 @@ type ProjectShowcaseOptions = {
   carouselStack: string[];
 };
 
-function requireProject(slug: string): Project {
-  const project = getProjectBySlug(slug);
+function requireProject(projectsBySlug: Map<string, Project>, slug: string): Project {
+  const project = projectsBySlug.get(slug);
 
   if (!project) {
     throw new Error(`Missing project content for Home showcase: ${slug}`);
@@ -37,8 +39,8 @@ function requireProject(slug: string): Project {
   return project;
 }
 
-function createProjectShowcase(options: ProjectShowcaseOptions): HomeProject {
-  const project = requireProject(options.slug);
+function createProjectShowcase(projectsBySlug: Map<string, Project>, options: ProjectShowcaseOptions): HomeProject {
+  const project = requireProject(projectsBySlug, options.slug);
 
   return {
     title: options.title,
@@ -50,11 +52,13 @@ function createProjectShowcase(options: ProjectShowcaseOptions): HomeProject {
     carouselStack: options.carouselStack,
     caseHref: `/projetos/${project.slug}`,
     liveHref: project.links.website,
+    logo: project.visuals?.logo ?? null,
+    logoAlt: project.visuals?.logoAlt ?? project.title,
   };
 }
 
-export const homeProjects: HomeProject[] = [
-  createProjectShowcase({
+const projectShowcases: ProjectShowcaseOptions[] = [
+  {
     slug: "margem-app",
     title: "Margem App",
     category: { pt: "SaaS • FoodTech", en: "SaaS • FoodTech" },
@@ -66,8 +70,8 @@ export const homeProjects: HomeProject[] = [
     brandLabel: "MG",
     brandAccent: "blue-purple",
     carouselStack: ["Next.js", "React", "TypeScript", "Supabase", "Prisma", "Tailwind CSS"],
-  }),
-  createProjectShowcase({
+  },
+  {
     slug: "comerc-ias",
     title: "Comerc IAs",
     category: { pt: "Institucional • Métricas", en: "Website • Metrics" },
@@ -79,8 +83,8 @@ export const homeProjects: HomeProject[] = [
     brandLabel: "CI",
     brandAccent: "violet-cyan",
     carouselStack: ["React", "TypeScript", "Bootstrap", "Node.js", "Supabase"],
-  }),
-  createProjectShowcase({
+  },
+  {
     slug: "gdash-dashboard",
     title: "GDASH Dashboard",
     category: { pt: "Dados • Monitoramento", en: "Data • Monitoring" },
@@ -92,8 +96,8 @@ export const homeProjects: HomeProject[] = [
     brandLabel: "GD",
     brandAccent: "emerald-teal",
     carouselStack: ["React", "Python", "RabbitMQ", "Go", "Tailwind CSS"],
-  }),
-  createProjectShowcase({
+  },
+  {
     slug: "sdr-expert-crm",
     title: "SDR Expert CRM",
     category: { pt: "CRM • IA", en: "CRM • AI" },
@@ -105,7 +109,14 @@ export const homeProjects: HomeProject[] = [
     brandLabel: "SDR",
     brandAccent: "rose-indigo",
     carouselStack: ["React", "TypeScript", "Vite", "Supabase", "PostgreSQL"],
-  }),
+  },
+];
+
+export function createHomeProjects(publicProjects: readonly Project[] = staticProjects): HomeProject[] {
+  const projectsBySlug = new Map(publicProjects.map((project) => [project.slug, project]));
+
+  return [
+    ...projectShowcases.map((project) => createProjectShowcase(projectsBySlug, project)),
   {
     title: "Developer Arcade",
     category: { pt: "Lab • Gamificação", en: "Lab • Gamification" },
@@ -132,4 +143,7 @@ export const homeProjects: HomeProject[] = [
     carouselStack: ["Next.js", "React", "TypeScript", "Tailwind CSS", "Supabase"],
     caseHref: "/",
   },
-];
+  ];
+}
+
+export const homeProjects: HomeProject[] = createHomeProjects();

@@ -1,17 +1,21 @@
-export const ADMIN_ACCESS_COOKIE = "alvaro_admin_access";
-export const ADMIN_REFRESH_COOKIE = "alvaro_admin_refresh";
 export const ADMIN_COOKIE_PATH = "/";
-export const ADMIN_REFRESH_MAX_AGE_SECONDS = 60 * 60 * 24 * 30;
+export const ADMIN_SESSION_COOKIE = "alvaro_admin_session";
+export const ADMIN_SESSION_MAX_AGE_SECONDS = 60 * 60 * 8;
+export const LEGACY_ADMIN_COOKIE_NAMES = ["alvaro_admin_access", "alvaro_admin_refresh"] as const;
+
+const ADMIN_LOGIN_EMAIL_MAX_LENGTH = 160;
+const BASIC_EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export function normalizeAdminEmail(value: string | null | undefined) {
   return value?.trim().toLowerCase() ?? "";
 }
 
-export function isAllowedAdminEmail(email: string | null | undefined, configuredEmail: string | null | undefined) {
-  const normalizedEmail = normalizeAdminEmail(email);
-  const normalizedConfiguredEmail = normalizeAdminEmail(configuredEmail);
+export function isValidAdminEmail(value: string | null | undefined) {
+  const normalizedEmail = normalizeAdminEmail(value);
 
-  return normalizedEmail.length > 0 && normalizedEmail === normalizedConfiguredEmail;
+  return normalizedEmail.length > 0
+    && normalizedEmail.length <= ADMIN_LOGIN_EMAIL_MAX_LENGTH
+    && BASIC_EMAIL_PATTERN.test(normalizedEmail);
 }
 
 export function isAdminLoginPath(pathname: string) {
@@ -40,4 +44,14 @@ export function isSameOriginAdminRequest(requestUrl: string, originHeader: strin
   } catch {
     return false;
   }
+}
+
+export function adminSessionCookieOptions(maxAge: number, nodeEnv = process.env.NODE_ENV) {
+  return {
+    httpOnly: true,
+    maxAge,
+    path: ADMIN_COOKIE_PATH,
+    sameSite: "lax" as const,
+    secure: nodeEnv === "production",
+  };
 }

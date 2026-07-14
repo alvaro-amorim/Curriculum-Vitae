@@ -10,9 +10,25 @@ function toIndexDescriptions(specs: readonly unknown[]) {
 export async function ensureMongoIndexes(options?: CreateIndexesOptions) {
   const collections = await getMongoCollections();
 
-  const [arcadeSessions, arcadeScores, portfolioProjects, portfolioProjectRevisions] = await Promise.all([
+  const [
+    adminLoginAttempts,
+    adminSessions,
+    adminUsers,
+    arcadeSessions,
+    arcadeScores,
+    projectMediaAssets,
+    portfolioProjects,
+    portfolioProjectRevisions,
+  ] = await Promise.all([
+    collections.adminLoginAttempts.createIndexes(
+      toIndexDescriptions(MONGODB_INDEX_SPECS.adminLoginAttempts),
+      options,
+    ),
+    collections.adminSessions.createIndexes(toIndexDescriptions(MONGODB_INDEX_SPECS.adminSessions), options),
+    collections.adminUsers.createIndexes(toIndexDescriptions(MONGODB_INDEX_SPECS.adminUsers), options),
     collections.arcadeSessions.createIndexes(toIndexDescriptions(MONGODB_INDEX_SPECS.arcadeSessions), options),
     collections.arcadeScores.createIndexes(toIndexDescriptions(MONGODB_INDEX_SPECS.arcadeScores), options),
+    collections.projectMediaAssets.createIndexes(toIndexDescriptions(MONGODB_INDEX_SPECS.projectMediaAssets), options),
     collections.portfolioProjects.createIndexes(toIndexDescriptions(MONGODB_INDEX_SPECS.portfolioProjects), options),
     collections.portfolioProjectRevisions.createIndexes(
       toIndexDescriptions(MONGODB_INDEX_SPECS.portfolioProjectRevisions),
@@ -21,8 +37,12 @@ export async function ensureMongoIndexes(options?: CreateIndexesOptions) {
   ]);
 
   return {
+    adminLoginAttempts,
+    adminSessions,
+    adminUsers,
     arcadeScores,
     arcadeSessions,
+    projectMediaAssets,
     portfolioProjectRevisions,
     portfolioProjects,
   };

@@ -27,6 +27,8 @@ export type ProjectVisualLayout =
   | "commerce-catalog";
 
 export type ProjectVisuals = {
+  logo?: string | null;
+  logoAlt?: LocalizedText;
   thumbnail: string | null;
   heroImage: string | null;
   gallery: string[];

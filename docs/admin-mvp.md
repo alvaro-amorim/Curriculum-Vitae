@@ -1,6 +1,6 @@
-# Admin MVP
+# Admin Auth
 
-The first Admin MVP provides a protected, read-only dashboard. It does not yet move public portfolio content into the database.
+The Admin area uses a private MongoDB-backed owner account and a server-side session cookie.
 
 ## Routes
 
@@ -9,74 +9,64 @@ The first Admin MVP provides a protected, read-only dashboard. It does not yet m
 /admin
 /api/admin/login
 /api/admin/logout
+/api/admin/projects
+/api/admin/media/signature
+/api/admin/media/register
+/api/admin/media/rollback
+/api/admin/media/[id]
 ```
 
 All `/admin` pages are excluded from public navigation and configured with `noindex` metadata.
 
-## Authentication design
+## Authentication Design
 
-- Supabase Auth email/password login is executed only by the server Route Handler.
-- The browser never receives the Supabase anonymous key.
-- Access and refresh tokens are stored in `HttpOnly`, `SameSite=Lax` cookies.
-- `src/proxy.ts` validates the access token before private routes render.
-- Expired access tokens are refreshed server-side when a valid refresh token exists.
-- Authorization requires an exact match with `ADMIN_EMAIL` after normalization.
-- Protected pages validate the user again before returning dashboard content.
-- Login and logout mutations reject foreign origins.
-- Login attempts are limited per hashed IP and e-mail bucket.
+- Admin users live in `admin_users`.
+- Passwords use `scrypt-v1` with a random salt per user.
+- The bootstrap script creates or rotates the owner account; there is no public sign-up or password reset endpoint.
+- Login creates one opaque session token and sends it only in `alvaro_admin_session`.
+- Only the SHA-256 hash of the session token is stored in `admin_sessions`.
+- The cookie is `HttpOnly`, `SameSite=Lax`, `Secure` in production and expires after about 8 hours.
+- `src/proxy.ts` only checks for cookie presence as an initial barrier.
+- Protected pages and Admin APIs validate the session against MongoDB before returning private data.
+- Login and logout mutations validate same-origin requests.
+- Login attempts are stored in `admin_login_attempts` with hashed IP/e-mail buckets and TTL cleanup.
 
-The current limiter is process-local. It is suitable as an initial control, but a distributed store is required for strict global enforcement across multiple serverless instances.
+## Bootstrap
 
-## Required environment variables
+Create the local owner manually:
 
-```env
-NEXT_PUBLIC_SUPABASE_URL=
-SUPABASE_ANON_KEY=
-SUPABASE_SERVICE_ROLE_KEY=
-ADMIN_EMAIL=
+```powershell
+npm run admin:bootstrap -- --email "email@dominio.com"
 ```
 
-`SUPABASE_ANON_KEY` is deliberately server-only and must not use a `NEXT_PUBLIC_` prefix.
+Rotate the password and revoke active Admin sessions:
 
-## Manual Supabase setup
+```powershell
+npm run admin:bootstrap -- --email "email@dominio.com" --rotate-password
+```
 
-1. Open the current `curriculo` project in Supabase.
-2. Open Authentication and create one email/password user for the administrator.
-3. Use the same normalized e-mail in `ADMIN_EMAIL`.
-4. Keep public sign-up disabled unless another product feature explicitly needs it.
-5. Configure the four variables above in `.env.local` for local development.
-6. Configure the same values in Vercel for Preview and Production as appropriate.
-7. Redeploy after changing environment variables.
+Do not commit passwords, session tokens, hashes, salts or real MongoDB credentials.
 
-Do not commit passwords, access tokens, refresh tokens or real service-role values.
+## MongoDB Collections
 
-## Current dashboard
+- `admin_users`
+- `admin_sessions`
+- `admin_login_attempts`
+- `arcade_sessions`
+- `arcade_scores`
+- `portfolio_projects`
+- `portfolio_project_revisions`
+- `project_media_assets`
 
-The dashboard is read-only and shows:
+Run `npm run mongodb:setup` after configuring `.env.local` to create indexes and TTL rules.
 
-- number of versioned projects;
-- number of Arcade games;
-- persisted session count;
-- persisted score count;
-- Supabase availability;
-- current authenticated administrator;
-- project catalog preview;
-- links to public Projects and Lab pages.
+## Project Media
 
-If the database is temporarily unavailable, the dashboard remains accessible and reports unavailable metrics instead of failing the whole page.
+Project media operations are protected by the same MongoDB Admin session used by the rest of the Admin panel.
 
-## Next Admin phase
-
-The next phase should add project editing without silently replacing the current source of truth.
-
-Recommended sequence:
-
-1. create a versioned migration for draft/project override tables;
-2. add RLS and service-role-only write access;
-3. import current static project data with a reversible script;
-4. create draft and published states;
-5. add Admin CRUD and bilingual preview;
-6. make public routes consume published database content with a static fallback;
-7. add audit logs and rollback.
-
-Uploads and Supabase Storage should be introduced only after project CRUD and authorization are stable.
+- Cloudinary stores project image binaries.
+- MongoDB stores metadata, project binding, role, order and deletion state.
+- Uploads are direct and signed; large files do not pass through the Vercel function.
+- The Cloudinary API secret stays server-side and is never exposed with `NEXT_PUBLIC_`.
+- Supported uploads are JPEG, PNG, WebP and AVIF within the documented limits.
+- Delete operations use the persisted Cloudinary `publicId`, remove project references and keep local state unchanged if Cloudinary deletion fails.

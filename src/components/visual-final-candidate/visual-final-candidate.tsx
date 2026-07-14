@@ -3,14 +3,16 @@
 import type { CSSProperties, ElementType, MouseEvent, ReactNode, TouchEvent } from "react";
 import { useEffect, useRef, useState } from "react";
 
+import Image from "next/image";
 import Link from "next/link";
 
 import { AboutContactSection } from "@/components/home/about-contact-section";
 import { usePortfolioUi } from "@/components/layout/app-shell";
 import { profile } from "@/content/profile";
 import { homeCopy as copy } from "@/content/home-copy";
-import { homeProjects as projects } from "@/content/home-projects";
-import type { HomeProjectAccent as Accent, HomeProjectIconKey as ProjectIconKey } from "@/content/home-projects";
+import { homeProjects as defaultHomeProjects } from "@/content/home-projects";
+import type { HomeProject, HomeProjectAccent as Accent, HomeProjectIconKey as ProjectIconKey } from "@/content/home-projects";
+import { cloudinaryOptimizedImageUrl } from "@/lib/media/media-rules";
 import type { Locale } from "@/types/portfolio";
 
 import { Icon, ProjectIcon, StackLogo } from "./home-icons";
@@ -49,7 +51,24 @@ function Reveal({ children, as: Tag = "div", className = "", delay = 0 }: { chil
   );
 }
 
-function ProjectCarousel({ locale }: { locale: Locale }) {
+function ProjectLogoOrIcon({ locale, project, size = "lg" }: { locale: Locale; project: HomeProject; size?: "sm" | "lg" }) {
+  if (project.logo) {
+    return (
+      <div className={`${styles.projectIcon} ${styles.projectLogoIcon} ${size === "sm" ? styles.projectIconSm : ""}`}>
+        <Image
+          alt={project.logoAlt?.[locale] ?? project.title}
+          height={size === "sm" ? 48 : 78}
+          src={cloudinaryOptimizedImageUrl(project.logo, size === "sm" ? 160 : 240)}
+          width={size === "sm" ? 48 : 78}
+        />
+      </div>
+    );
+  }
+
+  return <ProjectIcon iconKey={project.projectIconKey as ProjectIconKey} accent={project.brandAccent as Accent} size={size} />;
+}
+
+function ProjectCarousel({ locale, projects }: { locale: Locale; projects: HomeProject[] }) {
   const [idx, setIdx] = useState(0);
   const [key, setKey] = useState(0);
   const [paused, setPaused] = useState(false);
@@ -111,7 +130,7 @@ function ProjectCarousel({ locale }: { locale: Locale }) {
             key={project.title}
           >
             <div className={styles.projectSummary}>
-              <ProjectIcon iconKey={project.projectIconKey as ProjectIconKey} accent={project.brandAccent as Accent} />
+              <ProjectLogoOrIcon locale={locale} project={project} />
               <h3>{project.title}</h3>
               <p>{project.description[locale]}</p>
             </div>
@@ -184,17 +203,17 @@ function ProjectCarousel({ locale }: { locale: Locale }) {
   );
 }
 
-function FirstFold({ locale }: { locale: Locale }) {
+function FirstFold({ locale, projects }: { locale: Locale; projects: HomeProject[] }) {
   return (
     <div id="home" className={styles.firstFold}>
-      <HeroSection locale={locale} />
+      <HeroSection locale={locale} projects={projects} />
       <CapabilityBar locale={locale} />
       <ScrollIndicator locale={locale} />
     </div>
   );
 }
 
-function HeroSection({ locale }: { locale: Locale }) {
+function HeroSection({ locale, projects }: { locale: Locale; projects: HomeProject[] }) {
   const t = copy[locale];
 
   return (
@@ -239,7 +258,7 @@ function HeroSection({ locale }: { locale: Locale }) {
           </div>
 
           <div className={styles.carouselWrap} data-reveal data-visible="true">
-            <ProjectCarousel locale={locale} />
+            <ProjectCarousel locale={locale} projects={projects} />
           </div>
         </div>
       </div>
@@ -302,7 +321,7 @@ function SectionHeading({ eyebrow, title, intro }: { eyebrow: string; title: str
   );
 }
 
-function FeaturedProjects({ locale }: { locale: Locale }) {
+function FeaturedProjects({ locale, projects }: { locale: Locale; projects: HomeProject[] }) {
   const t = copy[locale];
 
   return (
@@ -313,7 +332,7 @@ function FeaturedProjects({ locale }: { locale: Locale }) {
           <Reveal className={styles.featuredCard} key={project.title} delay={(index % 3) * 90}>
             <Link href={project.caseHref}>
               <div>
-                <ProjectIcon iconKey={project.projectIconKey as ProjectIconKey} accent={project.brandAccent as Accent} size="sm" />
+                <ProjectLogoOrIcon locale={locale} project={project} size="sm" />
                 <span>
                   <Icon name="external" />
                 </span>
@@ -502,7 +521,7 @@ function FinalCta({ locale }: { locale: Locale }) {
   );
 }
 
-export function VisualFinalCandidate() {
+export function VisualFinalCandidate({ projects: showcaseProjects = defaultHomeProjects }: { projects?: HomeProject[] }) {
   const ref = useRef<HTMLElement>(null);
   const { locale } = usePortfolioUi();
   useReveal();
@@ -523,8 +542,8 @@ export function VisualFinalCandidate() {
       <div className={styles.orbA} aria-hidden="true" />
       <div className={styles.orbB} aria-hidden="true" />
 
-      <FirstFold locale={locale} />
-      <FeaturedProjects locale={locale} />
+      <FirstFold locale={locale} projects={showcaseProjects} />
+      <FeaturedProjects locale={locale} projects={showcaseProjects} />
       <StackSection locale={locale} />
       <ProcessSection locale={locale} />
       <ArcadeSection locale={locale} />

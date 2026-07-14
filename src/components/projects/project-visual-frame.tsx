@@ -1,6 +1,7 @@
 import Image from "next/image";
 import type { CSSProperties } from "react";
 
+import { cloudinaryOptimizedImageUrl } from "@/lib/media/media-rules";
 import type { Locale, Project } from "@/types/portfolio";
 
 import styles from "./project-experience.module.css";
@@ -35,10 +36,20 @@ export function ProjectVisualFrame({ project, locale, mode = "large", index }: P
   const status = visuals?.status ?? "pending";
   const isPending = status !== "available" || !image;
   const label = isPending ? pendingCopy[locale] : visuals?.alt[locale];
+  const imageWidth = mode === "compact" ? 720 : 1440;
+  const imageSizes = mode === "compact" ? "(max-width: 768px) 100vw, 42vw" : "(max-width: 980px) 100vw, 60vw";
 
   return (
     <div className={`${styles.visualFrame} ${mode === "compact" ? styles.compact : styles.large}`} style={projectAccentStyle(project)}>
-      {image ? <Image alt={visuals?.alt[locale] ?? project.title[locale]} fill sizes="(max-width: 768px) 100vw, 60vw" src={image} /> : null}
+      {image ? (
+        <Image
+          alt={visuals?.alt[locale] ?? project.title[locale]}
+          fill
+          priority={mode === "large" && index === 0}
+          sizes={imageSizes}
+          src={cloudinaryOptimizedImageUrl(image, imageWidth)}
+        />
+      ) : null}
       <div aria-hidden="true" className={styles.blueprint}>
         <span className={styles.blueprintPanel} />
         <span className={styles.blueprintPanelAlt} />

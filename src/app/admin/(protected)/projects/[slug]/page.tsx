@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 
 import { AdminProjectEditor } from "@/components/admin/admin-project-editor";
 import styles from "@/components/admin/admin-projects.module.css";
+import { getProjectMediaAssets } from "@/lib/media/repository";
 import { getAdminProjectBySlug, getProjectRevisions } from "@/lib/projects/repository";
 
 type PageProps = {
@@ -22,9 +23,10 @@ export const metadata: Metadata = {
 
 export default async function EditAdminProjectPage({ params }: PageProps) {
   const { slug } = await params;
-  const [record, revisions] = await Promise.all([
+  const [record, revisions, mediaAssets] = await Promise.all([
     getAdminProjectBySlug(slug),
     getProjectRevisions(slug),
+    getProjectMediaAssets(slug),
   ]);
 
   if (!record) {
@@ -45,6 +47,7 @@ export default async function EditAdminProjectPage({ params }: PageProps) {
         initialProject={record.project}
         initialPublicationStatus={record.publicationStatus}
         initialSortOrder={record.sortOrder}
+        mediaAssets={mediaAssets}
         mode="edit"
         revisions={revisions}
       />

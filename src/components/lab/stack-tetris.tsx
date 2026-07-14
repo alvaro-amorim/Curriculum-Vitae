@@ -158,7 +158,7 @@ const copy = {
     },
     idleTitle: "Compile módulos em linhas estáveis.",
     idleText:
-      "Mobile: deslize para mover/descer e para cima para rotacionar. Desktop: setas/WASD e Space.",
+      "Deslize para mover ou descer. Deslize para cima para rotacionar antes do stack overflow.",
     gameOverTitle: "Build quebrado.",
     gameOverText: "A pilha saturou. O melhor local foi salvo e o score persistente foi enviado sem bloquear a interface.",
     controlsTitle: "Controles",
@@ -215,7 +215,7 @@ const copy = {
     },
     idleTitle: "Compile modules into stable lines.",
     idleText:
-      "Mobile: swipe to move/drop and swipe up to rotate. Desktop: arrows/WASD and Space.",
+      "Swipe to move or drop. Swipe up to rotate before the stack overflows.",
     gameOverTitle: "Build broken.",
     gameOverText: "The stack saturated. Local best was saved and the persistent score was submitted without blocking the UI.",
     controlsTitle: "Controls",
@@ -675,7 +675,9 @@ export function StackTetris({ locale, onComplete }: StackTetrisProps) {
         return;
       }
 
-      event.preventDefault();
+      if (event.cancelable) {
+        event.preventDefault();
+      }
       if (Math.abs(dx) > Math.abs(dy)) {
         movePiece(dx > 0 ? 1 : -1, 0);
         return;

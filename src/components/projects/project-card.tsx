@@ -1,9 +1,11 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import type { PointerEvent } from "react";
 
 import { usePortfolioUi } from "@/components/layout/app-shell";
+import { cloudinaryOptimizedImageUrl } from "@/lib/media/media-rules";
 import type { Project } from "@/types/portfolio";
 
 import styles from "./project-experience.module.css";
@@ -58,6 +60,16 @@ export function ProjectCard({ project, compact = false, index = 0 }: ProjectCard
     >
       <div className={styles.sceneInfo}>
         <span className={styles.sceneNumber}>{String(index + 1).padStart(2, "0")}</span>
+        {project.visuals?.logo ? (
+          <div className={styles.sceneLogoTile}>
+            <Image
+              alt={project.visuals.logoAlt?.[locale] ?? project.title[locale]}
+              height={64}
+              src={cloudinaryOptimizedImageUrl(project.visuals.logo, 180)}
+              width={64}
+            />
+          </div>
+        ) : null}
         <p className={styles.sceneKicker}>{project.subtitle[locale]}</p>
         <h3 className={styles.sceneTitle}>{project.title[locale]}</h3>
         <p className={styles.sceneText}>{project.shortDescription[locale]}</p>

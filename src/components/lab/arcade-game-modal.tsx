@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 
+import { usePortfolioUi } from "@/components/layout/app-shell";
 import type { ArcadeBootstrapResponse } from "@/types/arcade-bootstrap";
 import type { LabGameId, Locale, PlayerGameRanking } from "@/types/portfolio";
 
@@ -52,6 +53,32 @@ function getFocusableElements(container: HTMLElement) {
   });
 }
 
+function ModalIcon({ name }: { name: "globe" | "moon" | "sun" }) {
+  const common = { "aria-hidden": true, focusable: false, viewBox: "0 0 24 24" };
+
+  if (name === "globe") {
+    return (
+      <svg {...common}>
+        <path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm-8-9h16M12 3c2.3 2.4 3.4 5.4 3.4 9S14.3 18.6 12 21c-2.3-2.4-3.4-5.4-3.4-9S9.7 5.4 12 3Z" />
+      </svg>
+    );
+  }
+
+  if (name === "sun") {
+    return (
+      <svg {...common}>
+        <path d="M12 4V2m0 20v-2m8-8h2M2 12h2m13.7-5.7 1.4-1.4M4.9 19.1l1.4-1.4m0-11.4L4.9 4.9m14.2 14.2-1.4-1.4M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg {...common}>
+      <path d="M20 15.5A8.2 8.2 0 0 1 8.5 4 8.5 8.5 0 1 0 20 15.5Z" />
+    </svg>
+  );
+}
+
 export function ArcadeGameModal({
   activeGame,
   children,
@@ -65,6 +92,7 @@ export function ArcadeGameModal({
   scoreStatus,
   sessionAlias,
 }: ArcadeGameModalProps) {
+  const { setLocale, theme, toggleTheme } = usePortfolioUi();
   const copy = labV2Copy[locale];
   const selectedGame = labGames.find((game) => game.id === activeGame) ?? labGames[0];
   const closeButtonRef = useRef<HTMLButtonElement | null>(null);
@@ -200,6 +228,29 @@ export function ArcadeGameModal({
             <p id="arcade-modal-description">{copy.focusHint}</p>
           </div>
           <div className={styles.headerActions}>
+            <div className={styles.modalControls} aria-label={locale === "pt" ? "Preferencias do modal" : "Modal preferences"}>
+              <button
+                aria-label={locale === "pt" ? "Alternar tema" : "Toggle theme"}
+                aria-pressed={theme === "light"}
+                className={styles.themeButton}
+                data-theme-state={theme}
+                onClick={toggleTheme}
+                type="button"
+              >
+                <ModalIcon name="sun" />
+                <span>{theme === "dark" ? "Dark" : "Light"}</span>
+                <ModalIcon name="moon" />
+              </button>
+              <div className={styles.localeSwitch} aria-label={locale === "pt" ? "Selecionar idioma" : "Select language"}>
+                <ModalIcon name="globe" />
+                <button aria-pressed={locale === "pt"} onClick={() => setLocale("pt")} type="button">
+                  PT
+                </button>
+                <button aria-pressed={locale === "en"} onClick={() => setLocale("en")} type="button">
+                  EN
+                </button>
+              </div>
+            </div>
             <button className={styles.restartButton} onClick={onRestart} type="button">
               {copy.restartGame}
             </button>

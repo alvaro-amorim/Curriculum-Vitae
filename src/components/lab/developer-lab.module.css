@@ -1555,7 +1555,7 @@
 
 .stageMessageInner h3 {
   margin: 0;
-  color: #fff;
+  color: var(--game-text, #fff);
   font-size: clamp(1.32rem, 3vw, 2.15rem);
   font-weight: 900;
   line-height: 0.98;
@@ -1563,7 +1563,7 @@
 
 .stageMessageInner p {
   margin: 0.55rem 0 0;
-  color: rgba(237, 246, 255, 0.74);
+  color: var(--game-muted, rgba(237, 246, 255, 0.74));
   font-size: 0.82rem;
   font-weight: 650;
   line-height: 1.45;
@@ -4476,6 +4476,8 @@
     linear-gradient(145deg, color-mix(in srgb, var(--game-surface) 76%, transparent), var(--game-bg));
   color: var(--game-text);
   box-shadow: var(--game-shadow);
+  touch-action: none;
+  user-select: none;
 }
 
 :global([data-lab-game-arena="true"]) .mazeStage,
@@ -4541,6 +4543,7 @@
   color: var(--game-text);
 }
 
+:global([data-lab-game-arena="true"]) .runnerHud div,
 :global([data-lab-game-arena="true"]) .mazeHud div,
 :global([data-lab-game-arena="true"]) .snakeHud div,
 :global([data-lab-game-arena="true"]) .tetrisHud div,
@@ -4549,6 +4552,14 @@
 :global([data-lab-game-arena="true"]) .tetrisMeta > span,
 :global([data-lab-game-arena="true"]) .runnerStageBadge {
   border-color: var(--game-border);
+  background: var(--game-surface);
+}
+
+:global([data-lab-game-arena="true"]) .runnerHud div {
+  min-width: 0;
+  border: 1px solid var(--game-border);
+  border-radius: 0.78rem;
+  padding: 0.5rem;
   background: var(--game-surface);
 }
 
@@ -4591,14 +4602,183 @@
 :global([data-lab-game-arena="true"]) .snakeCell,
 :global([data-lab-game-arena="true"]) .tetrisCell {
   min-height: 0;
+  border-color: color-mix(in srgb, var(--game-border) 78%, var(--game-text) 10%);
+  background: color-mix(in srgb, var(--game-surface-strong) 72%, var(--game-bg));
+}
+
+:global([data-lab-game-arena="true"]) .gameStatus,
+:global([data-lab-game-arena="true"]) .tetrisSwipeHint,
+:global([data-lab-game-arena="true"]) .tetrisControlHint,
+:global([data-lab-game-arena="true"]) .runnerStageBadge span {
+  color: var(--game-muted);
+}
+
+:global([data-lab-game-arena="true"]) .runnerStageBadge,
+:global([data-lab-game-arena="true"]) .snakeCrashReason,
+:global([data-lab-game-arena="true"]) .tetrisNextKind {
+  border-color: color-mix(in srgb, var(--game-accent) 34%, var(--game-border));
+  background: color-mix(in srgb, var(--game-surface-strong) 78%, transparent);
+  color: var(--game-text);
+}
+
+:global([data-lab-game-arena="true"]) .stageMessageInner {
   border-color: var(--game-border);
-  background: color-mix(in srgb, var(--game-surface-strong) 58%, transparent);
+  background: color-mix(in srgb, var(--game-surface-strong) 90%, var(--game-bg));
+  color: var(--game-text);
+  box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.34);
+}
+
+:global([data-lab-game-arena="true"]) .stageMessageInner h3 {
+  color: var(--game-text);
+}
+
+:global([data-lab-game-arena="true"]) .stageMessageInner p {
+  color: var(--game-muted);
+}
+
+:global([data-lab-game-arena="true"]) .mazeCellLabel,
+:global([data-lab-game-arena="true"]) .snakeCellLabel,
+:global([data-lab-game-arena="true"]) .tetrisCellLabel {
+  border-radius: 0.28rem;
+  padding: 0.06rem 0.12rem;
+  background: color-mix(in srgb, var(--game-bg) 74%, transparent);
+  color: var(--game-text);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.72);
+}
+
+:global([data-lab-game-arena="true"]) .mazeWall {
+  border-color: color-mix(in srgb, var(--game-border) 80%, var(--game-text) 20%);
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--game-surface-strong) 64%, var(--game-text) 10%), color-mix(in srgb, var(--game-bg) 88%, var(--game-text) 8%)),
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0 1px, transparent 1px 7px);
+}
+
+:global([data-lab-game-arena="true"]) .mazePatch,
+:global([data-lab-game-arena="true"]) .snakeToken {
+  border-color: color-mix(in srgb, var(--game-success) 60%, var(--game-border));
+  background:
+    radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--game-success) 36%, transparent), transparent 58%),
+    color-mix(in srgb, var(--game-success) 20%, var(--game-surface-strong));
+}
+
+:global([data-lab-game-arena="true"]) .mazePlayer,
+:global([data-lab-game-arena="true"]) .snakeHead,
+:global([data-lab-game-arena="true"]) .runnerAvatar {
+  border-color: color-mix(in srgb, var(--game-accent) 72%, var(--game-text) 18%);
+  background:
+    radial-gradient(circle at 50% 36%, #f8fbff 0 0.18rem, transparent 0.21rem),
+    linear-gradient(135deg, color-mix(in srgb, var(--game-accent) 72%, #f8fbff 16%), color-mix(in srgb, var(--game-success) 44%, var(--game-accent)));
+  box-shadow:
+    0 0 2rem color-mix(in srgb, var(--game-accent) 28%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.32);
+}
+
+:global([data-lab-game-arena="true"]) .snakeBody {
+  border-color: color-mix(in srgb, var(--game-accent) 52%, var(--game-border));
+  background:
+    radial-gradient(circle at 52% 45%, color-mix(in srgb, var(--game-accent) 26%, transparent), transparent 58%),
+    color-mix(in srgb, var(--game-accent) 20%, var(--game-surface-strong));
+}
+
+:global([data-lab-game-arena="true"]) .mazeVirusCell,
+:global([data-lab-game-arena="true"]) .snakeHazard {
+  border-color: color-mix(in srgb, var(--game-danger) 62%, var(--game-border));
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--game-danger) 24%, var(--game-surface-strong)), color-mix(in srgb, var(--game-danger) 14%, var(--game-bg)));
+}
+
+:global([data-lab-game-arena="true"]) .tetrisFilled,
+:global([data-lab-game-arena="true"]) .tetrisActive,
+:global([data-lab-game-arena="true"]) .tetrisPreviewCell.tetrisActive {
+  border-color: color-mix(in srgb, var(--piece-color, var(--game-accent)) 74%, var(--game-text) 16%);
+  background:
+    radial-gradient(circle at 42% 32%, rgba(248, 251, 255, 0.32), transparent 0.4rem),
+    linear-gradient(135deg, color-mix(in srgb, var(--piece-color, var(--game-accent)) 68%, var(--game-surface-strong)), color-mix(in srgb, var(--piece-color, var(--game-accent)) 34%, var(--game-bg)));
+}
+
+:global([data-lab-game-arena="true"]) .mazeFeedback,
+:global([data-lab-game-arena="true"]) .snakeFeedback,
+:global([data-lab-game-arena="true"]) .tetrisFeedback,
+:global([data-lab-game-arena="true"]) .collectPulse,
+:global([data-lab-game-arena="true"]) .runnerDangerCue {
+  border: 1px solid color-mix(in srgb, var(--game-accent) 35%, var(--game-border));
+  border-radius: 999px;
+  padding: 0.34rem 0.52rem;
+  background: color-mix(in srgb, var(--game-bg) 82%, transparent);
+  color: var(--game-text);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.76);
+  box-shadow: 0 0.8rem 2.2rem rgba(0, 0, 0, 0.24);
+}
+
+:global([data-lab-game-arena="true"]) .mazeFeedbackGood,
+:global([data-lab-game-arena="true"]) .snakeFeedbackGood,
+:global([data-lab-game-arena="true"]) .tetrisFeedbackGood,
+:global([data-lab-game-arena="true"]) .snakeComboBadge,
+:global([data-lab-game-arena="true"]) .tetrisClearBadge {
+  border-color: color-mix(in srgb, var(--game-success) 48%, var(--game-border));
+  background: color-mix(in srgb, var(--game-success) 16%, var(--game-surface-strong));
+  color: var(--game-text);
+}
+
+:global([data-lab-game-arena="true"]) .mazeFeedbackHit,
+:global([data-lab-game-arena="true"]) .snakeFeedbackHit,
+:global([data-lab-game-arena="true"]) .tetrisFeedbackHit,
+:global([data-lab-game-arena="true"]) .snakeDangerBadge {
+  border-color: color-mix(in srgb, var(--game-danger) 50%, var(--game-border));
+  background: color-mix(in srgb, var(--game-danger) 16%, var(--game-surface-strong));
+  color: var(--game-text);
+}
+
+:global([data-lab-game-arena="true"]) .mazeFeedbackBlocked,
+:global([data-lab-game-arena="true"]) .mazeDeployLocked,
+:global([data-lab-game-arena="true"]) .tetrisLevelBadge {
+  border-color: color-mix(in srgb, var(--game-warning) 54%, var(--game-border)) !important;
+  background: color-mix(in srgb, var(--game-warning) 18%, var(--game-surface-strong)) !important;
+  color: var(--game-text);
+}
+
+:global([data-lab-game-arena="true"]) .mazeDeployOpen,
+:global([data-lab-game-arena="true"]) .snakeWrapBadge,
+:global([data-lab-game-arena="true"]) .tetrisDropBadge,
+:global([data-lab-game-arena="true"]) .tetrisComboBadge {
+  border-color: color-mix(in srgb, var(--game-accent) 48%, var(--game-border)) !important;
+  background: color-mix(in srgb, var(--game-accent) 15%, var(--game-surface-strong)) !important;
+  color: var(--game-text);
+}
+
+:global([data-lab-game-arena="true"]) .mazeVirusModeActive {
+  border-color: color-mix(in srgb, var(--game-danger) 50%, var(--game-border)) !important;
+  background: color-mix(in srgb, var(--game-danger) 16%, var(--game-surface-strong)) !important;
+  color: var(--game-text);
+}
+
+:global([data-lab-game-arena="true"]) .mazeLifePips span {
+  border-color: color-mix(in srgb, var(--game-success) 58%, var(--game-border));
+  background: var(--game-success);
+}
+
+:global([data-lab-game-arena="true"]) .mazeLifePips .mazeLifeLost {
+  border-color: color-mix(in srgb, var(--game-danger) 58%, var(--game-border));
+  background: color-mix(in srgb, var(--game-danger) 26%, var(--game-surface));
+}
+
+:global([data-lab-game-arena="true"]) .runnerAction:hover,
+:global([data-lab-game-arena="true"]) .laneControl:hover,
+:global([data-lab-game-arena="true"]) .mazeDirection:hover,
+:global([data-lab-game-arena="true"]) .snakeDirection:hover,
+:global([data-lab-game-arena="true"]) .tetrisControl:hover,
+:global([data-lab-game-arena="true"]) .tetrisDropControl:hover {
+  border-color: color-mix(in srgb, var(--game-accent) 58%, var(--game-border));
+  background: color-mix(in srgb, var(--game-accent) 14%, var(--game-surface-strong));
+  color: var(--game-text);
 }
 
 :global([data-theme="light"]) :global([data-lab-game-arena="true"]) .pipelineTrack,
 :global([data-theme="light"]) :global([data-lab-game-arena="true"]) .laneLine {
   border-color: rgba(14, 116, 144, 0.28);
-  background: rgba(14, 116, 144, 0.08);
+  background:
+    linear-gradient(90deg, rgba(8, 145, 178, 0.12), rgba(14, 116, 144, 0.18), rgba(8, 145, 178, 0.12)),
+    rgba(14, 116, 144, 0.08);
 }
 
 :global([data-theme="light"]) :global([data-lab-game-arena="true"]) .mazeWall {
@@ -4614,6 +4794,106 @@
 :global([data-theme="light"]) :global([data-lab-game-arena="true"]) .tetrisActive,
 :global([data-theme="light"]) :global([data-lab-game-arena="true"]) .tetrisFilled {
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.74);
+}
+
+:global([data-theme="light"]) :global([data-lab-game-arena="true"]) .stageMessageInner {
+  background: rgba(248, 251, 255, 0.94);
+  box-shadow: 0 1rem 3rem rgba(15, 23, 42, 0.14);
+}
+
+:global([data-theme="light"]) :global([data-lab-game-arena="true"]) .stageMessageInner h3 {
+  color: #0f172a;
+}
+
+:global([data-theme="light"]) :global([data-lab-game-arena="true"]) .stageMessageInner p,
+:global([data-theme="light"]) :global([data-lab-game-arena="true"]) .gameStatus {
+  color: #334155;
+}
+
+:global([data-theme="light"]) :global([data-lab-game-arena="true"]) .runnerHud div,
+:global([data-theme="light"]) :global([data-lab-game-arena="true"]) .mazeHud div,
+:global([data-theme="light"]) :global([data-lab-game-arena="true"]) .snakeHud div,
+:global([data-theme="light"]) :global([data-lab-game-arena="true"]) .tetrisHud div,
+:global([data-theme="light"]) :global([data-lab-game-arena="true"]) .mazeMeta > span,
+:global([data-theme="light"]) :global([data-lab-game-arena="true"]) .snakeMeta > span,
+:global([data-theme="light"]) :global([data-lab-game-arena="true"]) .tetrisMeta > span,
+:global([data-theme="light"]) :global([data-lab-game-arena="true"]) .runnerStageBadge {
+  border-color: rgba(15, 23, 42, 0.18);
+  background: rgba(255, 255, 255, 0.86);
+}
+
+:global([data-theme="light"]) :global([data-lab-game-arena="true"]) .mazeCellLabel,
+:global([data-theme="light"]) :global([data-lab-game-arena="true"]) .snakeCellLabel,
+:global([data-theme="light"]) :global([data-lab-game-arena="true"]) .tetrisCellLabel {
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--game-text);
+  text-shadow: none;
+}
+
+:global([data-theme="light"]) :global([data-lab-game-arena="true"]) .mazeCell,
+:global([data-theme="light"]) :global([data-lab-game-arena="true"]) .snakeCell,
+:global([data-theme="light"]) :global([data-lab-game-arena="true"]) .tetrisCell {
+  border-color: rgba(15, 23, 42, 0.18);
+  background: rgba(255, 255, 255, 0.84);
+}
+
+:global([data-theme="light"]) :global([data-lab-game-arena="true"]) .mazeWall {
+  border-color: rgba(51, 65, 85, 0.48);
+  background:
+    linear-gradient(135deg, rgba(203, 213, 225, 0.96), rgba(148, 163, 184, 0.82)),
+    repeating-linear-gradient(135deg, rgba(15, 23, 42, 0.1) 0 1px, transparent 1px 7px);
+}
+
+:global([data-theme="light"]) :global([data-lab-game-arena="true"]) .mazePatch,
+:global([data-theme="light"]) :global([data-lab-game-arena="true"]) .snakeToken {
+  border-color: rgba(4, 120, 87, 0.46);
+  background:
+    radial-gradient(circle at 50% 50%, rgba(4, 120, 87, 0.28), transparent 58%),
+    rgba(209, 250, 229, 0.9);
+}
+
+:global([data-theme="light"]) :global([data-lab-game-arena="true"]) .mazePlayer,
+:global([data-theme="light"]) :global([data-lab-game-arena="true"]) .snakeHead,
+:global([data-theme="light"]) :global([data-lab-game-arena="true"]) .runnerAvatar {
+  border-color: rgba(14, 116, 144, 0.64);
+  background:
+    radial-gradient(circle at 50% 36%, #fff 0 0.18rem, transparent 0.21rem),
+    linear-gradient(135deg, rgba(6, 182, 212, 0.68), rgba(20, 184, 166, 0.58));
+}
+
+:global([data-theme="light"]) :global([data-lab-game-arena="true"]) .snakeBody {
+  border-color: rgba(14, 116, 144, 0.42);
+  background:
+    radial-gradient(circle at 52% 45%, rgba(14, 116, 144, 0.2), transparent 58%),
+    rgba(207, 250, 254, 0.78);
+}
+
+:global([data-theme="light"]) :global([data-lab-game-arena="true"]) .mazeVirusCell,
+:global([data-theme="light"]) :global([data-lab-game-arena="true"]) .snakeHazard {
+  border-color: rgba(190, 18, 60, 0.46);
+  background:
+    linear-gradient(135deg, rgba(254, 205, 211, 0.92), rgba(255, 241, 242, 0.82));
+}
+
+:global([data-theme="light"]) :global([data-lab-game-arena="true"]) .tetrisFilled,
+:global([data-theme="light"]) :global([data-lab-game-arena="true"]) .tetrisActive,
+:global([data-theme="light"]) :global([data-lab-game-arena="true"]) .tetrisPreviewCell.tetrisActive {
+  border-color: color-mix(in srgb, var(--piece-color, #0891b2) 74%, #0f172a 12%);
+  background:
+    radial-gradient(circle at 42% 32%, rgba(255, 255, 255, 0.46), transparent 0.4rem),
+    linear-gradient(135deg, color-mix(in srgb, var(--piece-color, #0891b2) 72%, white 8%), color-mix(in srgb, var(--piece-color, #0891b2) 54%, #0f172a 8%));
+  box-shadow:
+    0 0 18px color-mix(in srgb, var(--piece-color, #0891b2) 22%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+:global([data-theme="light"]) :global([data-lab-game-arena="true"]) .mazeFeedback,
+:global([data-theme="light"]) :global([data-lab-game-arena="true"]) .snakeFeedback,
+:global([data-theme="light"]) :global([data-lab-game-arena="true"]) .tetrisFeedback,
+:global([data-theme="light"]) :global([data-lab-game-arena="true"]) .collectPulse,
+:global([data-theme="light"]) :global([data-lab-game-arena="true"]) .runnerDangerCue {
+  text-shadow: none;
+  box-shadow: 0 0.75rem 1.8rem rgba(15, 23, 42, 0.12);
 }
 
 @media (max-width: 900px) {
@@ -4667,19 +4947,140 @@
 }
 
 @media (max-width: 620px) {
+  :global([data-lab-game-arena="true"]) .runnerGrid,
+  :global([data-lab-game-arena="true"]) .mazeLayout,
+  :global([data-lab-game-arena="true"]) .snakeLayout,
+  :global([data-lab-game-arena="true"]) .tetrisLayout {
+    grid-template-rows: minmax(0, 1fr) auto;
+    gap: 0.18rem;
+  }
+
   :global([data-lab-game-arena="true"]) .runnerStage,
   :global([data-lab-game-arena="true"]) .mazeStage,
   :global([data-lab-game-arena="true"]) .snakeStage,
   :global([data-lab-game-arena="true"]) .tetrisStage {
-    padding: 0.32rem;
-    border-radius: 0.72rem;
+    padding: 0.22rem;
+    border-radius: 0.55rem;
+  }
+
+  :global([data-lab-game-arena="true"]) .runnerHud {
+    inset: 0.38rem 0.38rem auto;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.18rem;
   }
 
   :global([data-lab-game-arena="true"]) .runnerHud,
   :global([data-lab-game-arena="true"]) .mazeHud,
   :global([data-lab-game-arena="true"]) .snakeHud,
   :global([data-lab-game-arena="true"]) .tetrisHud {
-    gap: 0.24rem;
+    grid-template-columns: repeat(auto-fit, minmax(3.15rem, 1fr));
+    gap: 0.18rem;
+  }
+
+  :global([data-lab-game-arena="true"]) .runnerHud div,
+  :global([data-lab-game-arena="true"]) .mazeHud div,
+  :global([data-lab-game-arena="true"]) .snakeHud div,
+  :global([data-lab-game-arena="true"]) .tetrisHud div {
+    border-radius: 0.42rem;
+    padding: 0.22rem 0.26rem;
+  }
+
+  :global([data-lab-game-arena="true"]) .runnerHud span,
+  :global([data-lab-game-arena="true"]) .mazeHud span,
+  :global([data-lab-game-arena="true"]) .snakeHud span,
+  :global([data-lab-game-arena="true"]) .tetrisHud span {
+    font-size: 0.44rem;
+  }
+
+  :global([data-lab-game-arena="true"]) .runnerHud strong,
+  :global([data-lab-game-arena="true"]) .mazeHud strong,
+  :global([data-lab-game-arena="true"]) .snakeHud strong,
+  :global([data-lab-game-arena="true"]) .tetrisHud strong {
+    font-size: clamp(0.72rem, 3.6vw, 0.95rem);
+  }
+
+  :global([data-lab-game-arena="true"]) .mazeMeta,
+  :global([data-lab-game-arena="true"]) .snakeMeta,
+  :global([data-lab-game-arena="true"]) .tetrisMeta {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 0.18rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    margin: 0.2rem 0;
+    white-space: nowrap;
+    scrollbar-width: none;
+  }
+
+  :global([data-lab-game-arena="true"]) .mazeMeta::-webkit-scrollbar,
+  :global([data-lab-game-arena="true"]) .snakeMeta::-webkit-scrollbar,
+  :global([data-lab-game-arena="true"]) .tetrisMeta::-webkit-scrollbar {
+    display: none;
+  }
+
+  :global([data-lab-game-arena="true"]) .mazeMeta > span,
+  :global([data-lab-game-arena="true"]) .snakeMeta > span,
+  :global([data-lab-game-arena="true"]) .tetrisMeta > span,
+  :global([data-lab-game-arena="true"]) .runnerStageBadge {
+    flex: 0 0 auto;
+    padding: 0.14rem 0.28rem;
+    font-size: 0.44rem;
+  }
+
+  :global([data-lab-game-arena="true"]) .runnerStageBadge {
+    top: 2.92rem;
+    left: 0.38rem;
+    max-width: calc(100% - 0.76rem);
+  }
+
+  :global([data-lab-game-arena="true"]) .runnerStageBadge strong {
+    font-size: 0.52rem;
+  }
+
+  :global([data-lab-game-arena="true"]) .runnerSide,
+  :global([data-lab-game-arena="true"]) .mazeSide,
+  :global([data-lab-game-arena="true"]) .snakeSide,
+  :global([data-lab-game-arena="true"]) .tetrisSide {
+    display: block;
+    min-height: 0;
+  }
+
+  :global([data-lab-game-arena="true"]) .runnerSide .runnerPanel:not(:first-child),
+  :global([data-lab-game-arena="true"]) .mazeSide .runnerPanel:not(:first-child),
+  :global([data-lab-game-arena="true"]) .snakeSide .runnerPanel:not(:first-child),
+  :global([data-lab-game-arena="true"]) .tetrisSide .runnerPanel:not(:first-child) {
+    display: none !important;
+  }
+
+  :global([data-lab-game-arena="true"]) .runnerPanel {
+    border: 0;
+    border-radius: 0.52rem;
+    padding: 0;
+    background: transparent;
+  }
+
+  :global([data-lab-game-arena="true"]) .runnerPanel > .gameStatus {
+    display: none;
+  }
+
+  :global([data-lab-game-arena="true"]) .runnerControls,
+  :global([data-lab-game-arena="true"]) .mazeActions,
+  :global([data-lab-game-arena="true"]) .snakeActions,
+  :global([data-lab-game-arena="true"]) .tetrisActions {
+    display: grid;
+    gap: 0.18rem;
+    margin: 0;
+  }
+
+  :global([data-lab-game-arena="true"]) .runnerControls,
+  :global([data-lab-game-arena="true"]) .snakeActions,
+  :global([data-lab-game-arena="true"]) .tetrisActions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  :global([data-lab-game-arena="true"]) .mazeActions {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   :global([data-lab-game-arena="true"]) .runnerAction,
@@ -4689,7 +5090,93 @@
   :global([data-lab-game-arena="true"]) .tetrisControl,
   :global([data-lab-game-arena="true"]) .tetrisDropControl {
     min-height: 1.86rem;
-    padding: 0.28rem 0.38rem;
-    font-size: 0.6rem;
+    border-radius: 0.44rem;
+    padding: 0.22rem 0.28rem;
+    font-size: 0.56rem;
+  }
+
+  :global([data-lab-game-arena="true"]) .mazeActions .runnerAction:nth-child(n + 2) {
+    display: none;
+  }
+
+  :global([data-lab-game-arena="true"]) .runnerControls .runnerAction:first-child {
+    grid-column: 1 / -1;
+  }
+
+  :global([data-lab-game-arena="true"]) .pipelineTrack {
+    bottom: 3.4rem;
+    height: 6.9rem;
+  }
+
+  :global([data-lab-game-arena="true"]) .laneLineOne {
+    bottom: 8.7rem;
+  }
+
+  :global([data-lab-game-arena="true"]) .laneLineTwo {
+    bottom: 5.9rem;
+  }
+
+  :global([data-lab-game-arena="true"]) .runnerAvatar {
+    bottom: calc(4.35rem + (var(--runner-y, 0) * 7.4rem));
+    width: 3.35rem;
+    border-radius: 0.9rem;
+  }
+
+  :global([data-lab-game-arena="true"]) .runnerAvatar::after {
+    right: -1.6rem;
+    width: 1.35rem;
+  }
+
+  :global([data-lab-game-arena="true"]) .obstacle {
+    bottom: 4.55rem;
+    min-width: 3.55rem;
+    min-height: 2.35rem;
+    padding: 0.38rem 0.42rem;
+    border-radius: 0.68rem;
+    font-size: 0.52rem;
+  }
+
+  :global([data-lab-game-arena="true"]) .collectPulse,
+  :global([data-lab-game-arena="true"]) .runnerDangerCue {
+    bottom: 10.6rem;
+    font-size: 0.52rem;
+  }
+
+  :global([data-lab-game-arena="true"]) .laneControls,
+  :global([data-lab-game-arena="true"]) .mazeDpad,
+  :global([data-lab-game-arena="true"]) .snakeDpad,
+  :global([data-lab-game-arena="true"]) .tetrisControls {
+    display: none !important;
+  }
+
+  :global([data-lab-game-arena="true"]) .laneControls button,
+  :global([data-lab-game-arena="true"]) .mazeDpad button,
+  :global([data-lab-game-arena="true"]) .snakeDpad button,
+  :global([data-lab-game-arena="true"]) .tetrisControls button {
+    display: none !important;
+  }
+
+  :global([data-lab-game-arena="true"]) .stageMessage,
+  :global([data-lab-game-arena="true"]) .mazeOverlay,
+  :global([data-lab-game-arena="true"]) .snakeOverlay,
+  :global([data-lab-game-arena="true"]) .tetrisOverlay {
+    align-items: end;
+    padding: 0.32rem;
+  }
+
+  :global([data-lab-game-arena="true"]) .stageMessageInner {
+    width: min(100%, 20rem);
+    border-radius: 0.58rem;
+    padding: 0.5rem;
+  }
+
+  :global([data-lab-game-arena="true"]) .stageMessageInner h3 {
+    font-size: clamp(0.92rem, 4.8vw, 1.08rem);
+    line-height: 1.04;
+  }
+
+  :global([data-lab-game-arena="true"]) .stageMessageInner p {
+    font-size: 0.62rem;
+    line-height: 1.28;
   }
 }

@@ -20,6 +20,7 @@ type RouteContext = {
 };
 
 function revalidatePublicProject(slug: string) {
+  revalidatePath("/");
   revalidatePath("/projetos");
   revalidatePath(`/projetos/${slug}`);
   revalidatePath("/sitemap.xml");

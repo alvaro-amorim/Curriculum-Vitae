@@ -513,6 +513,14 @@
   color: #fff;
 }
 
+.projectLogoIcon {
+  padding: 0.7rem;
+}
+
+.projectLogoIcon img {
+  object-fit: contain;
+}
+
 .projectIcon svg {
   width: 2rem;
   height: 2rem;
