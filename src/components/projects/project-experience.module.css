@@ -1760,3 +1760,1142 @@
     display: none;
   }
 }
+
+.srOnly {
+  position: absolute;
+  overflow: hidden;
+  width: 1px;
+  height: 1px;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+.localePt {
+  display: contents !important;
+}
+
+.localeEn {
+  display: none !important;
+}
+
+:global([data-locale="en"]) .localePt {
+  display: none !important;
+}
+
+:global([data-locale="en"]) .localeEn {
+  display: contents !important;
+}
+
+.caseStudyPage {
+  --case-text: var(--project-ink);
+  --case-muted: var(--project-muted);
+  --case-soft: color-mix(in srgb, var(--project-muted) 72%, transparent);
+  --case-panel: color-mix(in srgb, var(--project-panel) 78%, transparent);
+  --case-panel-strong: color-mix(in srgb, var(--project-panel-strong) 88%, transparent);
+  overflow: clip;
+  padding: 5.5rem 1.25rem 4rem;
+  color: var(--case-text);
+}
+
+:global([data-theme="light"]) .caseStudyPage {
+  --case-soft: rgba(15, 23, 42, 0.68);
+  --case-panel: rgba(255, 255, 255, 0.74);
+  --case-panel-strong: rgba(255, 255, 255, 0.94);
+}
+
+.caseStudyShell {
+  width: min(100%, var(--container-xl));
+  margin: 0 auto;
+}
+
+.caseStudyHero {
+  display: grid;
+  grid-template-columns: minmax(0, 0.84fr) minmax(28rem, 1fr);
+  gap: 2.5rem;
+  align-items: center;
+  min-height: min(46rem, calc(100vh - 6rem));
+}
+
+.caseHeroContent {
+  min-width: 0;
+}
+
+.caseBackLink,
+.projectPagerBack {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.3rem;
+  border-radius: 8px;
+  color: color-mix(in srgb, var(--accent-a) 86%, white);
+  font-size: 0.86rem;
+  font-weight: 820;
+  text-decoration: none;
+}
+
+.caseBackLink:hover,
+.projectPagerBack:hover {
+  color: var(--case-text);
+}
+
+.caseBackLink:focus-visible,
+.projectPagerBack:focus-visible,
+.caseButtonPrimary:focus-visible,
+.caseButtonSecondary:focus-visible,
+.caseInternalNav a:focus-visible,
+.caseGalleryGrid button:focus-visible,
+.caseLightboxDialog button:focus-visible,
+.projectPagerCard:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent-a) 78%, white);
+  outline-offset: 4px;
+}
+
+.caseIdentityLine {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.6rem;
+}
+
+.caseLogo,
+.caseLogoCompact {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--accent-a) 30%, rgba(255, 255, 255, 0.14));
+  border-radius: 8px;
+  background:
+    linear-gradient(145deg, color-mix(in srgb, var(--accent-a) 17%, transparent), transparent),
+    color-mix(in srgb, var(--case-panel-strong) 84%, transparent);
+}
+
+.caseLogo {
+  width: 5rem;
+  height: 5rem;
+  padding: 0.48rem;
+}
+
+.caseLogoCompact {
+  width: 3.4rem;
+  height: 3.4rem;
+  padding: 0.34rem;
+}
+
+.caseLogo img,
+.caseLogoCompact img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.caseLogoFallback {
+  color: color-mix(in srgb, var(--accent-a) 82%, white);
+  font-family: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 1.2rem;
+  font-weight: 900;
+}
+
+.caseEyebrow,
+.caseStep,
+.projectPagerDirection {
+  margin: 0;
+  color: color-mix(in srgb, var(--accent-a) 86%, white);
+  font-family: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.74rem;
+  font-weight: 850;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.caseStatus {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.8rem;
+  margin-top: 0.45rem;
+  border: 1px solid color-mix(in srgb, var(--accent-a) 34%, rgba(255, 255, 255, 0.16));
+  border-radius: 8px;
+  padding: 0.36rem 0.58rem;
+  background: color-mix(in srgb, var(--accent-a) 11%, transparent);
+  color: var(--case-text);
+  font-size: 0.8rem;
+  font-weight: 840;
+}
+
+.caseHeroTitle {
+  max-width: 12ch;
+  margin: 1.15rem 0 0;
+  color: var(--case-text);
+  font-size: 4.25rem;
+  font-weight: 950;
+  letter-spacing: 0;
+  line-height: 0.98;
+  overflow-wrap: break-word;
+  text-wrap: balance;
+}
+
+.caseHeroSubtitle {
+  max-width: 38rem;
+  margin: 1rem 0 0;
+  color: color-mix(in srgb, var(--accent-a) 80%, var(--case-text));
+  font-size: 1.25rem;
+  font-weight: 820;
+  line-height: 1.35;
+}
+
+.caseHeroLead {
+  max-width: 42rem;
+  margin: 0.8rem 0 0;
+  color: var(--case-muted);
+  font-size: 1.03rem;
+  font-weight: 650;
+  line-height: 1.72;
+}
+
+.caseHeroMeta {
+  display: grid;
+  gap: 0.7rem;
+  margin-top: 1.45rem;
+}
+
+.caseTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.caseTag {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.9rem;
+  border: 1px solid color-mix(in srgb, var(--accent-a) 24%, rgba(255, 255, 255, 0.13));
+  border-radius: 8px;
+  padding: 0.38rem 0.55rem;
+  background: color-mix(in srgb, var(--case-panel) 72%, transparent);
+  color: var(--case-soft);
+  font-size: 0.78rem;
+  font-weight: 760;
+}
+
+.caseCtas,
+.caseCtasCompact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+}
+
+.caseCtas {
+  margin-top: 1.55rem;
+}
+
+.caseCtasCompact {
+  margin-top: 0.8rem;
+}
+
+.caseButtonPrimary,
+.caseButtonSecondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.48rem;
+  min-height: 2.75rem;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 0.72rem 0.95rem;
+  font-size: 0.9rem;
+  font-weight: 850;
+  text-decoration: none;
+  transition:
+    border-color var(--motion-medium) var(--ease-signature),
+    background var(--motion-medium) var(--ease-signature),
+    color var(--motion-medium) var(--ease-signature),
+    transform var(--motion-medium) var(--ease-signature);
+}
+
+.caseButtonPrimary {
+  background: linear-gradient(135deg, color-mix(in srgb, var(--accent-a) 44%, #0f172a), color-mix(in srgb, var(--accent-b) 42%, #111827));
+  color: #fff;
+}
+
+.caseButtonSecondary {
+  border-color: color-mix(in srgb, var(--accent-a) 28%, rgba(255, 255, 255, 0.18));
+  background: color-mix(in srgb, var(--case-panel-strong) 72%, transparent);
+  color: var(--case-text);
+}
+
+.caseButtonPrimary:hover,
+.caseButtonSecondary:hover {
+  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--accent-a) 48%, white);
+}
+
+.caseHeroVisual {
+  min-width: 0;
+}
+
+.caseHeroFigure,
+.caseHeroFallback {
+  position: relative;
+  overflow: hidden;
+  min-height: 34rem;
+  border: 1px solid color-mix(in srgb, var(--accent-a) 28%, rgba(255, 255, 255, 0.16));
+  border-radius: 8px;
+  background:
+    linear-gradient(145deg, color-mix(in srgb, var(--accent-a) 14%, transparent), transparent 52%),
+    linear-gradient(180deg, color-mix(in srgb, var(--case-panel-strong) 82%, transparent), color-mix(in srgb, var(--case-panel) 72%, transparent));
+  box-shadow: 0 30px 96px color-mix(in srgb, var(--accent-a) 12%, rgba(0, 0, 0, 0.28));
+}
+
+.caseHeroFigure img {
+  object-fit: contain;
+  padding: 1rem;
+}
+
+.caseHeroFigure figcaption {
+  position: absolute;
+  right: 1rem;
+  bottom: 1rem;
+  left: 1rem;
+  border-radius: 8px;
+  padding: 0.8rem 0.95rem;
+  background: color-mix(in srgb, #02040a 78%, transparent);
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 0.82rem;
+  font-weight: 720;
+  line-height: 1.45;
+}
+
+:global([data-theme="light"]) .caseHeroFigure figcaption {
+  background: rgba(255, 255, 255, 0.9);
+  color: rgba(15, 23, 42, 0.76);
+}
+
+.caseHeroFallback {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1.25rem;
+}
+
+.caseFallbackChrome {
+  display: flex;
+  gap: 0.38rem;
+}
+
+.caseFallbackChrome span {
+  width: 0.52rem;
+  height: 0.52rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent-a) 68%, white);
+  opacity: 0.68;
+}
+
+.caseFallbackIdentity {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  margin-top: auto;
+}
+
+.caseFallbackIdentity strong {
+  display: block;
+  color: var(--case-text);
+  font-size: 1.65rem;
+  font-weight: 920;
+  line-height: 1;
+}
+
+.caseFallbackIdentity span {
+  display: block;
+  margin-top: 0.3rem;
+  color: var(--case-muted);
+  font-size: 0.9rem;
+  font-weight: 720;
+}
+
+.caseHeroFallback p {
+  max-width: 31rem;
+  margin: 1.4rem 0 1rem;
+  color: var(--case-muted);
+  font-size: 1.05rem;
+  font-weight: 680;
+  line-height: 1.62;
+}
+
+.caseHeroFallback small {
+  color: var(--case-soft);
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.caseFallbackGrid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 0.7rem;
+  margin: 1.2rem 0;
+}
+
+.caseFallbackGrid span {
+  min-height: 5.4rem;
+  border: 1px solid color-mix(in srgb, var(--accent-a) 24%, transparent);
+  border-radius: 8px;
+  background:
+    linear-gradient(120deg, color-mix(in srgb, var(--accent-a) 13%, transparent), transparent),
+    color-mix(in srgb, var(--case-panel-strong) 58%, transparent);
+}
+
+.caseFallbackGrid span:first-child {
+  grid-row: span 2;
+  min-height: 11.5rem;
+}
+
+.caseInternalNav {
+  display: flex;
+  position: sticky;
+  z-index: 20;
+  top: 5.1rem;
+  gap: 0.35rem;
+  overflow-x: auto;
+  max-width: max-content;
+  margin: 1.4rem auto 0;
+  border: 1px solid color-mix(in srgb, var(--accent-a) 18%, rgba(255, 255, 255, 0.14));
+  border-radius: 8px;
+  padding: 0.3rem;
+  background: color-mix(in srgb, var(--case-panel-strong) 82%, transparent);
+  backdrop-filter: blur(18px);
+  scrollbar-width: none;
+}
+
+.caseInternalNav::-webkit-scrollbar {
+  display: none;
+}
+
+.caseInternalNav a {
+  flex: 0 0 auto;
+  border-radius: 6px;
+  padding: 0.48rem 0.62rem;
+  color: var(--case-muted);
+  font-size: 0.78rem;
+  font-weight: 780;
+  text-decoration: none;
+  transition:
+    background var(--motion-medium) var(--ease-signature),
+    color var(--motion-medium) var(--ease-signature);
+}
+
+.caseInternalNav a:hover,
+.caseInternalNavActive {
+  background: color-mix(in srgb, var(--accent-a) 16%, transparent);
+  color: var(--case-text) !important;
+}
+
+.caseNarrative {
+  display: grid;
+  gap: 5rem;
+  margin-top: 4.5rem;
+}
+
+.caseSection {
+  scroll-margin-top: 7rem;
+}
+
+.caseSectionHeader {
+  max-width: 52rem;
+  margin-bottom: 1.5rem;
+}
+
+.caseSectionHeader h2 {
+  max-width: 16ch;
+  margin: 0.5rem 0 0;
+  color: var(--case-text);
+  font-size: 2.8rem;
+  font-weight: 930;
+  letter-spacing: 0;
+  line-height: 1.04;
+  text-wrap: balance;
+}
+
+.caseSectionHeader > p:not(.caseEyebrow) {
+  max-width: 42rem;
+  margin: 0.8rem 0 0;
+  color: var(--case-muted);
+  font-size: 1rem;
+  font-weight: 650;
+  line-height: 1.65;
+}
+
+.caseOverviewLayout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(18rem, 0.42fr);
+  gap: 2rem;
+  align-items: start;
+}
+
+.caseEditorialText {
+  max-width: 62rem;
+}
+
+.caseEditorialText > p {
+  margin: 0;
+  color: var(--case-text);
+  font-size: 1.42rem;
+  font-weight: 700;
+  line-height: 1.62;
+}
+
+.caseEditorialText blockquote {
+  max-width: 48rem;
+  margin: 2rem 0 0;
+  border-left: 3px solid color-mix(in srgb, var(--accent-a) 70%, white);
+  padding: 0.2rem 0 0.2rem 1.2rem;
+}
+
+.caseEditorialText blockquote > span {
+  color: color-mix(in srgb, var(--accent-a) 86%, white);
+  font-family: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.72rem;
+  font-weight: 850;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.caseEditorialText blockquote p {
+  margin: 0.45rem 0 0;
+  color: var(--case-muted);
+  font-size: 1.02rem;
+  font-weight: 650;
+  line-height: 1.62;
+}
+
+.caseFacts,
+.caseStackPanel,
+.caseClosingAction,
+.projectPagerCard {
+  border: 1px solid color-mix(in srgb, var(--accent-a) 18%, rgba(255, 255, 255, 0.14));
+  border-radius: 8px;
+  background: var(--case-panel);
+}
+
+.caseFacts {
+  padding: 1rem;
+}
+
+.caseFacts h3,
+.caseStackPanel h3 {
+  margin: 0;
+  color: var(--case-text);
+  font-size: 1rem;
+  font-weight: 880;
+}
+
+.caseFacts dl {
+  display: grid;
+  gap: 1rem;
+  margin: 1rem 0 0;
+}
+
+.caseFactRow {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.caseFactRow dt {
+  color: var(--case-soft);
+  font-size: 0.72rem;
+  font-weight: 760;
+  text-transform: uppercase;
+}
+
+.caseFactRow dd {
+  margin: 0;
+  color: var(--case-text);
+  font-size: 0.9rem;
+  font-weight: 760;
+}
+
+.problemSolutionGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
+  gap: 1rem;
+  align-items: stretch;
+}
+
+.problemPanel,
+.solutionPanel {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  padding: 1.5rem;
+}
+
+.problemPanel {
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  background: color-mix(in srgb, var(--case-panel) 74%, transparent);
+}
+
+.solutionPanel {
+  border: 1px solid color-mix(in srgb, var(--accent-a) 34%, rgba(255, 255, 255, 0.16));
+  background:
+    linear-gradient(145deg, color-mix(in srgb, var(--accent-a) 18%, transparent), transparent 56%),
+    color-mix(in srgb, var(--case-panel-strong) 80%, transparent);
+}
+
+.problemPanel h3,
+.solutionPanel h3 {
+  max-width: 16ch;
+  margin: 0.75rem 0 0;
+  color: var(--case-text);
+  font-size: 1.8rem;
+  font-weight: 920;
+  line-height: 1.08;
+}
+
+.problemPanel p,
+.solutionPanel p {
+  margin: 1rem 0 0;
+  color: var(--case-muted);
+  font-size: 1rem;
+  font-weight: 650;
+  line-height: 1.68;
+}
+
+.caseHighlightsGrid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.caseHighlightItem {
+  grid-column: span 3;
+  min-height: 15rem;
+  border-top: 1px solid color-mix(in srgb, var(--accent-a) 42%, rgba(255, 255, 255, 0.14));
+  padding-top: 1rem;
+}
+
+.caseHighlightItem:first-child,
+.caseHighlightItem:nth-child(4n) {
+  grid-column: span 4;
+}
+
+.caseHighlightItem:nth-child(3n) {
+  grid-column: span 2;
+}
+
+.caseHighlightItem h3 {
+  margin: 0.8rem 0 0;
+  color: var(--case-text);
+  font-size: 1.35rem;
+  font-weight: 900;
+  line-height: 1.16;
+}
+
+.caseHighlightItem p {
+  margin: 0.7rem 0 0;
+  color: var(--case-muted);
+  font-size: 0.98rem;
+  font-weight: 650;
+  line-height: 1.62;
+}
+
+.caseChallengesLayout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(17rem, 0.36fr);
+  gap: 2rem;
+  align-items: start;
+}
+
+.caseChallengeTrack {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.caseChallengeTrack li {
+  display: grid;
+  position: relative;
+  grid-template-columns: 3.4rem minmax(0, 1fr);
+  gap: 1rem;
+  padding: 0 0 1.7rem;
+}
+
+.caseChallengeTrack li:not(:last-child)::after {
+  position: absolute;
+  top: 2rem;
+  bottom: 0;
+  left: 1rem;
+  width: 1px;
+  background: color-mix(in srgb, var(--accent-a) 34%, transparent);
+  content: "";
+}
+
+.caseChallengeTrack li > span {
+  display: grid;
+  z-index: 1;
+  width: 2rem;
+  height: 2rem;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--accent-a) 46%, rgba(255, 255, 255, 0.18));
+  border-radius: 999px;
+  background: var(--case-panel-strong);
+  color: color-mix(in srgb, var(--accent-a) 86%, white);
+  font-family: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.72rem;
+  font-weight: 850;
+}
+
+.caseChallengeTrack h3 {
+  margin: 0;
+  color: var(--case-text);
+  font-size: 1.2rem;
+  font-weight: 880;
+  line-height: 1.2;
+}
+
+.caseChallengeTrack p {
+  margin: 0.45rem 0 0;
+  color: var(--case-muted);
+  font-size: 0.98rem;
+  font-weight: 650;
+  line-height: 1.62;
+}
+
+.caseStackPanel {
+  display: grid;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.caseGalleryGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
+.caseGalleryFeatured,
+.caseGalleryItem {
+  display: block;
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  border: 1px solid color-mix(in srgb, var(--accent-a) 20%, rgba(255, 255, 255, 0.14));
+  border-radius: 8px;
+  padding: 0;
+  background: var(--case-panel);
+  cursor: zoom-in;
+}
+
+.caseGalleryFeatured {
+  grid-column: span 2;
+  grid-row: span 2;
+  aspect-ratio: 16 / 10;
+}
+
+.caseGalleryItem {
+  aspect-ratio: 4 / 3;
+}
+
+.caseGalleryFeatured img,
+.caseGalleryItem img {
+  object-fit: contain;
+  padding: 0.5rem;
+}
+
+.caseGalleryFeatured span,
+.caseGalleryItem span {
+  position: absolute;
+  right: 0.6rem;
+  bottom: 0.6rem;
+  left: 0.6rem;
+  overflow: hidden;
+  border-radius: 6px;
+  padding: 0.42rem 0.5rem;
+  background: color-mix(in srgb, #02040a 76%, transparent);
+  color: rgba(255, 255, 255, 0.86);
+  font-size: 0.72rem;
+  font-weight: 720;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.caseLightboxOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgba(2, 4, 10, 0.88);
+}
+
+.caseLightboxDialog {
+  position: relative;
+  display: grid;
+  width: min(100%, 78rem);
+  height: min(100%, 48rem);
+  grid-template-columns: 3rem minmax(0, 1fr) 3rem;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.caseLightboxFigure {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  border-radius: 8px;
+  background: #050914;
+}
+
+.caseLightboxFigure img {
+  object-fit: contain;
+  padding: 1rem;
+}
+
+.caseLightboxFigure figcaption {
+  position: absolute;
+  right: 1rem;
+  bottom: 1rem;
+  left: 1rem;
+  border-radius: 8px;
+  padding: 0.7rem 0.8rem;
+  background: rgba(2, 4, 10, 0.82);
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.84rem;
+  font-weight: 650;
+  line-height: 1.45;
+}
+
+.caseLightboxFigure figcaption > span {
+  display: block;
+  margin-bottom: 0.2rem;
+  color: color-mix(in srgb, var(--accent-a) 82%, white);
+  font-family: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.7rem;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.caseLightboxClose,
+.caseLightboxPrevious,
+.caseLightboxNext {
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  cursor: pointer;
+}
+
+.caseLightboxClose {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 2;
+  width: 2.75rem;
+  height: 2.75rem;
+  font-size: 1.8rem;
+}
+
+.caseLightboxPrevious,
+.caseLightboxNext {
+  width: 3rem;
+  height: 4rem;
+  font-size: 2rem;
+}
+
+.caseClosing {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(18rem, 0.44fr);
+  gap: 2rem;
+  align-items: center;
+  border-top: 1px solid color-mix(in srgb, var(--accent-a) 24%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--accent-a) 18%, transparent);
+  padding: 2rem 0;
+}
+
+.caseClosingText h2 {
+  max-width: 17ch;
+  margin: 0.55rem 0 0;
+  color: var(--case-text);
+  font-size: 2.65rem;
+  font-weight: 930;
+  letter-spacing: 0;
+  line-height: 1.04;
+}
+
+.caseClosingText p:not(.caseEyebrow) {
+  max-width: 48rem;
+  margin: 1rem 0;
+  color: var(--case-muted);
+  font-size: 1.05rem;
+  font-weight: 650;
+  line-height: 1.68;
+}
+
+.caseClosingAction {
+  display: grid;
+  justify-items: start;
+  padding: 1rem;
+}
+
+.caseClosingAction strong {
+  display: block;
+  margin-top: 0.8rem;
+  color: var(--case-text);
+  font-size: 1.25rem;
+  font-weight: 900;
+}
+
+.caseClosingAction p {
+  margin: 0.3rem 0 0;
+  color: var(--case-muted);
+  font-size: 0.9rem;
+  font-weight: 680;
+  line-height: 1.45;
+}
+
+.projectPager {
+  display: grid;
+  gap: 1rem;
+}
+
+.projectPagerGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.projectPagerCard {
+  display: grid;
+  gap: 1rem;
+  min-height: 10rem;
+  padding: 1rem;
+  color: var(--case-text);
+  text-decoration: none;
+}
+
+.projectPagerCardDisabled {
+  color: var(--case-muted);
+  opacity: 0.7;
+}
+
+.projectPagerCardDisabled p {
+  margin: auto 0 0;
+  color: var(--case-muted);
+  font-size: 0.9rem;
+  font-weight: 680;
+  line-height: 1.45;
+}
+
+.projectPagerIdentity {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.projectPagerIdentity strong {
+  display: block;
+  color: var(--case-text);
+  font-size: 1.05rem;
+  font-weight: 900;
+  line-height: 1.16;
+}
+
+.projectPagerIdentity p {
+  margin: 0.28rem 0 0;
+  color: var(--case-muted);
+  font-size: 0.86rem;
+  font-weight: 650;
+  line-height: 1.4;
+}
+
+@media (max-width: 1100px) {
+  .caseStudyHero {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+
+  .caseHeroTitle {
+    max-width: 14ch;
+    font-size: 3.4rem;
+  }
+
+  .caseHeroFigure,
+  .caseHeroFallback {
+    min-height: 27rem;
+  }
+}
+
+@media (max-width: 900px) {
+  .caseInternalNav {
+    position: relative;
+    top: auto;
+    max-width: 100%;
+    margin-inline: 0;
+  }
+
+  .caseOverviewLayout,
+  .problemSolutionGrid,
+  .caseChallengesLayout,
+  .caseClosing,
+  .projectPagerGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .caseHighlightsGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .caseHighlightItem,
+  .caseHighlightItem:first-child,
+  .caseHighlightItem:nth-child(4n),
+  .caseHighlightItem:nth-child(3n) {
+    grid-column: span 1;
+  }
+
+  .caseGalleryGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .caseGalleryFeatured {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 640px) {
+  .caseStudyPage {
+    padding: 4.25rem 0.75rem 3rem;
+  }
+
+  .caseStudyHero {
+    gap: 1.4rem;
+  }
+
+  .caseIdentityLine {
+    align-items: flex-start;
+    gap: 0.85rem;
+    margin-top: 1rem;
+  }
+
+  .caseLogo {
+    width: 4rem;
+    height: 4rem;
+  }
+
+  .caseHeroTitle {
+    max-width: 100%;
+    font-size: 2.3rem;
+    line-height: 1.03;
+  }
+
+  .caseHeroSubtitle {
+    font-size: 1.02rem;
+  }
+
+  .caseHeroLead,
+  .caseSectionHeader > p:not(.caseEyebrow),
+  .problemPanel p,
+  .solutionPanel p,
+  .caseHighlightItem p,
+  .caseChallengeTrack p,
+  .caseClosingText p:not(.caseEyebrow) {
+    font-size: 0.92rem;
+    line-height: 1.58;
+  }
+
+  .caseCtas,
+  .caseCtasCompact {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .caseButtonPrimary,
+  .caseButtonSecondary {
+    width: 100%;
+    min-height: 2.9rem;
+  }
+
+  .caseHeroFigure,
+  .caseHeroFallback {
+    min-height: 22rem;
+  }
+
+  .caseHeroFigure img {
+    padding: 0.6rem;
+  }
+
+  .caseFallbackGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .caseFallbackGrid span,
+  .caseFallbackGrid span:first-child {
+    grid-row: auto;
+    min-height: 4rem;
+  }
+
+  .caseNarrative {
+    gap: 3.4rem;
+    margin-top: 3rem;
+  }
+
+  .caseSectionHeader h2,
+  .caseClosingText h2 {
+    max-width: 100%;
+    font-size: 1.8rem;
+    line-height: 1.08;
+  }
+
+  .caseEditorialText > p {
+    font-size: 1.08rem;
+    line-height: 1.58;
+  }
+
+  .problemPanel,
+  .solutionPanel {
+    padding: 1rem;
+  }
+
+  .problemPanel h3,
+  .solutionPanel h3 {
+    font-size: 1.35rem;
+  }
+
+  .caseHighlightsGrid,
+  .caseGalleryGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .caseGalleryFeatured,
+  .caseGalleryItem {
+    grid-column: 1 / -1;
+    aspect-ratio: 4 / 3;
+  }
+
+  .caseLightboxOverlay {
+    padding: 0.5rem;
+  }
+
+  .caseLightboxDialog {
+    height: min(100%, 42rem);
+    grid-template-columns: 2.6rem minmax(0, 1fr) 2.6rem;
+    gap: 0.35rem;
+  }
+
+  .caseLightboxPrevious,
+  .caseLightboxNext {
+    width: 2.6rem;
+    height: 3.2rem;
+  }
+
+  .caseLightboxFigure figcaption {
+    right: 0.55rem;
+    bottom: 0.55rem;
+    left: 0.55rem;
+  }
+}
