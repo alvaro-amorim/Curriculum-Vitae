@@ -1,5 +1,6 @@
-import { projects as staticProjects } from "@/content/projects";
 import type { Locale, Project } from "@/types/portfolio";
+
+import { projects as staticProjects } from "./projects.ts";
 
 export type HomeProjectIconKey = "margem" | "comerc" | "gdash" | "sdr" | "arcade" | "portfolio-os";
 export type HomeProjectAccent = "blue-purple" | "amber-pink" | "emerald-teal" | "rose-indigo" | "violet-cyan" | "sky-purple";
@@ -29,18 +30,12 @@ type ProjectShowcaseOptions = {
   carouselStack: string[];
 };
 
-function requireProject(projectsBySlug: Map<string, Project>, slug: string): Project {
-  const project = projectsBySlug.get(slug);
+function createProjectShowcase(projectsBySlug: Map<string, Project>, options: ProjectShowcaseOptions): HomeProject | null {
+  const project = projectsBySlug.get(options.slug);
 
   if (!project) {
-    throw new Error(`Missing project content for Home showcase: ${slug}`);
+    return null;
   }
-
-  return project;
-}
-
-function createProjectShowcase(projectsBySlug: Map<string, Project>, options: ProjectShowcaseOptions): HomeProject {
-  const project = requireProject(projectsBySlug, options.slug);
 
   return {
     title: options.title,
@@ -114,35 +109,39 @@ const projectShowcases: ProjectShowcaseOptions[] = [
 
 export function createHomeProjects(publicProjects: readonly Project[] = staticProjects): HomeProject[] {
   const projectsBySlug = new Map(publicProjects.map((project) => [project.slug, project]));
+  const showcaseProjects = projectShowcases.flatMap((project) => {
+    const showcase = createProjectShowcase(projectsBySlug, project);
+    return showcase ? [showcase] : [];
+  });
 
   return [
-    ...projectShowcases.map((project) => createProjectShowcase(projectsBySlug, project)),
-  {
-    title: "Developer Arcade",
-    category: { pt: "Lab • Gamificação", en: "Lab • Gamification" },
-    description: {
-      pt: "Lab interativo de desafios técnicos com sessão anônima e ranking persistente.",
-      en: "Interactive technical challenge lab with anonymous sessions and persistent rankings.",
+    ...showcaseProjects,
+    {
+      title: "Developer Arcade",
+      category: { pt: "Lab • Gamificação", en: "Lab • Gamification" },
+      description: {
+        pt: "Lab interativo de desafios técnicos com sessão anônima e ranking persistente.",
+        en: "Interactive technical challenge lab with anonymous sessions and persistent rankings.",
+      },
+      projectIconKey: "arcade",
+      brandLabel: "LAB",
+      brandAccent: "amber-pink",
+      carouselStack: ["Next.js", "React", "TypeScript", "Supabase", "Tailwind CSS"],
+      caseHref: "/lab",
     },
-    projectIconKey: "arcade",
-    brandLabel: "LAB",
-    brandAccent: "amber-pink",
-    carouselStack: ["Next.js", "React", "TypeScript", "Supabase", "Tailwind CSS"],
-    caseHref: "/lab",
-  },
-  {
-    title: "Portfolio OS",
-    category: { pt: "Portfólio • Produto", en: "Portfolio • Product" },
-    description: {
-      pt: "Portfólio modular com temas, conteúdo bilíngue, projetos e Developer Arcade.",
-      en: "Modular portfolio with themes, bilingual content, projects and Developer Arcade.",
+    {
+      title: "Portfolio OS",
+      category: { pt: "Portfólio • Produto", en: "Portfolio • Product" },
+      description: {
+        pt: "Portfólio modular com temas, conteúdo bilíngue, projetos e Developer Arcade.",
+        en: "Modular portfolio with themes, bilingual content, projects and Developer Arcade.",
+      },
+      projectIconKey: "portfolio-os",
+      brandLabel: "OS",
+      brandAccent: "sky-purple",
+      carouselStack: ["Next.js", "React", "TypeScript", "Tailwind CSS", "Supabase"],
+      caseHref: "/",
     },
-    projectIconKey: "portfolio-os",
-    brandLabel: "OS",
-    brandAccent: "sky-purple",
-    carouselStack: ["Next.js", "React", "TypeScript", "Tailwind CSS", "Supabase"],
-    caseHref: "/",
-  },
   ];
 }
 
