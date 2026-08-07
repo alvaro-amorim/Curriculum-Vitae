@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import type { ReactNode } from "react";
 
 import { AppShell } from "@/components/layout/app-shell";
+import { career } from "@/content/career";
 import { profile } from "@/content/profile";
 import { APP_NAME, SITE_URL } from "@/lib/constants";
 
@@ -20,26 +21,26 @@ const geistMono = Geist_Mono({
   display: "swap",
 });
 
-const defaultDescription =
-  "Álvaro Amorim — Desenvolvedor Full Stack Júnior focado em aplicações web, SaaS, automações e integrações com IA.";
+const siteTitle = `${profile.shortName} — ${career.role.pt}`;
+const defaultDescription = career.seo.siteDescription.pt;
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   applicationName: APP_NAME,
   title: {
-    default: "Álvaro Amorim — Desenvolvedor Full Stack Júnior",
-    template: "%s | Álvaro Amorim",
+    default: siteTitle,
+    template: `%s | ${profile.shortName}`,
   },
   description: defaultDescription,
   authors: [{ name: profile.shortName, url: SITE_URL }],
   creator: profile.shortName,
   publisher: profile.shortName,
-  keywords: ["Álvaro Amorim", "Desenvolvedor Full Stack Júnior", "Next.js", "React", "TypeScript", "SaaS", "IA", "Portfólio"],
+  keywords: career.seo.keywords,
   alternates: {
     canonical: "/",
   },
   openGraph: {
-    title: "Álvaro Amorim — Desenvolvedor Full Stack Júnior",
+    title: siteTitle,
     description: defaultDescription,
     siteName: APP_NAME,
     type: "website",
@@ -48,7 +49,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary",
-    title: "Álvaro Amorim — Desenvolvedor Full Stack Júnior",
+    title: siteTitle,
     description: defaultDescription,
   },
 };
