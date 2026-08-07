@@ -23,15 +23,22 @@ Regras:
 - retorne somente JSON válido;
 - não inclua Markdown;
 - não inclua imagens ou mídias;
-- mantenha publicationStatus como draft.`;
+- defina coleção, publicação, Home e carrossel conscientemente;
+- o mesmo JSON pode criar projetos novos e atualizar projetos existentes.`;
 
 type ImportResponse = {
   data?: {
     imported?: Array<{
+      action?: "created" | "updated";
       slug: string;
       title: string;
     }>;
     preview?: ProjectImportPreview;
+    synced?: Array<{
+      action: "created" | "updated";
+      slug: string;
+      title: string;
+    }>;
   };
   error?: {
     message?: string;
@@ -72,7 +79,11 @@ export function AdminProjectJsonImportModal({ onClose, onImported, open }: Props
   const [dragging, setDragging] = useState(false);
   const [error, setError] = useState("");
   const [fileMeta, setFileMeta] = useState<{ name: string; size: number } | null>(null);
-  const [imported, setImported] = useState<Array<{ slug: string; title: string }>>([]);
+  const [imported, setImported] = useState<Array<{
+    action?: "created" | "updated";
+    slug: string;
+    title: string;
+  }>>([]);
   const [jsonText, setJsonText] = useState("");
   const [loadingState, setLoadingState] = useState<"idle" | "validating" | "importing">("idle");
   const [preview, setPreview] = useState<ProjectImportPreview | null>(null);
@@ -257,17 +268,18 @@ export function AdminProjectJsonImportModal({ onClose, onImported, open }: Props
         method: "POST",
       });
       const body = (await response.json()) as ImportResponse;
+      const synchronizedProjects = body.data?.synced ?? body.data?.imported;
 
-      if (!response.ok || !body.ok || !body.data?.imported) {
-        setError(body.error?.message || "Não foi possível importar os projetos.");
+      if (!response.ok || !body.ok || !synchronizedProjects) {
+        setError(body.error?.message || "Não foi possível sincronizar os projetos.");
         return;
       }
 
-      setImported(body.data.imported);
-      setPreview(body.data.preview ?? null);
-      onImported(body.data.imported.map((project) => project.slug));
+      setImported(synchronizedProjects);
+      setPreview(body.data?.preview ?? null);
+      onImported(synchronizedProjects.map((project) => project.slug));
     } catch {
-      setError("Não foi possível importar o JSON.");
+      setError("Não foi possível sincronizar o JSON.");
     } finally {
       setLoadingState("idle");
     }
@@ -286,11 +298,17 @@ export function AdminProjectJsonImportModal({ onClose, onImported, open }: Props
     if (!preview) return null;
 
     return {
-      existing: preview.existingSlugs.length,
+      create: preview.createCount,
       invalid: preview.invalidCount,
+      update: preview.updateCount,
       valid: preview.validCount,
     };
   }, [preview]);
+
+  const synchronizationStats = useMemo(() => ({
+    created: imported.filter((project) => project.action === "created").length,
+    updated: imported.filter((project) => project.action === "updated").length,
+  }), [imported]);
 
   if (!open) {
     return null;
@@ -307,9 +325,9 @@ export function AdminProjectJsonImportModal({ onClose, onImported, open }: Props
       >
         <header className={styles.importModalHeader}>
           <div>
-            <span className={styles.eyebrow}>ADMIN / IMPORTAÇÃO</span>
-            <h2 id="project-json-import-title">Importar projetos via JSON</h2>
-            <p>Crie projetos a partir de um arquivo estruturado. As imagens e logos podem ser adicionadas posteriormente.</p>
+            <span className={styles.eyebrow}>ADMIN / SINCRONIZAÇÃO</span>
+            <h2 id="project-json-import-title">Sincronizar projetos via JSON</h2>
+            <p>Crie projetos ausentes e atualize registros existentes em uma única operação. Mídias já cadastradas são preservadas.</p>
           </div>
           <button
             aria-label="Fechar modal"
@@ -326,7 +344,7 @@ export function AdminProjectJsonImportModal({ onClose, onImported, open }: Props
         <section className={styles.importGuide}>
           <div>
             <strong>Modelo para IA</strong>
-            <p>Envie este modelo à IA junto com o link do repositório do projeto. Peça para ela analisar o código e preencher todos os campos sem inventar funcionalidades.</p>
+            <p>Envie este modelo à IA junto com o link do repositório. O JSON pode definir conteúdo, coleção, publicação, Home e carrossel.</p>
             {copyMessage ? <small aria-live="polite">{copyMessage}</small> : null}
           </div>
           <div className={styles.importGuideActions}>
@@ -385,7 +403,7 @@ export function AdminProjectJsonImportModal({ onClose, onImported, open }: Props
           >
             <div>
               <strong>Arraste um JSON aqui</strong>
-              <span>Somente .json até 1 MB. Nenhuma mídia será importada.</span>
+              <span>Somente .json até 1 MB. O arquivo não envia mídias e preserva as existentes.</span>
             </div>
             <input
               accept=".json,application/json"
@@ -449,8 +467,9 @@ export function AdminProjectJsonImportModal({ onClose, onImported, open }: Props
           <section className={styles.importPreview}>
             <div className={styles.importStats}>
               <span>{previewStats.valid} projetos válidos</span>
+              <span>{previewStats.create} serão criados</span>
+              <span>{previewStats.update} serão atualizados</span>
               <span>{previewStats.invalid} projetos com problemas</span>
-              <span>{previewStats.existing} slugs já existentes</span>
             </div>
             <div className={styles.importPreviewList}>
               {preview?.projects.map((item, index) => (
@@ -469,8 +488,12 @@ export function AdminProjectJsonImportModal({ onClose, onImported, open }: Props
                       <dd>{item.summary.subtitle || "indefinido"}</dd>
                     </div>
                     <div>
-                      <dt>Status</dt>
-                      <dd>{item.summary.status || "draft"}</dd>
+                      <dt>Publicação</dt>
+                      <dd>{item.summary.publicationStatus || "indefinida"}</dd>
+                    </div>
+                    <div>
+                      <dt>Coleção</dt>
+                      <dd>{item.summary.collection || "indefinida"}</dd>
                     </div>
                     <div>
                       <dt>Categorias</dt>
@@ -481,8 +504,12 @@ export function AdminProjectJsonImportModal({ onClose, onImported, open }: Props
                       <dd>{item.summary.stack.join(", ") || "indefinida"}</dd>
                     </div>
                     <div>
-                      <dt>Featured</dt>
-                      <dd>{item.summary.featured ? "Sim" : "Não"}</dd>
+                      <dt>Home</dt>
+                      <dd>{item.summary.showInHome ? "Visível" : "Oculto"}</dd>
+                    </div>
+                    <div>
+                      <dt>Carrossel</dt>
+                      <dd>{item.summary.showInCarousel ? "Visível" : "Oculto"}</dd>
                     </div>
                     <div>
                       <dt>Ordem</dt>
@@ -494,7 +521,7 @@ export function AdminProjectJsonImportModal({ onClose, onImported, open }: Props
                     </div>
                   </dl>
                   <div className={styles.importBadges}>
-                    <span>{item.existing ? "Slug já existente" : "Novo projeto"}</span>
+                    <span>{item.existing ? "Será atualizado" : "Será criado"}</span>
                     {item.errors.map((projectError) => (
                       <span data-tone="error" key={projectError}>{projectError}</span>
                     ))}
@@ -509,10 +536,12 @@ export function AdminProjectJsonImportModal({ onClose, onImported, open }: Props
           <section className={styles.importSuccess}>
             <strong>
               {imported.length === 1
-                ? "Projeto importado com sucesso como rascunho."
-                : `${imported.length} projetos foram importados como rascunho.`}
+                ? "Projeto sincronizado com sucesso."
+                : `${imported.length} projetos foram sincronizados com sucesso.`}
             </strong>
-            <p>Agora você pode adicionar logo, capa, hero e galeria.</p>
+            <p>
+              {synchronizationStats.created} criados e {synchronizationStats.updated} atualizados. As mídias existentes foram preservadas.
+            </p>
             <div className={styles.importGuideActions}>
               <button className={styles.secondaryButton} onClick={onClose} type="button">
                 Ver projetos
@@ -541,7 +570,7 @@ export function AdminProjectJsonImportModal({ onClose, onImported, open }: Props
             onClick={() => void importJson()}
             type="button"
           >
-            {loadingState === "importing" ? "Importando..." : `Importar ${importableCount} projetos`}
+            {loadingState === "importing" ? "Sincronizando..." : `Sincronizar ${importableCount} projetos`}
           </button>
         </footer>
       </div>
