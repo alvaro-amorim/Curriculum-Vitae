@@ -9,11 +9,13 @@ import { calculateSessionScore, initialLabScores } from "@/lib/lab-score";
 import type { GameScorePayloadV2, LabGameId, PlayerLeaderboardResponse } from "@/types/portfolio";
 
 import { ArcadeGameModal } from "./arcade-game-modal";
+import transitionStyles from "./arcade-transition.module.css";
 import { labGames, labV2Copy } from "./lab-v2-copy";
 import styles from "./developer-lab-v2.module.css";
 import { useArcadeData } from "./use-arcade-data";
 
 type ScoreStatus = "idle" | "syncing" | "synced" | "failed";
+type TransitionKind = "alias" | "game" | "alias-to-game";
 
 type ScoreStatusMap = Record<LabGameId, ScoreStatus>;
 
@@ -21,6 +23,11 @@ type LastResult = {
   game: LabGameId;
   rank: number | null;
   score: number;
+};
+
+type TransitionState = {
+  game: LabGameId | null;
+  kind: TransitionKind;
 };
 
 type AliasDialogProps = {
@@ -35,22 +42,28 @@ type AliasDialogProps = {
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
 };
 
-const RuntimeRunner = dynamic(
-  () => import("@/components/lab/runtime-runner").then((module) => module.RuntimeRunner),
-  { loading: ArenaLoading, ssr: false },
-);
-const BugMaze = dynamic(
-  () => import("@/components/lab/bug-maze").then((module) => module.BugMaze),
-  { loading: ArenaLoading, ssr: false },
-);
-const CodeSnake = dynamic(
-  () => import("@/components/lab/code-snake").then((module) => module.CodeSnake),
-  { loading: ArenaLoading, ssr: false },
-);
-const StackTetris = dynamic(
-  () => import("@/components/lab/stack-tetris").then((module) => module.StackTetris),
-  { loading: ArenaLoading, ssr: false },
-);
+const MIN_TRANSITION_MS = 360;
+
+const loadRuntimeRunner = () =>
+  import("@/components/lab/runtime-runner").then((module) => module.RuntimeRunner);
+const loadBugMaze = () =>
+  import("@/components/lab/bug-maze").then((module) => module.BugMaze);
+const loadCodeSnake = () =>
+  import("@/components/lab/code-snake").then((module) => module.CodeSnake);
+const loadStackTetris = () =>
+  import("@/components/lab/stack-tetris").then((module) => module.StackTetris);
+
+const gamePreloaders: Record<LabGameId, () => Promise<unknown>> = {
+  runtime: loadRuntimeRunner,
+  "bug-maze": loadBugMaze,
+  "code-snake": loadCodeSnake,
+  "stack-tetris": loadStackTetris,
+};
+
+const RuntimeRunner = dynamic(loadRuntimeRunner, { loading: ArenaLoading, ssr: false });
+const BugMaze = dynamic(loadBugMaze, { loading: ArenaLoading, ssr: false });
+const CodeSnake = dynamic(loadCodeSnake, { loading: ArenaLoading, ssr: false });
+const StackTetris = dynamic(loadStackTetris, { loading: ArenaLoading, ssr: false });
 
 const rankingKeyByGame = {
   runtime: "runtime",
@@ -72,6 +85,44 @@ function ArenaLoading() {
       <span />
       <span />
       <span />
+    </div>
+  );
+}
+
+function TransitionMark() {
+  return <span className={transitionStyles.mark} aria-hidden="true" />;
+}
+
+function ArcadeTransition({
+  copy,
+  transition,
+}: {
+  copy: (typeof labV2Copy)["pt"] | (typeof labV2Copy)["en"];
+  transition: TransitionState;
+}) {
+  const gameTitle = transition.game
+    ? labGames.find((game) => game.id === transition.game)?.title
+    : null;
+
+  const message = transition.kind === "alias"
+    ? copy.loadingAlias
+    : transition.kind === "alias-to-game"
+      ? `${copy.loadingGameReady}${gameTitle ? ` ${gameTitle}` : ""}...`
+      : `${copy.loadingGame}${gameTitle ? ` ${gameTitle}` : ""}...`;
+
+  return (
+    <div
+      aria-busy="true"
+      aria-live="polite"
+      className={transitionStyles.overlay}
+      role="status"
+    >
+      <div className={transitionStyles.card}>
+        <TransitionMark />
+        <span className={transitionStyles.eyebrow}>{copy.transitionEyebrow}</span>
+        <strong>{message}</strong>
+        <span className={transitionStyles.progress} aria-hidden="true" />
+      </div>
     </div>
   );
 }
@@ -201,7 +252,22 @@ function AliasDialog({
       }}
       ref={dialogRef}
     >
-      <form method="dialog" onSubmit={onSubmit}>
+      <form className={transitionStyles.aliasForm} method="dialog" onSubmit={onSubmit}>
+        {aliasStatus === "saving" ? (
+          <div
+            aria-busy="true"
+            aria-live="polite"
+            className={transitionStyles.aliasSaving}
+            role="status"
+          >
+            <div className={transitionStyles.aliasSavingContent}>
+              <TransitionMark />
+              <strong>{pendingGame ? copy.savingPlayer : copy.savingAlias}</strong>
+              <span>{pendingGame ? copy.loadingGameReady : copy.aliasSaved}</span>
+            </div>
+          </div>
+        ) : null}
+
         <div className={styles.aliasDialogHeader}>
           <span className={styles.eyebrow}>{copy.aliasGateEyebrow}</span>
           <button
@@ -259,6 +325,13 @@ function formatRank(rank: number | null, prefix: string) {
   return rank === null ? "—" : `${prefix}${rank}`;
 }
 
+function waitForMinimumTransition(startedAt: number) {
+  const remaining = MIN_TRANSITION_MS - (performance.now() - startedAt);
+  return remaining > 0
+    ? new Promise<void>((resolve) => window.setTimeout(resolve, remaining))
+    : Promise.resolve();
+}
+
 export function DeveloperLabV2() {
   const { locale } = usePortfolioUi();
   const copy = labV2Copy[locale];
@@ -279,6 +352,7 @@ export function DeveloperLabV2() {
   const [aliasMessage, setAliasMessage] = useState("");
   const [aliasDialogOpen, setAliasDialogOpen] = useState(false);
   const [pendingGame, setPendingGame] = useState<LabGameId | null>(null);
+  const [transition, setTransition] = useState<TransitionState | null>(null);
   const [scores, setScores] = useState(initialLabScores);
   const [scoreStatus, setScoreStatus] = useState<ScoreStatusMap>(initialScoreStatus);
   const [lastResult, setLastResult] = useState<LastResult | null>(null);
@@ -311,6 +385,22 @@ export function DeveloperLabV2() {
     : null;
   const activeGameLeaderboard = activeGame ? leaderboards[activeGame].slice(0, 3) : [];
 
+  const runTransition = useCallback(async (
+    kind: TransitionKind,
+    game: LabGameId | null,
+    task?: () => Promise<unknown>,
+  ) => {
+    const startedAt = performance.now();
+    setTransition({ game, kind });
+
+    try {
+      if (task) await task();
+      await waitForMinimumTransition(startedAt);
+    } finally {
+      setTransition(null);
+    }
+  }, []);
+
   const openGame = useCallback((game: LabGameId) => {
     setActiveGame(game);
     setRankingGame(game);
@@ -318,22 +408,34 @@ export function DeveloperLabV2() {
   }, []);
 
   const requestOpenGame = useCallback((game: LabGameId) => {
-    if (session?.alias?.trim()) {
-      openGame(game);
-      return;
-    }
+    if (transition) return;
 
-    setPendingGame(game);
-    setAliasMessage("");
-    setAliasDialogOpen(true);
-  }, [openGame, session?.alias]);
+    void (async () => {
+      if (session?.alias?.trim()) {
+        await runTransition("game", game, gamePreloaders[game]);
+        openGame(game);
+        return;
+      }
+
+      setPendingGame(game);
+      setAliasMessage("");
+      await runTransition("alias", game);
+      setAliasDialogOpen(true);
+    })();
+  }, [openGame, runTransition, session?.alias, transition]);
 
   const openAliasEditor = useCallback(() => {
+    if (transition) return;
+
     setPendingGame(null);
     setAliasMessage("");
     setAliasInput(session?.alias ?? "");
-    setAliasDialogOpen(true);
-  }, [session?.alias]);
+
+    void (async () => {
+      await runTransition("alias", null);
+      setAliasDialogOpen(true);
+    })();
+  }, [runTransition, session?.alias, transition]);
 
   const closeAliasDialog = useCallback(() => {
     if (aliasStatus === "saving") return;
@@ -398,19 +500,25 @@ export function DeveloperLabV2() {
     setAliasMessage("");
 
     try {
-      await saveAlias(alias);
       const gameToOpen = pendingGame;
+      await saveAlias(alias);
+
+      if (gameToOpen) {
+        setAliasDialogOpen(false);
+        setAliasMessage("");
+        await runTransition("alias-to-game", gameToOpen, gamePreloaders[gameToOpen]);
+        setPendingGame(null);
+        openGame(gameToOpen);
+        return;
+      }
+
       setAliasDialogOpen(false);
       setPendingGame(null);
       setAliasMessage("");
-
-      if (gameToOpen) {
-        openGame(gameToOpen);
-      }
     } catch (error) {
       setAliasMessage(error instanceof Error ? error.message : copy.aliasError);
     }
-  }, [aliasInput, copy.aliasError, copy.aliasRequired, openGame, pendingGame, saveAlias]);
+  }, [aliasInput, copy.aliasError, copy.aliasRequired, openGame, pendingGame, runTransition, saveAlias]);
 
   function renderActiveGame() {
     if (!activeGame) return null;
@@ -456,7 +564,7 @@ export function DeveloperLabV2() {
                   <span>{copy.playerEyebrow}</span>
                   <strong>{session?.alias ?? copy.noAlias}</strong>
                 </div>
-                <button onClick={openAliasEditor} type="button">
+                <button disabled={transition !== null} onClick={openAliasEditor} type="button">
                   {session?.alias ? copy.editAlias : copy.setAlias}
                 </button>
               </div>
@@ -538,7 +646,7 @@ export function DeveloperLabV2() {
                         </div>
                       </div>
                       <button
-                        disabled={status === "loading"}
+                        disabled={status === "loading" || transition !== null}
                         onClick={() => requestOpenGame(game.id)}
                         type="button"
                       >
@@ -653,6 +761,8 @@ export function DeveloperLabV2() {
           pendingGame={pendingGame}
         />
       ) : null}
+
+      {transition ? <ArcadeTransition copy={copy} transition={transition} /> : null}
     </main>
   );
 }
