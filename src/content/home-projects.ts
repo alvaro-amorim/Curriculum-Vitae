@@ -1,7 +1,5 @@
 import type { Locale, LocalizedText, Project } from "@/types/portfolio";
 
-import { primaryProjects } from "./project-catalog.ts";
-
 export type HomeProjectIconKey = "margem" | "comerc" | "gdash" | "sdr" | "arcade" | "portfolio-os";
 export type HomeProjectAccent = "blue-purple" | "amber-pink" | "emerald-teal" | "rose-indigo" | "violet-cyan" | "sky-purple";
 
@@ -151,4 +149,4 @@ export function createHomeProjects(publicProjects: readonly Project[]): HomeProj
   return publicProjects.map(createProjectShowcase);
 }
 
-export const homeProjects: HomeProject[] = createHomeProjects(primaryProjects);
+export const homeProjects: HomeProject[] = [];
