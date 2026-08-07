@@ -41,6 +41,18 @@ test("robots keeps administrative routes out of search indexing", () => {
   assert.match(source, /"\/api\/admin"/);
 });
 
+test("sitemap prioritizes recruiter routes before the interactive lab", () => {
+  const source = read("src/app/sitemap.ts");
+  const projectsPosition = source.indexOf('absoluteUrl("/projetos")');
+  const resumePosition = source.indexOf('absoluteUrl("/curriculo")');
+  const labPosition = source.indexOf('absoluteUrl("/lab")');
+
+  assert.ok(projectsPosition >= 0);
+  assert.ok(resumePosition > projectsPosition);
+  assert.ok(labPosition > resumePosition);
+  assert.match(source, /priority: 0\.7/);
+});
+
 test("project filters always provide an empty-state recovery action", () => {
   const source = read("src/components/projects/project-grid.tsx");
 
