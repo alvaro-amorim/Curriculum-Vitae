@@ -20,12 +20,13 @@ type RunnerStatus = "idle" | "running" | "paused" | "gameOver";
 type RunnerPulseKind = "clear" | "near" | "stage" | null;
 
 type Obstacle = {
+  code: string;
+  hitHeight: number;
   id: number;
   label: string;
   tone: "bug" | "network" | "build" | "memory" | "type" | "rate";
-  x: number;
   width: number;
-  hitHeight: number;
+  x: number;
 };
 
 type RunnerFrame = {
@@ -66,14 +67,14 @@ const TAP_DISTANCE = 14;
 const SWIPE_THRESHOLD = 34;
 
 const obstacleConfigs: Omit<Obstacle, "id" | "x">[] = [
-  { label: "BUG", tone: "bug", width: 10, hitHeight: 0.22 },
-  { label: "404", tone: "network", width: 9, hitHeight: 0.19 },
-  { label: "TIMEOUT", tone: "network", width: 12, hitHeight: 0.24 },
-  { label: "BUILD FAIL", tone: "build", width: 14, hitHeight: 0.27 },
-  { label: "MERGE CONFLICT", tone: "build", width: 17, hitHeight: 0.3 },
-  { label: "MEMORY LEAK", tone: "memory", width: 15, hitHeight: 0.27 },
-  { label: "TYPE ERROR", tone: "type", width: 13, hitHeight: 0.24 },
-  { label: "RATE LIMIT", tone: "rate", width: 12, hitHeight: 0.23 },
+  { code: "ERR", label: "BUG", tone: "bug", width: 10, hitHeight: 0.22 },
+  { code: "404", label: "NOT FOUND", tone: "network", width: 10, hitHeight: 0.19 },
+  { code: "504", label: "TIMEOUT", tone: "network", width: 12, hitHeight: 0.24 },
+  { code: "CI", label: "BUILD FAIL", tone: "build", width: 14, hitHeight: 0.27 },
+  { code: "GIT", label: "CONFLICT", tone: "build", width: 15, hitHeight: 0.3 },
+  { code: "RAM", label: "MEMORY LEAK", tone: "memory", width: 15, hitHeight: 0.27 },
+  { code: "TS", label: "TYPE ERROR", tone: "type", width: 13, hitHeight: 0.24 },
+  { code: "429", label: "RATE LIMIT", tone: "rate", width: 12, hitHeight: 0.23 },
 ];
 
 const obstacleColors: Record<Obstacle["tone"], string> = {
@@ -88,113 +89,149 @@ const obstacleColors: Record<Obstacle["tone"], string> = {
 const copy = {
   pt: {
     title: "Runtime Runner",
-    subtitle: "Um runner técnico com física previsível, dificuldade progressiva e ranking persistente.",
-    eyebrow: "runtime / execution",
-    start: "Iniciar execução",
-    restart: "Reiniciar",
+    subtitle: "Atravesse um pipeline vivo. Quanto mais tempo a execução permanece saudável, mais rápido o deploy fica.",
+    eyebrow: "DEPLOY PIPELINE / LIVE RUN",
+    start: "Iniciar deploy",
+    restart: "Nova execução",
     pause: "Pausar",
     resume: "Retomar",
     jump: "Pular",
     score: "score",
-    best: "melhor",
-    speed: "velocidade",
-    cleared: "erros evitados",
-    stage: "fase",
-    next: "próxima",
-    maxStage: "fase máxima",
-    near: "quase colisão",
-    autoPaused: "A rodada foi pausada automaticamente porque a janela perdeu o foco.",
-    started: "Execução iniciada.",
-    paused: "Execução pausada.",
-    resumed: "Execução retomada.",
-    gameOverAnnouncement: "Build interrompido. Resultado pronto para o ranking.",
-    idleTitle: "Desvie dos erros antes do build cair.",
-    idleText: "Clique, toque ou deslize para cima para saltar. Os intervalos foram calibrados para nunca exigir uma sequência fisicamente impossível.",
-    gameOverTitle: "Pipeline quebrado.",
-    gameOverText: "Seu resultado foi enviado ao ranking. Reinicie quando quiser tentar uma execução mais longa.",
+    best: "recorde",
+    speed: "ritmo",
+    cleared: "resolvidos",
+    stage: "ambiente",
+    next: "próximo",
+    maxStage: "pipeline estabilizado",
+    near: "risco crítico",
+    autoPaused: "Execução pausada automaticamente porque a janela perdeu o foco.",
+    started: "Deploy iniciado.",
+    paused: "Deploy pausado.",
+    resumed: "Deploy retomado.",
+    gameOverAnnouncement: "Pipeline interrompido. Resultado pronto para o ranking.",
+    idleTitle: "Mantenha o deploy vivo.",
+    idleText: "Salte sobre falhas de build, rede e memória. O ritmo aumenta em cinco ambientes, sem gerar sequências fisicamente impossíveis.",
+    gameOverTitle: "Pipeline interrompido.",
+    gameOverText: "A falha derrubou a execução. Seu melhor resultado continua valendo no ranking.",
+    pausedTitle: "Execução congelada.",
+    pausedText: "O relógio e o pipeline estão parados. Retome quando estiver pronto.",
     scoreSummary: "score final",
-    clearedSummary: "evitados",
+    clearedSummary: "falhas resolvidas",
     nearSummary: "quase colisões",
-    rulesTitle: "Regras",
-    reduced: "Reduced motion ativo: efeitos decorativos e aceleração são mais controlados.",
-    rules: [
-      "Space ou ArrowUp saltam; P pausa; R reinicia.",
-      "No mobile, toque ou swipe para cima executam o salto.",
-      `Cada erro evitado vale +${RUNTIME_SCORE_REWARDS.cleared} e cada quase colisão vale +${RUNTIME_SCORE_REWARDS.nearMiss}.`,
-      "A velocidade cresce por fases, mas o intervalo mínimo respeita o ciclo físico do salto.",
-      "Se a aba ou janela perder o foco durante a rodada, o jogo pausa automaticamente.",
-    ],
+    timeSummary: "tempo online",
+    consoleTitle: "RUN CONTROL",
+    consoleStatus: "status",
+    controlsTitle: "atalhos",
+    scoringTitle: "pontuação",
+    jumpKey: "SPACE / ↑",
+    pauseKey: "P",
+    restartKey: "R",
+    jumpHint: "pular",
+    pauseHint: "pausar",
+    restartHint: "reiniciar",
+    survival: "+8/s",
+    survivalLabel: "online",
+    clearReward: `+${RUNTIME_SCORE_REWARDS.cleared}`,
+    clearLabel: "falha evitada",
+    nearReward: `+${RUNTIME_SCORE_REWARDS.nearMiss}`,
+    nearLabel: "quase colisão",
+    reduced: "Movimento reduzido ativo",
+    live: "LIVE",
+    ready: "READY",
+    failed: "FAILED",
+    hold: "PAUSED",
+    swipe: "Toque ou swipe ↑ no mobile",
     status: {
-      idle: "pronto para iniciar",
-      running: "pipeline em execução",
+      idle: "aguardando execução",
+      running: "pipeline online",
       paused: "execução pausada",
-      gameOver: "build interrompido",
+      gameOver: "pipeline interrompido",
     },
     stages: {
-      "dev-server": "Dev server",
+      "dev-server": "Dev Server",
       staging: "Staging",
       production: "Produção",
-      "incident-mode": "Incidente",
-      "zero-downtime": "Zero downtime",
+      "incident-mode": "Incident Mode",
+      "zero-downtime": "Zero Downtime",
     },
-    pulseClear: `+${RUNTIME_SCORE_REWARDS.cleared} erro evitado`,
-    pulseNear: `+${RUNTIME_SCORE_REWARDS.nearMiss} quase colisão`,
-    pulseStage: "checkpoint de fase",
+    pulseClear: `+${RUNTIME_SCORE_REWARDS.cleared} RESOLVIDO`,
+    pulseNear: `+${RUNTIME_SCORE_REWARDS.nearMiss} NEAR MISS`,
+    pulseStage: "CHECKPOINT",
+    newRecord: "novo recorde pessoal",
+    currentRecord: "recorde pessoal",
   },
   en: {
     title: "Runtime Runner",
-    subtitle: "A technical runner with predictable physics, progressive difficulty, and persistent ranking.",
-    eyebrow: "runtime / execution",
-    start: "Start run",
-    restart: "Restart",
+    subtitle: "Cross a live pipeline. The longer execution stays healthy, the faster deployment becomes.",
+    eyebrow: "DEPLOY PIPELINE / LIVE RUN",
+    start: "Start deploy",
+    restart: "New run",
     pause: "Pause",
     resume: "Resume",
     jump: "Jump",
     score: "score",
-    best: "best",
-    speed: "speed",
-    cleared: "errors avoided",
-    stage: "stage",
+    best: "record",
+    speed: "pace",
+    cleared: "resolved",
+    stage: "environment",
     next: "next",
-    maxStage: "max stage",
-    near: "near miss",
-    autoPaused: "The run was paused automatically because the window lost focus.",
-    started: "Run started.",
-    paused: "Run paused.",
-    resumed: "Run resumed.",
-    gameOverAnnouncement: "Build interrupted. Result ready for the leaderboard.",
-    idleTitle: "Avoid errors before the build fails.",
-    idleText: "Click, tap, or swipe up to jump. Spawn intervals are calibrated so the game never demands a physically impossible sequence.",
-    gameOverTitle: "Pipeline failed.",
-    gameOverText: "Your result was submitted to the leaderboard. Restart whenever you want to chase a longer run.",
+    maxStage: "pipeline stabilized",
+    near: "critical risk",
+    autoPaused: "Execution paused automatically because the window lost focus.",
+    started: "Deploy started.",
+    paused: "Deploy paused.",
+    resumed: "Deploy resumed.",
+    gameOverAnnouncement: "Pipeline interrupted. Result ready for the leaderboard.",
+    idleTitle: "Keep the deploy alive.",
+    idleText: "Jump over build, network, and memory failures. Pace increases through five environments without physically impossible sequences.",
+    gameOverTitle: "Pipeline interrupted.",
+    gameOverText: "The failure stopped execution. Your best result still defines your leaderboard position.",
+    pausedTitle: "Execution frozen.",
+    pausedText: "The clock and pipeline are stopped. Resume whenever you are ready.",
     scoreSummary: "final score",
-    clearedSummary: "avoided",
+    clearedSummary: "failures resolved",
     nearSummary: "near misses",
-    rulesTitle: "Rules",
-    reduced: "Reduced motion is active: decorative effects and acceleration are more controlled.",
-    rules: [
-      "Space or ArrowUp jump; P pauses; R restarts.",
-      "On mobile, tap or swipe up executes a jump.",
-      `Each avoided error is worth +${RUNTIME_SCORE_REWARDS.cleared} and each near miss is worth +${RUNTIME_SCORE_REWARDS.nearMiss}.`,
-      "Speed grows through stages, but the minimum spawn interval respects the physical jump cycle.",
-      "If the tab or window loses focus during a run, the game pauses automatically.",
-    ],
+    timeSummary: "uptime",
+    consoleTitle: "RUN CONTROL",
+    consoleStatus: "status",
+    controlsTitle: "shortcuts",
+    scoringTitle: "scoring",
+    jumpKey: "SPACE / ↑",
+    pauseKey: "P",
+    restartKey: "R",
+    jumpHint: "jump",
+    pauseHint: "pause",
+    restartHint: "restart",
+    survival: "+8/s",
+    survivalLabel: "online",
+    clearReward: `+${RUNTIME_SCORE_REWARDS.cleared}`,
+    clearLabel: "failure avoided",
+    nearReward: `+${RUNTIME_SCORE_REWARDS.nearMiss}`,
+    nearLabel: "near miss",
+    reduced: "Reduced motion active",
+    live: "LIVE",
+    ready: "READY",
+    failed: "FAILED",
+    hold: "PAUSED",
+    swipe: "Tap or swipe ↑ on mobile",
     status: {
-      idle: "ready to start",
-      running: "pipeline running",
+      idle: "waiting for execution",
+      running: "pipeline online",
       paused: "execution paused",
-      gameOver: "build interrupted",
+      gameOver: "pipeline interrupted",
     },
     stages: {
-      "dev-server": "Dev server",
+      "dev-server": "Dev Server",
       staging: "Staging",
       production: "Production",
-      "incident-mode": "Incident",
-      "zero-downtime": "Zero downtime",
+      "incident-mode": "Incident Mode",
+      "zero-downtime": "Zero Downtime",
     },
-    pulseClear: `+${RUNTIME_SCORE_REWARDS.cleared} error avoided`,
-    pulseNear: `+${RUNTIME_SCORE_REWARDS.nearMiss} near miss`,
-    pulseStage: "stage checkpoint",
+    pulseClear: `+${RUNTIME_SCORE_REWARDS.cleared} RESOLVED`,
+    pulseNear: `+${RUNTIME_SCORE_REWARDS.nearMiss} NEAR MISS`,
+    pulseStage: "CHECKPOINT",
+    newRecord: "new personal record",
+    currentRecord: "personal record",
   },
 } as const;
 
@@ -234,6 +271,13 @@ function runnerJumpVelocity(mobile: boolean, reduced: boolean) {
 function runnerGravity(mobile: boolean, reduced: boolean) {
   if (reduced) return REDUCED_RUNNER_GRAVITY;
   return mobile ? MOBILE_RUNNER_GRAVITY : RUNNER_GRAVITY;
+}
+
+function formatTime(seconds: number) {
+  const whole = Math.max(0, Math.floor(seconds));
+  const minutes = Math.floor(whole / 60);
+  const remainder = whole % 60;
+  return `${String(minutes).padStart(2, "0")}:${String(remainder).padStart(2, "0")}`;
 }
 
 export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
@@ -535,6 +579,7 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
 
   const stageProgress = useMemo(() => runtimeStageProgress(frame.elapsed), [frame.elapsed]);
   const currentBest = Math.max(bestScore, frame.runScore);
+  const isNewRecord = status === "gameOver" && frame.runScore > 0 && frame.runScore >= bestScore;
   const isDanger = useMemo(
     () => status === "running" && frame.obstacles.some((obstacle) => obstacle.x < 32 && obstacle.x + obstacle.width > 9),
     [frame.obstacles, status],
@@ -542,12 +587,11 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
   const pulseText = frame.pulseKind === "near"
     ? t.pulseNear
     : frame.pulseKind === "stage"
-      ? t.pulseStage
+      ? `${t.pulseStage} · ${t.stages[frame.stage]}`
       : t.pulseClear;
   const nextStageLabel = stageProgress.nextStage
     ? `${t.next}: ${t.stages[stageProgress.nextStage]} · ${Math.ceil(stageProgress.secondsRemaining)}s`
     : t.maxStage;
-  const showOverlay = status === "idle" || status === "gameOver";
 
   function handlePointerDown(event: PointerEvent<HTMLDivElement>) {
     if (!event.isPrimary) return;
@@ -570,62 +614,77 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
     if (isTap || isSwipeUp) requestJump();
   }
 
-  function handlePrimaryAction() {
-    if (status === "paused") {
-      togglePause();
-    } else if (status === "running") {
-      requestJump();
-    } else {
-      startRun(false);
-    }
-  }
-
   return (
     <section className={styles.root} aria-labelledby="runtime-runner-title" ref={rootRef}>
-      <div className={styles.header}>
+      <header className={styles.runnerHeader}>
         <div>
           <p className={styles.eyebrow}>{t.eyebrow}</p>
           <h2 id="runtime-runner-title">{t.title}</h2>
+          <p className={styles.subtitle} id="runtime-instructions">{t.subtitle}</p>
         </div>
-        <p className={styles.intro} id="runtime-instructions">{t.subtitle}</p>
-      </div>
+        <div className={styles.liveStatus} data-status={status}>
+          <i aria-hidden="true" />
+          <span>{status === "running" ? t.live : status === "paused" ? t.hold : status === "gameOver" ? t.failed : t.ready}</span>
+        </div>
+      </header>
 
-      <div className={styles.layout}>
+      <div className={styles.gameShell}>
         <div
           aria-describedby="runtime-instructions"
           aria-label={`${t.title}: ${t.status[status]}`}
-          className={styles.stage}
+          className={styles.playfield}
           data-danger={isDanger ? "true" : "false"}
           data-state={status}
           onPointerCancel={() => { pointerStartRef.current = null; }}
           onPointerDown={handlePointerDown}
           onPointerUp={handlePointerUp}
-          role="button"
           tabIndex={0}
         >
+          <div className={styles.environment} aria-hidden="true">
+            <div className={styles.environmentGlow} />
+            <div className={styles.pipelineGrid} />
+            <div className={styles.pipelineLanes} />
+            <div className={styles.pipelinePacket} />
+            <div className={styles.pipelinePacketSecondary} />
+          </div>
+
           <div className={styles.hud} aria-hidden="true">
-            <div className={styles.metric}><span>{t.score}</span><strong>{frame.runScore}</strong></div>
+            <div className={styles.metricPrimary}>
+              <span>{t.score}</span>
+              <strong>{frame.runScore}</strong>
+            </div>
             <div className={styles.metric}><span>{t.best}</span><strong>{currentBest}</strong></div>
             <div className={styles.metric}><span>{t.speed}</span><strong>{frame.speed.toFixed(1)}x</strong></div>
             <div className={styles.metric}><span>{t.cleared}</span><strong>{frame.cleared}</strong></div>
           </div>
 
-          <div className={styles.stageProgress} aria-hidden="true">
-            <span className={styles.stageLabel}>{t.stages[frame.stage]}</span>
-            <span className={styles.progressTrack}>
+          <div className={styles.stageRail} aria-hidden="true">
+            <div className={styles.stageMeta}>
+              <span>{t.stages[frame.stage]}</span>
+              <small>{nextStageLabel}</small>
+            </div>
+            <div className={styles.stageTrack}>
               <i style={{ "--stage-progress": stageProgress.progress } as StyleVars} />
-            </span>
-            <span className={styles.nextStage}>{nextStageLabel}</span>
+            </div>
           </div>
 
-          <div className={styles.track} aria-hidden="true" />
+          <div className={styles.track} aria-hidden="true">
+            <span className={styles.trackLabel}>main</span>
+            <span className={styles.trackNode} />
+            <span className={styles.trackNode} />
+            <span className={styles.trackNode} />
+          </div>
           <div className={styles.ground} aria-hidden="true" />
+
           <span
             aria-hidden="true"
             className={styles.runner}
             data-air={frame.runnerY > 0 ? "true" : "false"}
             style={{ "--runner-y": frame.runnerY } as StyleVars}
-          />
+          >
+            <span className={styles.runnerPrompt}>&gt;_</span>
+            <span className={styles.runnerSignal} />
+          </span>
 
           {frame.obstacles.map((obstacle) => (
             <span
@@ -640,55 +699,117 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
                 "--obstacle-x": obstacle.x,
               } as StyleVars}
             >
-              {obstacle.label}
+              <small>{obstacle.code}</small>
+              <b>{obstacle.label}</b>
             </span>
           ))}
 
           {frame.pulse > 0 && frame.pulseKind ? (
-            <span className={styles.pulse} key={frame.pulse}>{pulseText}</span>
+            <span className={styles.eventPulse} data-kind={frame.pulseKind} key={frame.pulse}>{pulseText}</span>
           ) : null}
           {isDanger ? <span className={styles.dangerCue}>{t.near}</span> : null}
 
-          {showOverlay ? (
-            <div className={styles.overlay}>
-              <div className={styles.overlayCard}>
-                <p className={styles.status}>{t.status[status]}</p>
-                <h3>{status === "gameOver" ? t.gameOverTitle : t.idleTitle}</h3>
-                <p>{status === "gameOver" ? t.gameOverText : t.idleText}</p>
-                {status === "gameOver" ? (
-                  <div className={styles.summary}>
-                    <div><span>{t.scoreSummary}</span><strong>{frame.runScore}</strong></div>
-                    <div><span>{t.clearedSummary}</span><strong>{frame.cleared}</strong></div>
-                    <div><span>{t.nearSummary}</span><strong>{frame.nearMisses}</strong></div>
-                  </div>
-                ) : null}
+          {status === "idle" ? (
+            <div className={styles.stateOverlay}>
+              <div className={styles.stateCard}>
+                <span className={styles.stateCode}>READY / 200</span>
+                <h3>{t.idleTitle}</h3>
+                <p>{t.idleText}</p>
+                <div className={styles.quickKeys} aria-hidden="true">
+                  <span><kbd>{t.jumpKey}</kbd>{t.jumpHint}</span>
+                  <span><kbd>{t.pauseKey}</kbd>{t.pauseHint}</span>
+                  <span><kbd>{t.restartKey}</kbd>{t.restartHint}</span>
+                </div>
+                <button className={styles.primaryAction} onClick={() => startRun(false)} type="button">
+                  <span>{t.start}</span><i aria-hidden="true">↗</i>
+                </button>
+                <small>{t.swipe}</small>
+              </div>
+            </div>
+          ) : null}
+
+          {status === "paused" ? (
+            <div className={styles.stateOverlay}>
+              <div className={styles.stateCard} data-compact="true">
+                <span className={styles.stateCode}>PAUSE / HOLD</span>
+                <h3>{t.pausedTitle}</h3>
+                <p>{autoPaused ? t.autoPaused : t.pausedText}</p>
+                <button className={styles.primaryAction} onClick={togglePause} type="button">
+                  <span>{t.resume}</span><i aria-hidden="true">▶</i>
+                </button>
+              </div>
+            </div>
+          ) : null}
+
+          {status === "gameOver" ? (
+            <div className={styles.stateOverlay}>
+              <div className={styles.stateCard} data-game-over="true">
+                <div className={styles.resultHeading}>
+                  <span className={styles.stateCode}>PIPELINE / FAILED</span>
+                  <span className={styles.recordBadge} data-record={isNewRecord ? "true" : "false"}>
+                    {isNewRecord ? t.newRecord : t.currentRecord}
+                  </span>
+                </div>
+                <h3>{t.gameOverTitle}</h3>
+                <p>{t.gameOverText}</p>
+                <div className={styles.resultGrid}>
+                  <div><span>{t.scoreSummary}</span><strong>{frame.runScore}</strong></div>
+                  <div><span>{t.timeSummary}</span><strong>{formatTime(frame.elapsed)}</strong></div>
+                  <div><span>{t.clearedSummary}</span><strong>{frame.cleared}</strong></div>
+                  <div><span>{t.nearSummary}</span><strong>{frame.nearMisses}</strong></div>
+                </div>
+                <button className={styles.primaryAction} onClick={() => startRun(false)} type="button">
+                  <span>{t.restart}</span><i aria-hidden="true">↻</i>
+                </button>
               </div>
             </div>
           ) : null}
         </div>
 
-        <aside className={styles.side}>
-          <div className={styles.panel}>
-            <p className={styles.status}>{t.status[status]}</p>
-            <div className={styles.controls}>
-              <button onClick={handlePrimaryAction} type="button">
-                {status === "paused" ? t.resume : status === "running" ? t.jump : status === "gameOver" ? t.restart : t.start}
-              </button>
-              <button disabled={status === "idle" || status === "gameOver"} onClick={togglePause} type="button">
-                {status === "paused" ? t.resume : t.pause}
-              </button>
-              <button onClick={() => startRun(false)} type="button">{t.restart}</button>
+        <aside className={styles.console} aria-label={t.consoleTitle}>
+          <div className={styles.consoleHeader}>
+            <div>
+              <span>{t.consoleTitle}</span>
+              <strong>{t.status[status]}</strong>
             </div>
-            {autoPaused ? <p className={styles.autoPause}>{t.autoPaused}</p> : null}
+            <i data-status={status} aria-hidden="true" />
           </div>
 
-          <div className={styles.rules}>
-            <h3>{t.rulesTitle}</h3>
-            <ul>
-              {t.rules.map((rule) => <li key={rule}>{rule}</li>)}
-            </ul>
-            {reducedMotion ? <p>{t.reduced}</p> : null}
+          <button
+            className={styles.consolePrimary}
+            onClick={status === "running" ? requestJump : status === "paused" ? togglePause : () => startRun(false)}
+            type="button"
+          >
+            <span>{status === "running" ? t.jump : status === "paused" ? t.resume : status === "gameOver" ? t.restart : t.start}</span>
+            <kbd>{status === "running" ? "↑" : "↵"}</kbd>
+          </button>
+
+          <div className={styles.consoleActions}>
+            <button disabled={status === "idle" || status === "gameOver"} onClick={togglePause} type="button">
+              <kbd>P</kbd><span>{status === "paused" ? t.resume : t.pause}</span>
+            </button>
+            <button onClick={() => startRun(false)} type="button"><kbd>R</kbd><span>{t.restart}</span></button>
           </div>
+
+          <div className={styles.consoleBlock}>
+            <p>{t.scoringTitle}</p>
+            <div className={styles.rewardList}>
+              <div><strong>{t.survival}</strong><span>{t.survivalLabel}</span></div>
+              <div><strong>{t.clearReward}</strong><span>{t.clearLabel}</span></div>
+              <div><strong>{t.nearReward}</strong><span>{t.nearLabel}</span></div>
+            </div>
+          </div>
+
+          <div className={styles.consoleBlock}>
+            <p>{t.stage}</p>
+            <div className={styles.stageList}>
+              {(["dev-server", "staging", "production", "incident-mode", "zero-downtime"] as RuntimeStage[]).map((stage) => (
+                <span data-active={frame.stage === stage ? "true" : "false"} key={stage}>{t.stages[stage]}</span>
+              ))}
+            </div>
+          </div>
+
+          {reducedMotion ? <div className={styles.reducedNotice}>{t.reduced}</div> : null}
         </aside>
       </div>
 
