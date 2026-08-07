@@ -1,6 +1,6 @@
 import type { ClientSession, WithId } from "mongodb";
 
-import { getProjectBySlug, projects as staticProjects } from "@/content/projects";
+import { getProjectBySlug, projects as staticProjects } from "@/content/project-catalog";
 import { getMongoClient } from "@/lib/mongodb/client";
 import {
   getMongoCollections,
@@ -11,6 +11,13 @@ import {
 } from "@/lib/mongodb/collections";
 import { readMongoConfig } from "@/lib/mongodb/config";
 import { syncProjectMediaSelection } from "@/lib/media/repository";
+import {
+  defaultProjectHomePlacement,
+  normalizeProjectHomePlacement,
+  selectHomeProjectCollections,
+  type HomeProjectCollections,
+  type ProjectHomePlacement,
+} from "@/lib/projects/home-placement";
 import {
   applyPublicProjectDetailOverlay,
   applyPublicProjectOverlay,
@@ -36,6 +43,7 @@ export class ProjectConflictError extends Error {
 
 export type AdminProjectRecord = {
   createdAt: string;
+  homePlacement: ProjectHomePlacement;
   id: string;
   project: Project;
   publicationStatus: PortfolioProjectPublicationStatus;
@@ -49,6 +57,7 @@ export type ProjectRevision = {
   action: PortfolioProjectRevisionDocument["action"];
   changedAt: string;
   changedBy: string | null;
+  homePlacement: ProjectHomePlacement;
   id: string;
   project: Project;
   publicationStatus: PortfolioProjectPublicationStatus;
@@ -73,6 +82,7 @@ function toAdminRecord(document: WithId<PortfolioProjectDocument>): AdminProject
 
   return {
     createdAt: document.createdAt.toISOString(),
+    homePlacement: normalizeProjectHomePlacement(document.slug, document.homePlacement),
     id: document._id.toHexString(),
     project,
     publicationStatus: document.publicationStatus,
@@ -107,11 +117,29 @@ async function insertRevision(
     changedAt: new Date(),
     changedBy,
     content: document.content,
+    homePlacement: normalizeProjectHomePlacement(document.slug, document.homePlacement),
     projectId: document._id,
     publicationStatus: document.publicationStatus,
     slug: document.slug,
     sortOrder: document.sortOrder,
   }, { session });
+}
+
+function publicProjectsFromDocuments(documents: readonly PortfolioProjectDocument[]) {
+  if (documents.length === 0) {
+    return staticProjects;
+  }
+
+  return applyPublicProjectOverlay(staticProjects, documents.map(toOverlayRow));
+}
+
+function homePlacementsFromDocuments(documents: readonly PortfolioProjectDocument[]) {
+  return new Map(
+    documents.map((document) => [
+      document.slug,
+      normalizeProjectHomePlacement(document.slug, document.homePlacement),
+    ]),
+  );
 }
 
 export async function getPublicProjects(): Promise<Project[]> {
@@ -122,13 +150,27 @@ export async function getPublicProjects(): Promise<Project[]> {
       .sort({ sortOrder: 1, updatedAt: -1 })
       .toArray();
 
-    if (documents.length === 0) {
-      return staticProjects;
-    }
-
-    return applyPublicProjectOverlay(staticProjects, documents.map(toOverlayRow));
+    return publicProjectsFromDocuments(documents);
   } catch {
     return staticProjects;
+  }
+}
+
+export async function getHomeProjectCollections(): Promise<HomeProjectCollections> {
+  try {
+    const { portfolioProjects } = await getMongoCollections();
+    const documents = await portfolioProjects
+      .find({})
+      .sort({ sortOrder: 1, updatedAt: -1 })
+      .toArray();
+    const projects = publicProjectsFromDocuments(documents);
+
+    return selectHomeProjectCollections(
+      projects,
+      homePlacementsFromDocuments(documents),
+    );
+  } catch {
+    return selectHomeProjectCollections(staticProjects);
   }
 }
 
@@ -201,6 +243,7 @@ export async function createAdminProject(input: AdminProjectMutation, updatedBy:
       const document: PortfolioProjectDocument = {
         content,
         createdAt: now,
+        homePlacement: defaultProjectHomePlacement(input.project.slug),
         publicationStatus: input.publicationStatus,
         publishedAt: input.publicationStatus === "published" ? now : null,
         slug: input.project.slug,
@@ -303,6 +346,60 @@ export async function updateAdminProject(input: AdminProjectMutation, updatedBy:
   return record;
 }
 
+export async function updateAdminProjectHomePlacement(
+  slug: string,
+  placement: ProjectHomePlacement,
+  updatedBy: string,
+) {
+  const client = await getMongoClient();
+  const { databaseName } = readMongoConfig();
+  const collections = getMongoCollectionsFromDatabase(client.db(databaseName));
+  const session = client.startSession();
+  let updated: WithId<PortfolioProjectDocument> | null = null;
+
+  try {
+    await session.withTransaction(async () => {
+      const existing = await collections.portfolioProjects.findOne({ slug }, { session });
+
+      if (!existing) {
+        throw new ProjectNotFoundError();
+      }
+
+      await insertRevision(existing, "update", updatedBy, session);
+      const now = new Date();
+      const homePlacement = normalizeProjectHomePlacement(slug, placement);
+
+      await collections.portfolioProjects.updateOne(
+        { _id: existing._id },
+        {
+          $set: {
+            homePlacement,
+            updatedAt: now,
+            updatedBy,
+          },
+        },
+        { session },
+      );
+
+      updated = {
+        ...existing,
+        homePlacement,
+        updatedAt: now,
+        updatedBy,
+      };
+    });
+  } finally {
+    await session.endSession();
+  }
+
+  const record = updated ? toAdminRecord(updated) : null;
+  if (!record) {
+    throw new Error("A exibição na Home não passou na validação de leitura.");
+  }
+
+  return record;
+}
+
 export async function archiveAdminProject(slug: string, updatedBy: string) {
   const client = await getMongoClient();
   const { databaseName } = readMongoConfig();
@@ -360,6 +457,7 @@ export async function importStaticProjects(updatedBy: string) {
         const document: PortfolioProjectDocument = {
           content: project,
           createdAt: now,
+          homePlacement: defaultProjectHomePlacement(project.slug),
           publicationStatus: "published",
           publishedAt: now,
           slug: project.slug,
@@ -394,6 +492,7 @@ export async function getProjectRevisions(slug: string): Promise<ProjectRevision
       action: document.action,
       changedAt: document.changedAt.toISOString(),
       changedBy: document.changedBy,
+      homePlacement: normalizeProjectHomePlacement(document.slug, document.homePlacement),
       id: document._id.toHexString(),
       project,
       publicationStatus: document.publicationStatus,
