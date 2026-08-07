@@ -1,6 +1,8 @@
+import { career } from "./career.ts";
+
 export const homeCopy = {
   pt: {
-    available: "DISPONÍVEL PARA NOVOS DESAFIOS",
+    available: career.availability.pt.toUpperCase(),
     titleA: "Transformo ideias",
     titleBPrefix: "em",
     titleBHighlight: "produtos digitais",
@@ -42,7 +44,7 @@ export const homeCopy = {
     arcadeIntro: "Desafios técnicos curtos, jogáveis no navegador, com leaderboard ao vivo.",
     aboutEyebrow: "SOBRE",
     aboutTitle: "Construo produtos que funcionam de verdade.",
-    aboutText: "Sou desenvolvedor Full Stack Júnior focado em produtos web, automações, dados e IA aplicada.",
+    aboutText: career.homeAbout.pt,
     finalTitle: "Vamos construir algo útil?",
     finalSubtitle: "Se você tem uma ideia, um produto em andamento ou um problema que merece uma solução bem feita — vamos conversar.",
     allProjects: "Ver todos",
@@ -71,14 +73,10 @@ export const homeCopy = {
     arcadeLeaderboard: "Top jogadores",
     arcadeLive: "ao vivo",
     arcadeYou: "você?",
-    aboutStats: [
-      ["6", "Projetos apresentados"],
-      ["2024", "Atuação em desenvolvimento"],
-      ["PT/EN", "Portfólio bilíngue"],
-    ],
+    aboutStats: career.homeStats.pt,
   },
   en: {
-    available: "AVAILABLE FOR NEW CHALLENGES",
+    available: career.availability.en.toUpperCase(),
     titleA: "I turn ideas",
     titleBPrefix: "into",
     titleBHighlight: "digital products",
@@ -120,7 +118,7 @@ export const homeCopy = {
     arcadeIntro: "Short technical challenges, playable in the browser, with a live leaderboard.",
     aboutEyebrow: "ABOUT",
     aboutTitle: "I build products that actually work.",
-    aboutText: "I am a Junior Full Stack Developer focused on web products, automations, data and applied AI.",
+    aboutText: career.homeAbout.en,
     finalTitle: "Let’s build something useful?",
     finalSubtitle: "If you have an idea, a product in progress or a problem that deserves a well-built solution — let’s talk.",
     allProjects: "View all",
@@ -149,10 +147,6 @@ export const homeCopy = {
     arcadeLeaderboard: "Top players",
     arcadeLive: "live",
     arcadeYou: "you?",
-    aboutStats: [
-      ["6", "Projects presented"],
-      ["2024", "Development work since"],
-      ["PT/EN", "Bilingual portfolio"],
-    ],
+    aboutStats: career.homeStats.en,
   },
 } as const;
