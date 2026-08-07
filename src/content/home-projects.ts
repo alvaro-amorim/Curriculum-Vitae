@@ -1,6 +1,6 @@
 import type { Locale, LocalizedText, Project } from "@/types/portfolio";
 
-import { projects as staticProjects } from "./projects.ts";
+import { primaryProjectSlugs, projects as staticProjects } from "./project-catalog.ts";
 
 export type HomeProjectIconKey = "margem" | "comerc" | "gdash" | "sdr" | "arcade" | "portfolio-os";
 export type HomeProjectAccent = "blue-purple" | "amber-pink" | "emerald-teal" | "rose-indigo" | "violet-cyan" | "sky-purple";
@@ -20,17 +20,23 @@ export type HomeProject = {
 };
 
 type ProjectShowcaseOptions = {
-  slug: string;
+  slug: (typeof primaryProjectSlugs)[number];
   projectIconKey: HomeProjectIconKey;
   brandLabel: string;
   brandAccent: HomeProjectAccent;
 };
 
 const categoryLabels: Record<string, LocalizedText> = {
+  Atendimento: { pt: "Atendimento", en: "Customer service" },
+  Áudio: { pt: "Áudio", en: "Audio" },
+  E-commerce: { pt: "E-commerce", en: "E-commerce" },
+  "Editor visual": { pt: "Editor visual", en: "Visual editor" },
+  FoodTech: { pt: "FoodTech", en: "FoodTech" },
   IA: { pt: "IA", en: "AI" },
-  Institucional: { pt: "Institucional", en: "Institutional" },
-  Dados: { pt: "Dados", en: "Data" },
-  Métricas: { pt: "Métricas", en: "Metrics" },
+  "Local-first": { pt: "Local-first", en: "Local-first" },
+  Produto: { pt: "Produto", en: "Product" },
+  SaaS: { pt: "SaaS", en: "SaaS" },
+  CRM: { pt: "CRM", en: "CRM" },
 };
 
 function localizeCategory(category: string, locale: Locale) {
@@ -63,7 +69,7 @@ function createProjectShowcase(projectsBySlug: Map<string, Project>, options: Pr
     brandAccent: options.brandAccent,
     carouselStack: project.stack,
     caseHref: `/projetos/${project.slug}`,
-    liveHref: project.links.website,
+    liveHref: project.links.website || undefined,
     logo: project.visuals?.logo ?? null,
     logoAlt: project.visuals?.logoAlt ?? project.title,
   };
@@ -77,16 +83,16 @@ const projectShowcases: ProjectShowcaseOptions[] = [
     brandAccent: "blue-purple",
   },
   {
-    slug: "comerc-ias",
-    projectIconKey: "comerc",
-    brandLabel: "CI",
-    brandAccent: "violet-cyan",
+    slug: "fluxo",
+    projectIconKey: "gdash",
+    brandLabel: "FL",
+    brandAccent: "emerald-teal",
   },
   {
-    slug: "gdash-dashboard",
-    projectIconKey: "gdash",
-    brandLabel: "GD",
-    brandAccent: "emerald-teal",
+    slug: "glace-confeitaria",
+    projectIconKey: "comerc",
+    brandLabel: "GL",
+    brandAccent: "amber-pink",
   },
   {
     slug: "sdr-expert-crm",
@@ -94,44 +100,27 @@ const projectShowcases: ProjectShowcaseOptions[] = [
     brandLabel: "SDR",
     brandAccent: "rose-indigo",
   },
+  {
+    slug: "layerart-store",
+    projectIconKey: "comerc",
+    brandLabel: "LA",
+    brandAccent: "violet-cyan",
+  },
+  {
+    slug: "audio-emotion",
+    projectIconKey: "gdash",
+    brandLabel: "AE",
+    brandAccent: "sky-purple",
+  },
 ];
 
 export function createHomeProjects(publicProjects: readonly Project[] = staticProjects): HomeProject[] {
   const projectsBySlug = new Map(publicProjects.map((project) => [project.slug, project]));
-  const showcaseProjects = projectShowcases.flatMap((project) => {
+
+  return projectShowcases.flatMap((project) => {
     const showcase = createProjectShowcase(projectsBySlug, project);
     return showcase ? [showcase] : [];
   });
-
-  return [
-    ...showcaseProjects,
-    {
-      title: "Developer Arcade",
-      category: { pt: "Lab • Gamificação", en: "Lab • Gamification" },
-      description: {
-        pt: "Lab interativo de desafios técnicos com sessão anônima e ranking persistente.",
-        en: "Interactive technical challenge lab with anonymous sessions and persistent rankings.",
-      },
-      projectIconKey: "arcade",
-      brandLabel: "LAB",
-      brandAccent: "amber-pink",
-      carouselStack: ["Next.js", "React", "TypeScript", "Supabase", "Tailwind CSS"],
-      caseHref: "/lab",
-    },
-    {
-      title: "Portfolio OS",
-      category: { pt: "Portfólio • Produto", en: "Portfolio • Product" },
-      description: {
-        pt: "Portfólio modular com temas, conteúdo bilíngue, projetos e Developer Arcade.",
-        en: "Modular portfolio with themes, bilingual content, projects and Developer Arcade.",
-      },
-      projectIconKey: "portfolio-os",
-      brandLabel: "OS",
-      brandAccent: "sky-purple",
-      carouselStack: ["Next.js", "React", "TypeScript", "Tailwind CSS", "Supabase"],
-      caseHref: "/",
-    },
-  ];
 }
 
 export const homeProjects: HomeProject[] = createHomeProjects();
