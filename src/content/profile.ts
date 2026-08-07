@@ -1,16 +1,12 @@
 import type { ProfileLink } from "@/types/portfolio";
 
+import { career } from "./career.ts";
+
 export const profile = {
   fullName: "Álvaro Amorim de Oliveira Martins",
   shortName: "Álvaro Amorim",
-  role: {
-    pt: "Desenvolvedor Full Stack Júnior",
-    en: "Junior Full Stack Developer",
-  },
-  positioning: {
-    pt: "Aplicações Web • Produtos SaaS • Automações • Integrações com IA",
-    en: "Web Applications • SaaS Products • Automation • AI Integrations",
-  },
+  role: career.role,
+  positioning: career.positioning,
   location: "Juiz de Fora, MG",
   country: {
     pt: "Brasil",
@@ -31,7 +27,7 @@ export const profileLinks: ProfileLink[] = [
       pt: "Currículo Digital",
       en: "Digital resume",
     },
-    href: "https://curriculum-vitae-babr.vercel.app/",
+    href: profile.portfolio,
     display: "curriculum-vitae-babr.vercel.app",
     kind: "portfolio",
   },
@@ -40,7 +36,7 @@ export const profileLinks: ProfileLink[] = [
       pt: "GitHub",
       en: "GitHub",
     },
-    href: "https://github.com/alvaro-amorim",
+    href: profile.github,
     display: "github.com/alvaro-amorim",
     kind: "github",
   },
