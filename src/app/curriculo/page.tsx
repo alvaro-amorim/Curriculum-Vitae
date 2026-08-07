@@ -8,18 +8,22 @@ import { ProjectsPreview } from "@/components/resume/projects-preview";
 import { ResumeSummary } from "@/components/resume/resume-summary";
 import { SkillsSection } from "@/components/resume/skills-section";
 import styles from "@/components/resume/resume.module.css";
+import { career } from "@/content/career";
+import { profile } from "@/content/profile";
+
+const pageTitle = `Currículo — ${profile.shortName}`;
 
 export const metadata: Metadata = {
   title: {
-    absolute: "Currículo — Álvaro Amorim",
+    absolute: pageTitle,
   },
-  description: "Currículo de Álvaro Amorim, Desenvolvedor Full Stack Júnior, com perfil, contato, formação, experiência, habilidades, projetos e downloads em PDF/DOCX.",
+  description: career.seo.resumeDescription.pt,
   alternates: {
     canonical: "/curriculo",
   },
   openGraph: {
-    title: "Currículo — Álvaro Amorim",
-    description: "Resumo profissional, experiência, formação, habilidades e projetos de Álvaro Amorim, Desenvolvedor Full Stack Júnior.",
+    title: pageTitle,
+    description: career.seo.resumeOpenGraphDescription.pt,
     url: "/curriculo",
   },
 };
