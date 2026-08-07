@@ -133,7 +133,7 @@ function createProjectShowcase(project: Project): HomeProject {
       pt: projectCategory(project, "pt"),
       en: projectCategory(project, "en"),
     },
-    description: project.shortDescription,
+    description: project.carouselDescription ?? project.shortDescription,
     projectIconKey: presentation.projectIconKey,
     brandLabel: presentation.brandLabel,
     brandAccent: presentation.brandAccent,
