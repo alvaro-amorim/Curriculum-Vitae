@@ -61,6 +61,7 @@ export function ProjectsPreview({
 
     return links;
   });
+  const newTabLabel = locale === "pt" ? "abre em nova aba" : "opens in a new tab";
 
   return (
     <Card className={styles.resumeCard}>
@@ -91,12 +92,24 @@ export function ProjectsPreview({
                     {t.projectsPage.viewCase}
                   </Link>
                   {project.links.website ? (
-                    <a className={buttonClassName("secondary", "sm")} href={project.links.website} rel="noreferrer" target="_blank">
+                    <a
+                      aria-label={`${t.actions.open}: ${project.title[locale]} (${newTabLabel})`}
+                      className={buttonClassName("secondary", "sm")}
+                      href={project.links.website}
+                      rel="noopener noreferrer"
+                      target="_blank"
+                    >
                       {t.actions.open}
                     </a>
                   ) : null}
                   {project.links.repository ? (
-                    <a className={buttonClassName("ghost", "sm")} href={project.links.repository} rel="noreferrer" target="_blank">
+                    <a
+                      aria-label={`${t.caseStudy.viewRepository}: ${project.title[locale]} (${newTabLabel})`}
+                      className={buttonClassName("ghost", "sm")}
+                      href={project.links.repository}
+                      rel="noopener noreferrer"
+                      target="_blank"
+                    >
                       {t.caseStudy.viewRepository}
                     </a>
                   ) : null}
@@ -125,7 +138,13 @@ export function ProjectsPreview({
             ].map((link) => (
               <li className="flex flex-wrap gap-2" key={link.href}>
                 <span className="text-[var(--text)]">{link.label}:</span>
-                <a className="break-all underline-offset-4 hover:text-[var(--text)] hover:underline" href={link.href} rel="noreferrer" target="_blank">
+                <a
+                  aria-label={`${link.label}: ${link.display} (${newTabLabel})`}
+                  className="break-all underline-offset-4 hover:text-[var(--text)] hover:underline"
+                  href={link.href}
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
                   {link.display}
                 </a>
               </li>
