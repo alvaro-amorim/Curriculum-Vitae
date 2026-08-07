@@ -1,4 +1,3 @@
-import { projects } from "@/content/projects";
 import { ARCADE_GAME_IDS } from "@/lib/arcade/constants";
 import { getMongoCollections } from "@/lib/mongodb/collections";
 
@@ -24,7 +23,7 @@ export async function getAdminDashboardMetrics(): Promise<AdminDashboardMetrics>
       arcadeGames: ARCADE_GAME_IDS.length,
       databaseAvailable: true,
       projectDatabaseAvailable: true,
-      projects: projectCount > 0 ? projectCount : projects.length,
+      projects: projectCount,
       scores,
       sessions,
     };
@@ -33,7 +32,7 @@ export async function getAdminDashboardMetrics(): Promise<AdminDashboardMetrics>
       arcadeGames: ARCADE_GAME_IDS.length,
       databaseAvailable: false,
       projectDatabaseAvailable: false,
-      projects: projects.length,
+      projects: 0,
       scores: null,
       sessions: null,
     };
