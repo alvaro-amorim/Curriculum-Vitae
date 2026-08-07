@@ -99,6 +99,13 @@ export const ProjectContentSchema = z.object({
   whatItShows: LocalizedLongTextSchema,
 }).strict();
 
+export const ProjectHomePlacementSchema = z.object({
+  carouselOrder: z.coerce.number().int().min(0).max(10_000),
+  homeOrder: z.coerce.number().int().min(0).max(10_000),
+  showInCarousel: z.boolean(),
+  showInHome: z.boolean(),
+}).strict();
+
 export const AdminProjectMutationSchema = z.object({
   mediaAssets: ProjectMediaSelectionsSchema.optional(),
   project: ProjectContentSchema,
@@ -108,3 +115,4 @@ export const AdminProjectMutationSchema = z.object({
 
 export type AdminProjectMutation = z.infer<typeof AdminProjectMutationSchema>;
 export type ProjectContent = z.infer<typeof ProjectContentSchema>;
+export type ProjectHomePlacementMutation = z.infer<typeof ProjectHomePlacementSchema>;
