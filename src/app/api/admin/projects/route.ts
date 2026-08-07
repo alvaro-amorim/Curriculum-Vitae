@@ -52,6 +52,10 @@ export async function POST(request: Request) {
   try {
     const project = await createAdminProject(parsed.data, auth.user.email);
     revalidatePath("/");
+    revalidatePath("/admin");
+    revalidatePath("/admin/projects");
+    revalidatePath(`/admin/projects/${project.project.slug}`);
+    revalidatePath("/curriculo");
     revalidatePath("/projetos");
     revalidatePath(`/projetos/${project.project.slug}`);
     revalidatePath("/sitemap.xml");
