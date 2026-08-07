@@ -89,7 +89,7 @@ export type ExperienceItem = {
 export type EducationItem = {
   title: LocalizedText;
   institution: LocalizedText;
-  period: string;
+  period: LocalizedText;
 };
 
 export type CertificationGroup = {

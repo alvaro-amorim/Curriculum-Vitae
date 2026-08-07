@@ -21,7 +21,7 @@ export function EducationSection() {
                 <h3 className={styles.itemTitle}>{item.title[locale]}</h3>
                 <p className={styles.itemMeta}>{item.institution[locale]}</p>
               </div>
-              <Badge>{item.period}</Badge>
+              <Badge>{item.period[locale]}</Badge>
             </div>
           </div>
         ))}

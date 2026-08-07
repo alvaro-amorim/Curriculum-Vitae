@@ -4,8 +4,8 @@ export const profile = {
   fullName: "Álvaro Amorim de Oliveira Martins",
   shortName: "Álvaro Amorim",
   role: {
-    pt: "Desenvolvedor Full Stack",
-    en: "Full Stack Developer",
+    pt: "Desenvolvedor Full Stack Júnior",
+    en: "Junior Full Stack Developer",
   },
   positioning: {
     pt: "Aplicações Web • Produtos SaaS • Automações • Integrações com IA",

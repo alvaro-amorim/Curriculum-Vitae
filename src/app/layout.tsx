@@ -21,25 +21,25 @@ const geistMono = Geist_Mono({
 });
 
 const defaultDescription =
-  "Álvaro Amorim — Desenvolvedor Full Stack focado em aplicações web, SaaS, automações e integrações com IA.";
+  "Álvaro Amorim — Desenvolvedor Full Stack Júnior focado em aplicações web, SaaS, automações e integrações com IA.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   applicationName: APP_NAME,
   title: {
-    default: "Álvaro Amorim — Desenvolvedor Full Stack",
+    default: "Álvaro Amorim — Desenvolvedor Full Stack Júnior",
     template: "%s | Álvaro Amorim",
   },
   description: defaultDescription,
   authors: [{ name: profile.shortName, url: SITE_URL }],
   creator: profile.shortName,
   publisher: profile.shortName,
-  keywords: ["Álvaro Amorim", "Desenvolvedor Full Stack", "Next.js", "React", "TypeScript", "SaaS", "IA", "Portfólio"],
+  keywords: ["Álvaro Amorim", "Desenvolvedor Full Stack Júnior", "Next.js", "React", "TypeScript", "SaaS", "IA", "Portfólio"],
   alternates: {
     canonical: "/",
   },
   openGraph: {
-    title: "Álvaro Amorim — Desenvolvedor Full Stack",
+    title: "Álvaro Amorim — Desenvolvedor Full Stack Júnior",
     description: defaultDescription,
     siteName: APP_NAME,
     type: "website",
@@ -48,7 +48,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary",
-    title: "Álvaro Amorim — Desenvolvedor Full Stack",
+    title: "Álvaro Amorim — Desenvolvedor Full Stack Júnior",
     description: defaultDescription,
   },
 };
