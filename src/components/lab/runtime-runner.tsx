@@ -51,6 +51,14 @@ type RuntimeRunnerProps = {
 
 type StyleVars = CSSProperties & Record<`--${string}`, string | number>;
 
+type RunnerContactGeometry = {
+  heightScale: number;
+  hitLeft: number;
+  hitRight: number;
+  nearLeft: number;
+  nearRight: number;
+};
+
 const BEST_SCORE_KEY = "alvaro-dev-runtime-runner-best-v1";
 const GROUND_EPSILON = 0.08;
 const JUMP_BUFFER_MS = 145;
@@ -65,6 +73,23 @@ const REDUCED_RUNNER_GRAVITY = 2.28;
 const MOBILE_QUERY = "(max-width: 640px)";
 const TAP_DISTANCE = 14;
 const SWIPE_THRESHOLD = 34;
+const COLLISION_EDGE_TOLERANCE = 0.18;
+
+const DESKTOP_CONTACT_GEOMETRY: RunnerContactGeometry = {
+  heightScale: 0.82,
+  hitLeft: 13.15,
+  hitRight: 16.55,
+  nearLeft: 11.7,
+  nearRight: 18.2,
+};
+
+const MOBILE_CONTACT_GEOMETRY: RunnerContactGeometry = {
+  heightScale: 0.55,
+  hitLeft: 11.1,
+  hitRight: 17.3,
+  nearLeft: 9.4,
+  nearRight: 19.2,
+};
 
 const obstacleConfigs: Omit<Obstacle, "id" | "x">[] = [
   { code: "ERR", label: "BUG", tone: "bug", width: 10, hitHeight: 0.22 },
@@ -271,6 +296,19 @@ function runnerJumpVelocity(mobile: boolean, reduced: boolean) {
 function runnerGravity(mobile: boolean, reduced: boolean) {
   if (reduced) return REDUCED_RUNNER_GRAVITY;
   return mobile ? MOBILE_RUNNER_GRAVITY : RUNNER_GRAVITY;
+}
+
+function runnerContactGeometry(mobile: boolean) {
+  return mobile ? MOBILE_CONTACT_GEOMETRY : DESKTOP_CONTACT_GEOMETRY;
+}
+
+function overlapsHorizontal(
+  obstacle: Obstacle,
+  left: number,
+  right: number,
+  tolerance = 0,
+) {
+  return obstacle.x < right - tolerance && obstacle.x + obstacle.width > left + tolerance;
 }
 
 function formatTime(seconds: number) {
@@ -513,11 +551,15 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
         spawnIn = runtimeSpawnDelay(elapsed, mobilePlayfield, reducedMotion);
       }
 
+      const contact = runnerContactGeometry(mobilePlayfield);
       const collision = obstacles.some((obstacle) => {
-        const hitsRunnerX = mobilePlayfield
-          ? obstacle.x < 15.7 && obstacle.x + obstacle.width > 12.2
-          : obstacle.x < 18.1 && obstacle.x + obstacle.width > 13.5;
-        const collisionHeight = obstacle.hitHeight * (mobilePlayfield ? 0.6 : 0.88);
+        const hitsRunnerX = overlapsHorizontal(
+          obstacle,
+          contact.hitLeft,
+          contact.hitRight,
+          COLLISION_EDGE_TOLERANCE,
+        );
+        const collisionHeight = obstacle.hitHeight * contact.heightScale;
         return elapsed > 1 && hitsRunnerX && runnerY < collisionHeight;
       });
 
@@ -526,11 +568,9 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
         for (const obstacle of obstacles) {
           if (nearMissedObstacleIdsRef.current.has(obstacle.id)) continue;
 
-          const hitsNearWindow = mobilePlayfield
-            ? obstacle.x < 21.5 && obstacle.x + obstacle.width > 10.5
-            : obstacle.x < 23.5 && obstacle.x + obstacle.width > 11;
-          const collisionHeight = obstacle.hitHeight * (mobilePlayfield ? 0.6 : 0.88);
-          const closeHeight = obstacle.hitHeight + (mobilePlayfield ? 0.2 : 0.22);
+          const hitsNearWindow = overlapsHorizontal(obstacle, contact.nearLeft, contact.nearRight);
+          const collisionHeight = obstacle.hitHeight * contact.heightScale;
+          const closeHeight = collisionHeight + (mobilePlayfield ? 0.18 : 0.2);
           const isNearMiss = elapsed > 1.1 && hitsNearWindow && runnerY >= collisionHeight && runnerY < closeHeight;
 
           if (isNearMiss) {
@@ -577,12 +617,13 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
     return () => window.cancelAnimationFrame(animationFrame);
   }, [commitFrame, finishRun, mobilePlayfield, reducedMotion, status, t.stage, t.stages]);
 
+  const contact = runnerContactGeometry(mobilePlayfield);
   const stageProgress = useMemo(() => runtimeStageProgress(frame.elapsed), [frame.elapsed]);
   const currentBest = Math.max(bestScore, frame.runScore);
   const isNewRecord = status === "gameOver" && frame.runScore > 0 && frame.runScore >= bestScore;
   const isDanger = useMemo(
-    () => status === "running" && frame.obstacles.some((obstacle) => obstacle.x < 32 && obstacle.x + obstacle.width > 9),
-    [frame.obstacles, status],
+    () => status === "running" && frame.obstacles.some((obstacle) => overlapsHorizontal(obstacle, contact.nearLeft, contact.nearRight)),
+    [contact.nearLeft, contact.nearRight, frame.obstacles, status],
   );
   const pulseText = frame.pulseKind === "near"
     ? t.pulseNear
@@ -690,7 +731,7 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
             <span
               aria-hidden="true"
               className={styles.obstacle}
-              data-near={obstacle.x < 31 && obstacle.x > 10 ? "true" : "false"}
+              data-near={overlapsHorizontal(obstacle, contact.nearLeft, contact.nearRight) ? "true" : "false"}
               key={obstacle.id}
               style={{
                 "--obstacle-color": obstacleColors[obstacle.tone],
