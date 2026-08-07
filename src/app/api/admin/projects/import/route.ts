@@ -69,6 +69,7 @@ export async function POST(request: Request) {
       }
 
       return apiSuccess({
+        imported: result.synced,
         preview: result.preview,
         synced: result.synced,
       }, {
