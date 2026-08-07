@@ -1,5 +1,5 @@
-import { primaryProjectSlugs } from "@/content/project-catalog";
-import type { Project } from "@/types/portfolio";
+import { primaryProjectSlugs } from "../../content/project-catalog.ts";
+import type { Project } from "../../types/portfolio.ts";
 
 export type ProjectHomePlacement = {
   carouselOrder: number;
