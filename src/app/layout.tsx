@@ -35,7 +35,7 @@ export const metadata: Metadata = {
   authors: [{ name: profile.shortName, url: SITE_URL }],
   creator: profile.shortName,
   publisher: profile.shortName,
-  keywords: career.seo.keywords,
+  keywords: [...career.seo.keywords],
   alternates: {
     canonical: "/",
   },
