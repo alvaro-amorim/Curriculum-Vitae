@@ -4,7 +4,11 @@ import type { FormEvent } from "react";
 import { useState } from "react";
 
 import type { ProjectCollectionId } from "@/lib/projects/project-collection";
-import type { ProjectHomePlacement } from "@/lib/projects/home-placement";
+import {
+  CAROUSEL_DESCRIPTION_MAX_LENGTH,
+  type ProjectHomePlacement,
+} from "@/lib/projects/home-placement";
+import type { LocalizedText } from "@/types/portfolio";
 
 import styles from "./admin-projects.module.css";
 
@@ -16,6 +20,7 @@ type ApiResponse = {
 };
 
 type AdminProjectHomePlacementProps = {
+  fallbackDescription: LocalizedText;
   initialCollection: ProjectCollectionId;
   initialPlacement: ProjectHomePlacement;
   publicationStatus: "draft" | "published" | "archived";
@@ -26,7 +31,12 @@ function numberValue(form: FormData, name: string) {
   return Number(String(form.get(name) ?? "0"));
 }
 
+function stringValue(form: FormData, name: string) {
+  return String(form.get(name) ?? "").trim();
+}
+
 export function AdminProjectHomePlacement({
+  fallbackDescription,
   initialCollection,
   initialPlacement,
   publicationStatus,
@@ -35,11 +45,21 @@ export function AdminProjectHomePlacement({
   const [pending, setPending] = useState(false);
   const [message, setMessage] = useState("");
   const [tone, setTone] = useState<"error" | "success">("success");
+  const [carouselDescriptionPt, setCarouselDescriptionPt] = useState(
+    initialPlacement.carouselDescription?.pt ?? "",
+  );
+  const [carouselDescriptionEn, setCarouselDescriptionEn] = useState(
+    initialPlacement.carouselDescription?.en ?? "",
+  );
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
     const payload = {
+      carouselDescription: {
+        en: stringValue(form, "carouselDescriptionEn"),
+        pt: stringValue(form, "carouselDescriptionPt"),
+      },
       carouselOrder: numberValue(form, "carouselOrder"),
       collection: String(form.get("collection") ?? "secondary") as ProjectCollectionId,
       homeOrder: numberValue(form, "homeOrder"),
@@ -67,7 +87,7 @@ export function AdminProjectHomePlacement({
       }
 
       setTone("success");
-      setMessage("Coleção e exibição pública atualizadas com sucesso.");
+      setMessage("Coleção, carrossel e exibição pública atualizados com sucesso.");
     } catch {
       setTone("error");
       setMessage("Não foi possível conectar ao endpoint de apresentação.");
@@ -145,7 +165,39 @@ export function AdminProjectHomePlacement({
               type="number"
             />
           </label>
+
+          <label className={styles.field}>
+            Resumo do carrossel PT
+            <textarea
+              maxLength={CAROUSEL_DESCRIPTION_MAX_LENGTH}
+              name="carouselDescriptionPt"
+              onChange={(event) => setCarouselDescriptionPt(event.currentTarget.value)}
+              placeholder={fallbackDescription.pt}
+              value={carouselDescriptionPt}
+            />
+            <span style={{ justifySelf: "end", opacity: 0.72 }}>
+              {carouselDescriptionPt.length}/{CAROUSEL_DESCRIPTION_MAX_LENGTH}
+            </span>
+          </label>
+
+          <label className={styles.field}>
+            Carousel summary EN
+            <textarea
+              maxLength={CAROUSEL_DESCRIPTION_MAX_LENGTH}
+              name="carouselDescriptionEn"
+              onChange={(event) => setCarouselDescriptionEn(event.currentTarget.value)}
+              placeholder={fallbackDescription.en}
+              value={carouselDescriptionEn}
+            />
+            <span style={{ justifySelf: "end", opacity: 0.72 }}>
+              {carouselDescriptionEn.length}/{CAROUSEL_DESCRIPTION_MAX_LENGTH}
+            </span>
+          </label>
         </div>
+
+        <p>
+          O resumo do carrossel é opcional. Se os dois campos ficarem vazios, a Home usa uma versão compactada automaticamente da descrição curta.
+        </p>
 
         <div className={styles.headerActions}>
           <button className={styles.primaryButton} disabled={pending} type="submit">
