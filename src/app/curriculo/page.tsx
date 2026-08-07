@@ -13,13 +13,13 @@ export const metadata: Metadata = {
   title: {
     absolute: "Currículo — Álvaro Amorim",
   },
-  description: "Currículo objetivo de Álvaro Amorim com perfil, contato, formação, experiência, habilidades, projetos e downloads em PDF/DOCX.",
+  description: "Currículo de Álvaro Amorim, Desenvolvedor Full Stack Júnior, com perfil, contato, formação, experiência, habilidades, projetos e downloads em PDF/DOCX.",
   alternates: {
     canonical: "/curriculo",
   },
   openGraph: {
     title: "Currículo — Álvaro Amorim",
-    description: "Resumo profissional, experiência, formação, habilidades e projetos de Álvaro Amorim.",
+    description: "Resumo profissional, experiência, formação, habilidades e projetos de Álvaro Amorim, Desenvolvedor Full Stack Júnior.",
     url: "/curriculo",
   },
 };
