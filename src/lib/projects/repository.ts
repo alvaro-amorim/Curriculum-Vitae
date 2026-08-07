@@ -1,5 +1,6 @@
 import type { ClientSession, WithId } from "mongodb";
 
+import { deleteCloudinaryProjectMedia } from "@/lib/media/cloudinary";
 import { getMongoClient } from "@/lib/mongodb/client";
 import {
   getMongoCollections,
@@ -473,6 +474,61 @@ export async function archiveAdminProject(slug: string, updatedBy: string) {
   } finally {
     await session.endSession();
   }
+}
+
+export async function deleteAdminProjectPermanently(slug: string) {
+  const client = await getMongoClient();
+  const { databaseName } = readMongoConfig();
+  const collections = getMongoCollectionsFromDatabase(client.db(databaseName));
+  const existing = await collections.portfolioProjects.findOne({ slug });
+
+  if (!existing) {
+    throw new ProjectNotFoundError();
+  }
+
+  const activeMediaAssets = await collections.projectMediaAssets
+    .find({
+      deletedAt: { $exists: false },
+      projectSlug: slug,
+    })
+    .toArray();
+
+  for (const asset of activeMediaAssets) {
+    await deleteCloudinaryProjectMedia(asset.publicId, asset.resourceType);
+  }
+
+  const session = client.startSession();
+
+  try {
+    await session.withTransaction(async () => {
+      const current = await collections.portfolioProjects.findOne({ slug }, { session });
+
+      if (!current) {
+        throw new ProjectNotFoundError();
+      }
+
+      await Promise.all([
+        collections.portfolioProjectRevisions.deleteMany({ slug }, { session }),
+        collections.projectMediaAssets.deleteMany({ projectSlug: slug }, { session }),
+      ]);
+
+      const result = await collections.portfolioProjects.deleteOne(
+        { _id: current._id },
+        { session },
+      );
+
+      if (result.deletedCount !== 1) {
+        throw new Error("O MongoDB não confirmou a exclusão do projeto.");
+      }
+    });
+  } finally {
+    await session.endSession();
+  }
+
+  return {
+    deletedMediaAssets: activeMediaAssets.length,
+    slug,
+  };
 }
 
 export async function importStaticProjects() {
