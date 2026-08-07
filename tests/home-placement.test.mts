@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { primaryProjectSlugs, projects } from "../src/content/project-catalog.ts";
+import { projects } from "../src/content/project-catalog.ts";
 import {
   defaultProjectHomePlacement,
   normalizeProjectHomePlacement,
@@ -9,57 +9,58 @@ import {
   type ProjectHomePlacement,
 } from "../src/lib/projects/home-placement.ts";
 
-test("curated primary projects remain the safe default for both home surfaces", () => {
-  const collections = selectHomeProjectCollections(projects);
+test("projects remain hidden when the database has no featured or placement decision", () => {
+  const databaseProjects = projects.slice(0, 3).map((project) => ({
+    ...project,
+    featured: false,
+  }));
+  const collections = selectHomeProjectCollections(databaseProjects);
 
-  assert.deepEqual(
-    collections.homeProjects.map((project) => project.slug),
-    [...primaryProjectSlugs],
-  );
-  assert.deepEqual(
-    collections.carouselProjects.map((project) => project.slug),
-    [...primaryProjectSlugs],
-  );
+  assert.deepEqual(collections.homeProjects, []);
+  assert.deepEqual(collections.carouselProjects, []);
 });
 
-test("home grid and carousel use independent visibility and order", () => {
+test("home grid and carousel use independent database visibility and order", () => {
+  const databaseProjects = projects.slice(0, 3).map((project) => ({
+    ...project,
+    featured: false,
+  }));
+  const [first, second, third] = databaseProjects;
   const placements = new Map<string, ProjectHomePlacement>([
-    ["margem-app", {
+    [first.slug, {
       carouselOrder: 30,
       homeOrder: 20,
       showInCarousel: false,
       showInHome: true,
     }],
-    ["fluxo", {
+    [second.slug, {
       carouselOrder: 10,
       homeOrder: 40,
       showInCarousel: true,
       showInHome: false,
     }],
-    ["robet", {
+    [third.slug, {
       carouselOrder: 0,
       homeOrder: 0,
       showInCarousel: true,
       showInHome: true,
     }],
   ]);
-  const collections = selectHomeProjectCollections(projects, placements);
+  const collections = selectHomeProjectCollections(databaseProjects, placements);
 
-  assert.equal(collections.homeProjects[0]?.slug, "robet");
-  assert.equal(collections.homeProjects.some((project) => project.slug === "margem-app"), true);
-  assert.equal(collections.homeProjects.some((project) => project.slug === "fluxo"), false);
-  assert.equal(collections.carouselProjects[0]?.slug, "robet");
-  assert.equal(collections.carouselProjects.some((project) => project.slug === "fluxo"), true);
-  assert.equal(collections.carouselProjects.some((project) => project.slug === "margem-app"), false);
+  assert.deepEqual(collections.homeProjects.map((project) => project.slug), [third.slug, first.slug]);
+  assert.deepEqual(collections.carouselProjects.map((project) => project.slug), [third.slug, second.slug]);
 });
 
 test("legacy and invalid placement values normalize without a migration", () => {
+  const featuredFallback = defaultProjectHomePlacement(true, 30);
+
   assert.deepEqual(
-    normalizeProjectHomePlacement("margem-app", undefined),
-    defaultProjectHomePlacement("margem-app"),
+    normalizeProjectHomePlacement(undefined, featuredFallback),
+    featuredFallback,
   );
   assert.deepEqual(
-    normalizeProjectHomePlacement("novo-projeto", {
+    normalizeProjectHomePlacement({
       carouselOrder: -20,
       homeOrder: Number.NaN,
       showInCarousel: true,
