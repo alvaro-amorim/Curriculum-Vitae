@@ -1,5 +1,6 @@
 import type { Collection, Db, ObjectId } from "mongodb";
 
+import type { ProjectHomePlacement } from "@/lib/projects/home-placement";
 import type { LabGameId, Project } from "@/types/portfolio";
 
 import { getMongoDatabase } from "./client.ts";
@@ -87,6 +88,7 @@ export type PortfolioProjectDocument = {
   _id?: ObjectId;
   content: Project;
   createdAt: Date;
+  homePlacement?: ProjectHomePlacement;
   publicationStatus: PortfolioProjectPublicationStatus;
   publishedAt: Date | null;
   slug: string;
@@ -101,6 +103,7 @@ export type PortfolioProjectRevisionDocument = {
   changedAt: Date;
   changedBy: string | null;
   content: Project;
+  homePlacement?: ProjectHomePlacement;
   projectId: ObjectId;
   publicationStatus: PortfolioProjectPublicationStatus;
   slug: string;
