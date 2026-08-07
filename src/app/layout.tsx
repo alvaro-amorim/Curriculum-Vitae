@@ -8,6 +8,7 @@ import { profile } from "@/content/profile";
 import { APP_NAME, SITE_URL } from "@/lib/constants";
 
 import "./globals.css";
+import "./carousel-layout-guard.css";
 
 const geistSans = Geist({
   subsets: ["latin"],
