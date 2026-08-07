@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 
 import { DeveloperLabV2 } from "@/components/lab/developer-lab-v2";
 
+import styles from "./lab-page.module.css";
+
 export const metadata: Metadata = {
   title: {
     absolute: "Developer Arcade — Álvaro Amorim",
@@ -20,5 +22,9 @@ export const metadata: Metadata = {
 };
 
 export default function LabPage() {
-  return <DeveloperLabV2 />;
+  return (
+    <div className={styles.page}>
+      <DeveloperLabV2 />
+    </div>
+  );
 }
