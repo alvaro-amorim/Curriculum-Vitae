@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { AdminProjectEditor } from "@/components/admin/admin-project-editor";
+import { AdminProjectHomePlacement } from "@/components/admin/admin-project-home-placement";
 import styles from "@/components/admin/admin-projects.module.css";
 import { getProjectMediaAssets } from "@/lib/media/repository";
 import { getAdminProjectBySlug, getProjectRevisions } from "@/lib/projects/repository";
@@ -39,9 +40,16 @@ export default async function EditAdminProjectPage({ params }: PageProps) {
         <div>
           <span className={styles.eyebrow}>ADMIN / EDITAR PROJETO</span>
           <h1>{record.project.title.pt}</h1>
-          <p>Edite o conteúdo bilíngue e controle quando esta versão substitui o fallback estático público.</p>
+          <p>Edite conteúdo, mídias, coleção, publicação e todos os locais em que o projeto aparece.</p>
         </div>
       </header>
+
+      <AdminProjectHomePlacement
+        initialCollection={record.collection}
+        initialPlacement={record.homePlacement}
+        publicationStatus={record.publicationStatus}
+        slug={record.project.slug}
+      />
 
       <AdminProjectEditor
         initialProject={record.project}

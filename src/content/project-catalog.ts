@@ -1,9 +1,10 @@
 import type { Locale, ProfileLink, Project } from "@/types/portfolio";
+import type { ProjectCollectionId } from "@/lib/projects/project-collection";
 
 import { additionalProjects } from "./additional-projects.ts";
 import { projects as originalProjects } from "./projects.ts";
 
-export type ProjectCollectionId = "primary" | "labs" | "secondary";
+export type { ProjectCollectionId } from "@/lib/projects/project-collection";
 
 export const primaryProjectSlugs = [
   "margem-app",
@@ -20,10 +21,11 @@ export const labProjectSlugs = [
   "gdash-dashboard",
   "checktask-explorer",
   "rivals-ai",
-  "robet",
 ] as const;
 
 export const secondaryProjectSlugs = ["comerc-ias"] as const;
+
+const excludedProjectSlugs = new Set(["robet"]);
 
 const projectCollectionBySlug = new Map<string, ProjectCollectionId>([
   ...primaryProjectSlugs.map((slug) => [slug, "primary"] as const),
@@ -83,7 +85,9 @@ export const projectCollections: Record<ProjectCollectionId, {
 const allProjectsBySlug = new Map<string, Project>();
 
 for (const project of [...originalProjects, ...additionalProjects]) {
-  allProjectsBySlug.set(project.slug, project);
+  if (!excludedProjectSlugs.has(project.slug)) {
+    allProjectsBySlug.set(project.slug, project);
+  }
 }
 
 function projectsForSlugs(slugs: readonly string[]) {
@@ -118,8 +122,9 @@ export function getProjectBySlug(slug: string) {
   return projects.find((project) => project.slug === slug);
 }
 
-export function getProjectCollectionId(slug: string): ProjectCollectionId {
-  return projectCollectionBySlug.get(slug) ?? "secondary";
+export function getProjectCollectionId(project: Project): ProjectCollectionId {
+  const configuredCollection = (project as Project & { collection?: ProjectCollectionId }).collection;
+  return configuredCollection ?? projectCollectionBySlug.get(project.slug) ?? "secondary";
 }
 
 export function groupProjectsByCollection(projectList: readonly Project[]) {
@@ -130,7 +135,7 @@ export function groupProjectsByCollection(projectList: readonly Project[]) {
   };
 
   for (const project of projectList) {
-    groups[getProjectCollectionId(project.slug)].push(project);
+    groups[getProjectCollectionId(project)].push(project);
   }
 
   return (["primary", "labs", "secondary"] as const).map((id) => ({

@@ -4,7 +4,7 @@ import test from "node:test";
 import { career } from "../src/content/career.ts";
 import { homeCopy } from "../src/content/home-copy.ts";
 import { createHomeProjects } from "../src/content/home-projects.ts";
-import { primaryProjectSlugs } from "../src/content/project-catalog.ts";
+import { primaryProjects } from "../src/content/project-catalog.ts";
 import { portfolioContent } from "../src/content/portfolio.ts";
 
 const { education, profile, projects, resumeSummary } = portfolioContent;
@@ -26,14 +26,14 @@ test("canonical registry keeps required professional data available", () => {
   assert.equal(new Set(projects.map((project) => project.slug)).size, projects.length);
 });
 
-test("home project showcases derive content from the curated project catalog", () => {
-  const showcases = createHomeProjects(projects);
+test("home project showcases derive content from the selected project catalog", () => {
+  const showcases = createHomeProjects(primaryProjects);
 
-  assert.equal(showcases.length, primaryProjectSlugs.length);
+  assert.equal(showcases.length, primaryProjects.length);
 
   for (const showcase of showcases) {
     const slug = showcase.caseHref.replace("/projetos/", "");
-    const source = projects.find((project) => project.slug === slug);
+    const source = primaryProjects.find((project) => project.slug === slug);
 
     assert.ok(source, `Missing project source for ${slug}`);
     assert.equal(showcase.title, source.title.pt);

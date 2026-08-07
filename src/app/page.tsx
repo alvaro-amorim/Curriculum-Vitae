@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 import { VisualFinalCandidate } from "@/components/visual-final-candidate/visual-final-candidate";
 import { createHomeProjects } from "@/content/home-projects";
-import { getPublicProjects } from "@/lib/projects/repository";
+import { getHomeProjectCollections } from "@/lib/projects/repository";
 
 export const dynamic = "force-dynamic";
 
@@ -23,6 +23,12 @@ export const metadata: Metadata = {
 };
 
 export default async function HomePage() {
-  const projects = await getPublicProjects();
-  return <VisualFinalCandidate projects={createHomeProjects(projects)} />;
+  const { carouselProjects, homeProjects } = await getHomeProjectCollections();
+
+  return (
+    <VisualFinalCandidate
+      carouselProjects={createHomeProjects(carouselProjects)}
+      featuredProjects={createHomeProjects(homeProjects)}
+    />
+  );
 }

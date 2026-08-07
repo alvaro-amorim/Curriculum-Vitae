@@ -10,8 +10,11 @@ import { SkillsSection } from "@/components/resume/skills-section";
 import styles from "@/components/resume/resume.module.css";
 import { career } from "@/content/career";
 import { profile } from "@/content/profile";
+import { getPublicProjects } from "@/lib/projects/repository";
 
 const pageTitle = `Currículo — ${profile.shortName}`;
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: {
@@ -28,7 +31,9 @@ export const metadata: Metadata = {
   },
 };
 
-export default function ResumePage() {
+export default async function ResumePage() {
+  const projects = await getPublicProjects();
+
   return (
     <main className={styles.resumePage}>
       <div className={styles.resumeHeroGrid}>
@@ -44,7 +49,7 @@ export default function ResumePage() {
       </div>
       <div className={styles.resumeStack}>
         <ExperienceSection />
-        <ProjectsPreview />
+        <ProjectsPreview projects={projects} />
       </div>
     </main>
   );

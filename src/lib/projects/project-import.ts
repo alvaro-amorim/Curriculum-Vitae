@@ -6,9 +6,12 @@ import {
   getMongoCollectionsFromDatabase,
   type MongoCollections,
   type PortfolioProjectDocument,
+  type PortfolioProjectPublicationStatus,
 } from "../mongodb/collections.ts";
 import { readMongoConfig } from "../mongodb/config.ts";
 import type { Project } from "../../types/portfolio.ts";
+import type { ProjectCollectionId } from "./project-collection.ts";
+import type { ProjectHomePlacement } from "./home-placement.ts";
 
 export const PROJECT_IMPORT_SCHEMA_VERSION = "1.0" as const;
 export const PROJECT_IMPORT_MAX_BYTES = 1024 * 1024;
@@ -28,7 +31,8 @@ Regras:
 - retorne somente JSON válido;
 - não inclua Markdown;
 - não inclua imagens ou mídias;
-- mantenha publicationStatus como draft.`;
+- defina coleção, publicação, Home e carrossel conscientemente;
+- o mesmo JSON pode criar projetos novos e atualizar projetos existentes.`;
 
 const EXECUTABLE_TEXT_PATTERN = /<\s*(?:script|iframe|object|embed|svg|link|meta|style)\b|javascript\s*:|on[a-z]+\s*=/i;
 const SlugSchema = z
@@ -80,17 +84,26 @@ const LocalizedListSchema = z.object({
   }
 });
 
+const ProjectHomePlacementImportSchema = z.object({
+  carouselOrder: z.number().int().safe().min(0).max(10_000),
+  homeOrder: z.number().int().safe().min(0).max(10_000),
+  showInCarousel: z.boolean(),
+  showInHome: z.boolean(),
+}).strict();
+
 export const ProjectJsonImportProjectSchema = z.object({
   category: z.array(ShortTextSchema).min(1).max(8),
+  collection: z.enum(["primary", "labs", "secondary"]),
   featured: z.boolean().default(false),
   fullDescription: LocalizedLongTextSchema,
   highlights: LocalizedListSchema,
+  homePlacement: ProjectHomePlacementImportSchema,
   links: z.object({
     repository: ImportUrlSchema,
     website: ImportUrlSchema,
   }).strict(),
   problem: LocalizedLongTextSchema,
-  publicationStatus: z.literal("draft"),
+  publicationStatus: z.enum(["draft", "published", "archived"]),
   shortDescription: LocalizedLongTextSchema,
   slug: SlugSchema,
   solution: LocalizedLongTextSchema,
@@ -117,6 +130,7 @@ export type ProjectJsonImportProject = z.infer<typeof ProjectJsonImportProjectSc
 export type ProjectJsonImportPayload = z.infer<typeof ProjectJsonImportPayloadSchema>;
 
 export type ProjectImportPreviewItem = {
+  action: "create" | "update";
   errors: string[];
   existing: boolean;
   importable: boolean;
@@ -124,8 +138,12 @@ export type ProjectImportPreviewItem = {
   rawSlug: string | null;
   summary: {
     categories: string[];
+    collection: ProjectCollectionId | null;
     featured: boolean;
+    publicationStatus: PortfolioProjectPublicationStatus | null;
     repository: string;
+    showInCarousel: boolean;
+    showInHome: boolean;
     slug: string;
     sortOrder: number | null;
     stack: string[];
@@ -137,12 +155,20 @@ export type ProjectImportPreviewItem = {
 };
 
 export type ProjectImportPreview = {
+  createCount: number;
   duplicateSlugs: string[];
   existingSlugs: string[];
   invalidCount: number;
   projects: ProjectImportPreviewItem[];
   schemaVersion: string | null;
+  updateCount: number;
   validCount: number;
+};
+
+export type ProjectSyncResultItem = {
+  action: "created" | "updated";
+  slug: string;
+  title: string;
 };
 
 type ProjectImportCollections = Pick<MongoCollections, "portfolioProjectRevisions" | "portfolioProjects">;
@@ -154,7 +180,14 @@ export const PROJECT_IMPORT_TEMPLATE: ProjectJsonImportPayload = {
       slug: "nome-do-projeto",
       publicationStatus: "draft",
       sortOrder: 60,
+      collection: "secondary",
       featured: false,
+      homePlacement: {
+        showInHome: false,
+        homeOrder: 1_000,
+        showInCarousel: false,
+        carouselOrder: 1_000,
+      },
       title: {
         pt: "Nome do projeto",
         en: "Project name",
@@ -283,11 +316,22 @@ function emptySummary(raw: unknown): ProjectImportPreviewItem["summary"] {
   const subtitle = record.subtitle && typeof record.subtitle === "object" ? record.subtitle as Record<string, unknown> : {};
   const status = record.status && typeof record.status === "object" ? record.status as Record<string, unknown> : {};
   const links = record.links && typeof record.links === "object" ? record.links as Record<string, unknown> : {};
+  const placement = record.homePlacement && typeof record.homePlacement === "object"
+    ? record.homePlacement as Record<string, unknown>
+    : {};
 
   return {
     categories: Array.isArray(record.category) ? record.category.filter((item): item is string => typeof item === "string") : [],
+    collection: record.collection === "primary" || record.collection === "labs" || record.collection === "secondary"
+      ? record.collection
+      : null,
     featured: typeof record.featured === "boolean" ? record.featured : false,
+    publicationStatus: record.publicationStatus === "draft" || record.publicationStatus === "published" || record.publicationStatus === "archived"
+      ? record.publicationStatus
+      : null,
     repository: typeof links.repository === "string" ? links.repository : "",
+    showInCarousel: placement.showInCarousel === true,
+    showInHome: placement.showInHome === true,
     slug: typeof record.slug === "string" ? record.slug : "",
     sortOrder: typeof record.sortOrder === "number" && Number.isSafeInteger(record.sortOrder) ? record.sortOrder : null,
     stack: Array.isArray(record.stack) ? record.stack.filter((item): item is string => typeof item === "string") : [],
@@ -309,10 +353,12 @@ export function buildProjectImportPreview(
 
   if (!topLevel.success) {
     return {
+      createCount: 0,
       duplicateSlugs: [],
       existingSlugs: [],
       invalidCount: 1,
       projects: [{
+        action: "create",
         errors: issuesToMessages(topLevel.error),
         existing: false,
         importable: false,
@@ -323,6 +369,7 @@ export function buildProjectImportPreview(
       schemaVersion: payload && typeof payload === "object" && "schemaVersion" in payload
         ? String((payload as { schemaVersion?: unknown }).schemaVersion)
         : null,
+      updateCount: 0,
       validCount: 0,
     };
   }
@@ -354,17 +401,16 @@ export function buildProjectImportPreview(
     }
 
     const existing = rawSlug ? existingSlugs.has(rawSlug) : false;
-
-    if (existing) {
-      errors.push("Já existe um projeto com este slug.");
-    }
-
     const project = parsed.success ? projectFromImport(parsed.data) : null;
     const summary = parsed.success
       ? {
           categories: parsed.data.category,
+          collection: parsed.data.collection,
           featured: parsed.data.featured,
+          publicationStatus: parsed.data.publicationStatus,
           repository: parsed.data.links.repository,
+          showInCarousel: parsed.data.homePlacement.showInCarousel,
+          showInHome: parsed.data.homePlacement.showInHome,
           slug: parsed.data.slug,
           sortOrder: parsed.data.sortOrder,
           stack: parsed.data.stack,
@@ -376,6 +422,7 @@ export function buildProjectImportPreview(
       : emptySummary(item);
 
     return {
+      action: existing ? "update" : "create",
       errors,
       existing,
       importable: errors.length === 0 && project !== null,
@@ -385,18 +432,21 @@ export function buildProjectImportPreview(
     };
   });
 
+  const validProjects = projects.filter((project) => project.importable);
   const previewExistingSlugs = projects
     .filter((project) => project.existing && project.rawSlug)
     .map((project) => project.rawSlug as string)
     .sort();
 
   return {
+    createCount: validProjects.filter((project) => !project.existing).length,
     duplicateSlugs,
     existingSlugs: previewExistingSlugs,
     invalidCount: projects.filter((project) => !project.importable).length,
     projects,
     schemaVersion: topLevel.data.schemaVersion,
-    validCount: projects.filter((project) => project.importable).length,
+    updateCount: validProjects.filter((project) => project.existing).length,
+    validCount: validProjects.length,
   };
 }
 
@@ -438,7 +488,46 @@ export async function previewProjectJsonImport(
   return buildProjectImportPreview(payload, existingSlugs);
 }
 
-export async function importProjectJsonDrafts(
+function publishedAtForSync(
+  status: PortfolioProjectPublicationStatus,
+  existing: PortfolioProjectDocument | null,
+  now: Date,
+) {
+  if (status !== "published") {
+    return null;
+  }
+
+  return existing?.publishedAt ?? now;
+}
+
+function preserveExistingVisuals(project: Project, existing: PortfolioProjectDocument | null) {
+  return existing?.content.visuals
+    ? { ...project, visuals: existing.content.visuals }
+    : project;
+}
+
+async function insertSyncRevision(
+  collections: ProjectImportCollections,
+  document: WithId<PortfolioProjectDocument>,
+  action: "create" | "update",
+  changedBy: string,
+  session?: ClientSession,
+) {
+  await collections.portfolioProjectRevisions.insertOne({
+    action,
+    changedAt: new Date(),
+    changedBy,
+    collection: document.collection,
+    content: document.content,
+    homePlacement: document.homePlacement,
+    projectId: document._id,
+    publicationStatus: document.publicationStatus,
+    slug: document.slug,
+    sortOrder: document.sortOrder,
+  }, { session });
+}
+
+export async function syncProjectJsonProjects(
   payload: unknown,
   updatedBy: string,
   options?: {
@@ -452,41 +541,65 @@ export async function importProjectJsonDrafts(
     return getMongoCollectionsFromDatabase(client!.db(databaseName));
   })();
   const preview = await previewProjectJsonImport(payload, { collections });
-  const importableProjects = preview.projects.flatMap((item) => item.importable && item.project ? [item.project] : []);
   const parsedPayload = ProjectJsonImportPayloadSchema.safeParse(payload);
-  const sourceProjects = parsedPayload.success
-    ? new Map(parsedPayload.data.projects.map((project) => [project.slug, project]))
-    : new Map<string, ProjectJsonImportProject>();
-  const imported: Array<{ slug: string; title: string }> = [];
+  const synced: ProjectSyncResultItem[] = [];
 
-  if (importableProjects.length === 0) {
+  if (!parsedPayload.success || preview.invalidCount > 0) {
     return {
-      imported,
       preview,
+      synced,
     };
   }
 
-  const insertAll = async (session?: ClientSession) => {
-    for (const project of importableProjects) {
-      const existing = await collections.portfolioProjects.findOne({ slug: project.slug }, { session });
-
-      if (existing) {
-        continue;
-      }
-
-      const sourceProject = sourceProjects.get(project.slug);
-
-      if (!sourceProject) {
-        continue;
-      }
-
+  const syncAll = async (session?: ClientSession) => {
+    for (const sourceProject of parsedPayload.data.projects) {
+      const existing = await collections.portfolioProjects.findOne({ slug: sourceProject.slug }, { session });
+      const project = preserveExistingVisuals(projectFromImport(sourceProject), existing);
       const now = new Date();
+      const homePlacement: ProjectHomePlacement = sourceProject.homePlacement;
+
+      if (existing?._id) {
+        await insertSyncRevision(
+          collections,
+          existing as WithId<PortfolioProjectDocument>,
+          "update",
+          updatedBy,
+          session,
+        );
+
+        await collections.portfolioProjects.updateOne(
+          { _id: existing._id },
+          {
+            $set: {
+              collection: sourceProject.collection,
+              content: project,
+              homePlacement,
+              publicationStatus: sourceProject.publicationStatus,
+              publishedAt: publishedAtForSync(sourceProject.publicationStatus, existing, now),
+              sortOrder: sourceProject.sortOrder,
+              updatedAt: now,
+              updatedBy,
+            },
+          },
+          { session },
+        );
+
+        synced.push({
+          action: "updated",
+          slug: sourceProject.slug,
+          title: sourceProject.title.pt,
+        });
+        continue;
+      }
+
       const document: PortfolioProjectDocument = {
+        collection: sourceProject.collection,
         content: project,
         createdAt: now,
-        publicationStatus: "draft",
-        publishedAt: null,
-        slug: project.slug,
+        homePlacement,
+        publicationStatus: sourceProject.publicationStatus,
+        publishedAt: publishedAtForSync(sourceProject.publicationStatus, null, now),
+        slug: sourceProject.slug,
         sortOrder: sourceProject.sortOrder,
         updatedAt: now,
         updatedBy,
@@ -497,37 +610,32 @@ export async function importProjectJsonDrafts(
         _id: result.insertedId,
       };
 
-      await collections.portfolioProjectRevisions.insertOne({
-        action: "create",
-        changedAt: now,
-        changedBy: updatedBy,
-        content: project,
-        projectId: createdDocument._id,
-        publicationStatus: "draft",
-        slug: project.slug,
-        sortOrder: sourceProject.sortOrder,
-      }, { session });
-      imported.push({
-        slug: project.slug,
-        title: project.title.pt,
+      await insertSyncRevision(collections, createdDocument, "create", updatedBy, session);
+      synced.push({
+        action: "created",
+        slug: sourceProject.slug,
+        title: sourceProject.title.pt,
       });
     }
   };
 
   if (options?.runInTransaction) {
-    await options.runInTransaction(insertAll);
+    await options.runInTransaction(syncAll);
   } else {
     const session = client!.startSession();
 
     try {
-      await session.withTransaction(() => insertAll(session));
+      await session.withTransaction(() => syncAll(session));
     } finally {
       await session.endSession();
     }
   }
 
   return {
-    imported,
     preview,
+    synced,
   };
 }
+
+/** @deprecated Use syncProjectJsonProjects. */
+export const importProjectJsonDrafts = syncProjectJsonProjects;

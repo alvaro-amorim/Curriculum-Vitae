@@ -3,7 +3,7 @@
 import type { PointerEvent } from "react";
 
 import { usePortfolioUi } from "@/components/layout/app-shell";
-import { groupProjectsByCollection } from "@/content/project-catalog";
+import { groupProjectsByCollection } from "@/lib/projects/project-groups";
 import type { Project } from "@/types/portfolio";
 
 import { ProjectGrid } from "./project-grid";
@@ -27,14 +27,14 @@ export function ProjectsIndex({ projects }: { projects: Project[] }) {
   const title = locale === "pt" ? "Projetos" : "Projects";
   const description =
     locale === "pt"
-      ? "Uma seleção organizada por profundidade de produto, uso real e objetivo técnico."
-      : "A selection organized by product depth, real-world use, and technical purpose.";
+      ? "Uma seleção organizada pelo painel administrativo, com status, escopo e evidências de cada case."
+      : "A selection organized through the Admin panel, with each case's status, scope, and evidence.";
   const countLabel = locale === "pt"
     ? `${primaryCount} principais + ${labCount} laboratórios`
     : `${primaryCount} featured + ${labCount} technical labs`;
   const note = locale === "pt"
-    ? "Cada case informa seu status, escopo e limites atuais."
-    : "Each case states its current status, scope, and limitations.";
+    ? "A publicação e a coleção de cada projeto vêm diretamente do MongoDB."
+    : "Each project's publication and collection come directly from MongoDB.";
 
   if (!featuredProject) {
     return (

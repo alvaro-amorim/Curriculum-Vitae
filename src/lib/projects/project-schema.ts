@@ -99,7 +99,21 @@ export const ProjectContentSchema = z.object({
   whatItShows: LocalizedLongTextSchema,
 }).strict();
 
+export const ProjectCollectionSchema = z.enum(["primary", "labs", "secondary"]);
+
+export const ProjectHomePlacementSchema = z.object({
+  carouselOrder: z.coerce.number().int().min(0).max(10_000),
+  homeOrder: z.coerce.number().int().min(0).max(10_000),
+  showInCarousel: z.boolean(),
+  showInHome: z.boolean(),
+}).strict();
+
+export const ProjectPresentationSchema = ProjectHomePlacementSchema.extend({
+  collection: ProjectCollectionSchema,
+}).strict();
+
 export const AdminProjectMutationSchema = z.object({
+  collection: ProjectCollectionSchema.optional(),
   mediaAssets: ProjectMediaSelectionsSchema.optional(),
   project: ProjectContentSchema,
   publicationStatus: z.enum(["draft", "published", "archived"]),
@@ -108,3 +122,5 @@ export const AdminProjectMutationSchema = z.object({
 
 export type AdminProjectMutation = z.infer<typeof AdminProjectMutationSchema>;
 export type ProjectContent = z.infer<typeof ProjectContentSchema>;
+export type ProjectHomePlacementMutation = z.infer<typeof ProjectHomePlacementSchema>;
+export type ProjectPresentationMutation = z.infer<typeof ProjectPresentationSchema>;

@@ -101,6 +101,18 @@ export const MONGODB_INDEX_SPECS = {
       key: { publicationStatus: 1, sortOrder: 1, updatedAt: -1 },
       name: "portfolio_projects_publication_order",
     },
+    {
+      key: { publicationStatus: 1, collection: 1, sortOrder: 1 },
+      name: "portfolio_projects_collection_order",
+    },
+    {
+      key: { publicationStatus: 1, "homePlacement.showInHome": 1, "homePlacement.homeOrder": 1 },
+      name: "portfolio_projects_home_order",
+    },
+    {
+      key: { publicationStatus: 1, "homePlacement.showInCarousel": 1, "homePlacement.carouselOrder": 1 },
+      name: "portfolio_projects_carousel_order",
+    },
   ],
   portfolioProjectRevisions: [
     {

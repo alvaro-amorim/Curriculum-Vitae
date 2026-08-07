@@ -28,14 +28,16 @@ export default async function AdminProjectsPage() {
       <header className={styles.pageHeader}>
         <div>
           <span className={styles.eyebrow}>ADMIN / PROJETOS</span>
-          <h1>Conteúdo editorial dos cases.</h1>
-          <p>Importe projetos via JSON, edite versões bilíngues e controle o que é publicado pelo MongoDB.</p>
+          <h1>Fonte única dos projetos.</h1>
+          <p>Todo projeto público, sua coleção, publicação, mídias, Home e carrossel são controlados exclusivamente pelo MongoDB.</p>
         </div>
       </header>
 
       <AdminProjectList
         databaseReady={databaseReady}
         projects={projects.map((record) => ({
+          collection: record.collection,
+          homePlacement: record.homePlacement,
           publicationStatus: record.publicationStatus,
           slug: record.project.slug,
           sortOrder: record.sortOrder,

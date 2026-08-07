@@ -19,8 +19,12 @@ type RouteContext = {
   }>;
 };
 
-function revalidatePublicProject(slug: string) {
+function revalidateProjectSurfaces(slug: string) {
   revalidatePath("/");
+  revalidatePath("/admin");
+  revalidatePath("/admin/projects");
+  revalidatePath(`/admin/projects/${slug}`);
+  revalidatePath("/curriculo");
   revalidatePath("/projetos");
   revalidatePath(`/projetos/${slug}`);
   revalidatePath("/sitemap.xml");
@@ -81,7 +85,7 @@ export async function PUT(request: Request, context: RouteContext) {
 
   try {
     const project = await updateAdminProject(parsed.data, auth.user.email);
-    revalidatePublicProject(slug);
+    revalidateProjectSurfaces(slug);
     return apiSuccess({ project });
   } catch (error) {
     if (error instanceof ProjectNotFoundError) {
@@ -103,7 +107,7 @@ export async function DELETE(request: Request, context: RouteContext) {
 
   try {
     await archiveAdminProject(slug, auth.user.email);
-    revalidatePublicProject(slug);
+    revalidateProjectSurfaces(slug);
     return apiSuccess({ archived: true, slug });
   } catch (error) {
     if (error instanceof ProjectNotFoundError) {

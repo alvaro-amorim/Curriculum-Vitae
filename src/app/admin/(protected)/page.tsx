@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import styles from "@/components/admin/admin.module.css";
-import { projects } from "@/content/projects";
 import { getAdminDashboardMetrics } from "@/lib/admin/dashboard";
+import { getAdminProjects } from "@/lib/projects/repository";
 
 export const metadata: Metadata = {
   title: "Admin Dashboard",
@@ -21,6 +21,10 @@ function formatMetric(value: number | null) {
 
 export default async function AdminDashboardPage() {
   const metrics = await getAdminDashboardMetrics();
+  const adminProjects = metrics.projectDatabaseAvailable
+    ? await getAdminProjects().catch(() => [])
+    : [];
+  const publishedProjects = adminProjects.filter((record) => record.publicationStatus === "published");
 
   return (
     <>
@@ -28,7 +32,7 @@ export default async function AdminDashboardPage() {
         <div>
           <span className={styles.eyebrow}>ADMIN DASHBOARD</span>
           <h1>Controle central do portfólio.</h1>
-          <p>Acompanhe a base atual e acesse as operações editoriais protegidas.</p>
+          <p>O MongoDB é a fonte única dos projetos e das decisões editoriais públicas.</p>
         </div>
         <span className={styles.environmentBadge}>
           <i className={styles.statusDot} />
@@ -40,7 +44,7 @@ export default async function AdminDashboardPage() {
         <article className={styles.metricCard}>
           <span>Projetos</span>
           <strong>{formatMetric(metrics.projects)}</strong>
-          <small>{metrics.projectDatabaseAvailable ? "Registros MongoDB" : "Fallback versionado"}</small>
+          <small>Registros MongoDB</small>
         </article>
         <article className={styles.metricCard}>
           <span>Jogos Arcade</span>
@@ -65,20 +69,22 @@ export default async function AdminDashboardPage() {
             <div>
               <span className={styles.eyebrow}>CATÁLOGO</span>
               <h2>Projetos publicados</h2>
-              <p>Resumo da fonte versionada e acesso ao editor administrativo.</p>
+              <p>Resumo dos registros publicados no MongoDB e acesso ao editor administrativo.</p>
             </div>
           </div>
 
           <div className={styles.projectList}>
-            {projects.slice(0, 6).map((project) => (
-              <div className={styles.projectItem} key={project.slug}>
+            {publishedProjects.length > 0 ? publishedProjects.slice(0, 6).map((record) => (
+              <div className={styles.projectItem} key={record.project.slug}>
                 <div>
-                  <strong>{project.title.pt}</strong>
-                  <small>{project.subtitle.pt}</small>
+                  <strong>{record.project.title.pt}</strong>
+                  <small>{record.project.subtitle.pt}</small>
                 </div>
-                <span>{project.status.pt}</span>
+                <span>{record.project.status.pt}</span>
               </div>
-            ))}
+            )) : (
+              <p>Nenhum projeto está publicado no MongoDB.</p>
+            )}
           </div>
         </article>
 
@@ -103,7 +109,7 @@ export default async function AdminDashboardPage() {
               <i />
               <div>
                 <strong>Conteúdo administrativo</strong>
-                <small>{metrics.projectDatabaseAvailable ? "Coleção de projetos pronta" : "Fallback estático ativo"}</small>
+                <small>{metrics.projectDatabaseAvailable ? "Fonte única ativa" : "Projetos públicos indisponíveis"}</small>
               </div>
             </div>
             <div className={styles.systemItem} data-ok="true">

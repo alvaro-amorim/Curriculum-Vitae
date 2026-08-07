@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 import { cache } from "react";
 
 import { ProjectCaseStudy } from "@/components/projects/project-case-study";
-import { projects } from "@/content/project-catalog";
 import { profile } from "@/content/profile";
 import { SITE_URL } from "@/lib/constants";
 import {
@@ -22,12 +21,6 @@ type ProjectPageProps = {
     slug: string;
   }>;
 };
-
-export function generateStaticParams() {
-  return projects.map((project) => ({
-    slug: project.slug,
-  }));
-}
 
 function absoluteHttpsUrl(source: string | null | undefined) {
   if (!source) {

@@ -3,10 +3,10 @@ import { revalidatePath } from "next/cache";
 import { apiError, apiSuccess, methodNotAllowed, readJsonPayload } from "@/lib/api-response";
 import { requireAdminApiUser } from "@/lib/admin/api-auth";
 import {
-  importProjectJsonDrafts,
   previewProjectJsonImport,
   PROJECT_IMPORT_MAX_BYTES,
   ProjectJsonImportRequestSchema,
+  syncProjectJsonProjects,
 } from "@/lib/projects/project-import";
 
 const ADMIN_PROJECT_IMPORT_MAX_BYTES = PROJECT_IMPORT_MAX_BYTES + 8 * 1024;
@@ -33,7 +33,7 @@ export async function POST(request: Request) {
   const parsed = ProjectJsonImportRequestSchema.safeParse(json.payload);
 
   if (!parsed.success) {
-    return apiError("VALIDATION_ERROR", "Payload de importação inválido.", 400, {
+    return apiError("VALIDATION_ERROR", "Payload de sincronização inválido.", 400, {
       headers: noStoreHeaders(),
     });
   }
@@ -48,38 +48,41 @@ export async function POST(request: Request) {
     }
 
     if (parsed.data.mode === "import") {
-      const result = await importProjectJsonDrafts(parsed.data.payload, auth.user.email);
+      const result = await syncProjectJsonProjects(parsed.data.payload, auth.user.email);
 
-      if (result.imported.length === 0) {
-        return apiError("VALIDATION_ERROR", "Nenhum projeto válido e inédito para importar.", 400, {
+      if (result.preview.invalidCount > 0 || result.synced.length === 0) {
+        return apiError("VALIDATION_ERROR", "Nenhum projeto válido para sincronizar.", 400, {
           headers: noStoreHeaders(),
         });
       }
 
       revalidatePath("/");
+      revalidatePath("/curriculo");
+      revalidatePath("/admin");
       revalidatePath("/admin/projects");
       revalidatePath("/projetos");
       revalidatePath("/sitemap.xml");
 
-      for (const imported of result.imported) {
-        revalidatePath(`/admin/projects/${imported.slug}`);
-        revalidatePath(`/projetos/${imported.slug}`);
+      for (const project of result.synced) {
+        revalidatePath(`/admin/projects/${project.slug}`);
+        revalidatePath(`/projetos/${project.slug}`);
       }
 
       return apiSuccess({
-        imported: result.imported,
+        imported: result.synced,
         preview: result.preview,
+        synced: result.synced,
       }, {
         headers: noStoreHeaders(),
-        status: result.preview.invalidCount > 0 ? 207 : 201,
+        status: 200,
       });
     }
 
-    return apiError("VALIDATION_ERROR", "Modo de importação inválido.", 400, {
+    return apiError("VALIDATION_ERROR", "Modo de sincronização inválido.", 400, {
       headers: noStoreHeaders(),
     });
   } catch {
-    return apiError("INTERNAL_ERROR", "Não foi possível importar projetos via JSON.", 503, {
+    return apiError("INTERNAL_ERROR", "Não foi possível sincronizar os projetos via JSON.", 503, {
       headers: noStoreHeaders(),
     });
   }
