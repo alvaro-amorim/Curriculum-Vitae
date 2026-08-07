@@ -1,4 +1,3 @@
-import { primaryProjectSlugs } from "../../content/project-catalog.ts";
 import type { Project } from "../../types/portfolio.ts";
 
 export type ProjectHomePlacement = {
@@ -14,36 +13,25 @@ export type HomeProjectCollections = {
 };
 
 const DEFAULT_HIDDEN_ORDER = 1_000;
-const primaryOrderBySlug = new Map<string, number>(
-  primaryProjectSlugs.map((slug, index) => [slug, index * 10]),
-);
 
-export function defaultProjectHomePlacement(slug: string): ProjectHomePlacement {
-  const primaryOrder = primaryOrderBySlug.get(slug);
-
-  if (typeof primaryOrder === "number") {
-    return {
-      carouselOrder: primaryOrder,
-      homeOrder: primaryOrder,
-      showInCarousel: true,
-      showInHome: true,
-    };
-  }
+export function defaultProjectHomePlacement(
+  featured = false,
+  order = DEFAULT_HIDDEN_ORDER,
+): ProjectHomePlacement {
+  const safeOrder = Number.isInteger(order) ? Math.max(0, order) : DEFAULT_HIDDEN_ORDER;
 
   return {
-    carouselOrder: DEFAULT_HIDDEN_ORDER,
-    homeOrder: DEFAULT_HIDDEN_ORDER,
-    showInCarousel: false,
-    showInHome: false,
+    carouselOrder: safeOrder,
+    homeOrder: safeOrder,
+    showInCarousel: featured,
+    showInHome: featured,
   };
 }
 
 export function normalizeProjectHomePlacement(
-  slug: string,
   placement?: Partial<ProjectHomePlacement> | null,
+  fallback = defaultProjectHomePlacement(),
 ): ProjectHomePlacement {
-  const fallback = defaultProjectHomePlacement(slug);
-
   return {
     carouselOrder: Number.isInteger(placement?.carouselOrder)
       ? Math.max(0, placement?.carouselOrder ?? fallback.carouselOrder)
@@ -62,9 +50,12 @@ function orderedProjects(
   surface: "carousel" | "home",
 ) {
   return projects
-    .map((project, catalogIndex) => ({
-      catalogIndex,
-      placement: normalizeProjectHomePlacement(project.slug, placements.get(project.slug)),
+    .map((project, databaseIndex) => ({
+      databaseIndex,
+      placement: normalizeProjectHomePlacement(
+        placements.get(project.slug),
+        defaultProjectHomePlacement(project.featured === true, databaseIndex),
+      ),
       project,
     }))
     .filter(({ placement }) => (
@@ -78,7 +69,7 @@ function orderedProjects(
         ? right.placement.carouselOrder
         : right.placement.homeOrder;
 
-      return leftOrder - rightOrder || left.catalogIndex - right.catalogIndex;
+      return leftOrder - rightOrder || left.databaseIndex - right.databaseIndex;
     })
     .map(({ project }) => project);
 }
