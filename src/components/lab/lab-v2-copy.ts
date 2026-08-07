@@ -128,6 +128,11 @@ export const labV2Copy = {
     aliasGateContinue: "Salvar e jogar",
     aliasGateSave: "Salvar alias",
     aliasGateCancel: "Agora não",
+    transitionEyebrow: "PREPARANDO ARCADE",
+    loadingAlias: "Abrindo identificação do jogador...",
+    savingPlayer: "Salvando seu jogador...",
+    loadingGame: "Carregando arena",
+    loadingGameReady: "Jogador confirmado. Preparando arena",
   },
   en: {
     eyebrow: "DEVELOPER ARCADE",
@@ -193,5 +198,10 @@ export const labV2Copy = {
     aliasGateContinue: "Save and play",
     aliasGateSave: "Save alias",
     aliasGateCancel: "Not now",
+    transitionEyebrow: "PREPARING ARCADE",
+    loadingAlias: "Opening player identity...",
+    savingPlayer: "Saving your player...",
+    loadingGame: "Loading arena",
+    loadingGameReady: "Player confirmed. Preparing arena",
   },
 } as const;
