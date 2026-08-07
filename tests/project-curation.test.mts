@@ -15,10 +15,11 @@ const expectedSlugs = [
   ...secondaryProjectSlugs,
 ];
 
-test("project curation keeps six primary projects and six technical labs", () => {
+test("project curation keeps six primary projects and five technical labs", () => {
   assert.equal(primaryProjectSlugs.length, 6);
-  assert.equal(labProjectSlugs.length, 6);
+  assert.equal(labProjectSlugs.length, 5);
   assert.equal(new Set(expectedSlugs).size, expectedSlugs.length);
+  assert.equal(projects.some((project) => project.slug === "robet"), false);
 });
 
 test("every curated slug resolves to a complete project", () => {
