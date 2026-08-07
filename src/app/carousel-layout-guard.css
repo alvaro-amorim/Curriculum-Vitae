@@ -1,0 +1,38 @@
+/*
+ * Structural guard for the Home project carousel.
+ *
+ * The carousel slides are absolutely positioned inside their body. Some
+ * low-height desktop breakpoints intentionally compact the first fold, but
+ * the body still needs enough vertical space for an icon, a two-line title
+ * and a three-line editorial summary. Keep this protection global so it can
+ * override the compact module breakpoints without coupling content length to
+ * viewport height.
+ */
+
+@media (min-width: 900px) {
+  div:has(> article[aria-hidden][data-active]) {
+    min-height: 248px !important;
+  }
+
+  article[aria-hidden][data-active] > div:first-child h3 {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+  }
+
+  article[aria-hidden][data-active] > div:first-child p {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+  }
+}
+
+@media (min-width: 900px) and (max-height: 820px) {
+  div:has(> article[aria-hidden][data-active]) {
+    min-height: 242px !important;
+  }
+}
