@@ -5,6 +5,8 @@ import { usePathname } from "next/navigation";
 import type { CSSProperties } from "react";
 import { useEffect, useRef, useState } from "react";
 
+import { profile } from "@/content/profile";
+
 import { usePortfolioUi } from "./app-shell";
 import styles from "./topbar.module.css";
 
@@ -90,6 +92,7 @@ export function Topbar({ onNavigateStart }: TopbarProps) {
   const idleTimer = useRef<number | null>(null);
   const ticking = useRef(false);
   const items = navItems[locale];
+  const brandLabel = `${profile.shortName} — ${profile.role[locale]}`;
 
   useEffect(() => {
     openRef.current = open;
@@ -258,19 +261,19 @@ export function Topbar({ onNavigateStart }: TopbarProps) {
     >
       <nav className={styles.navShell} aria-label={t.nav.mainNavigation}>
         <Link
-          aria-label="Álvaro.dev Portfolio OS"
+          aria-label={brandLabel}
           className={styles.brand}
           href="/"
           onClick={() => {
             setOpen(false);
             if (pathname !== "/") onNavigateStart?.();
           }}
-          title="Álvaro.dev Portfolio OS"
+          title={brandLabel}
         >
           <Monogram />
           <span>
             <strong>Álvaro.dev</strong>
-            <small>Full Stack Developer</small>
+            <small>{profile.role[locale]}</small>
           </span>
         </Link>
 
