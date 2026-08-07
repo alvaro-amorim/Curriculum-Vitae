@@ -1,0 +1,39 @@
+.page {
+  display: contents;
+}
+
+.page > :global(main) {
+  padding-top: clamp(6.75rem, 7vw, 7.75rem) !important;
+}
+
+.page :global(dialog[aria-labelledby="arcade-alias-title"]) {
+  position: fixed !important;
+  inset: auto !important;
+  top: 50% !important;
+  left: 50% !important;
+  max-height: calc(100dvh - 2rem);
+  margin: 0 !important;
+  overflow: auto;
+  transform: translate(-50%, -50%) !important;
+  cursor: default !important;
+}
+
+.page :global(dialog[aria-labelledby="arcade-alias-title"] input) {
+  cursor: text !important;
+  caret-color: currentColor;
+}
+
+.page :global(dialog[aria-labelledby="arcade-alias-title"] button) {
+  cursor: pointer !important;
+}
+
+@media (max-width: 640px) {
+  .page > :global(main) {
+    padding-top: 5.75rem !important;
+  }
+
+  .page :global(dialog[aria-labelledby="arcade-alias-title"]) {
+    width: min(calc(100vw - 1.25rem), 30rem);
+    max-height: calc(100dvh - 1.25rem);
+  }
+}
