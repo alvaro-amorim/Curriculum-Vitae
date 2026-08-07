@@ -1,20 +1,21 @@
-/* Runtime Runner mobile arena overrides.
- * Kept global and tightly scoped to the game's semantic root so the mobile
- * experience can prioritize playability without leaking into the rest of Lab.
+/* Runtime Runner — mobile-first presentation.
+ * The desktop component keeps the gameplay model; this layer changes only
+ * composition, density and visual hierarchy for touch-sized viewports.
  */
 
 @media (max-width: 640px) {
   section[aria-labelledby="runtime-runner-title"] {
-    --runner-ground: 6.15rem;
-    --runner-jump-range: 10.4rem;
+    --runner-ground: 4.85rem;
+    --runner-jump-range: 9.35rem;
     height: auto !important;
     min-height: 0;
     overflow: visible;
-    padding: 0.22rem 0.22rem 0.3rem;
+    padding: 0.12rem;
   }
 
-  section[aria-labelledby="runtime-runner-title"] > header {
-    display: none;
+  section[aria-labelledby="runtime-runner-title"] > header,
+  section[aria-labelledby="runtime-runner-title"] > div > aside {
+    display: none !important;
   }
 
   section[aria-labelledby="runtime-runner-title"] > div {
@@ -25,196 +26,327 @@
     overflow: visible;
   }
 
-  section[aria-labelledby="runtime-runner-title"] > div > aside {
-    display: none !important;
-  }
-
+  /* Arena: taller than the action band, but visually filled with a quiet
+     circuit landscape instead of empty sky. */
   section[aria-labelledby="runtime-runner-title"] [data-state] {
-    height: clamp(27rem, 67dvh, 33rem);
+    height: clamp(29rem, 72dvh, 36rem);
     min-height: 0;
-    max-height: 33rem;
-    border-radius: 0.78rem;
+    max-height: 36rem;
+    overflow: hidden;
+    border: 1px solid color-mix(in srgb, var(--runner-cyan) 24%, var(--runner-line));
+    border-radius: 0.72rem;
+    background:
+      radial-gradient(circle at 78% 20%, color-mix(in srgb, var(--runner-cyan) 8%, transparent), transparent 30%),
+      radial-gradient(circle at 18% 54%, color-mix(in srgb, var(--runner-violet) 7%, transparent), transparent 32%),
+      var(--runner-bg);
+    box-shadow:
+      0 0.8rem 2.2rem rgba(2, 6, 23, 0.18),
+      inset 0 1px 0 rgba(255, 255, 255, 0.055),
+      inset 0 0 2.5rem color-mix(in srgb, var(--runner-cyan) 3%, transparent);
     -webkit-tap-highlight-color: transparent;
   }
 
-  /* HUD: one compact row instead of a 2x2 block. */
+  /* Add a quiet technical horizon to the upper half of the arena. */
+  section[aria-labelledby="runtime-runner-title"] [data-state]::before {
+    position: absolute;
+    z-index: 1;
+    inset: 3.45rem 0 9.4rem;
+    background:
+      linear-gradient(90deg, transparent 0 9%, rgba(92, 225, 255, 0.08) 9% 9.35%, transparent 9.35% 31%, rgba(159, 122, 234, 0.07) 31% 31.3%, transparent 31.3% 68%, rgba(92, 225, 255, 0.07) 68% 68.25%, transparent 68.25%),
+      linear-gradient(0deg, transparent 0 23%, rgba(92, 225, 255, 0.06) 23% 23.35%, transparent 23.35% 64%, rgba(159, 122, 234, 0.055) 64% 64.3%, transparent 64.3%);
+    content: "";
+    opacity: 0.7;
+    pointer-events: none;
+    mask-image: linear-gradient(to bottom, transparent, black 15%, black 76%, transparent);
+  }
+
+  /* HUD becomes telemetry, not four large cards. */
   section[aria-labelledby="runtime-runner-title"] [data-state] > div:nth-of-type(2) {
-    top: 0.48rem;
-    right: 0.48rem;
-    left: 0.48rem;
+    top: 0.42rem;
+    right: 0.42rem;
+    left: 0.42rem;
     display: grid;
-    grid-template-columns: 1.16fr 0.96fr 0.86fr 0.86fr;
-    gap: 0.22rem;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0;
+    overflow: hidden;
+    border: 1px solid color-mix(in srgb, var(--runner-line) 78%, transparent);
+    border-radius: 0.48rem;
+    background: color-mix(in srgb, var(--runner-panel) 78%, transparent);
+    box-shadow: 0 0.45rem 1.3rem rgba(2, 6, 23, 0.12);
   }
 
   section[aria-labelledby="runtime-runner-title"] [data-state] > div:nth-of-type(2) > div {
     min-width: 0;
-    border-radius: 0.5rem;
-    padding: 0.3rem 0.34rem;
+    border: 0;
+    border-radius: 0;
+    padding: 0.26rem 0.3rem 0.28rem;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  section[aria-labelledby="runtime-runner-title"] [data-state] > div:nth-of-type(2) > div + div {
+    border-left: 1px solid color-mix(in srgb, var(--runner-line) 72%, transparent);
   }
 
   section[aria-labelledby="runtime-runner-title"] [data-state] > div:nth-of-type(2) span {
     overflow: hidden;
-    font-size: 0.32rem;
-    letter-spacing: 0.045em;
+    color: color-mix(in srgb, var(--runner-muted) 88%, transparent);
+    font-size: 0.28rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
-  section[aria-labelledby="runtime-runner-title"] [data-state] > div:nth-of-type(2) strong {
-    margin-top: 0.08rem;
-    font-size: 0.72rem;
+  section[aria-labelledby="runtime-runner-title"] [data-state] > div:nth-of-type(2) strong,
+  section[aria-labelledby="runtime-runner-title"] [data-state] > div:nth-of-type(2) > div:first-child strong {
+    margin-top: 0.07rem;
+    font-size: 0.64rem;
+    line-height: 1;
   }
 
   section[aria-labelledby="runtime-runner-title"] [data-state] > div:nth-of-type(2) > div:first-child strong {
-    font-size: 0.88rem;
+    color: var(--runner-cyan);
+    font-size: 0.74rem;
   }
 
-  /* Stage progress stays immediately below the compact HUD. */
+  /* Stage rail becomes a slim status line. */
   section[aria-labelledby="runtime-runner-title"] [data-state] > div:nth-of-type(3) {
-    top: 3.25rem;
-    right: 0.5rem;
-    left: 0.5rem;
+    top: 2.72rem;
+    right: 0.44rem;
+    left: 0.44rem;
+    gap: 0.16rem;
+  }
+
+  section[aria-labelledby="runtime-runner-title"] [data-state] > div:nth-of-type(3) span {
+    font-size: 0.39rem;
+    letter-spacing: 0.055em;
   }
 
   section[aria-labelledby="runtime-runner-title"] [data-state] > div:nth-of-type(3) small {
     display: none;
   }
 
-  /* Raise the action band so the player is not trapped at the very bottom. */
-  section[aria-labelledby="runtime-runner-title"] [data-state] > div:nth-of-type(4) {
-    bottom: 6.35rem;
-    height: 7.2rem;
+  section[aria-labelledby="runtime-runner-title"] [data-state] > div:nth-of-type(3) > div:last-child {
+    height: 2px;
+    opacity: 0.82;
   }
 
-  section[aria-labelledby="runtime-runner-title"] [data-state] > div:nth-of-type(4) > span:first-child {
-    opacity: 0.55;
+  /* Background layers: softer grid, clearer horizon, slower packets. */
+  section[aria-labelledby="runtime-runner-title"] [data-state] > div:first-child {
+    background:
+      radial-gradient(circle at 12% 72%, rgba(52, 211, 153, 0.075), transparent 12rem),
+      radial-gradient(circle at 82% 18%, rgba(92, 225, 255, 0.09), transparent 15rem),
+      linear-gradient(168deg, #071423 0%, #06101d 52%, #080719 100%);
   }
 
-  section[aria-labelledby="runtime-runner-title"] [data-state] > div:nth-of-type(5) {
-    bottom: 6rem;
+  :root[data-theme="light"] section[aria-labelledby="runtime-runner-title"] [data-state] > div:first-child {
+    background:
+      radial-gradient(circle at 12% 72%, rgba(4, 120, 87, 0.055), transparent 12rem),
+      radial-gradient(circle at 82% 18%, rgba(2, 132, 199, 0.075), transparent 15rem),
+      linear-gradient(168deg, #fbfdff 0%, #eef6fc 52%, #f6f2ff 100%);
   }
 
-  /* Environment lane follows the new mobile ground line. */
+  section[aria-labelledby="runtime-runner-title"] [data-state] > div:first-child > div:nth-child(2) {
+    opacity: 0.16;
+    background-size: 36px 36px;
+  }
+
   section[aria-labelledby="runtime-runner-title"] [data-state] > div:first-child > div:nth-child(3) {
-    bottom: 6.05rem;
-    height: 7.3rem;
+    bottom: 4.75rem;
+    height: 6.2rem;
+    border-block-color: rgba(92, 225, 255, 0.1);
+    opacity: 0.72;
   }
 
   section[aria-labelledby="runtime-runner-title"] [data-state] > div:first-child > div:nth-child(4) {
-    bottom: 10.5rem;
+    bottom: 8.45rem;
+    width: 0.34rem;
+    height: 0.34rem;
+    opacity: 0.74;
   }
 
   section[aria-labelledby="runtime-runner-title"] [data-state] > div:first-child > div:nth-child(5) {
-    bottom: 8.15rem;
+    bottom: 6.55rem;
+    width: 0.3rem;
+    height: 0.3rem;
+    opacity: 0.62;
   }
 
-  /* Player: slightly larger vertically/readability-wise, without turning it into
-     an oversized target compared with the logical contact geometry. */
+  /* Track sits higher and uses less visual weight. */
+  section[aria-labelledby="runtime-runner-title"] [data-state] > div:nth-of-type(4) {
+    bottom: 4.78rem;
+    height: 5.7rem;
+    opacity: 0.72;
+  }
+
+  section[aria-labelledby="runtime-runner-title"] [data-state] > div:nth-of-type(4) > span:first-child {
+    bottom: 0.08rem;
+    padding: 0.1rem 0.24rem;
+    font-size: 0.34rem;
+    opacity: 0.58;
+  }
+
+  section[aria-labelledby="runtime-runner-title"] [data-state] > div:nth-of-type(5) {
+    bottom: 4.58rem;
+    box-shadow: 0 0 0.7rem color-mix(in srgb, var(--runner-cyan) 25%, transparent);
+  }
+
+  /* Runner: smaller silhouette, sharper hierarchy, more scene around it. */
   section[aria-labelledby="runtime-runner-title"] [data-air] {
-    left: 10.2%;
-    width: 3.55rem;
-    border-radius: 1rem 1rem 0.82rem 0.82rem;
+    left: 9.4%;
+    width: 2.72rem;
+    border-radius: 0.72rem 0.72rem 0.55rem 0.55rem;
+    box-shadow: 0 0.6rem 1.3rem rgba(2, 6, 23, 0.16);
   }
 
   section[aria-labelledby="runtime-runner-title"] [data-air] > span:first-child {
-    width: 2.05rem;
-    height: 1.4rem;
-    font-size: 0.88rem;
+    width: 1.58rem;
+    height: 1.02rem;
+    border-radius: 0.34rem;
+    font-size: 0.64rem;
   }
 
-  /* On narrow screens the visual obstacle width follows its logical cqw width.
-     This prevents the min-width from making an obstacle look like it touched
-     the runner before the collision geometry says it did. */
+  section[aria-labelledby="runtime-runner-title"] [data-air] > span:last-child {
+    width: 0.26rem;
+    height: 0.26rem;
+  }
+
+  /* Obstacles read as compact technical props, not cards. */
   section[aria-labelledby="runtime-runner-title"] [data-near] {
-    width: max(calc(var(--obstacle-width, 12) * 1cqw), 2.55rem);
+    width: max(calc(var(--obstacle-width, 12) * 1cqw), 1.95rem);
     min-width: 0;
-    min-height: calc(2.35rem + (var(--obstacle-height, 0.2) * 2.7rem));
-    border-radius: 0.32rem 0.72rem 0.32rem 0.32rem;
-    padding: 0.34rem 0.34rem 0.31rem 0.52rem;
+    min-height: calc(1.55rem + (var(--obstacle-height, 0.2) * 1.95rem));
+    border-width: 1px;
+    border-radius: 0.22rem 0.52rem 0.22rem 0.22rem;
+    padding: 0.22rem 0.24rem 0.2rem 0.39rem;
+    box-shadow: 0 0.5rem 1.1rem rgba(2, 6, 23, 0.13);
   }
 
   section[aria-labelledby="runtime-runner-title"] [data-near] small {
-    font-size: 0.51rem;
+    font-size: 0.39rem;
+    letter-spacing: 0.035em;
   }
 
   section[aria-labelledby="runtime-runner-title"] [data-near] b {
-    font-size: 0.42rem;
+    margin-top: 0.08rem;
+    overflow: hidden;
+    font-size: 0.31rem;
+    letter-spacing: 0.025em;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
-  /* The whole arena is the jump surface; make that discoverable without
-     introducing a button that would compete with tap/swipe gestures. */
+  /* Touch hint is intentionally tiny: discoverable, never dominant. */
   section[aria-labelledby="runtime-runner-title"] [data-state="running"]::after {
     position: absolute;
     z-index: 16;
-    right: 0.58rem;
-    bottom: 0.62rem;
-    border: 1px solid color-mix(in srgb, var(--runner-cyan) 34%, transparent);
+    right: 0.44rem;
+    bottom: 0.42rem;
+    border: 1px solid color-mix(in srgb, var(--runner-cyan) 24%, transparent);
     border-radius: 999px;
-    padding: 0.28rem 0.46rem;
-    background: color-mix(in srgb, var(--runner-panel) 86%, transparent);
-    color: var(--runner-muted);
+    padding: 0.18rem 0.31rem;
+    background: color-mix(in srgb, var(--runner-panel) 72%, transparent);
+    color: color-mix(in srgb, var(--runner-muted) 84%, transparent);
     content: "TAP / SWIPE ↑";
     font-family: var(--font-mono), ui-monospace, monospace;
-    font-size: 0.44rem;
-    font-weight: 850;
-    letter-spacing: 0.06em;
+    font-size: 0.31rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
     pointer-events: none;
     text-transform: uppercase;
   }
 
-  /* Keep transient feedback away from the player and obstacle reading zone. */
+  /* Transient feedback stays above the action line and out of the jump arc. */
   section[aria-labelledby="runtime-runner-title"] [data-state] > span:not([data-air]):not([data-near]) {
     max-width: calc(100% - 1rem);
+    font-size: 0.44rem;
+  }
+
+  /* Ready / pause / failed states also become smaller on mobile. */
+  section[aria-labelledby="runtime-runner-title"] [data-state] > div:last-child:not(:first-child) {
+    padding: 0.42rem;
+  }
+
+  section[aria-labelledby="runtime-runner-title"] [data-state] button {
+    min-height: 2.2rem;
   }
 }
 
 @media (max-width: 390px) {
   section[aria-labelledby="runtime-runner-title"] {
-    --runner-ground: 5.85rem;
-    --runner-jump-range: 9.75rem;
+    --runner-ground: 4.55rem;
+    --runner-jump-range: 8.75rem;
   }
 
   section[aria-labelledby="runtime-runner-title"] [data-state] {
-    height: clamp(25rem, 64dvh, 30rem);
+    height: clamp(27rem, 70dvh, 33rem);
   }
 
   section[aria-labelledby="runtime-runner-title"] [data-state] > div:nth-of-type(2) {
-    grid-template-columns: 1.1fr 0.92fr 0.82fr 0.82fr;
+    right: 0.34rem;
+    left: 0.34rem;
   }
 
   section[aria-labelledby="runtime-runner-title"] [data-state] > div:nth-of-type(2) span {
-    font-size: 0.29rem;
+    font-size: 0.25rem;
   }
 
-  section[aria-labelledby="runtime-runner-title"] [data-state] > div:nth-of-type(2) strong {
-    font-size: 0.65rem;
+  section[aria-labelledby="runtime-runner-title"] [data-state] > div:nth-of-type(2) strong,
+  section[aria-labelledby="runtime-runner-title"] [data-state] > div:nth-of-type(2) > div:first-child strong {
+    font-size: 0.57rem;
+  }
+
+  section[aria-labelledby="runtime-runner-title"] [data-state] > div:nth-of-type(2) > div:first-child strong {
+    font-size: 0.66rem;
   }
 
   section[aria-labelledby="runtime-runner-title"] [data-state] > div:nth-of-type(3) {
-    top: 3.05rem;
+    top: 2.58rem;
+    right: 0.36rem;
+    left: 0.36rem;
   }
 
   section[aria-labelledby="runtime-runner-title"] [data-state] > div:nth-of-type(4) {
-    bottom: 6.05rem;
+    bottom: 4.48rem;
   }
 
   section[aria-labelledby="runtime-runner-title"] [data-state] > div:nth-of-type(5) {
-    bottom: 5.7rem;
+    bottom: 4.28rem;
   }
 
   section[aria-labelledby="runtime-runner-title"] [data-state] > div:first-child > div:nth-child(3) {
-    bottom: 5.75rem;
+    bottom: 4.45rem;
+    height: 5.8rem;
+  }
+
+  section[aria-labelledby="runtime-runner-title"] [data-state] > div:first-child > div:nth-child(4) {
+    bottom: 7.9rem;
+  }
+
+  section[aria-labelledby="runtime-runner-title"] [data-state] > div:first-child > div:nth-child(5) {
+    bottom: 6.05rem;
   }
 
   section[aria-labelledby="runtime-runner-title"] [data-air] {
-    left: 9.7%;
-    width: 3.35rem;
+    left: 8.8%;
+    width: 2.48rem;
+  }
+
+  section[aria-labelledby="runtime-runner-title"] [data-air] > span:first-child {
+    width: 1.44rem;
+    height: 0.94rem;
+    font-size: 0.58rem;
   }
 
   section[aria-labelledby="runtime-runner-title"] [data-near] {
-    width: max(calc(var(--obstacle-width, 12) * 1cqw), 2.35rem);
-    min-height: calc(2.2rem + (var(--obstacle-height, 0.2) * 2.45rem));
+    width: max(calc(var(--obstacle-width, 12) * 1cqw), 1.72rem);
+    min-height: calc(1.42rem + (var(--obstacle-height, 0.2) * 1.8rem));
+    padding: 0.2rem 0.2rem 0.18rem 0.34rem;
+  }
+
+  section[aria-labelledby="runtime-runner-title"] [data-near] small {
+    font-size: 0.36rem;
   }
 
   section[aria-labelledby="runtime-runner-title"] [data-near] b {
@@ -222,9 +354,9 @@
   }
 
   section[aria-labelledby="runtime-runner-title"] [data-state="running"]::after {
-    right: 0.45rem;
-    bottom: 0.48rem;
-    padding: 0.24rem 0.4rem;
-    font-size: 0.4rem;
+    right: 0.34rem;
+    bottom: 0.34rem;
+    padding: 0.16rem 0.27rem;
+    font-size: 0.28rem;
   }
 }
