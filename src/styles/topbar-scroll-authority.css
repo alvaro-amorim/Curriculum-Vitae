@@ -1,0 +1,15 @@
+/*
+ * Scroll visibility is authoritative for the global topbar.
+ *
+ * The component stylesheet intentionally exposes hover/focus affordances, but
+ * those pseudo states must never resurrect a topbar that the smart-scroll hook
+ * has already hidden. Keyboard focus keeps the hook disabled and therefore
+ * produces data-hidden="false" before this rule is relevant.
+ */
+[data-topbar="global"][data-hidden="true"],
+[data-topbar="global"][data-hidden="true"]:hover,
+[data-topbar="global"][data-hidden="true"]:focus-within {
+  opacity: 0;
+  transform: translate(-50%, -145%);
+  pointer-events: none;
+}
