@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 
+import { career } from "@/content/career";
 import { profile } from "@/content/profile";
 import type { Locale } from "@/types/portfolio";
 
@@ -13,19 +14,10 @@ const copy = {
   pt: {
     eyebrow: "SOBRE & CONTATO",
     title: "Código, produto e intenção.",
-    intro: "Sou Álvaro Amorim, desenvolvedor Full Stack Júnior em Juiz de Fora. Transformo problemas reais em produtos web claros, funcionais e preparados para evoluir.",
-    availability: "Disponível para novos desafios",
-    role: "Desenvolvedor Full Stack Júnior",
     locationLabel: "Localização",
     focusLabel: "Foco atual",
-    focus: "Produtos web, automações e IA aplicada",
     journeyEyebrow: "TRAJETÓRIA",
     journeyTitle: "Construindo uma base cada vez mais completa.",
-    journey: [
-      ["2025", "Formação em Desenvolvimento Full Stack"],
-      ["2026", "Pós-graduação em IA para Devs na FIAP (em andamento)"],
-      ["Agora", "Projetos reais, estudo contínuo e busca pela primeira oportunidade formal em desenvolvimento"],
-    ],
     contactEyebrow: "CONTATO DIRETO",
     contactTitle: "Vamos conversar sem complicação.",
     contactText: "Escolha o canal mais conveniente. E-mail, LinkedIn, GitHub e telefone estão a um clique.",
@@ -37,24 +29,14 @@ const copy = {
     copied: "E-mail copiado",
     projects: "Ver projetos",
     resume: "Abrir currículo",
-    open: "Abrir",
   },
   en: {
     eyebrow: "ABOUT & CONTACT",
     title: "Code, product, and intention.",
-    intro: "I am Álvaro Amorim, a Junior Full Stack Developer based in Juiz de Fora. I turn real problems into clear, functional web products prepared to evolve.",
-    availability: "Available for new challenges",
-    role: "Junior Full Stack Developer",
     locationLabel: "Location",
     focusLabel: "Current focus",
-    focus: "Web products, automation, and applied AI",
     journeyEyebrow: "JOURNEY",
     journeyTitle: "Building an increasingly complete foundation.",
-    journey: [
-      ["2025", "Degree in Full Stack Development"],
-      ["2026", "Postgraduate program in AI for Developers at FIAP (in progress)"],
-      ["Now", "Real projects, continuous learning, and the search for my first formal development opportunity"],
-    ],
     contactEyebrow: "DIRECT CONTACT",
     contactTitle: "Let’s talk without friction.",
     contactText: "Choose the most convenient channel. Email, LinkedIn, GitHub, and phone are one click away.",
@@ -66,7 +48,6 @@ const copy = {
     copied: "Email copied",
     projects: "View projects",
     resume: "Open resume",
-    open: "Open",
   },
 } as const;
 
@@ -91,6 +72,10 @@ function ContactIcon({ name }: { name: "email" | "github" | "linkedin" | "phone"
   }
 
   return <svg {...common}><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.9a3.4 3.4 0 0 0-.9-2.6c3-.3 6.1-1.5 6.1-6.6a5.2 5.2 0 0 0-1.4-3.6 4.8 4.8 0 0 0-.1-3.6s-1.1-.3-3.7 1.4a12.8 12.8 0 0 0-6.7 0C6.7.4 5.6.7 5.6.7a4.8 4.8 0 0 0-.1 3.6 5.2 5.2 0 0 0-1.4 3.6c0 5.1 3.1 6.3 6.1 6.6a3 3 0 0 0-.8 1.9V22" /></svg>;
+}
+
+function displayHandle(url: string, prefix: string) {
+  return url.replace(/^https?:\/\/(www\.)?/, "").replace(prefix, "").replace(/\/$/, "");
 }
 
 export function AboutContactSection({ locale }: { locale: Locale }) {
@@ -119,13 +104,13 @@ export function AboutContactSection({ locale }: { locale: Locale }) {
       href: profile.linkedin,
       icon: "linkedin" as const,
       label: t.linkedin,
-      value: "alvaro-amorim-fullstack",
+      value: displayHandle(profile.linkedin, "linkedin.com/in/"),
     },
     {
       href: profile.github,
       icon: "github" as const,
       label: t.github,
-      value: "github.com/alvaro-amorim",
+      value: displayHandle(profile.github, ""),
     },
     {
       href: phoneHref,
@@ -153,15 +138,15 @@ export function AboutContactSection({ locale }: { locale: Locale }) {
               <span aria-hidden="true">Á</span>
             </div>
             <div>
-              <span className={styles.available}><i />{t.availability}</span>
+              <span className={styles.available}><i />{career.availability[locale]}</span>
               <h2 id="about-contact-title">{t.title}</h2>
-              <p>{t.intro}</p>
+              <p>{career.aboutIntro[locale]}</p>
             </div>
           </div>
 
           <div className={styles.profileFacts}>
             <article>
-              <span>{t.role}</span>
+              <span>{profile.role[locale]}</span>
               <strong>{profile.positioning[locale]}</strong>
             </article>
             <article>
@@ -170,7 +155,7 @@ export function AboutContactSection({ locale }: { locale: Locale }) {
             </article>
             <article>
               <span>{t.focusLabel}</span>
-              <strong>{t.focus}</strong>
+              <strong>{career.focus[locale]}</strong>
             </article>
           </div>
 
@@ -178,7 +163,7 @@ export function AboutContactSection({ locale }: { locale: Locale }) {
             <span className={styles.eyebrow}>{t.journeyEyebrow}</span>
             <h3>{t.journeyTitle}</h3>
             <ol>
-              {t.journey.map(([year, label]) => (
+              {career.journey[locale].map(([year, label]) => (
                 <li key={year}>
                   <strong>{year}</strong>
                   <span>{label}</span>
