@@ -132,20 +132,13 @@ export function AdminProjectList({
                 <small>{project.subtitle}</small>
               </div>
               <div className={styles.projectMeta}>
-                <small>Slug</small>
+                <small>Slug · ordem do catálogo {project.sortOrder}</small>
                 <strong>{project.slug}</strong>
               </div>
               <div className={styles.projectMeta}>
-                <small>Catálogo</small>
-                <strong>Ordem {project.sortOrder}</strong>
-              </div>
-              <div className={styles.projectMeta}>
-                <small>Grade da Home</small>
-                <strong>{placementLabel(project.homePlacement.showInHome, project.homePlacement.homeOrder)}</strong>
-              </div>
-              <div className={styles.projectMeta}>
-                <small>Carrossel</small>
-                <strong>{placementLabel(project.homePlacement.showInCarousel, project.homePlacement.carouselOrder)}</strong>
+                <small>Exibição na Home</small>
+                <strong>Grade: {placementLabel(project.homePlacement.showInHome, project.homePlacement.homeOrder)}</strong>
+                <strong>Carrossel: {placementLabel(project.homePlacement.showInCarousel, project.homePlacement.carouselOrder)}</strong>
               </div>
               <div className={styles.rowActions}>
                 <span className={styles.status} data-status={project.publicationStatus}>
