@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 
 import { usePortfolioUi } from "@/components/layout/app-shell";
+import recruiterStyles from "@/components/recruiter/recruiter-journey.module.css";
 import { cn } from "@/lib/cn";
 import { filterProjects, getProjectFilters } from "@/lib/project-filters";
 import { groupProjectsByCollection } from "@/lib/projects/project-groups";
@@ -52,6 +53,24 @@ export function ProjectGrid({ projects }: ProjectGridProps) {
           </button>
         ))}
       </div>
+
+      {visibleProjects.length === 0 ? (
+        <section className={recruiterStyles.emptyState} aria-live="polite">
+          <h3>{locale === "pt" ? "Nenhum case neste filtro." : "No cases match this filter."}</h3>
+          <p>
+            {locale === "pt"
+              ? "Escolha outra tecnologia ou volte para a visão completa dos projetos publicados."
+              : "Choose another technology or return to the complete view of published projects."}
+          </p>
+          <button
+            className={recruiterStyles.resetButton}
+            onClick={() => setActiveCategory("all")}
+            type="button"
+          >
+            {locale === "pt" ? "Mostrar todos os projetos" : "Show all projects"}
+          </button>
+        </section>
+      ) : null}
 
       {groupedProjects.map((group) => {
         if (group.projects.length === 0) {
