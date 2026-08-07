@@ -27,5 +27,5 @@ test("Admin requires the exact slug before permanent deletion", () => {
   assert.match(source, /window\.prompt/);
   assert.match(source, /typedSlug !== slug/);
   assert.match(source, /\/permanent/);
-  assert.match(source, />Excluir</);
+  assert.match(source, /"Excluir"/);
 });
