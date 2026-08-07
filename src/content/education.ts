@@ -3,6 +3,20 @@ import type { CertificationGroup, EducationItem } from "@/types/portfolio";
 export const education: EducationItem[] = [
   {
     title: {
+      pt: "Pós-Graduação em IA para Devs",
+      en: "Postgraduate Program in AI for Developers",
+    },
+    institution: {
+      pt: "FIAP",
+      en: "FIAP",
+    },
+    period: {
+      pt: "2026 - em andamento",
+      en: "2026 - Present",
+    },
+  },
+  {
+    title: {
       pt: "Tecnólogo em Desenvolvimento Full Stack",
       en: "Technologist in Full Stack Development",
     },
@@ -10,7 +24,10 @@ export const education: EducationItem[] = [
       pt: "Universidade Estácio de Sá",
       en: "Estácio de Sá University",
     },
-    period: "2023-2025",
+    period: {
+      pt: "2023 - 2025",
+      en: "2023 - 2025",
+    },
   },
 ];
 
