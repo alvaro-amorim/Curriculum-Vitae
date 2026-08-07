@@ -226,7 +226,10 @@ function HeroSection({ locale, projects }: { locale: Locale; projects: HomeProje
   return (
     <section className={styles.heroSection}>
       <div className={styles.container}>
-        <div className={styles.heroGrid}>
+        <div
+          className={styles.heroGrid}
+          style={projects.length === 0 ? { gridTemplateColumns: "minmax(0, 1fr)" } : undefined}
+        >
           <div className={styles.heroCopy} data-reveal data-visible="true">
             <div className={styles.availability}>
               <span>
@@ -264,9 +267,11 @@ function HeroSection({ locale, projects }: { locale: Locale; projects: HomeProje
             </Link>
           </div>
 
-          <div className={styles.carouselWrap} data-reveal data-visible="true">
-            <ProjectCarousel locale={locale} projects={projects} />
-          </div>
+          {projects.length > 0 ? (
+            <div className={styles.carouselWrap} data-reveal data-visible="true">
+              <ProjectCarousel locale={locale} projects={projects} />
+            </div>
+          ) : null}
         </div>
       </div>
     </section>
@@ -330,6 +335,10 @@ function SectionHeading({ eyebrow, title, intro }: { eyebrow: string; title: str
 
 function FeaturedProjects({ locale, projects }: { locale: Locale; projects: HomeProject[] }) {
   const t = copy[locale];
+
+  if (projects.length === 0) {
+    return null;
+  }
 
   return (
     <section id="projetos" className={styles.section}>
@@ -530,7 +539,15 @@ function FinalCta({ locale }: { locale: Locale }) {
   );
 }
 
-export function VisualFinalCandidate({ projects: showcaseProjects = defaultHomeProjects }: { projects?: HomeProject[] }) {
+type VisualFinalCandidateProps = {
+  carouselProjects?: HomeProject[];
+  featuredProjects?: HomeProject[];
+};
+
+export function VisualFinalCandidate({
+  carouselProjects = defaultHomeProjects,
+  featuredProjects = defaultHomeProjects,
+}: VisualFinalCandidateProps) {
   const ref = useRef<HTMLElement>(null);
   const { locale } = usePortfolioUi();
   useReveal();
@@ -551,8 +568,8 @@ export function VisualFinalCandidate({ projects: showcaseProjects = defaultHomeP
       <div className={styles.orbA} aria-hidden="true" />
       <div className={styles.orbB} aria-hidden="true" />
 
-      <FirstFold locale={locale} projects={showcaseProjects} />
-      <FeaturedProjects locale={locale} projects={showcaseProjects} />
+      <FirstFold locale={locale} projects={carouselProjects} />
+      <FeaturedProjects locale={locale} projects={featuredProjects} />
       <StackSection locale={locale} />
       <ProcessSection locale={locale} />
       <ArcadeSection locale={locale} />
