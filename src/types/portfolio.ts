@@ -220,3 +220,15 @@ export type GameScorePayloadV3 =
     };
 
 export type GameScorePayloadV2 = GameScorePayloadV3;
+
+export type LabPageCopy = {
+  title: LocalizedText;
+  description: LocalizedText;
+  sessionScore: LocalizedText;
+  pending: LocalizedText;
+  completed: LocalizedText;
+  apiSynced: LocalizedText;
+  apiPending: LocalizedText;
+  apiFailed: LocalizedText;
+  backLinksLabel: LocalizedText;
+};
