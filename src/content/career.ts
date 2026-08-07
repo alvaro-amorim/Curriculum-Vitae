@@ -56,12 +56,12 @@ export const career = {
   } satisfies LocalizedPairs,
   homeStats: {
     pt: [
-      ["6", "Projetos apresentados"],
+      ["6", "Projetos principais"],
       ["2024", "Atuação em desenvolvimento"],
       ["PT/EN", "Portfólio bilíngue"],
     ],
     en: [
-      ["6", "Projects presented"],
+      ["6", "Featured projects"],
       ["2024", "Development work since"],
       ["PT/EN", "Bilingual portfolio"],
     ],
