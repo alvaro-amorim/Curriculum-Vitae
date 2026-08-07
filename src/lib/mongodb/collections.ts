@@ -1,7 +1,7 @@
 import type { Collection, Db, ObjectId } from "mongodb";
 
-import type { ProjectHomePlacement } from "@/lib/projects/home-placement";
 import type { LabGameId, Project } from "@/types/portfolio";
+import type { ProjectCollectionId } from "@/lib/projects/project-collection";
 
 import { getMongoDatabase } from "./client.ts";
 
@@ -86,9 +86,15 @@ export type PortfolioProjectPublicationStatus = "archived" | "draft" | "publishe
 
 export type PortfolioProjectDocument = {
   _id?: ObjectId;
+  collection?: ProjectCollectionId;
   content: Project;
   createdAt: Date;
-  homePlacement?: ProjectHomePlacement;
+  homePlacement?: {
+    carouselOrder: number;
+    homeOrder: number;
+    showInCarousel: boolean;
+    showInHome: boolean;
+  };
   publicationStatus: PortfolioProjectPublicationStatus;
   publishedAt: Date | null;
   slug: string;
@@ -102,8 +108,14 @@ export type PortfolioProjectRevisionDocument = {
   action: "archive" | "create" | "publish" | "update";
   changedAt: Date;
   changedBy: string | null;
+  collection?: ProjectCollectionId;
   content: Project;
-  homePlacement?: ProjectHomePlacement;
+  homePlacement?: {
+    carouselOrder: number;
+    homeOrder: number;
+    showInCarousel: boolean;
+    showInHome: boolean;
+  };
   projectId: ObjectId;
   publicationStatus: PortfolioProjectPublicationStatus;
   slug: string;
