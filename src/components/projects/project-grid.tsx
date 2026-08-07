@@ -3,9 +3,9 @@
 import { useMemo, useState } from "react";
 
 import { usePortfolioUi } from "@/components/layout/app-shell";
-import { groupProjectsByCollection } from "@/content/project-catalog";
 import { cn } from "@/lib/cn";
 import { filterProjects, getProjectFilters } from "@/lib/project-filters";
+import { groupProjectsByCollection } from "@/lib/projects/project-groups";
 import type { Project } from "@/types/portfolio";
 
 import { formatProjectCategory, ProjectCard } from "./project-card";
