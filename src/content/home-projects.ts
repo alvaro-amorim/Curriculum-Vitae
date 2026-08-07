@@ -29,7 +29,7 @@ type ProjectShowcaseOptions = {
 const categoryLabels: Record<string, LocalizedText> = {
   Atendimento: { pt: "Atendimento", en: "Customer service" },
   Áudio: { pt: "Áudio", en: "Audio" },
-  E-commerce: { pt: "E-commerce", en: "E-commerce" },
+  "E-commerce": { pt: "E-commerce", en: "E-commerce" },
   "Editor visual": { pt: "Editor visual", en: "Visual editor" },
   FoodTech: { pt: "FoodTech", en: "FoodTech" },
   IA: { pt: "IA", en: "AI" },
