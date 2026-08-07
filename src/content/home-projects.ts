@@ -1,4 +1,4 @@
-import type { Locale, Project } from "@/types/portfolio";
+import type { Locale, LocalizedText, Project } from "@/types/portfolio";
 
 import { projects as staticProjects } from "./projects.ts";
 
@@ -21,14 +21,28 @@ export type HomeProject = {
 
 type ProjectShowcaseOptions = {
   slug: string;
-  title: string;
-  category: Record<Locale, string>;
-  description: Record<Locale, string>;
   projectIconKey: HomeProjectIconKey;
   brandLabel: string;
   brandAccent: HomeProjectAccent;
-  carouselStack: string[];
 };
+
+const categoryLabels: Record<string, LocalizedText> = {
+  IA: { pt: "IA", en: "AI" },
+  Institucional: { pt: "Institucional", en: "Institutional" },
+  Dados: { pt: "Dados", en: "Data" },
+  Métricas: { pt: "Métricas", en: "Metrics" },
+};
+
+function localizeCategory(category: string, locale: Locale) {
+  return categoryLabels[category]?.[locale] ?? category;
+}
+
+function projectCategory(project: Project, locale: Locale) {
+  return project.category
+    .slice(0, 2)
+    .map((category) => localizeCategory(category, locale))
+    .join(" • ");
+}
 
 function createProjectShowcase(projectsBySlug: Map<string, Project>, options: ProjectShowcaseOptions): HomeProject | null {
   const project = projectsBySlug.get(options.slug);
@@ -38,13 +52,16 @@ function createProjectShowcase(projectsBySlug: Map<string, Project>, options: Pr
   }
 
   return {
-    title: options.title,
-    category: options.category,
-    description: options.description,
+    title: project.title.pt,
+    category: {
+      pt: projectCategory(project, "pt"),
+      en: projectCategory(project, "en"),
+    },
+    description: project.shortDescription,
     projectIconKey: options.projectIconKey,
     brandLabel: options.brandLabel,
     brandAccent: options.brandAccent,
-    carouselStack: options.carouselStack,
+    carouselStack: project.stack,
     caseHref: `/projetos/${project.slug}`,
     liveHref: project.links.website,
     logo: project.visuals?.logo ?? null,
@@ -55,55 +72,27 @@ function createProjectShowcase(projectsBySlug: Map<string, Project>, options: Pr
 const projectShowcases: ProjectShowcaseOptions[] = [
   {
     slug: "margem-app",
-    title: "Margem App",
-    category: { pt: "SaaS • FoodTech", en: "SaaS • FoodTech" },
-    description: {
-      pt: "Gestão, precificação e rotulagem para negócios de alimentação.",
-      en: "Management, pricing and labeling for food businesses.",
-    },
     projectIconKey: "margem",
     brandLabel: "MG",
     brandAccent: "blue-purple",
-    carouselStack: ["Next.js", "React", "TypeScript", "Supabase", "Prisma", "Tailwind CSS"],
   },
   {
     slug: "comerc-ias",
-    title: "Comerc IAs",
-    category: { pt: "Institucional • Métricas", en: "Website • Metrics" },
-    description: {
-      pt: "Site institucional com área administrativa e acompanhamento de métricas.",
-      en: "Institutional website with an admin area and metrics tracking.",
-    },
     projectIconKey: "comerc",
     brandLabel: "CI",
     brandAccent: "violet-cyan",
-    carouselStack: ["React", "TypeScript", "Bootstrap", "Node.js", "Supabase"],
   },
   {
     slug: "gdash-dashboard",
-    title: "GDASH Dashboard",
-    category: { pt: "Dados • Monitoramento", en: "Data • Monitoring" },
-    description: {
-      pt: "Monitoramento climático orientado a eventos com pipeline de dados e métricas.",
-      en: "Event-driven climate monitoring with a data pipeline and metrics.",
-    },
     projectIconKey: "gdash",
     brandLabel: "GD",
     brandAccent: "emerald-teal",
-    carouselStack: ["React", "Python", "RabbitMQ", "Go", "Tailwind CSS"],
   },
   {
     slug: "sdr-expert-crm",
-    title: "SDR Expert CRM",
-    category: { pt: "CRM • IA", en: "CRM • AI" },
-    description: {
-      pt: "Mini CRM para SDRs com pipeline comercial, campanhas com IA e isolamento por workspace.",
-      en: "Mini CRM for SDR teams with a sales pipeline, AI campaigns and workspace isolation.",
-    },
     projectIconKey: "sdr",
     brandLabel: "SDR",
     brandAccent: "rose-indigo",
-    carouselStack: ["React", "TypeScript", "Vite", "Supabase", "PostgreSQL"],
   },
 ];
 
