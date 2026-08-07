@@ -419,7 +419,9 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
   const requestJump = useCallback(() => {
     const now = performance.now();
 
-    if (statusRef.current === "idle" || statusRef.current === "gameOver") {
+    if (statusRef.current === "gameOver") return;
+
+    if (statusRef.current === "idle") {
       startRun(true);
       return;
     }
@@ -477,7 +479,7 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
   useEffect(() => {
     function handleKeyDown(event: globalThis.KeyboardEvent) {
       const target = event.target;
-      if (target instanceof HTMLElement && target.closest("input, textarea, select, [contenteditable='true']")) return;
+      if (target instanceof HTMLElement && target.closest("button, a, input, textarea, select, [contenteditable='true']")) return;
 
       const active = document.activeElement;
       const focusedInside = active instanceof HTMLElement && Boolean(rootRef.current?.contains(active));
@@ -495,6 +497,7 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
       }
 
       if (event.code === "KeyR" && !event.repeat) {
+        if (statusRef.current === "gameOver") return;
         event.preventDefault();
         startRun(false);
       }
@@ -635,13 +638,16 @@ export function RuntimeRunner({ locale, onComplete }: RuntimeRunnerProps) {
     : t.maxStage;
 
   function handlePointerDown(event: PointerEvent<HTMLDivElement>) {
-    if (!event.isPrimary) return;
+    if (!event.isPrimary || statusRef.current === "gameOver") return;
     pointerStartRef.current = { x: event.clientX, y: event.clientY };
     event.currentTarget.setPointerCapture?.(event.pointerId);
   }
 
   function handlePointerUp(event: PointerEvent<HTMLDivElement>) {
-    if (!event.isPrimary) return;
+    if (!event.isPrimary || statusRef.current === "gameOver") {
+      pointerStartRef.current = null;
+      return;
+    }
     const start = pointerStartRef.current;
     pointerStartRef.current = null;
     if (!start) return;
