@@ -2,7 +2,7 @@ import { revalidatePath } from "next/cache";
 
 import { apiError, apiSuccess, methodNotAllowed, readJsonPayload, validationError } from "@/lib/api-response";
 import { requireAdminApiUser } from "@/lib/admin/api-auth";
-import { ProjectHomePlacementSchema } from "@/lib/projects/project-schema";
+import { ProjectPresentationSchema } from "@/lib/projects/project-schema";
 import {
   ProjectNotFoundError,
   updateAdminProjectHomePlacement,
@@ -30,7 +30,7 @@ export async function PUT(request: Request, context: RouteContext) {
     return json.response;
   }
 
-  const parsed = ProjectHomePlacementSchema.safeParse(json.payload);
+  const parsed = ProjectPresentationSchema.safeParse(json.payload);
 
   if (!parsed.success) {
     return validationError(parsed.error);
@@ -44,8 +44,13 @@ export async function PUT(request: Request, context: RouteContext) {
     );
 
     revalidatePath("/");
+    revalidatePath("/admin");
     revalidatePath("/admin/projects");
     revalidatePath(`/admin/projects/${slug}`);
+    revalidatePath("/curriculo");
+    revalidatePath("/projetos");
+    revalidatePath(`/projetos/${slug}`);
+    revalidatePath("/sitemap.xml");
 
     return apiSuccess({ project });
   } catch (error) {
@@ -53,7 +58,7 @@ export async function PUT(request: Request, context: RouteContext) {
       return apiError("NOT_FOUND", error.message, 404);
     }
 
-    return apiError("INTERNAL_ERROR", "Não foi possível atualizar a exibição na Home.", 503);
+    return apiError("INTERNAL_ERROR", "Não foi possível atualizar a apresentação pública.", 503);
   }
 }
 
