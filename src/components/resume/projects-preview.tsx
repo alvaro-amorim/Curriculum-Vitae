@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 
-import { projects, projectLinks } from "@/content/projects";
+import { primaryProjects } from "@/content/project-catalog";
 import { profileLinks } from "@/content/profile";
 import { buttonClassName } from "@/components/ui/button";
 import { usePortfolioUi } from "@/components/layout/app-shell";
@@ -17,11 +17,38 @@ type ProjectsPreviewProps = {
   limit?: number;
 };
 
+type CuratedLink = {
+  href: string;
+  label: string;
+  display: string;
+};
+
 export function ProjectsPreview({ showLinks = true, featuredOnly = false, limit }: ProjectsPreviewProps) {
   const { locale, t } = usePortfolioUi();
-  const visibleProjects = projects
+  const visibleProjects = primaryProjects
     .filter((project) => !featuredOnly || project.featured)
-    .slice(0, limit ?? projects.length);
+    .slice(0, limit ?? primaryProjects.length);
+  const curatedLinks = primaryProjects.flatMap((project) => {
+    const links: CuratedLink[] = [];
+
+    if (project.links.website) {
+      links.push({
+        href: project.links.website,
+        label: project.title[locale],
+        display: project.links.website.replace(/^https?:\/\//, "").replace(/\/$/, ""),
+      });
+    }
+
+    if (project.links.repository) {
+      links.push({
+        href: project.links.repository,
+        label: `${project.title[locale]} — GitHub`,
+        display: project.links.repository.replace(/^https?:\/\//, "").replace(/\/$/, ""),
+      });
+    }
+
+    return links;
+  });
 
   return (
     <Card className={styles.resumeCard}>
@@ -50,9 +77,11 @@ export function ProjectsPreview({ showLinks = true, featuredOnly = false, limit 
                 <Link className={buttonClassName("primary", "sm")} href={`/projetos/${project.slug}`}>
                   {t.projectsPage.viewCase}
                 </Link>
-                <a className={buttonClassName("secondary", "sm")} href={project.links.website} rel="noreferrer" target="_blank">
-                  {t.actions.open}
-                </a>
+                {project.links.website ? (
+                  <a className={buttonClassName("secondary", "sm")} href={project.links.website} rel="noreferrer" target="_blank">
+                    {t.actions.open}
+                  </a>
+                ) : null}
                 {project.links.repository ? (
                   <a className={buttonClassName("ghost", "sm")} href={project.links.repository} rel="noreferrer" target="_blank">
                     {t.caseStudy.viewRepository}
@@ -68,9 +97,16 @@ export function ProjectsPreview({ showLinks = true, featuredOnly = false, limit 
         <div className="mt-6">
           <h3 className={styles.projectKicker}>{t.resume.links}</h3>
           <ul className={styles.linkList}>
-            {[...profileLinks, ...projectLinks].map((link) => (
+            {[
+              ...profileLinks.map((link) => ({
+                href: link.href,
+                label: link.label[locale],
+                display: link.display,
+              })),
+              ...curatedLinks,
+            ].map((link) => (
               <li className="flex flex-wrap gap-2" key={link.href}>
-                <span className="text-[var(--text)]">{link.label[locale]}:</span>
+                <span className="text-[var(--text)]">{link.label}:</span>
                 <a className="break-all underline-offset-4 hover:text-[var(--text)] hover:underline" href={link.href} rel="noreferrer" target="_blank">
                   {link.display}
                 </a>

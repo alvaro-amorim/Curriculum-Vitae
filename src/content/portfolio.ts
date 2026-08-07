@@ -2,7 +2,7 @@ import { career } from "./career.ts";
 import { certificationGroup, education } from "./education.ts";
 import { experiences } from "./experience.ts";
 import { profile, profileLinks } from "./profile.ts";
-import { projectLinks, projects } from "./projects.ts";
+import { projectLinks, projects } from "./project-catalog.ts";
 import { resumeSummary } from "./resume.ts";
 import { skillDomains, skillDomainLabels, skillLevels, skillLevelLabels, skills } from "./skills.ts";
 

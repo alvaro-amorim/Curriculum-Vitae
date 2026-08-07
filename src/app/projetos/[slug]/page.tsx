@@ -3,16 +3,19 @@ import { notFound } from "next/navigation";
 import { cache } from "react";
 
 import { ProjectCaseStudy } from "@/components/projects/project-case-study";
-import { projects } from "@/content/projects";
+import { projects } from "@/content/project-catalog";
 import { profile } from "@/content/profile";
 import { SITE_URL } from "@/lib/constants";
-import { getPublicProjectBySlug, getPublicProjects } from "@/lib/projects/repository";
+import {
+  getCuratedPublicProjectBySlug,
+  getCuratedPublicProjects,
+} from "@/lib/projects/public-catalog";
 import type { Project } from "@/types/portfolio";
 
 export const dynamic = "force-dynamic";
 
-const loadProject = cache(getPublicProjectBySlug);
-const loadProjects = cache(getPublicProjects);
+const loadProject = cache(getCuratedPublicProjectBySlug);
+const loadProjects = cache(getCuratedPublicProjects);
 
 type ProjectPageProps = {
   params: Promise<{

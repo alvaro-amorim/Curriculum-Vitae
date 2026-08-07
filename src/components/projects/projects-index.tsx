@@ -3,6 +3,7 @@
 import type { PointerEvent } from "react";
 
 import { usePortfolioUi } from "@/components/layout/app-shell";
+import { groupProjectsByCollection } from "@/content/project-catalog";
 import type { Project } from "@/types/portfolio";
 
 import { ProjectGrid } from "./project-grid";
@@ -20,13 +21,20 @@ function handleExperiencePointer(event: PointerEvent<HTMLElement>) {
 export function ProjectsIndex({ projects }: { projects: Project[] }) {
   const { locale } = usePortfolioUi();
   const featuredProject = projects.find((project) => project.featured) ?? projects[0];
+  const groups = groupProjectsByCollection(projects);
+  const primaryCount = groups.find((group) => group.id === "primary")?.projects.length ?? 0;
+  const labCount = groups.find((group) => group.id === "labs")?.projects.length ?? 0;
   const title = locale === "pt" ? "Projetos" : "Projects";
   const description =
     locale === "pt"
-      ? "Cases, produtos e experiências desenvolvidas com foco em entrega real."
-      : "Cases, products and digital experiences built with real delivery in mind.";
-  const countLabel = locale === "pt" ? `${projects.length} cases publicados` : `${projects.length} published cases`;
-  const note = locale === "pt" ? "Escolha um projeto para abrir o estudo completo." : "Choose a project to open the full case study.";
+      ? "Uma seleção organizada por profundidade de produto, uso real e objetivo técnico."
+      : "A selection organized by product depth, real-world use, and technical purpose.";
+  const countLabel = locale === "pt"
+    ? `${primaryCount} principais + ${labCount} laboratórios`
+    : `${primaryCount} featured + ${labCount} technical labs`;
+  const note = locale === "pt"
+    ? "Cada case informa seu status, escopo e limites atuais."
+    : "Each case states its current status, scope, and limitations.";
 
   if (!featuredProject) {
     return (
@@ -61,20 +69,7 @@ export function ProjectsIndex({ projects }: { projects: Project[] }) {
           </aside>
         </section>
 
-        <section className={styles.projectsListBlock}>
-          <div className={styles.projectsListHeader}>
-            <div>
-              <p className={styles.eyebrow}>{locale === "pt" ? "grade de projetos" : "project grid"}</p>
-              <h2 className={styles.sectionTitle}>{locale === "pt" ? "Escolha um case." : "Pick a case."}</h2>
-            </div>
-            <p className={styles.sectionIntro}>
-              {locale === "pt"
-                ? "Cards compactos com contexto, stack principal e caminho direto para o estudo completo."
-                : "Compact cards with context, core stack and a direct path to the full case study."}
-            </p>
-          </div>
-          <ProjectGrid projects={projects} />
-        </section>
+        <ProjectGrid projects={projects} />
       </div>
     </main>
   );

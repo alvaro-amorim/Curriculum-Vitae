@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 
 import { usePortfolioUi } from "@/components/layout/app-shell";
+import { groupProjectsByCollection } from "@/content/project-catalog";
 import { cn } from "@/lib/cn";
 import { filterProjects, getProjectFilters } from "@/lib/project-filters";
 import type { Project } from "@/types/portfolio";
@@ -22,6 +23,10 @@ export function ProjectGrid({ projects }: ProjectGridProps) {
   const visibleProjects = useMemo(
     () => filterProjects(projects, activeCategory, filters),
     [activeCategory, filters, projects],
+  );
+  const groupedProjects = useMemo(
+    () => groupProjectsByCollection(visibleProjects),
+    [visibleProjects],
   );
 
   return (
@@ -48,11 +53,29 @@ export function ProjectGrid({ projects }: ProjectGridProps) {
         ))}
       </div>
 
-      <div className={styles.projectScenes}>
-        {visibleProjects.map((project, index) => (
-          <ProjectCard index={index} key={project.slug} project={project} />
-        ))}
-      </div>
+      {groupedProjects.map((group) => {
+        if (group.projects.length === 0) {
+          return null;
+        }
+
+        return (
+          <section className={styles.projectsListBlock} key={group.id}>
+            <div className={styles.projectsListHeader}>
+              <div>
+                <p className={styles.eyebrow}>{group.copy.eyebrow[locale]}</p>
+                <h2 className={styles.sectionTitle}>{group.copy.title[locale]}</h2>
+              </div>
+              <p className={styles.sectionIntro}>{group.copy.description[locale]}</p>
+            </div>
+
+            <div className={styles.projectScenes}>
+              {group.projects.map((project, index) => (
+                <ProjectCard index={index} key={project.slug} project={project} />
+              ))}
+            </div>
+          </section>
+        );
+      })}
     </div>
   );
 }
