@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 import { AdminProjectList } from "@/components/admin/admin-project-list";
 import styles from "@/components/admin/admin-projects.module.css";
-import { getAdminProjects, importStaticProjects } from "@/lib/projects/repository";
+import { getAdminProjects } from "@/lib/projects/repository";
 
 export const metadata: Metadata = {
   title: "Projetos | Admin",
@@ -18,7 +18,6 @@ export default async function AdminProjectsPage() {
   let projects = [] as Awaited<ReturnType<typeof getAdminProjects>>;
 
   try {
-    await importStaticProjects("system:catalog-sync");
     projects = await getAdminProjects();
   } catch {
     databaseReady = false;
@@ -29,14 +28,15 @@ export default async function AdminProjectsPage() {
       <header className={styles.pageHeader}>
         <div>
           <span className={styles.eyebrow}>ADMIN / PROJETOS</span>
-          <h1>Conteúdo editorial dos cases.</h1>
-          <p>Edite versões bilíngues, mídias, publicação e a presença de cada projeto na Home e no carrossel.</p>
+          <h1>Fonte única dos projetos.</h1>
+          <p>Todo projeto público, sua coleção, publicação, mídias, Home e carrossel são controlados exclusivamente pelo MongoDB.</p>
         </div>
       </header>
 
       <AdminProjectList
         databaseReady={databaseReady}
         projects={projects.map((record) => ({
+          collection: record.collection,
           homePlacement: record.homePlacement,
           publicationStatus: record.publicationStatus,
           slug: record.project.slug,
