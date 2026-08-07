@@ -44,6 +44,21 @@ const LocalizedListSchema = z.object({
   en: z.array(ShortTextSchema).min(1).max(24),
   pt: z.array(ShortTextSchema).min(1).max(24),
 }).strict();
+const CarouselDescriptionSchema = z.object({
+  en: z.string().trim().max(120),
+  pt: z.string().trim().max(120),
+}).strict().superRefine((value, context) => {
+  const hasEn = value.en.length > 0;
+  const hasPt = value.pt.length > 0;
+
+  if (hasEn !== hasPt) {
+    context.addIssue({
+      code: "custom",
+      message: "Preencha os dois idiomas do resumo do carrossel ou deixe ambos vazios.",
+      path: [hasPt ? "en" : "pt"],
+    });
+  }
+});
 
 const ProjectVisualsSchema = z.preprocess((value) => {
   if (!value || typeof value !== "object" || Array.isArray(value)) {
@@ -102,6 +117,7 @@ export const ProjectContentSchema = z.object({
 export const ProjectCollectionSchema = z.enum(["primary", "labs", "secondary"]);
 
 export const ProjectHomePlacementSchema = z.object({
+  carouselDescription: CarouselDescriptionSchema.optional(),
   carouselOrder: z.coerce.number().int().min(0).max(10_000),
   homeOrder: z.coerce.number().int().min(0).max(10_000),
   showInCarousel: z.boolean(),

@@ -1,8 +1,10 @@
 "use client";
 
+import Link from "next/link";
 import type { PointerEvent } from "react";
 
 import { usePortfolioUi } from "@/components/layout/app-shell";
+import recruiterStyles from "@/components/recruiter/recruiter-journey.module.css";
 import { groupProjectsByCollection } from "@/lib/projects/project-groups";
 import type { Project } from "@/types/portfolio";
 
@@ -25,16 +27,15 @@ export function ProjectsIndex({ projects }: { projects: Project[] }) {
   const primaryCount = groups.find((group) => group.id === "primary")?.projects.length ?? 0;
   const labCount = groups.find((group) => group.id === "labs")?.projects.length ?? 0;
   const title = locale === "pt" ? "Projetos" : "Projects";
-  const description =
-    locale === "pt"
-      ? "Uma seleção organizada pelo painel administrativo, com status, escopo e evidências de cada case."
-      : "A selection organized through the Admin panel, with each case's status, scope, and evidence.";
+  const description = locale === "pt"
+    ? "Cases organizados para mostrar o problema, a solução, as decisões técnicas e o que cada entrega demonstra na prática."
+    : "Cases organized to show the problem, solution, technical decisions, and what each delivery demonstrates in practice.";
   const countLabel = locale === "pt"
     ? `${primaryCount} principais + ${labCount} laboratórios`
     : `${primaryCount} featured + ${labCount} technical labs`;
   const note = locale === "pt"
-    ? "A publicação e a coleção de cada projeto vêm diretamente do MongoDB."
-    : "Each project's publication and collection come directly from MongoDB.";
+    ? "Projetos principais mostram profundidade de produto; laboratórios destacam experimentação e fundamentos técnicos."
+    : "Featured projects show product depth; technical labs highlight experimentation and engineering fundamentals.";
 
   if (!featuredProject) {
     return (
@@ -47,6 +48,23 @@ export function ProjectsIndex({ projects }: { projects: Project[] }) {
               <p className={styles.heroText}>
                 {locale === "pt" ? "Nenhum projeto está publicado no momento." : "No projects are published right now."}
               </p>
+            </div>
+          </section>
+
+          <section className={recruiterStyles.emptyState}>
+            <h2>{locale === "pt" ? "Enquanto isso, conheça meu perfil profissional." : "Meanwhile, explore my professional profile."}</h2>
+            <p>
+              {locale === "pt"
+                ? "O currículo digital reúne formação, experiência, habilidades e canais de contato."
+                : "The digital resume brings together education, experience, skills, and contact channels."}
+            </p>
+            <div className={recruiterStyles.actions}>
+              <Link className={recruiterStyles.primaryAction} href="/curriculo">
+                {locale === "pt" ? "Abrir currículo" : "Open resume"}
+              </Link>
+              <Link className={recruiterStyles.secondaryAction} href="/#sobre">
+                {locale === "pt" ? "Entrar em contato" : "Get in touch"}
+              </Link>
             </div>
           </section>
         </div>

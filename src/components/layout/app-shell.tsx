@@ -5,6 +5,7 @@ import { createContext, useCallback, useContext, useEffect, useLayoutEffect, use
 import { usePathname } from "next/navigation";
 
 import { CommandPalette } from "@/components/lab/command-palette";
+import recruiterStyles from "@/components/recruiter/recruiter-journey.module.css";
 import { dictionary, type Dictionary } from "@/content/translations";
 import { STORAGE_KEYS } from "@/lib/constants";
 import type { Locale, ThemeName } from "@/types/portfolio";
@@ -227,6 +228,9 @@ export function AppShell({ children }: { children: ReactNode }) {
       >
         {!isAdminRoute ? (
           <>
+            <a className={recruiterStyles.skipLink} href="#main-content">
+              {locale === "pt" ? "Pular para o conteúdo" : "Skip to content"}
+            </a>
             <Topbar />
             <CommandPalette />
             <CustomCursor />
@@ -235,7 +239,9 @@ export function AppShell({ children }: { children: ReactNode }) {
         <div
           className={styles.pageFrame}
           data-route={isAdminRoute ? "admin" : pathname === "/" ? "immersive" : "standard"}
+          id="main-content"
           key={pathname}
+          tabIndex={-1}
         >
           {children}
         </div>

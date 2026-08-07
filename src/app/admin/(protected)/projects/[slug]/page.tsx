@@ -45,6 +45,7 @@ export default async function EditAdminProjectPage({ params }: PageProps) {
       </header>
 
       <AdminProjectHomePlacement
+        fallbackDescription={record.project.shortDescription}
         initialCollection={record.collection}
         initialPlacement={record.homePlacement}
         publicationStatus={record.publicationStatus}

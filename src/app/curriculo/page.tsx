@@ -13,6 +13,7 @@ import { profile } from "@/content/profile";
 import { getPublicProjects } from "@/lib/projects/repository";
 
 const pageTitle = `Currículo — ${profile.shortName}`;
+const pageDescription = career.seo.resumeDescription.pt;
 
 export const dynamic = "force-dynamic";
 
@@ -20,7 +21,7 @@ export const metadata: Metadata = {
   title: {
     absolute: pageTitle,
   },
-  description: career.seo.resumeDescription.pt,
+  description: pageDescription,
   alternates: {
     canonical: "/curriculo",
   },
@@ -28,6 +29,11 @@ export const metadata: Metadata = {
     title: pageTitle,
     description: career.seo.resumeOpenGraphDescription.pt,
     url: "/curriculo",
+  },
+  twitter: {
+    card: "summary",
+    title: pageTitle,
+    description: career.seo.resumeOpenGraphDescription.pt,
   },
 };
 

@@ -1,6 +1,6 @@
 import type { Collection, Db, ObjectId } from "mongodb";
 
-import type { LabGameId, Project } from "@/types/portfolio";
+import type { LabGameId, LocalizedText, Project } from "@/types/portfolio";
 import type { ProjectCollectionId } from "@/lib/projects/project-collection";
 
 import { getMongoDatabase } from "./client.ts";
@@ -90,6 +90,7 @@ export type PortfolioProjectDocument = {
   content: Project;
   createdAt: Date;
   homePlacement?: {
+    carouselDescription?: LocalizedText;
     carouselOrder: number;
     homeOrder: number;
     showInCarousel: boolean;
@@ -111,6 +112,7 @@ export type PortfolioProjectRevisionDocument = {
   collection?: ProjectCollectionId;
   content: Project;
   homePlacement?: {
+    carouselDescription?: LocalizedText;
     carouselOrder: number;
     homeOrder: number;
     showInCarousel: boolean;

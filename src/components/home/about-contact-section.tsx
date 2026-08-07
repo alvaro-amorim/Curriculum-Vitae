@@ -181,12 +181,16 @@ export function AboutContactSection({ locale }: { locale: Locale }) {
           <div className={styles.contactList}>
             {contacts.map((contact) => {
               const external = contact.href.startsWith("http");
+              const ariaLabel = external
+                ? `${contact.label}: ${contact.value} (${locale === "pt" ? "abre em nova aba" : "opens in a new tab"})`
+                : `${contact.label}: ${contact.value}`;
 
               return (
                 <a
+                  aria-label={ariaLabel}
                   href={contact.href}
                   key={contact.label}
-                  rel={external ? "noreferrer" : undefined}
+                  rel={external ? "noopener noreferrer" : undefined}
                   target={external ? "_blank" : undefined}
                 >
                   <span className={styles.contactIcon}><ContactIcon name={contact.icon} /></span>

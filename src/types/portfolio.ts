@@ -61,6 +61,7 @@ export type Project = {
   title: LocalizedText;
   subtitle: LocalizedText;
   shortDescription: LocalizedText;
+  carouselDescription?: LocalizedText;
   fullDescription: LocalizedText;
   status: LocalizedText;
   category: string[];
