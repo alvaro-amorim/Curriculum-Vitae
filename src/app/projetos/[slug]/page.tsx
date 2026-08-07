@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { cache } from "react";
 
 import { ProjectCaseStudy } from "@/components/projects/project-case-study";
+import { ProjectRecruiterCta } from "@/components/recruiter/project-recruiter-cta";
 import { profile } from "@/content/profile";
 import { SITE_URL } from "@/lib/constants";
 import {
@@ -48,6 +49,10 @@ export async function generateMetadata({ params }: ProjectPageProps): Promise<Me
   if (!project) {
     return {
       title: "Projeto não encontrado",
+      robots: {
+        index: false,
+        follow: false,
+      },
     };
   }
 
@@ -89,5 +94,10 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
     notFound();
   }
 
-  return <ProjectCaseStudy project={project} projects={publicProjects} />;
+  return (
+    <>
+      <ProjectCaseStudy project={project} projects={publicProjects} />
+      <ProjectRecruiterCta project={project} />
+    </>
+  );
 }
