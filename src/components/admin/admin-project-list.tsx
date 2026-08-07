@@ -4,10 +4,13 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 
+import type { ProjectHomePlacement } from "@/lib/projects/home-placement";
+
 import { AdminProjectJsonImportModal } from "./admin-project-json-import-modal";
 import styles from "./admin-projects.module.css";
 
 type ProjectSummary = {
+  homePlacement: ProjectHomePlacement;
   publicationStatus: "draft" | "published" | "archived";
   slug: string;
   sortOrder: number;
@@ -25,6 +28,10 @@ type ApiResponse = {
   };
   ok: boolean;
 };
+
+function placementLabel(enabled: boolean, order: number) {
+  return enabled ? `Ativo · ordem ${order}` : "Oculto";
+}
 
 export function AdminProjectList({
   databaseReady,
@@ -129,8 +136,16 @@ export function AdminProjectList({
                 <strong>{project.slug}</strong>
               </div>
               <div className={styles.projectMeta}>
-                <small>Ordem</small>
-                <strong>{project.sortOrder}</strong>
+                <small>Catálogo</small>
+                <strong>Ordem {project.sortOrder}</strong>
+              </div>
+              <div className={styles.projectMeta}>
+                <small>Grade da Home</small>
+                <strong>{placementLabel(project.homePlacement.showInHome, project.homePlacement.homeOrder)}</strong>
+              </div>
+              <div className={styles.projectMeta}>
+                <small>Carrossel</small>
+                <strong>{placementLabel(project.homePlacement.showInCarousel, project.homePlacement.carouselOrder)}</strong>
               </div>
               <div className={styles.rowActions}>
                 <span className={styles.status} data-status={project.publicationStatus}>
@@ -153,7 +168,7 @@ export function AdminProjectList({
         </div>
       ) : (
         <div className={styles.emptyState}>
-          <p>O MongoDB ainda não possui projetos. Importe um JSON administrativo ou crie um novo case.</p>
+          <p>O MongoDB ainda não possui projetos. O catálogo curado será sincronizado automaticamente quando a conexão estiver disponível.</p>
         </div>
       )}
 
