@@ -49,6 +49,9 @@ function handlePointer(event: PointerEvent<HTMLElement>) {
 export function ProjectCard({ project, compact = false, index = 0 }: ProjectCardProps) {
   const { locale, t } = usePortfolioUi();
   const viewCase = locale === "pt" ? "Ver case" : t.projectsPage.viewCase;
+  const externalProjectLabel = locale === "pt"
+    ? `Abrir ${project.title.pt} em uma nova aba`
+    : `Open ${project.title.en} in a new tab`;
 
   return (
     <article
@@ -94,7 +97,13 @@ export function ProjectCard({ project, compact = false, index = 0 }: ProjectCard
             {viewCase}
           </Link>
           {project.links.website ? (
-            <a className={styles.actionGhost} href={project.links.website} rel="noreferrer" target="_blank">
+            <a
+              aria-label={externalProjectLabel}
+              className={styles.actionGhost}
+              href={project.links.website}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
               {t.actions.open}
             </a>
           ) : null}
