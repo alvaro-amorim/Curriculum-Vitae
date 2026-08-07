@@ -25,6 +25,8 @@ const requiredPtTokens = [
   "Ver projetos",
   "Como eu trabalho.",
   "Um lab com ranking real.",
+  "Desenvolvedor Full Stack Júnior",
+  "alvaroaom.jf@gmail.com",
 ];
 
 const forbiddenPtTokens = [
@@ -33,6 +35,9 @@ const forbiddenPtTokens = [
   "Theme",
   "How I work.",
   "A lab with real ranking.",
+  "5+ Anos construindo software",
+  "6+ Produtos em produção",
+  "alvaroamorimjf@gmail.com",
 ];
 
 async function requestRoute(path) {
