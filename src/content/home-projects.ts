@@ -1,6 +1,6 @@
 import type { Locale, LocalizedText, Project } from "@/types/portfolio";
 
-import { primaryProjectSlugs, projects as staticProjects } from "./project-catalog.ts";
+import { primaryProjects } from "./project-catalog.ts";
 
 export type HomeProjectIconKey = "margem" | "comerc" | "gdash" | "sdr" | "arcade" | "portfolio-os";
 export type HomeProjectAccent = "blue-purple" | "amber-pink" | "emerald-teal" | "rose-indigo" | "violet-cyan" | "sky-purple";
@@ -19,8 +19,7 @@ export type HomeProject = {
   logoAlt?: Record<Locale, string>;
 };
 
-type ProjectShowcaseOptions = {
-  slug: (typeof primaryProjectSlugs)[number];
+type ProjectShowcasePresentation = {
   projectIconKey: HomeProjectIconKey;
   brandLabel: string;
   brandAccent: HomeProjectAccent;
@@ -29,15 +28,62 @@ type ProjectShowcaseOptions = {
 const categoryLabels: Record<string, LocalizedText> = {
   Atendimento: { pt: "Atendimento", en: "Customer service" },
   Áudio: { pt: "Áudio", en: "Audio" },
+  Dados: { pt: "Dados", en: "Data" },
+  Dashboard: { pt: "Dashboard", en: "Dashboard" },
   "E-commerce": { pt: "E-commerce", en: "E-commerce" },
   "Editor visual": { pt: "Editor visual", en: "Visual editor" },
   FoodTech: { pt: "FoodTech", en: "FoodTech" },
   IA: { pt: "IA", en: "AI" },
+  Institucional: { pt: "Institucional", en: "Institutional" },
   "Local-first": { pt: "Local-first", en: "Local-first" },
+  Métricas: { pt: "Métricas", en: "Metrics" },
   Produto: { pt: "Produto", en: "Product" },
   SaaS: { pt: "SaaS", en: "SaaS" },
   CRM: { pt: "CRM", en: "CRM" },
 };
+
+const knownPresentations: Record<string, ProjectShowcasePresentation> = {
+  "audio-emotion": {
+    projectIconKey: "gdash",
+    brandLabel: "AE",
+    brandAccent: "sky-purple",
+  },
+  "fluxo": {
+    projectIconKey: "gdash",
+    brandLabel: "FL",
+    brandAccent: "emerald-teal",
+  },
+  "glace-confeitaria": {
+    projectIconKey: "comerc",
+    brandLabel: "GL",
+    brandAccent: "amber-pink",
+  },
+  "layerart-store": {
+    projectIconKey: "comerc",
+    brandLabel: "LA",
+    brandAccent: "violet-cyan",
+  },
+  "margem-app": {
+    projectIconKey: "margem",
+    brandLabel: "MG",
+    brandAccent: "blue-purple",
+  },
+  "sdr-expert-crm": {
+    projectIconKey: "sdr",
+    brandLabel: "SDR",
+    brandAccent: "rose-indigo",
+  },
+};
+
+const fallbackAccents: HomeProjectAccent[] = [
+  "blue-purple",
+  "amber-pink",
+  "emerald-teal",
+  "rose-indigo",
+  "violet-cyan",
+  "sky-purple",
+];
+const fallbackIcons: HomeProjectIconKey[] = ["comerc", "gdash", "sdr", "margem"];
 
 function localizeCategory(category: string, locale: Locale) {
   return categoryLabels[category]?.[locale] ?? category;
@@ -50,12 +96,38 @@ function projectCategory(project: Project, locale: Locale) {
     .join(" • ");
 }
 
-function createProjectShowcase(projectsBySlug: Map<string, Project>, options: ProjectShowcaseOptions): HomeProject | null {
-  const project = projectsBySlug.get(options.slug);
+function stableHash(value: string) {
+  return [...value].reduce((hash, character) => ((hash * 31) + character.charCodeAt(0)) >>> 0, 0);
+}
 
-  if (!project) {
-    return null;
+function projectInitials(project: Project) {
+  const words = project.title.pt
+    .replace(/[^\p{L}\p{N}\s]/gu, " ")
+    .trim()
+    .split(/\s+/u)
+    .filter(Boolean);
+
+  return words.slice(0, 3).map((word) => word[0]).join("").toUpperCase() || "PRJ";
+}
+
+function projectPresentation(project: Project): ProjectShowcasePresentation {
+  const configured = knownPresentations[project.slug];
+
+  if (configured) {
+    return configured;
   }
+
+  const hash = stableHash(project.slug);
+
+  return {
+    brandAccent: fallbackAccents[hash % fallbackAccents.length],
+    brandLabel: projectInitials(project),
+    projectIconKey: fallbackIcons[hash % fallbackIcons.length],
+  };
+}
+
+function createProjectShowcase(project: Project): HomeProject {
+  const presentation = projectPresentation(project);
 
   return {
     title: project.title.pt,
@@ -64,9 +136,9 @@ function createProjectShowcase(projectsBySlug: Map<string, Project>, options: Pr
       en: projectCategory(project, "en"),
     },
     description: project.shortDescription,
-    projectIconKey: options.projectIconKey,
-    brandLabel: options.brandLabel,
-    brandAccent: options.brandAccent,
+    projectIconKey: presentation.projectIconKey,
+    brandLabel: presentation.brandLabel,
+    brandAccent: presentation.brandAccent,
     carouselStack: project.stack,
     caseHref: `/projetos/${project.slug}`,
     liveHref: project.links.website || undefined,
@@ -75,52 +147,8 @@ function createProjectShowcase(projectsBySlug: Map<string, Project>, options: Pr
   };
 }
 
-const projectShowcases: ProjectShowcaseOptions[] = [
-  {
-    slug: "margem-app",
-    projectIconKey: "margem",
-    brandLabel: "MG",
-    brandAccent: "blue-purple",
-  },
-  {
-    slug: "fluxo",
-    projectIconKey: "gdash",
-    brandLabel: "FL",
-    brandAccent: "emerald-teal",
-  },
-  {
-    slug: "glace-confeitaria",
-    projectIconKey: "comerc",
-    brandLabel: "GL",
-    brandAccent: "amber-pink",
-  },
-  {
-    slug: "sdr-expert-crm",
-    projectIconKey: "sdr",
-    brandLabel: "SDR",
-    brandAccent: "rose-indigo",
-  },
-  {
-    slug: "layerart-store",
-    projectIconKey: "comerc",
-    brandLabel: "LA",
-    brandAccent: "violet-cyan",
-  },
-  {
-    slug: "audio-emotion",
-    projectIconKey: "gdash",
-    brandLabel: "AE",
-    brandAccent: "sky-purple",
-  },
-];
-
-export function createHomeProjects(publicProjects: readonly Project[] = staticProjects): HomeProject[] {
-  const projectsBySlug = new Map(publicProjects.map((project) => [project.slug, project]));
-
-  return projectShowcases.flatMap((project) => {
-    const showcase = createProjectShowcase(projectsBySlug, project);
-    return showcase ? [showcase] : [];
-  });
+export function createHomeProjects(publicProjects: readonly Project[]): HomeProject[] {
+  return publicProjects.map(createProjectShowcase);
 }
 
-export const homeProjects: HomeProject[] = createHomeProjects();
+export const homeProjects: HomeProject[] = createHomeProjects(primaryProjects);
