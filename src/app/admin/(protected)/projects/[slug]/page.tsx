@@ -40,11 +40,12 @@ export default async function EditAdminProjectPage({ params }: PageProps) {
         <div>
           <span className={styles.eyebrow}>ADMIN / EDITAR PROJETO</span>
           <h1>{record.project.title.pt}</h1>
-          <p>Edite o conteúdo bilíngue, as mídias e os locais em que o projeto aparece publicamente.</p>
+          <p>Edite conteúdo, mídias, coleção, publicação e todos os locais em que o projeto aparece.</p>
         </div>
       </header>
 
       <AdminProjectHomePlacement
+        initialCollection={record.collection}
         initialPlacement={record.homePlacement}
         publicationStatus={record.publicationStatus}
         slug={record.project.slug}
