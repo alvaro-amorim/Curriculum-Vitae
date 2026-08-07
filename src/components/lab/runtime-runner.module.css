@@ -11,6 +11,8 @@
   --runner-line: rgba(190, 220, 255, 0.15);
   --runner-text: #f8fbff;
   --runner-muted: rgba(220, 235, 255, 0.65);
+  --runner-ground: 5.55rem;
+  --runner-jump-range: 11.8rem;
   display: grid;
   width: 100%;
   height: 100%;
@@ -90,10 +92,9 @@
   border: 1px solid var(--runner-line);
   border-radius: 999px;
   padding: 0.32rem 0.52rem;
-  background: color-mix(in srgb, var(--runner-panel) 84%, transparent);
+  background: color-mix(in srgb, var(--runner-panel) 90%, transparent);
   color: var(--runner-muted);
   font-size: 0.5rem;
-  backdrop-filter: blur(12px);
 }
 
 .liveStatus i,
@@ -112,14 +113,9 @@
 }
 
 .liveStatus[data-status="paused"] i,
-.consoleHeader > i[data-status="paused"] {
-  background: var(--runner-amber);
-}
-
+.consoleHeader > i[data-status="paused"] { background: var(--runner-amber); }
 .liveStatus[data-status="gameOver"] i,
-.consoleHeader > i[data-status="gameOver"] {
-  background: var(--runner-red);
-}
+.consoleHeader > i[data-status="gameOver"] { background: var(--runner-red); }
 
 .gameShell {
   display: grid;
@@ -142,13 +138,13 @@
   border-radius: 1.05rem;
   outline: none;
   background: var(--runner-bg);
-  box-shadow:
-    0 1.2rem 4rem rgba(0, 0, 0, 0.24),
-    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+  box-shadow: 0 1.2rem 4rem rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.07);
   cursor: pointer;
   touch-action: none;
   user-select: none;
   isolation: isolate;
+  contain: layout paint;
+  container-type: inline-size;
 }
 
 .playfield:focus-visible {
@@ -158,9 +154,6 @@
 
 .playfield[data-danger="true"] {
   border-color: color-mix(in srgb, var(--runner-amber) 62%, var(--runner-line));
-  box-shadow:
-    0 1.2rem 4rem rgba(0, 0, 0, 0.24),
-    inset 0 0 4rem rgba(251, 191, 36, 0.055);
 }
 
 .playfield[data-state="gameOver"] {
@@ -195,11 +188,10 @@
   border-bottom: 0;
   border-radius: 0.8rem 0.8rem 0 0;
   content: "";
-  opacity: 0.4;
+  opacity: 0.35;
   background:
     repeating-linear-gradient(to bottom, rgba(92, 225, 255, 0.08) 0 1px, transparent 1px 1.8rem),
     linear-gradient(to right, rgba(92, 225, 255, 0.04), transparent);
-  filter: blur(0.1px);
 }
 
 .environment::before {
@@ -224,6 +216,7 @@
     linear-gradient(108deg, transparent 28%, rgba(92, 225, 255, 0.055) 46%, transparent 62%),
     radial-gradient(circle at 50% 100%, rgba(159, 122, 234, 0.08), transparent 48%);
   animation: environmentSweep 7.5s linear infinite;
+  will-change: transform;
 }
 
 .pipelineGrid {
@@ -244,31 +237,28 @@
   background:
     linear-gradient(90deg, rgba(92, 225, 255, 0.035), rgba(159, 122, 234, 0.1), rgba(52, 211, 153, 0.045)),
     repeating-linear-gradient(90deg, rgba(92, 225, 255, 0.14) 0 1px, transparent 1px 5.6rem);
-  box-shadow: inset 0 1.5rem 3rem rgba(92, 225, 255, 0.025);
 }
 
 .pipelinePacket,
 .pipelinePacketSecondary {
   position: absolute;
   z-index: 1;
+  left: 0;
   bottom: 10.4rem;
   width: 0.48rem;
   height: 0.48rem;
   border-radius: 50%;
   background: var(--runner-cyan);
-  box-shadow:
-    -1.5rem 0 1rem rgba(92, 225, 255, 0.14),
-    0 0 1.1rem var(--runner-cyan);
+  box-shadow: 0 0 1.1rem var(--runner-cyan);
   pointer-events: none;
   animation: packetFlow 4.6s linear infinite;
+  will-change: transform, opacity;
 }
 
 .pipelinePacketSecondary {
   bottom: 7.7rem;
   background: var(--runner-violet);
-  box-shadow:
-    -1.5rem 0 1rem rgba(159, 122, 234, 0.14),
-    0 0 1.1rem var(--runner-violet);
+  box-shadow: 0 0 1.1rem var(--runner-violet);
   animation-delay: -2.1s;
   animation-duration: 5.8s;
 }
@@ -290,17 +280,14 @@
   border: 1px solid var(--runner-line);
   border-radius: 0.65rem;
   padding: 0.4rem 0.48rem;
-  background: color-mix(in srgb, var(--runner-panel) 78%, transparent);
+  background: color-mix(in srgb, var(--runner-panel) 92%, transparent);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.055);
-  backdrop-filter: blur(14px);
 }
 
 .metricPrimary {
   min-width: 5.8rem;
   border-color: color-mix(in srgb, var(--runner-cyan) 34%, var(--runner-line));
-  background:
-    linear-gradient(135deg, color-mix(in srgb, var(--runner-cyan) 11%, transparent), transparent 58%),
-    color-mix(in srgb, var(--runner-panel) 82%, transparent);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--runner-cyan) 11%, transparent), transparent 58%), color-mix(in srgb, var(--runner-panel) 94%, transparent);
 }
 
 .metric span,
@@ -366,12 +353,15 @@
 
 .stageTrack i {
   display: block;
-  width: calc(var(--stage-progress, 0) * 100%);
+  width: 100%;
   height: 100%;
   border-radius: inherit;
   background: linear-gradient(90deg, var(--runner-cyan), var(--runner-blue), var(--runner-violet));
   box-shadow: 0 0 0.9rem color-mix(in srgb, var(--runner-cyan) 45%, transparent);
-  transition: width 120ms linear;
+  transform: scaleX(var(--stage-progress, 0));
+  transform-origin: left center;
+  transition: transform 90ms linear;
+  will-change: transform;
 }
 
 .track {
@@ -420,9 +410,7 @@
   border: 1px solid var(--runner-cyan);
   border-radius: 50%;
   background: var(--runner-bg);
-  box-shadow:
-    0 0 0 0.25rem rgba(92, 225, 255, 0.035),
-    0 0 1rem rgba(92, 225, 255, 0.22);
+  box-shadow: 0 0 0 0.25rem rgba(92, 225, 255, 0.035), 0 0 1rem rgba(92, 225, 255, 0.22);
 }
 
 .trackNode:nth-of-type(2) { left: 27%; }
@@ -437,9 +425,7 @@
   bottom: 5.38rem;
   height: 3px;
   background: linear-gradient(90deg, transparent, var(--runner-cyan) 12%, rgba(92, 225, 255, 0.55) 86%, transparent);
-  box-shadow:
-    0 0 1.4rem rgba(92, 225, 255, 0.28),
-    0 0.45rem 1.2rem rgba(92, 225, 255, 0.06);
+  box-shadow: 0 0 1.4rem rgba(92, 225, 255, 0.24);
   pointer-events: none;
 }
 
@@ -447,24 +433,20 @@
   position: absolute;
   z-index: 9;
   left: 12.5%;
-  bottom: calc(5.55rem + (var(--runner-y, 0) * 11.8rem));
+  bottom: var(--runner-ground);
   display: grid;
   width: 4.45rem;
   aspect-ratio: 1.08;
   place-items: center;
   border: 1px solid rgba(92, 225, 255, 0.65);
   border-radius: 1.25rem 1.25rem 1rem 1rem;
-  background:
-    linear-gradient(150deg, rgba(92, 225, 255, 0.24), rgba(159, 122, 234, 0.16) 60%, rgba(2, 6, 23, 0.96)),
-    rgba(4, 12, 24, 0.94);
-  box-shadow:
-    -1.25rem 0 1.7rem rgba(92, 225, 255, 0.08),
-    0 0 3rem rgba(92, 225, 255, 0.24),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  background: linear-gradient(150deg, rgba(92, 225, 255, 0.24), rgba(159, 122, 234, 0.16) 60%, rgba(2, 6, 23, 0.96)), rgba(4, 12, 24, 0.94);
+  box-shadow: -1.25rem 0 1.7rem rgba(92, 225, 255, 0.08), 0 0 2rem rgba(92, 225, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2);
   color: #ecfeff;
   pointer-events: none;
+  transform: translate3d(0, calc(var(--runner-y, 0) * var(--runner-jump-range) * -1), 0);
   transform-origin: center bottom;
-  transition: border-color 120ms ease, box-shadow 120ms ease;
+  will-change: transform;
 }
 
 .runner::before {
@@ -474,11 +456,9 @@
   left: 0.55rem;
   height: 0.45rem;
   border-radius: 0 0 0.6rem 0.6rem;
-  background:
-    linear-gradient(90deg, var(--runner-cyan) 0 26%, transparent 26% 72%, var(--runner-violet) 72% 100%);
+  background: linear-gradient(90deg, var(--runner-cyan) 0 26%, transparent 26% 72%, var(--runner-violet) 72% 100%);
   content: "";
   opacity: 0.82;
-  filter: drop-shadow(0 0 0.45rem rgba(92, 225, 255, 0.32));
 }
 
 .runner::after {
@@ -491,22 +471,17 @@
   background: linear-gradient(90deg, transparent, rgba(92, 225, 255, 0.44));
   content: "";
   opacity: 0.72;
-  transform: translateY(-50%);
+  translate: 0 -50%;
 }
 
 :global([data-theme="light"]) .runner {
-  background:
-    linear-gradient(150deg, rgba(2, 132, 199, 0.18), rgba(109, 40, 217, 0.1) 60%, rgba(255, 255, 255, 0.96)),
-    rgba(255, 255, 255, 0.97);
+  background: linear-gradient(150deg, rgba(2, 132, 199, 0.18), rgba(109, 40, 217, 0.1) 60%, rgba(255, 255, 255, 0.96)), rgba(255, 255, 255, 0.97);
   color: #075985;
 }
 
 .runner[data-air="true"] {
   border-color: var(--runner-green);
-  box-shadow:
-    -1.8rem 0 2.2rem rgba(52, 211, 153, 0.08),
-    0 0 3.4rem rgba(52, 211, 153, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.22);
+  box-shadow: -1.8rem 0 2.2rem rgba(52, 211, 153, 0.08), 0 0 2.5rem rgba(52, 211, 153, 0.26), inset 0 1px 0 rgba(255, 255, 255, 0.22);
   animation: runnerAir 360ms ease-out both;
 }
 
@@ -526,9 +501,7 @@
   letter-spacing: -0.08em;
 }
 
-:global([data-theme="light"]) .runnerPrompt {
-  background: rgba(255, 255, 255, 0.46);
-}
+:global([data-theme="light"]) .runnerPrompt { background: rgba(255, 255, 255, 0.46); }
 
 .runnerSignal {
   position: absolute;
@@ -544,10 +517,10 @@
 .obstacle {
   position: absolute;
   z-index: 8;
-  left: calc(var(--obstacle-x, 100) * 1%);
-  bottom: 5.55rem;
+  left: 0;
+  bottom: var(--runner-ground);
   display: grid;
-  width: calc(var(--obstacle-width, 12) * 1%);
+  width: calc(var(--obstacle-width, 12) * 1cqw);
   min-width: 5.1rem;
   min-height: calc(2.65rem + (var(--obstacle-height, 0.2) * 3.4rem));
   align-content: center;
@@ -556,16 +529,14 @@
   border: 1px solid color-mix(in srgb, var(--obstacle-color, var(--runner-red)) 74%, transparent);
   border-radius: 0.35rem 0.9rem 0.35rem 0.35rem;
   padding: 0.48rem 0.54rem 0.44rem 0.72rem;
-  background:
-    linear-gradient(135deg, color-mix(in srgb, var(--obstacle-color) 22%, transparent), transparent 58%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.045), transparent 35%),
-    rgba(8, 12, 23, 0.96);
-  box-shadow:
-    0 0.8rem 2rem rgba(0, 0, 0, 0.24),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--obstacle-color) 22%, transparent), transparent 58%), linear-gradient(180deg, rgba(255, 255, 255, 0.045), transparent 35%), rgba(8, 12, 23, 0.96);
+  box-shadow: 0 0.6rem 1.5rem rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.08);
   color: #fff;
   pointer-events: none;
+  transform: translate3d(calc(var(--obstacle-x, 100) * 1cqw), 0, 0);
   transform-origin: center bottom;
+  will-change: transform;
+  contain: layout paint;
 }
 
 .obstacle::before {
@@ -574,8 +545,7 @@
   bottom: 0;
   left: 0;
   width: 0.27rem;
-  background:
-    repeating-linear-gradient(to bottom, var(--obstacle-color) 0 0.45rem, transparent 0.45rem 0.72rem);
+  background: repeating-linear-gradient(to bottom, var(--obstacle-color) 0 0.45rem, transparent 0.45rem 0.72rem);
   content: "";
   opacity: 0.9;
 }
@@ -588,15 +558,11 @@
   height: 0.22rem;
   border-radius: 999px;
   background: color-mix(in srgb, var(--obstacle-color) 72%, transparent);
-  box-shadow: 0 0.52rem 0 color-mix(in srgb, var(--obstacle-color) 26%, transparent);
   content: "";
 }
 
 :global([data-theme="light"]) .obstacle {
-  background:
-    linear-gradient(135deg, color-mix(in srgb, var(--obstacle-color) 12%, transparent), transparent 58%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.78), rgba(255, 255, 255, 0.94)),
-    rgba(255, 255, 255, 0.98);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--obstacle-color) 12%, transparent), transparent 58%), linear-gradient(180deg, rgba(255, 255, 255, 0.78), rgba(255, 255, 255, 0.94)), rgba(255, 255, 255, 0.98);
   color: #0f172a;
 }
 
@@ -617,16 +583,11 @@
   white-space: nowrap;
 }
 
-.obstacle:nth-of-type(even) {
-  border-radius: 0.85rem 0.3rem 0.85rem 0.3rem;
-}
-
 .obstacle[data-near="true"] {
   border-color: var(--runner-amber);
-  box-shadow:
-    0 0 0 2px rgba(251, 191, 36, 0.06),
-    0 0 2.6rem rgba(251, 191, 36, 0.24);
-  transform: translateY(-0.08rem) scale(1.025);
+  box-shadow: 0 0 0 2px rgba(251, 191, 36, 0.06), 0 0 1.5rem rgba(251, 191, 36, 0.2);
+  scale: 1.02;
+  translate: 0 -0.08rem;
 }
 
 .eventPulse {
@@ -639,7 +600,6 @@
   padding: 0.34rem 0.55rem;
   background: rgba(6, 78, 59, 0.48);
   color: #d1fae5;
-  box-shadow: 0 0.8rem 2rem rgba(6, 78, 59, 0.18);
   font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.58rem;
   font-weight: 950;
@@ -657,7 +617,6 @@
   left: 50%;
   bottom: auto;
   top: 7rem;
-  transform: translateX(-50%);
   border-color: rgba(159, 122, 234, 0.56);
   background: rgba(76, 29, 149, 0.48);
   color: #ede9fe;
@@ -689,16 +648,11 @@
   display: grid;
   place-items: center;
   padding: 0.8rem;
-  background:
-    radial-gradient(circle at 50% 58%, rgba(92, 225, 255, 0.055), transparent 18rem),
-    linear-gradient(180deg, rgba(3, 8, 18, 0.06), rgba(3, 8, 18, 0.64));
-  backdrop-filter: blur(2px) saturate(88%);
+  background: radial-gradient(circle at 50% 58%, rgba(92, 225, 255, 0.055), transparent 18rem), linear-gradient(180deg, rgba(3, 8, 18, 0.06), rgba(3, 8, 18, 0.64));
 }
 
 :global([data-theme="light"]) .stateOverlay {
-  background:
-    radial-gradient(circle at 50% 58%, rgba(2, 132, 199, 0.07), transparent 18rem),
-    linear-gradient(180deg, rgba(238, 244, 251, 0.04), rgba(226, 236, 248, 0.72));
+  background: radial-gradient(circle at 50% 58%, rgba(2, 132, 199, 0.07), transparent 18rem), linear-gradient(180deg, rgba(238, 244, 251, 0.04), rgba(226, 236, 248, 0.72));
 }
 
 .stateCard {
@@ -708,13 +662,8 @@
   border: 1px solid color-mix(in srgb, var(--runner-cyan) 22%, var(--runner-line));
   border-radius: 0.45rem 1.1rem 0.45rem 1.1rem;
   padding: 1rem 1.05rem;
-  background:
-    linear-gradient(135deg, rgba(92, 225, 255, 0.055), transparent 42%),
-    color-mix(in srgb, var(--runner-panel) 90%, transparent);
-  box-shadow:
-    0 1.8rem 5rem rgba(0, 0, 0, 0.34),
-    inset 0 1px 0 rgba(255, 255, 255, 0.07);
-  backdrop-filter: blur(18px);
+  background: linear-gradient(135deg, rgba(92, 225, 255, 0.055), transparent 42%), var(--runner-panel);
+  box-shadow: 0 1.3rem 3.5rem rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.07);
 }
 
 .stateCard::before {
@@ -727,14 +676,8 @@
   content: "";
 }
 
-.stateCard[data-compact="true"] {
-  width: min(88%, 23rem);
-}
-
-.stateCode {
-  color: var(--runner-cyan);
-  font-size: 0.51rem;
-}
+.stateCard[data-compact="true"] { width: min(88%, 23rem); }
+.stateCode { color: var(--runner-cyan); font-size: 0.51rem; }
 
 .stateCard h3 {
   margin: 0.38rem 0 0;
@@ -808,7 +751,6 @@
   font: inherit;
   font-weight: 950;
   cursor: pointer;
-  box-shadow: 0 0.8rem 1.8rem rgba(59, 130, 246, 0.12);
 }
 
 .primaryAction {
@@ -817,9 +759,7 @@
   font-size: 0.7rem;
 }
 
-.primaryAction i {
-  font-style: normal;
-}
+.primaryAction i { font-style: normal; }
 
 .resultHeading {
   display: flex;
@@ -841,7 +781,6 @@
 .recordBadge[data-record="true"] {
   border-color: color-mix(in srgb, var(--runner-green) 52%, var(--runner-line));
   color: var(--runner-green);
-  box-shadow: 0 0 1.2rem color-mix(in srgb, var(--runner-green) 15%, transparent);
 }
 
 .resultGrid {
@@ -859,11 +798,7 @@
   background: var(--runner-panel-soft);
 }
 
-.resultGrid span {
-  display: block;
-  color: var(--runner-muted);
-  font-size: 0.44rem;
-}
+.resultGrid span { display: block; color: var(--runner-muted); font-size: 0.44rem; }
 
 .resultGrid strong {
   display: block;
@@ -885,10 +820,7 @@
   border: 1px solid var(--runner-line);
   border-radius: 0.85rem;
   padding: 0.58rem;
-  background:
-    linear-gradient(180deg, rgba(92, 225, 255, 0.025), transparent 25%),
-    var(--runner-panel);
-  box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.16);
+  background: linear-gradient(180deg, rgba(92, 225, 255, 0.025), transparent 25%), var(--runner-panel);
 }
 
 .consoleHeader {
@@ -900,16 +832,8 @@
   padding-bottom: 0.5rem;
 }
 
-.consoleHeader div {
-  display: grid;
-  min-width: 0;
-  gap: 0.08rem;
-}
-
-.consoleHeader span {
-  color: var(--runner-cyan);
-  font-size: 0.45rem;
-}
+.consoleHeader div { display: grid; min-width: 0; gap: 0.08rem; }
+.consoleHeader span { color: var(--runner-cyan); font-size: 0.45rem; }
 
 .consoleHeader strong {
   overflow: hidden;
@@ -950,10 +874,7 @@
   cursor: pointer;
 }
 
-.consoleActions button:disabled {
-  opacity: 0.38;
-  cursor: not-allowed;
-}
+.consoleActions button:disabled { opacity: 0.38; cursor: not-allowed; }
 
 .consoleBlock {
   border: 1px solid var(--runner-line);
@@ -962,16 +883,8 @@
   background: var(--runner-panel-soft);
 }
 
-.consoleBlock > p {
-  margin: 0 0 0.4rem;
-  color: var(--runner-muted);
-  font-size: 0.44rem;
-}
-
-.rewardList {
-  display: grid;
-  gap: 0.28rem;
-}
+.consoleBlock > p { margin: 0 0 0.4rem; color: var(--runner-muted); font-size: 0.44rem; }
+.rewardList { display: grid; gap: 0.28rem; }
 
 .rewardList div {
   display: flex;
@@ -986,16 +899,8 @@
   font-size: 0.64rem;
 }
 
-.rewardList span {
-  color: var(--runner-muted);
-  font-size: 0.53rem;
-  text-align: right;
-}
-
-.stageList {
-  display: grid;
-  gap: 0.22rem;
-}
+.rewardList span { color: var(--runner-muted); font-size: 0.53rem; text-align: right; }
+.stageList { display: grid; gap: 0.22rem; }
 
 .stageList span {
   position: relative;
@@ -1014,7 +919,7 @@
   border-radius: 50%;
   background: var(--runner-line);
   content: "";
-  transform: translateY(-50%);
+  translate: 0 -50%;
 }
 
 .stageList span[data-active="true"] {
@@ -1047,33 +952,33 @@
 }
 
 @keyframes statusPulse {
-  0%, 100% { opacity: 0.5; transform: scale(0.88); }
-  50% { opacity: 1; transform: scale(1.1); }
+  0%, 100% { opacity: 0.5; scale: 0.88; }
+  50% { opacity: 1; scale: 1.1; }
 }
 
 @keyframes environmentSweep {
-  from { transform: translateX(-20%); }
-  to { transform: translateX(20%); }
+  from { transform: translate3d(-20%, 0, 0); }
+  to { transform: translate3d(20%, 0, 0); }
 }
 
 @keyframes packetFlow {
-  from { left: -3%; opacity: 0; transform: scale(0.75); }
+  from { transform: translate3d(-3cqw, 0, 0) scale(0.75); opacity: 0; }
   8% { opacity: 1; }
-  50% { transform: scale(1.12); }
+  50% { transform: translate3d(50cqw, 0, 0) scale(1.12); }
   92% { opacity: 1; }
-  to { left: 103%; opacity: 0; transform: scale(0.75); }
+  to { transform: translate3d(103cqw, 0, 0) scale(0.75); opacity: 0; }
 }
 
 @keyframes eventRise {
-  from { opacity: 0; transform: translateY(0.75rem) scale(0.88); }
+  from { opacity: 0; translate: 0 0.75rem; scale: 0.88; }
   35% { opacity: 1; }
-  to { opacity: 1; transform: translateY(-1.15rem) scale(1); }
+  to { opacity: 1; translate: 0 -1.15rem; scale: 1; }
 }
 
 @keyframes checkpointIn {
-  0% { opacity: 0; transform: translate(-50%, 0.7rem) scale(0.9); }
-  30%, 72% { opacity: 1; transform: translate(-50%, 0) scale(1); }
-  100% { opacity: 0; transform: translate(-50%, -0.65rem) scale(0.98); }
+  0% { opacity: 0; translate: -50% 0.7rem; scale: 0.9; }
+  30%, 72% { opacity: 1; translate: -50% 0; scale: 1; }
+  100% { opacity: 0; translate: -50% -0.65rem; scale: 0.98; }
 }
 
 @keyframes dangerBlink {
@@ -1082,12 +987,11 @@
 }
 
 @keyframes runnerAir {
-  0% { transform: scaleX(1.05) scaleY(0.94); }
-  45% { transform: scaleX(0.96) scaleY(1.05) rotate(-1deg); }
-  100% { transform: scale(1); }
+  0% { scale: 1.05 0.94; rotate: 0deg; }
+  45% { scale: 0.96 1.05; rotate: -1deg; }
+  100% { scale: 1; rotate: 0deg; }
 }
 
-/* Runtime-only modal compaction: on constrained desktop the game, not the chrome, owns the viewport. */
 @media (max-width: 1480px), (max-height: 850px) {
   :global(section[role="dialog"]):has(.root) {
     grid-template-rows: auto minmax(0, 1fr) !important;
@@ -1103,53 +1007,22 @@
     display: none !important;
   }
 
-  :global(section[role="dialog"]):has(.root) > header h2 {
-    font-size: 1rem !important;
-  }
+  :global(section[role="dialog"]):has(.root) > header h2 { font-size: 1rem !important; }
+  :global(section[role="dialog"]):has(.root) > nav { display: none !important; }
+  :global(section[role="dialog"]):has(.root) > div { grid-template-columns: minmax(0, 1fr) !important; }
+  :global(section[role="dialog"]):has(.root) > div > aside { display: none !important; }
+  :global(section[role="dialog"]):has(.root) > div > div { padding: 0.42rem !important; }
 
-  :global(section[role="dialog"]):has(.root) > nav {
-    display: none !important;
-  }
-
-  :global(section[role="dialog"]):has(.root) > div {
-    grid-template-columns: minmax(0, 1fr) !important;
-  }
-
-  :global(section[role="dialog"]):has(.root) > div > aside {
-    display: none !important;
-  }
-
-  :global(section[role="dialog"]):has(.root) > div > div {
-    padding: 0.42rem !important;
-  }
-
-  .root {
-    padding: 0.38rem;
-  }
-
-  .runnerHeader {
-    padding-bottom: 0.36rem;
-  }
-
-  .subtitle {
-    max-width: 40rem;
-    font-size: 0.61rem;
-  }
-
-  .gameShell {
-    grid-template-columns: minmax(0, 1fr) 9.3rem;
-  }
-
+  .root { padding: 0.38rem; }
+  .runnerHeader { padding-bottom: 0.36rem; }
+  .subtitle { max-width: 40rem; font-size: 0.61rem; }
+  .gameShell { grid-template-columns: minmax(0, 1fr) 9.3rem; }
   .consoleBlock:last-of-type,
-  .reducedNotice {
-    display: none;
-  }
+  .reducedNotice { display: none; }
 }
 
 @media (max-width: 1180px), (max-height: 720px) {
-  .subtitle {
-    display: none;
-  }
+  .subtitle { display: none; }
 
   .gameShell {
     grid-template-columns: minmax(0, 1fr);
@@ -1170,54 +1043,25 @@
     padding: 0 0.45rem 0 0;
   }
 
-  .consolePrimary {
-    min-height: 2.2rem;
-  }
-
-  .consoleActions {
-    grid-template-columns: auto auto;
-  }
-
-  .consoleActions button {
-    min-width: 4.8rem;
-  }
-
+  .consolePrimary { min-height: 2.2rem; }
+  .consoleActions { grid-template-columns: auto auto; }
+  .consoleActions button { min-width: 4.8rem; }
   .consoleBlock,
-  .reducedNotice {
-    display: none;
-  }
-
-  .playfield {
-    min-height: 21rem;
-  }
+  .reducedNotice { display: none; }
+  .playfield { min-height: 21rem; }
 }
 
 @media (max-width: 720px) {
   .root {
+    --runner-jump-range: 10.4rem;
     padding: 0.3rem;
   }
 
-  .runnerHeader {
-    padding: 0 0.05rem 0.3rem;
-  }
-
-  .runnerHeader h2 {
-    font-size: 1rem;
-  }
-
-  .eyebrow {
-    font-size: 0.46rem;
-  }
-
-  .liveStatus {
-    padding: 0.25rem 0.42rem;
-    font-size: 0.44rem;
-  }
-
-  .playfield {
-    min-height: 24rem;
-    border-radius: 0.8rem;
-  }
+  .runnerHeader { padding: 0 0.05rem 0.3rem; }
+  .runnerHeader h2 { font-size: 1rem; }
+  .eyebrow { font-size: 0.46rem; }
+  .liveStatus { padding: 0.25rem 0.42rem; font-size: 0.44rem; }
+  .playfield { min-height: 24rem; border-radius: 0.8rem; }
 
   .hud {
     right: 0.48rem;
@@ -1228,158 +1072,56 @@
   }
 
   .metric,
-  .metricPrimary {
-    min-width: 0;
-    padding: 0.34rem;
-  }
-
+  .metricPrimary { min-width: 0; padding: 0.34rem; }
   .metric span,
-  .metricPrimary span {
-    font-size: 0.38rem;
-  }
-
+  .metricPrimary span { font-size: 0.38rem; }
   .metric strong,
-  .metricPrimary strong {
-    font-size: 0.72rem;
-  }
-
-  .metricPrimary strong {
-    font-size: 0.84rem;
-  }
-
-  .stageRail {
-    top: 3.7rem;
-    left: 0.48rem;
-    right: 0.48rem;
-  }
-
-  .runner {
-    left: 11.5%;
-    width: 3.8rem;
-  }
-
-  .obstacle {
-    min-width: 4.25rem;
-  }
-
-  .quickKeys {
-    display: none;
-  }
-
-  .resultGrid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .console {
-    grid-template-columns: minmax(0, 1fr) auto;
-  }
-
-  .consoleHeader {
-    display: none;
-  }
+  .metricPrimary strong { font-size: 0.72rem; }
+  .metricPrimary strong { font-size: 0.84rem; }
+  .stageRail { top: 3.7rem; left: 0.48rem; right: 0.48rem; }
+  .runner { left: 11.5%; width: 3.8rem; }
+  .obstacle { min-width: 4.25rem; }
+  .quickKeys { display: none; }
+  .resultGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .console { grid-template-columns: minmax(0, 1fr) auto; }
+  .consoleHeader { display: none; }
 }
 
 @media (max-width: 520px) {
-  .runnerHeader {
-    display: none;
+  .root {
+    --runner-ground: 4.57rem;
+    --runner-jump-range: 9.6rem;
   }
 
-  .playfield {
-    min-height: 22rem;
-    border-radius: 0.65rem;
-  }
-
-  .hud {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .stageRail {
-    top: 6.05rem;
-  }
-
-  .stageMeta small {
-    display: none;
-  }
-
-  .pipelineLanes {
-    bottom: 4.55rem;
-    height: 8rem;
-  }
-
+  .runnerHeader { display: none; }
+  .playfield { min-height: 22rem; border-radius: 0.65rem; }
+  .hud { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .stageRail { top: 6.05rem; }
+  .stageMeta small { display: none; }
+  .pipelineLanes { bottom: 4.55rem; height: 8rem; }
   .environment::before,
-  .environment::after {
-    bottom: 4.7rem;
-    opacity: 0.22;
-  }
-
-  .ground {
-    bottom: 4.4rem;
-  }
-
-  .track {
-    bottom: 4.58rem;
-  }
-
-  .runner {
-    left: 9.6%;
-    bottom: calc(4.57rem + (var(--runner-y, 0) * 9.6rem));
-    width: 3.25rem;
-  }
-
-  .runnerPrompt {
-    width: 1.9rem;
-    height: 1.35rem;
-    font-size: 0.82rem;
-  }
+  .environment::after { bottom: 4.7rem; opacity: 0.22; }
+  .ground { bottom: 4.4rem; }
+  .track { bottom: 4.58rem; }
+  .runner { left: 9.6%; width: 3.25rem; }
+  .runnerPrompt { width: 1.9rem; height: 1.35rem; font-size: 0.82rem; }
 
   .obstacle {
-    bottom: 4.57rem;
     min-width: 3.55rem;
     min-height: calc(2.15rem + (var(--obstacle-height, 0.2) * 2.5rem));
     padding: 0.34rem 0.36rem 0.32rem 0.55rem;
   }
 
-  .obstacle small {
-    font-size: 0.54rem;
-  }
-
-  .obstacle b {
-    font-size: 0.45rem;
-  }
-
-  .eventPulse {
-    left: 11%;
-    bottom: 13rem;
-  }
-
-  .dangerCue {
-    bottom: 12.7rem;
-  }
-
-  .stateOverlay {
-    padding: 0.45rem;
-  }
-
-  .stateCard {
-    width: min(96%, 28rem);
-    padding: 0.76rem;
-  }
-
-  .console {
-    grid-template-columns: minmax(0, 1fr) auto;
-  }
-
-  .consolePrimary {
-    min-height: 2rem;
-  }
-
-  .consoleActions button {
-    min-width: 0;
-  }
-
-  .consoleActions button span {
-    display: none;
-  }
+  .obstacle small { font-size: 0.54rem; }
+  .obstacle b { font-size: 0.45rem; }
+  .eventPulse { left: 11%; bottom: 13rem; }
+  .dangerCue { bottom: 12.7rem; }
+  .stateOverlay { padding: 0.45rem; }
+  .stateCard { width: min(96%, 28rem); padding: 0.76rem; }
+  .console { grid-template-columns: minmax(0, 1fr) auto; }
+  .consolePrimary { min-height: 2rem; }
+  .consoleActions button { min-width: 0; }
+  .consoleActions button span { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1394,9 +1136,5 @@
     animation: none;
   }
 
-  .stageTrack i,
-  .runner,
-  .obstacle {
-    transition: none;
-  }
+  .stageTrack i { transition: none; }
 }
