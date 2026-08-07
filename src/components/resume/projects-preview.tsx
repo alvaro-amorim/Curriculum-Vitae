@@ -6,8 +6,8 @@ import { buttonClassName } from "@/components/ui/button";
 import { usePortfolioUi } from "@/components/layout/app-shell";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { getProjectCollectionId } from "@/content/project-catalog";
 import { profileLinks } from "@/content/profile";
+import type { ProjectCollectionId } from "@/lib/projects/project-collection";
 import type { Project } from "@/types/portfolio";
 
 import styles from "./resume.module.css";
@@ -25,6 +25,10 @@ type CuratedLink = {
   display: string;
 };
 
+function projectCollection(project: Project): ProjectCollectionId {
+  return (project as Project & { collection?: ProjectCollectionId }).collection ?? "secondary";
+}
+
 export function ProjectsPreview({
   projects,
   showLinks = true,
@@ -32,7 +36,7 @@ export function ProjectsPreview({
   limit,
 }: ProjectsPreviewProps) {
   const { locale, t } = usePortfolioUi();
-  const primaryProjects = projects.filter((project) => getProjectCollectionId(project) === "primary");
+  const primaryProjects = projects.filter((project) => projectCollection(project) === "primary");
   const visibleProjects = primaryProjects
     .filter((project) => !featuredOnly || project.featured)
     .slice(0, limit ?? primaryProjects.length);
