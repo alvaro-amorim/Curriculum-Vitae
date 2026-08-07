@@ -35,8 +35,9 @@ const forbiddenPtTokens = [
   "Theme",
   "How I work.",
   "A lab with real ranking.",
-  "5+ Anos construindo software",
-  "6+ Produtos em produção",
+  "5+",
+  "6+",
+  "100%",
   "alvaroamorimjf@gmail.com",
 ];
 
@@ -82,7 +83,7 @@ async function validateHomeHtml() {
 
   for (const token of forbiddenPtTokens) {
     if (html.includes(token)) {
-      throw new Error(`Rendered PT HTML contains unexpected EN token: ${token}`);
+      throw new Error(`Rendered PT HTML contains forbidden token: ${token}`);
     }
   }
 }
