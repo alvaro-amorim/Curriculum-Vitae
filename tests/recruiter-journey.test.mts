@@ -37,8 +37,8 @@ test("Public shell exposes keyboard skip navigation", () => {
 test("robots keeps administrative routes out of search indexing", () => {
   const source = read("src/app/robots.ts");
 
-  assert.match(source, /"\/admin\/"/);
-  assert.match(source, /"\/api\/admin\/"/);
+  assert.match(source, /"\/admin"/);
+  assert.match(source, /"\/api\/admin"/);
 });
 
 test("project filters always provide an empty-state recovery action", () => {
