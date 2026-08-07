@@ -17,13 +17,19 @@ type ProjectsPreviewProps = {
   limit?: number;
 };
 
+type CuratedLink = {
+  href: string;
+  label: string;
+  display: string;
+};
+
 export function ProjectsPreview({ showLinks = true, featuredOnly = false, limit }: ProjectsPreviewProps) {
   const { locale, t } = usePortfolioUi();
   const visibleProjects = primaryProjects
     .filter((project) => !featuredOnly || project.featured)
     .slice(0, limit ?? primaryProjects.length);
   const curatedLinks = primaryProjects.flatMap((project) => {
-    const links = [];
+    const links: CuratedLink[] = [];
 
     if (project.links.website) {
       links.push({
