@@ -4,12 +4,14 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 
+import type { ProjectCollectionId } from "@/lib/projects/project-collection";
 import type { ProjectHomePlacement } from "@/lib/projects/home-placement";
 
 import { AdminProjectJsonImportModal } from "./admin-project-json-import-modal";
 import styles from "./admin-projects.module.css";
 
 type ProjectSummary = {
+  collection: ProjectCollectionId;
   homePlacement: ProjectHomePlacement;
   publicationStatus: "draft" | "published" | "archived";
   slug: string;
@@ -27,6 +29,12 @@ type ApiResponse = {
     message?: string;
   };
   ok: boolean;
+};
+
+const collectionLabels: Record<ProjectCollectionId, string> = {
+  primary: "Projeto principal",
+  labs: "Laboratório técnico",
+  secondary: "Outro case",
 };
 
 function placementLabel(enabled: boolean, order: number) {
@@ -85,7 +93,7 @@ export function AdminProjectList({
     <>
       {!databaseReady ? (
         <div className={styles.notice} data-tone="error">
-          <span>O MongoDB não está disponível. O portfólio público continua usando o catálogo estático de segurança.</span>
+          <span>O MongoDB não está disponível. Nenhum fallback estático será publicado.</span>
         </div>
       ) : null}
 
@@ -130,13 +138,14 @@ export function AdminProjectList({
               <div className={styles.projectIdentity}>
                 <strong>{project.title}</strong>
                 <small>{project.subtitle}</small>
+                <small>{collectionLabels[project.collection]}</small>
               </div>
               <div className={styles.projectMeta}>
                 <small>Slug · ordem do catálogo {project.sortOrder}</small>
                 <strong>{project.slug}</strong>
               </div>
               <div className={styles.projectMeta}>
-                <small>Exibição na Home</small>
+                <small>Exibição pública</small>
                 <strong>Grade: {placementLabel(project.homePlacement.showInHome, project.homePlacement.homeOrder)}</strong>
                 <strong>Carrossel: {placementLabel(project.homePlacement.showInCarousel, project.homePlacement.carouselOrder)}</strong>
               </div>
@@ -161,7 +170,7 @@ export function AdminProjectList({
         </div>
       ) : (
         <div className={styles.emptyState}>
-          <p>O MongoDB ainda não possui projetos. O catálogo curado será sincronizado automaticamente quando a conexão estiver disponível.</p>
+          <p>O MongoDB ainda não possui projetos. Importe um JSON administrativo ou crie um novo case.</p>
         </div>
       )}
 
@@ -176,8 +185,8 @@ export function AdminProjectList({
             setTone("success");
             setMessage(
               slugs.length === 1
-                ? "Projeto importado com sucesso como rascunho. Agora você pode adicionar logo, capa, hero e galeria."
-                : `${slugs.length} projetos foram importados como rascunho. Agora você pode adicionar logo, capa, hero e galeria.`,
+                ? "Projeto importado como rascunho. Agora configure coleção, Home, carrossel e mídias."
+                : `${slugs.length} projetos foram importados como rascunho. Agora configure coleção, Home, carrossel e mídias.`,
             );
             router.refresh();
             window.setTimeout(() => setHighlightedSlugs([]), 12_000);
