@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { submitLabScore } from "../src/lib/lab-score.ts";
+import { GAME_VERSIONS, submitLabScore } from "../src/lib/lab-score.ts";
 import { ScorePayloadSchema } from "../src/lib/validators.ts";
 
 const base = {
@@ -14,7 +14,7 @@ test("accepts each final Arcade score contract", () => {
     {
       ...base,
       game: "runtime",
-      gameVersion: "runtime@3.0.0",
+      gameVersion: GAME_VERSIONS.runtime,
       metadata: {
         cleared: 14,
         collisions: 1,
@@ -28,7 +28,7 @@ test("accepts each final Arcade score contract", () => {
     {
       ...base,
       game: "bug-maze",
-      gameVersion: "bug-maze@3.0.0",
+      gameVersion: GAME_VERSIONS["bug-maze"],
       metadata: {
         damageTaken: 1,
         deployStage: 4,
@@ -42,7 +42,7 @@ test("accepts each final Arcade score contract", () => {
     {
       ...base,
       game: "code-snake",
-      gameVersion: "code-snake@3.0.0",
+      gameVersion: GAME_VERSIONS["code-snake"],
       metadata: {
         hazardsHit: 1,
         length: 12,
@@ -56,7 +56,7 @@ test("accepts each final Arcade score contract", () => {
     {
       ...base,
       game: "stack-tetris",
-      gameVersion: "stack-tetris@3.0.0",
+      gameVersion: GAME_VERSIONS["stack-tetris"],
       metadata: {
         hardDrops: 8,
         level: 3,
@@ -77,7 +77,7 @@ test("rejects fabricated score bounds and game versions", () => {
   const runtimePayload = {
     ...base,
     game: "runtime",
-    gameVersion: "runtime@3.0.0",
+    gameVersion: GAME_VERSIONS.runtime,
     metadata: {
       cleared: 1,
       collisions: 0,
@@ -115,7 +115,7 @@ test("rejects inconsistent game metadata", () => {
   const tooManyTokens = {
     ...base,
     game: "bug-maze",
-    gameVersion: "bug-maze@3.0.0",
+    gameVersion: GAME_VERSIONS["bug-maze"],
     metadata: {
       damageTaken: 0,
       deployStage: 2,
@@ -129,7 +129,7 @@ test("rejects inconsistent game metadata", () => {
   const incompatibleSnakeRules = {
     ...base,
     game: "code-snake",
-    gameVersion: "code-snake@3.0.0",
+    gameVersion: GAME_VERSIONS["code-snake"],
     metadata: {
       hazardsHit: 0,
       length: 8,
@@ -177,7 +177,7 @@ test("submitLabScore preserves the raw Runtime score", async () => {
     const result = await submitLabScore({
       ...base,
       game: "runtime",
-      gameVersion: "runtime@3.0.0",
+      gameVersion: GAME_VERSIONS.runtime,
       metadata: {
         cleared: 14,
         collisions: 1,

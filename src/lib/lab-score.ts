@@ -5,7 +5,7 @@ export type LabScoreState = Record<LabGameId, number | null>;
 export const GAME_SCORE_CONTRACT_VERSION = "v3";
 
 export const GAME_VERSIONS = {
-  runtime: "runtime@3.0.0",
+  runtime: "runtime@3.1.0",
   "bug-maze": "bug-maze@3.0.0",
   "code-snake": "code-snake@3.0.0",
   "stack-tetris": "stack-tetris@3.0.0",

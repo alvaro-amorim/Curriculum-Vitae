@@ -72,7 +72,7 @@ const runtimeMetadataSchema = z
   .object({
     collisions: nonNegativeIntSchema.max(10),
     cleared: nonNegativeIntSchema.max(2_000),
-    distance: nonNegativeIntSchema.max(50_000),
+    distance: nonNegativeIntSchema.max(500_000),
     maxSpeed: z.number().finite().min(0).max(80),
     nearMisses: nonNegativeIntSchema.max(2_000).optional(),
     stageReached: z.enum(["dev-server", "staging", "production", "incident-mode", "zero-downtime"]),

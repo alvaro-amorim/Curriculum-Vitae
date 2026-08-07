@@ -191,7 +191,7 @@ export type GameScorePayloadV3 =
       deviceType?: GameDeviceType;
       durationMs: number;
       game: "runtime";
-      gameVersion: "runtime@3.0.0";
+      gameVersion: "runtime@3.1.0";
       metadata: RuntimeScoreMetadata;
       score: number;
     }
