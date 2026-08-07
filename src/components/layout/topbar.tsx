@@ -6,6 +6,11 @@ import type { CSSProperties } from "react";
 import { useEffect, useRef, useState } from "react";
 
 import { profile } from "@/content/profile";
+import {
+  isTopbarNearTop,
+  resolveTopbarScrollAction,
+  shouldLockTopbarVisibility,
+} from "@/lib/topbar-visibility";
 
 import { usePortfolioUi } from "./app-shell";
 import styles from "./topbar.module.css";
@@ -88,6 +93,7 @@ export function Topbar({ onNavigateStart }: TopbarProps) {
   const openRef = useRef(open);
   const pointerInsideRef = useRef(pointerInside);
   const focusInsideRef = useRef(focusInside);
+  const keyboardInteractionRef = useRef(false);
   const lastScrollY = useRef(0);
   const idleTimer = useRef<number | null>(null);
   const ticking = useRef(false);
@@ -107,17 +113,61 @@ export function Topbar({ onNavigateStart }: TopbarProps) {
   }, [focusInside]);
 
   useEffect(() => {
-    const frame = window.requestAnimationFrame(() => setOpen(false));
+    function handleKeyboardNavigation(event: KeyboardEvent) {
+      if (event.key === "Tab") {
+        keyboardInteractionRef.current = true;
+      }
+    }
+
+    function handlePointerInteraction(event: PointerEvent) {
+      keyboardInteractionRef.current = false;
+
+      if (event.pointerType !== "mouse") {
+        pointerInsideRef.current = false;
+        setPointerInside(false);
+      }
+    }
+
+    document.addEventListener("keydown", handleKeyboardNavigation, true);
+    document.addEventListener("pointerdown", handlePointerInteraction, true);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyboardNavigation, true);
+      document.removeEventListener("pointerdown", handlePointerInteraction, true);
+    };
+  }, []);
+
+  useEffect(() => {
+    const frame = window.requestAnimationFrame(() => {
+      openRef.current = false;
+      pointerInsideRef.current = false;
+      setOpen(false);
+      setPointerInside(false);
+
+      if (!keyboardInteractionRef.current) {
+        focusInsideRef.current = false;
+        setFocusInside(false);
+      }
+
+      const currentY = Math.max(0, window.scrollY);
+      lastScrollY.current = currentY;
+      setScrolled(currentY > 12);
+
+      if (isTopbarNearTop(currentY, window.innerHeight)) {
+        setHidden(false);
+      }
+    });
+
     return () => window.cancelAnimationFrame(frame);
   }, [pathname]);
 
   useEffect(() => {
-    function isNearTop(scrollY = window.scrollY) {
-      return scrollY < Math.max(120, window.innerHeight * 0.15);
-    }
-
     function shouldStayVisible() {
-      return openRef.current || pointerInsideRef.current || focusInsideRef.current;
+      return shouldLockTopbarVisibility({
+        menuOpen: openRef.current,
+        focusInside: focusInsideRef.current,
+        keyboardInteraction: keyboardInteractionRef.current,
+      });
     }
 
     function clearIdleTimer() {
@@ -129,8 +179,17 @@ export function Topbar({ onNavigateStart }: TopbarProps) {
 
     function scheduleIdleHide() {
       clearIdleTimer();
+
+      if (pointerInsideRef.current) {
+        return;
+      }
+
       idleTimer.current = window.setTimeout(() => {
-        if (!isNearTop() && !shouldStayVisible()) {
+        if (
+          !isTopbarNearTop(window.scrollY, window.innerHeight)
+          && !shouldStayVisible()
+          && !pointerInsideRef.current
+        ) {
           setHidden(true);
         }
       }, 2800);
@@ -140,29 +199,27 @@ export function Topbar({ onNavigateStart }: TopbarProps) {
       const currentY = Math.max(0, window.scrollY);
       setScrolled(currentY > 12);
 
-      if (isNearTop(currentY)) {
+      const action = resolveTopbarScrollAction({
+        currentY,
+        lastY: lastScrollY.current,
+        viewportHeight: window.innerHeight,
+        menuOpen: openRef.current,
+        focusInside: focusInsideRef.current,
+        keyboardInteraction: keyboardInteractionRef.current,
+      });
+
+      if (action === "show") {
         setHidden(false);
-        clearIdleTimer();
-        lastScrollY.current = currentY;
-        return;
-      }
-
-      if (shouldStayVisible()) {
-        setHidden(false);
-        scheduleIdleHide();
-        lastScrollY.current = currentY;
-        return;
-      }
-
-      const delta = currentY - lastScrollY.current;
-
-      if (delta > 8) {
+      } else if (action === "hide") {
         setHidden(true);
-      } else if (delta < -6) {
-        setHidden(false);
       }
 
-      scheduleIdleHide();
+      if (isTopbarNearTop(currentY, window.innerHeight)) {
+        clearIdleTimer();
+      } else {
+        scheduleIdleHide();
+      }
+
       lastScrollY.current = currentY;
     }
 
@@ -186,7 +243,10 @@ export function Topbar({ onNavigateStart }: TopbarProps) {
   }, []);
 
   useEffect(() => {
-    if (open || pointerInside || focusInside || window.scrollY < Math.max(120, window.innerHeight * 0.15)) {
+    const keyboardFocusLock = keyboardInteractionRef.current && focusInside;
+    const nearTop = isTopbarNearTop(window.scrollY, window.innerHeight);
+
+    if (open || pointerInside || keyboardFocusLock || nearTop) {
       const frame = window.requestAnimationFrame(() => setHidden(false));
       return () => window.cancelAnimationFrame(frame);
     }
@@ -200,17 +260,20 @@ export function Topbar({ onNavigateStart }: TopbarProps) {
     function handlePointerDown(event: PointerEvent) {
       const target = event.target instanceof Node ? event.target : null;
       if (target && topbarRef.current?.contains(target)) return;
+      openRef.current = false;
       setOpen(false);
     }
 
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
+        openRef.current = false;
         setOpen(false);
       }
     }
 
     function handleResize() {
       if (window.innerWidth > 1024) {
+        openRef.current = false;
         setOpen(false);
       }
     }
@@ -251,12 +314,24 @@ export function Topbar({ onNavigateStart }: TopbarProps) {
       data-topbar="global"
       onBlurCapture={(event) => {
         if (!event.currentTarget.contains(event.relatedTarget)) {
+          focusInsideRef.current = false;
           setFocusInside(false);
         }
       }}
-      onFocusCapture={() => setFocusInside(true)}
-      onPointerEnter={() => setPointerInside(true)}
-      onPointerLeave={() => setPointerInside(false)}
+      onFocusCapture={() => {
+        focusInsideRef.current = true;
+        setFocusInside(true);
+      }}
+      onPointerEnter={(event) => {
+        if (event.pointerType !== "mouse") return;
+        pointerInsideRef.current = true;
+        setPointerInside(true);
+      }}
+      onPointerLeave={(event) => {
+        if (event.pointerType !== "mouse") return;
+        pointerInsideRef.current = false;
+        setPointerInside(false);
+      }}
       ref={topbarRef}
     >
       <nav className={styles.navShell} aria-label={t.nav.mainNavigation}>
@@ -265,6 +340,7 @@ export function Topbar({ onNavigateStart }: TopbarProps) {
           className={styles.brand}
           href="/"
           onClick={() => {
+            openRef.current = false;
             setOpen(false);
             if (pathname !== "/") onNavigateStart?.();
           }}
@@ -289,6 +365,7 @@ export function Topbar({ onNavigateStart }: TopbarProps) {
                   data-href={item.href}
                   href={item.href}
                   onClick={() => {
+                    openRef.current = false;
                     setOpen(false);
                     if (!active) onNavigateStart?.();
                   }}
@@ -328,7 +405,13 @@ export function Topbar({ onNavigateStart }: TopbarProps) {
             aria-expanded={open}
             aria-label={open ? (locale === "pt" ? "Fechar menu" : "Close menu") : "Menu"}
             className={styles.menuButton}
-            onClick={() => setOpen((current) => !current)}
+            onClick={() => {
+              setOpen((current) => {
+                const next = !current;
+                openRef.current = next;
+                return next;
+              });
+            }}
             type="button"
           >
             <Icon name={open ? "x" : "menu"} />
@@ -343,6 +426,7 @@ export function Topbar({ onNavigateStart }: TopbarProps) {
             href={item.href}
             key={item.href}
             onClick={() => {
+              openRef.current = false;
               setOpen(false);
               if (!isActiveRoute(pathname, item.href)) onNavigateStart?.();
             }}
