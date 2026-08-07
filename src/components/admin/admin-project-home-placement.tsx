@@ -3,6 +3,7 @@
 import type { FormEvent } from "react";
 import { useState } from "react";
 
+import type { ProjectCollectionId } from "@/lib/projects/project-collection";
 import type { ProjectHomePlacement } from "@/lib/projects/home-placement";
 
 import styles from "./admin-projects.module.css";
@@ -15,6 +16,7 @@ type ApiResponse = {
 };
 
 type AdminProjectHomePlacementProps = {
+  initialCollection: ProjectCollectionId;
   initialPlacement: ProjectHomePlacement;
   publicationStatus: "draft" | "published" | "archived";
   slug: string;
@@ -25,6 +27,7 @@ function numberValue(form: FormData, name: string) {
 }
 
 export function AdminProjectHomePlacement({
+  initialCollection,
   initialPlacement,
   publicationStatus,
   slug,
@@ -36,8 +39,9 @@ export function AdminProjectHomePlacement({
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
-    const payload: ProjectHomePlacement = {
+    const payload = {
       carouselOrder: numberValue(form, "carouselOrder"),
+      collection: String(form.get("collection") ?? "secondary") as ProjectCollectionId,
       homeOrder: numberValue(form, "homeOrder"),
       showInCarousel: form.get("showInCarousel") === "on",
       showInHome: form.get("showInHome") === "on",
@@ -58,15 +62,15 @@ export function AdminProjectHomePlacement({
 
       if (!response.ok || !body.ok) {
         setTone("error");
-        setMessage(body.error?.message || "Não foi possível salvar a exibição na Home.");
+        setMessage(body.error?.message || "Não foi possível salvar a apresentação pública.");
         return;
       }
 
       setTone("success");
-      setMessage("Exibição na Home atualizada com sucesso.");
+      setMessage("Coleção e exibição pública atualizadas com sucesso.");
     } catch {
       setTone("error");
-      setMessage("Não foi possível conectar ao endpoint de exibição.");
+      setMessage("Não foi possível conectar ao endpoint de apresentação.");
     } finally {
       setPending(false);
     }
@@ -75,14 +79,14 @@ export function AdminProjectHomePlacement({
   return (
     <form className={styles.editor} onSubmit={handleSubmit}>
       <section className={styles.editorSection}>
-        <h2>Exibição na Home</h2>
+        <h2>Organização e exibição pública</h2>
         <p>
-          Controle separadamente a grade de projetos e o carrossel principal. Apenas projetos publicados aparecem publicamente.
+          Defina a coleção da página de projetos e controle separadamente a grade da Home e o carrossel principal.
         </p>
 
         {publicationStatus !== "published" ? (
           <div className={styles.notice} data-tone="warning">
-            Este projeto está como {publicationStatus}. As opções ficam salvas, mas só entram na Home quando o status for published.
+            Este projeto está como {publicationStatus}. As opções ficam salvas, mas ele só aparece publicamente quando o status for published.
           </div>
         ) : null}
 
@@ -93,6 +97,15 @@ export function AdminProjectHomePlacement({
         ) : null}
 
         <div className={styles.fieldGrid}>
+          <label className={styles.fullField}>
+            Coleção na página de projetos
+            <select defaultValue={initialCollection} name="collection" required>
+              <option value="primary">Projetos principais</option>
+              <option value="labs">Laboratórios técnicos</option>
+              <option value="secondary">Outros cases</option>
+            </select>
+          </label>
+
           <label className={styles.checkboxField}>
             <input
               defaultChecked={initialPlacement.showInHome}
@@ -136,7 +149,7 @@ export function AdminProjectHomePlacement({
 
         <div className={styles.headerActions}>
           <button className={styles.primaryButton} disabled={pending} type="submit">
-            {pending ? "Salvando..." : "Salvar exibição na Home"}
+            {pending ? "Salvando..." : "Salvar organização pública"}
           </button>
         </div>
       </section>
