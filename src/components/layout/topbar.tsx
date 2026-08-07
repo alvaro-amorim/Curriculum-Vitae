@@ -6,11 +6,7 @@ import type { CSSProperties } from "react";
 import { useEffect, useRef, useState } from "react";
 
 import { profile } from "@/content/profile";
-import {
-  isTopbarNearTop,
-  resolveTopbarScrollAction,
-  shouldLockTopbarVisibility,
-} from "@/lib/topbar-visibility";
+import { useSmartScrollVisibility } from "@/hooks/use-smart-scroll-visibility";
 
 import { usePortfolioUi } from "./app-shell";
 import styles from "./topbar.module.css";
@@ -83,34 +79,19 @@ export function Topbar({ onNavigateStart }: TopbarProps) {
   const { locale, t, theme, toggleLocale, toggleTheme } = usePortfolioUi();
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const [hidden, setHidden] = useState(false);
-  const [pointerInside, setPointerInside] = useState(false);
-  const [focusInside, setFocusInside] = useState(false);
+  const [keyboardFocusInside, setKeyboardFocusInside] = useState(false);
   const indicatorRef = useRef<HTMLSpanElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
   const topbarRef = useRef<HTMLElement>(null);
-  const openRef = useRef(open);
-  const pointerInsideRef = useRef(pointerInside);
-  const focusInsideRef = useRef(focusInside);
   const keyboardInteractionRef = useRef(false);
-  const lastScrollY = useRef(0);
-  const idleTimer = useRef<number | null>(null);
-  const ticking = useRef(false);
   const items = navItems[locale];
   const brandLabel = `${profile.shortName} — ${profile.role[locale]}`;
-
-  useEffect(() => {
-    openRef.current = open;
-  }, [open]);
-
-  useEffect(() => {
-    pointerInsideRef.current = pointerInside;
-  }, [pointerInside]);
-
-  useEffect(() => {
-    focusInsideRef.current = focusInside;
-  }, [focusInside]);
+  const { isVisible, isScrolled } = useSmartScrollVisibility({
+    disabled: open || keyboardFocusInside,
+    hideAfter: 96,
+    directionThreshold: 12,
+    resetKey: pathname,
+  });
 
   useEffect(() => {
     function handleKeyboardNavigation(event: KeyboardEvent) {
@@ -119,13 +100,9 @@ export function Topbar({ onNavigateStart }: TopbarProps) {
       }
     }
 
-    function handlePointerInteraction(event: PointerEvent) {
+    function handlePointerInteraction() {
       keyboardInteractionRef.current = false;
-
-      if (event.pointerType !== "mouse") {
-        pointerInsideRef.current = false;
-        setPointerInside(false);
-      }
+      setKeyboardFocusInside(false);
     }
 
     document.addEventListener("keydown", handleKeyboardNavigation, true);
@@ -139,120 +116,13 @@ export function Topbar({ onNavigateStart }: TopbarProps) {
 
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => {
-      openRef.current = false;
-      pointerInsideRef.current = false;
       setOpen(false);
-      setPointerInside(false);
-
-      if (!keyboardInteractionRef.current) {
-        focusInsideRef.current = false;
-        setFocusInside(false);
-      }
-
-      const currentY = Math.max(0, window.scrollY);
-      lastScrollY.current = currentY;
-      setScrolled(currentY > 12);
-
-      if (isTopbarNearTop(currentY, window.innerHeight)) {
-        setHidden(false);
-      }
+      setKeyboardFocusInside(false);
+      keyboardInteractionRef.current = false;
     });
 
     return () => window.cancelAnimationFrame(frame);
   }, [pathname]);
-
-  useEffect(() => {
-    function shouldStayVisible() {
-      return shouldLockTopbarVisibility({
-        menuOpen: openRef.current,
-        focusInside: focusInsideRef.current,
-        keyboardInteraction: keyboardInteractionRef.current,
-      });
-    }
-
-    function clearIdleTimer() {
-      if (idleTimer.current) {
-        window.clearTimeout(idleTimer.current);
-        idleTimer.current = null;
-      }
-    }
-
-    function scheduleIdleHide() {
-      clearIdleTimer();
-
-      if (pointerInsideRef.current) {
-        return;
-      }
-
-      idleTimer.current = window.setTimeout(() => {
-        if (
-          !isTopbarNearTop(window.scrollY, window.innerHeight)
-          && !shouldStayVisible()
-          && !pointerInsideRef.current
-        ) {
-          setHidden(true);
-        }
-      }, 2800);
-    }
-
-    function syncScrollState() {
-      const currentY = Math.max(0, window.scrollY);
-      setScrolled(currentY > 12);
-
-      const action = resolveTopbarScrollAction({
-        currentY,
-        lastY: lastScrollY.current,
-        viewportHeight: window.innerHeight,
-        menuOpen: openRef.current,
-        focusInside: focusInsideRef.current,
-        keyboardInteraction: keyboardInteractionRef.current,
-      });
-
-      if (action === "show") {
-        setHidden(false);
-      } else if (action === "hide") {
-        setHidden(true);
-      }
-
-      if (isTopbarNearTop(currentY, window.innerHeight)) {
-        clearIdleTimer();
-      } else {
-        scheduleIdleHide();
-      }
-
-      lastScrollY.current = currentY;
-    }
-
-    function handleScroll() {
-      if (ticking.current) return;
-      ticking.current = true;
-      window.requestAnimationFrame(() => {
-        ticking.current = false;
-        syncScrollState();
-      });
-    }
-
-    lastScrollY.current = Math.max(0, window.scrollY);
-    syncScrollState();
-    window.addEventListener("scroll", handleScroll, { passive: true });
-
-    return () => {
-      clearIdleTimer();
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
-
-  useEffect(() => {
-    const keyboardFocusLock = keyboardInteractionRef.current && focusInside;
-    const nearTop = isTopbarNearTop(window.scrollY, window.innerHeight);
-
-    if (open || pointerInside || keyboardFocusLock || nearTop) {
-      const frame = window.requestAnimationFrame(() => setHidden(false));
-      return () => window.cancelAnimationFrame(frame);
-    }
-
-    return undefined;
-  }, [focusInside, open, pointerInside]);
 
   useEffect(() => {
     if (!open) return;
@@ -260,20 +130,17 @@ export function Topbar({ onNavigateStart }: TopbarProps) {
     function handlePointerDown(event: PointerEvent) {
       const target = event.target instanceof Node ? event.target : null;
       if (target && topbarRef.current?.contains(target)) return;
-      openRef.current = false;
       setOpen(false);
     }
 
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
-        openRef.current = false;
         setOpen(false);
       }
     }
 
     function handleResize() {
       if (window.innerWidth > 1024) {
-        openRef.current = false;
         setOpen(false);
       }
     }
@@ -303,34 +170,24 @@ export function Topbar({ onNavigateStart }: TopbarProps) {
     indicator.style.width = `${Math.max(16, rect.width - 24)}px`;
     indicator.style.transform = `translateX(${rect.left - parentRect.left + 12}px)`;
     indicator.style.opacity = "1";
-  }, [items, pathname, scrolled]);
+  }, [isScrolled, items, pathname]);
 
   return (
     <header
       className={styles.topbar}
-      data-hidden={hidden ? "true" : "false"}
+      data-hidden={isVisible ? "false" : "true"}
       data-menu-open={open ? "true" : "false"}
-      data-scrolled={scrolled ? "true" : "false"}
+      data-scrolled={isScrolled ? "true" : "false"}
       data-topbar="global"
       onBlurCapture={(event) => {
         if (!event.currentTarget.contains(event.relatedTarget)) {
-          focusInsideRef.current = false;
-          setFocusInside(false);
+          setKeyboardFocusInside(false);
         }
       }}
       onFocusCapture={() => {
-        focusInsideRef.current = true;
-        setFocusInside(true);
-      }}
-      onPointerEnter={(event) => {
-        if (event.pointerType !== "mouse") return;
-        pointerInsideRef.current = true;
-        setPointerInside(true);
-      }}
-      onPointerLeave={(event) => {
-        if (event.pointerType !== "mouse") return;
-        pointerInsideRef.current = false;
-        setPointerInside(false);
+        if (keyboardInteractionRef.current) {
+          setKeyboardFocusInside(true);
+        }
       }}
       ref={topbarRef}
     >
@@ -340,7 +197,6 @@ export function Topbar({ onNavigateStart }: TopbarProps) {
           className={styles.brand}
           href="/"
           onClick={() => {
-            openRef.current = false;
             setOpen(false);
             if (pathname !== "/") onNavigateStart?.();
           }}
@@ -365,7 +221,6 @@ export function Topbar({ onNavigateStart }: TopbarProps) {
                   data-href={item.href}
                   href={item.href}
                   onClick={() => {
-                    openRef.current = false;
                     setOpen(false);
                     if (!active) onNavigateStart?.();
                   }}
@@ -405,13 +260,7 @@ export function Topbar({ onNavigateStart }: TopbarProps) {
             aria-expanded={open}
             aria-label={open ? (locale === "pt" ? "Fechar menu" : "Close menu") : "Menu"}
             className={styles.menuButton}
-            onClick={() => {
-              setOpen((current) => {
-                const next = !current;
-                openRef.current = next;
-                return next;
-              });
-            }}
+            onClick={() => setOpen((current) => !current)}
             type="button"
           >
             <Icon name={open ? "x" : "menu"} />
@@ -426,7 +275,6 @@ export function Topbar({ onNavigateStart }: TopbarProps) {
             href={item.href}
             key={item.href}
             onClick={() => {
-              openRef.current = false;
               setOpen(false);
               if (!isActiveRoute(pathname, item.href)) onNavigateStart?.();
             }}
