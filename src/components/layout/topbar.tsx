@@ -6,6 +6,7 @@ import type { CSSProperties } from "react";
 import { useEffect, useRef, useState } from "react";
 
 import { profile } from "@/content/profile";
+import { useSmartScrollVisibility } from "@/hooks/use-smart-scroll-visibility";
 
 import { usePortfolioUi } from "./app-shell";
 import styles from "./topbar.module.css";
@@ -78,121 +79,50 @@ export function Topbar({ onNavigateStart }: TopbarProps) {
   const { locale, t, theme, toggleLocale, toggleTheme } = usePortfolioUi();
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const [hidden, setHidden] = useState(false);
-  const [pointerInside, setPointerInside] = useState(false);
-  const [focusInside, setFocusInside] = useState(false);
+  const [keyboardFocusInside, setKeyboardFocusInside] = useState(false);
   const indicatorRef = useRef<HTMLSpanElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
   const topbarRef = useRef<HTMLElement>(null);
-  const openRef = useRef(open);
-  const pointerInsideRef = useRef(pointerInside);
-  const focusInsideRef = useRef(focusInside);
-  const lastScrollY = useRef(0);
-  const idleTimer = useRef<number | null>(null);
-  const ticking = useRef(false);
+  const keyboardInteractionRef = useRef(false);
   const items = navItems[locale];
   const brandLabel = `${profile.shortName} — ${profile.role[locale]}`;
+  const { isVisible, isScrolled } = useSmartScrollVisibility({
+    disabled: open || keyboardFocusInside,
+    hideAfter: 96,
+    directionThreshold: 12,
+    resetKey: pathname,
+  });
 
   useEffect(() => {
-    openRef.current = open;
-  }, [open]);
-
-  useEffect(() => {
-    pointerInsideRef.current = pointerInside;
-  }, [pointerInside]);
-
-  useEffect(() => {
-    focusInsideRef.current = focusInside;
-  }, [focusInside]);
-
-  useEffect(() => {
-    const frame = window.requestAnimationFrame(() => setOpen(false));
-    return () => window.cancelAnimationFrame(frame);
-  }, [pathname]);
-
-  useEffect(() => {
-    function isNearTop(scrollY = window.scrollY) {
-      return scrollY < Math.max(120, window.innerHeight * 0.15);
-    }
-
-    function shouldStayVisible() {
-      return openRef.current || pointerInsideRef.current || focusInsideRef.current;
-    }
-
-    function clearIdleTimer() {
-      if (idleTimer.current) {
-        window.clearTimeout(idleTimer.current);
-        idleTimer.current = null;
+    function handleKeyboardNavigation(event: KeyboardEvent) {
+      if (event.key === "Tab") {
+        keyboardInteractionRef.current = true;
       }
     }
 
-    function scheduleIdleHide() {
-      clearIdleTimer();
-      idleTimer.current = window.setTimeout(() => {
-        if (!isNearTop() && !shouldStayVisible()) {
-          setHidden(true);
-        }
-      }, 2800);
+    function handlePointerInteraction() {
+      keyboardInteractionRef.current = false;
+      setKeyboardFocusInside(false);
     }
 
-    function syncScrollState() {
-      const currentY = Math.max(0, window.scrollY);
-      setScrolled(currentY > 12);
-
-      if (isNearTop(currentY)) {
-        setHidden(false);
-        clearIdleTimer();
-        lastScrollY.current = currentY;
-        return;
-      }
-
-      if (shouldStayVisible()) {
-        setHidden(false);
-        scheduleIdleHide();
-        lastScrollY.current = currentY;
-        return;
-      }
-
-      const delta = currentY - lastScrollY.current;
-
-      if (delta > 8) {
-        setHidden(true);
-      } else if (delta < -6) {
-        setHidden(false);
-      }
-
-      scheduleIdleHide();
-      lastScrollY.current = currentY;
-    }
-
-    function handleScroll() {
-      if (ticking.current) return;
-      ticking.current = true;
-      window.requestAnimationFrame(() => {
-        ticking.current = false;
-        syncScrollState();
-      });
-    }
-
-    lastScrollY.current = Math.max(0, window.scrollY);
-    syncScrollState();
-    window.addEventListener("scroll", handleScroll, { passive: true });
+    document.addEventListener("keydown", handleKeyboardNavigation, true);
+    document.addEventListener("pointerdown", handlePointerInteraction, true);
 
     return () => {
-      clearIdleTimer();
-      window.removeEventListener("scroll", handleScroll);
+      document.removeEventListener("keydown", handleKeyboardNavigation, true);
+      document.removeEventListener("pointerdown", handlePointerInteraction, true);
     };
   }, []);
 
   useEffect(() => {
-    if (open || pointerInside || focusInside || window.scrollY < Math.max(120, window.innerHeight * 0.15)) {
-      const frame = window.requestAnimationFrame(() => setHidden(false));
-      return () => window.cancelAnimationFrame(frame);
-    }
+    const frame = window.requestAnimationFrame(() => {
+      setOpen(false);
+      setKeyboardFocusInside(false);
+      keyboardInteractionRef.current = false;
+    });
 
-    return undefined;
-  }, [focusInside, open, pointerInside]);
+    return () => window.cancelAnimationFrame(frame);
+  }, [pathname]);
 
   useEffect(() => {
     if (!open) return;
@@ -240,23 +170,25 @@ export function Topbar({ onNavigateStart }: TopbarProps) {
     indicator.style.width = `${Math.max(16, rect.width - 24)}px`;
     indicator.style.transform = `translateX(${rect.left - parentRect.left + 12}px)`;
     indicator.style.opacity = "1";
-  }, [items, pathname, scrolled]);
+  }, [isScrolled, items, pathname]);
 
   return (
     <header
       className={styles.topbar}
-      data-hidden={hidden ? "true" : "false"}
+      data-hidden={isVisible ? "false" : "true"}
       data-menu-open={open ? "true" : "false"}
-      data-scrolled={scrolled ? "true" : "false"}
+      data-scrolled={isScrolled ? "true" : "false"}
       data-topbar="global"
       onBlurCapture={(event) => {
         if (!event.currentTarget.contains(event.relatedTarget)) {
-          setFocusInside(false);
+          setKeyboardFocusInside(false);
         }
       }}
-      onFocusCapture={() => setFocusInside(true)}
-      onPointerEnter={() => setPointerInside(true)}
-      onPointerLeave={() => setPointerInside(false)}
+      onFocusCapture={() => {
+        if (keyboardInteractionRef.current) {
+          setKeyboardFocusInside(true);
+        }
+      }}
       ref={topbarRef}
     >
       <nav className={styles.navShell} aria-label={t.nav.mainNavigation}>

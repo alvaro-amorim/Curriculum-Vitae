@@ -5,5 +5,6 @@
 @import "../styles/layout.css";
 @import "../styles/a11y.css";
 @import "../styles/motion.css";
+@import "../styles/topbar-scroll-authority.css";
 @import "../styles/runtime-runner-mobile.css";
 @import "../styles/runtime-runner-ranking-dock.css";
