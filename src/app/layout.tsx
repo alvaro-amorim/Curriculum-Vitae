@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import type { ReactNode } from "react";
 
 import { AppShell } from "@/components/layout/app-shell";
+import { GlobalNavigationLoader } from "@/components/layout/global-navigation-loader";
 import { career } from "@/content/career";
 import { profile } from "@/content/profile";
 import { APP_NAME, SITE_URL } from "@/lib/constants";
@@ -67,6 +68,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
   return (
     <html className={`${geistSans.variable} ${geistMono.variable}`} data-theme="dark" lang="pt-BR" suppressHydrationWarning>
       <body>
+        <GlobalNavigationLoader />
         <AppShell>{children}</AppShell>
       </body>
     </html>
