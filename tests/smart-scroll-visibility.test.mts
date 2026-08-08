@@ -65,5 +65,7 @@ test("global navigation loader starts on internal route clicks and releases afte
   assert.match(source, /previousPathRef/);
   assert.match(source, /document\.fonts\?\.ready/);
   assert.match(source, /ROUTE_FAILSAFE_MS/);
+  assert.match(source, /ROUTE_MIN_MS/);
+  assert.match(source, /pathChanged/);
   assert.match(layout, /<GlobalNavigationLoader \/>/);
 });
