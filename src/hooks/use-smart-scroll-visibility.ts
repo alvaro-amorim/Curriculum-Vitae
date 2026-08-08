@@ -6,6 +6,7 @@ type SmartScrollVisibilityOptions = {
   disabled?: boolean;
   hideAfter?: number;
   directionThreshold?: number;
+  idleDelay?: number;
   resetKey?: string;
 };
 
@@ -33,6 +34,7 @@ export function useSmartScrollVisibility({
   disabled = false,
   hideAfter = 96,
   directionThreshold = 12,
+  idleDelay = 2800,
   resetKey,
 }: SmartScrollVisibilityOptions = {}): SmartScrollVisibilityState {
   const [state, setState] = useState<SmartScrollVisibilityState>({
@@ -44,6 +46,7 @@ export function useSmartScrollVisibility({
   const lastScrollPositionRef = useRef(0);
   const accumulatedDeltaRef = useRef(0);
   const animationFrameRef = useRef(0);
+  const idleTimerRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (typeof window === "undefined") {
@@ -60,13 +63,43 @@ export function useSmartScrollVisibility({
       setState({ isVisible, isScrolled });
     };
 
+    const clearIdleTimer = () => {
+      if (idleTimerRef.current !== null) {
+        window.clearTimeout(idleTimerRef.current);
+        idleTimerRef.current = null;
+      }
+    };
+
+    const scheduleIdleHide = () => {
+      clearIdleTimer();
+
+      if (getScrollPosition() <= hideAfter) {
+        return;
+      }
+
+      idleTimerRef.current = window.setTimeout(() => {
+        const currentScrollPosition = getScrollPosition();
+
+        if (currentScrollPosition > hideAfter) {
+          updateState(false, currentScrollPosition > 12);
+        }
+
+        idleTimerRef.current = null;
+      }, idleDelay);
+    };
+
     const initialScrollPosition = getScrollPosition();
     lastScrollPositionRef.current = initialScrollPosition;
     accumulatedDeltaRef.current = 0;
     updateState(true, initialScrollPosition > 12);
 
     if (disabled) {
+      clearIdleTimer();
       return undefined;
+    }
+
+    if (initialScrollPosition > hideAfter) {
+      scheduleIdleHide();
     }
 
     const evaluateScroll = () => {
@@ -78,9 +111,12 @@ export function useSmartScrollVisibility({
 
       if (currentScrollPosition <= hideAfter) {
         accumulatedDeltaRef.current = 0;
+        clearIdleTimer();
         updateState(true, isScrolled);
         return;
       }
+
+      scheduleIdleHide();
 
       if (Math.abs(scrollDelta) < 1) {
         updateState(isVisibleRef.current, isScrolled);
@@ -119,10 +155,23 @@ export function useSmartScrollVisibility({
       }
     };
 
+    const handleActivity = () => {
+      if (getScrollPosition() > hideAfter && isVisibleRef.current) {
+        scheduleIdleHide();
+      }
+    };
+
     window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("pointermove", handleActivity, { passive: true });
+    window.addEventListener("touchmove", handleActivity, { passive: true });
+    window.addEventListener("keydown", handleActivity);
 
     return () => {
+      clearIdleTimer();
       window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("pointermove", handleActivity);
+      window.removeEventListener("touchmove", handleActivity);
+      window.removeEventListener("keydown", handleActivity);
 
       if (animationFrameRef.current && typeof window.cancelAnimationFrame === "function") {
         window.cancelAnimationFrame(animationFrameRef.current);
@@ -130,7 +179,7 @@ export function useSmartScrollVisibility({
 
       animationFrameRef.current = 0;
     };
-  }, [directionThreshold, disabled, hideAfter, resetKey]);
+  }, [directionThreshold, disabled, hideAfter, idleDelay, resetKey]);
 
   return state;
 }
