@@ -1,1 +1,1 @@
-export { BugMazeV2 as BugMaze } from "./bug-maze-v2";
+export { BugMazeV3 as BugMaze } from "./bug-maze-v3";
