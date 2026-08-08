@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import styles from "./global-navigation-loader.module.css";
 
@@ -54,12 +54,10 @@ export function GlobalNavigationLoader() {
   const releaseTimerRef = useRef<number | null>(null);
   const failsafeTimerRef = useRef<number | null>(null);
   const previousPathRef = useRef(pathname);
-
-  const locale = useMemo(() => getLocale(), [pathname, loader.mode]);
+  const locale = getLocale();
 
   useEffect(() => {
     if (isAdminRoute) {
-      setLoader((current) => ({ ...current, active: false }));
       return undefined;
     }
 
