@@ -73,7 +73,7 @@ test("player, viruses, connected walls and artifacts remain bounded game assets"
   assert.match(source, /data-role="virus"/);
   assert.match(source, /data-join-top/);
   assert.match(styles, /\.actor\s*\{[\s\S]*transition: left 135ms[\s\S]*top 135ms/);
-  assert.match(styles, /\.player,[\s\S]*\.virus\s*\{[\s\S]*max-width: 78%[\s\S]*max-height: 78%/);
+  assert.match(styles, /\.player,[\s\S]*\.virus\s*\{[\s\S]*max-width: 76%[\s\S]*max-height: 76%/);
   assert.match(styles, /\.artifact\[data-kind="KEY"\]/);
   assert.match(styles, /\.portal\[data-ready="true"\]/);
 });
