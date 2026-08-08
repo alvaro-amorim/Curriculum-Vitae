@@ -1,8 +1,12 @@
 /*
  * The smart-scroll state is the single source of truth for navbar visibility.
- * CSS Modules may be injected after global styles, so the old :hover and
- * :focus-within rules can otherwise resurrect a navbar that React already
- * marked as hidden. These declarations intentionally win that cascade.
+ *
+ * The component stylesheet also contains :hover / :focus-within presentation
+ * rules. CSS Modules can be injected after global styles at runtime, so equal
+ * specificity was not enough: after navigation the focused link (or a pointer
+ * still over the navbar) could visually resurrect an element already marked
+ * data-hidden="true". The explicit important declarations below make the
+ * React visibility state authoritative regardless of stylesheet order.
  */
 html [data-topbar="global"][data-hidden="true"],
 html [data-topbar="global"][data-hidden="true"]:hover,
