@@ -42,3 +42,38 @@ test("Bug Maze v2 owns its visual system without changing other arcade games", (
   assert.match(styles, /\.board/);
   assert.match(styles, /@media \(max-width: 720px\)/);
 });
+
+test("player and viruses render in an animated actor layer instead of teleporting inside grid cells", () => {
+  const source = read("src/components/lab/bug-maze-v2.tsx");
+  const polish = read("src/styles/bug-maze-polish.css");
+
+  assert.match(source, /function actorStyle/);
+  assert.match(source, /data-maze-actors/);
+  assert.match(source, /data-role="player"/);
+  assert.match(source, /data-role="virus"/);
+  assert.match(polish, /\[data-maze-actor\][\s\S]*transition:/);
+  assert.match(polish, /left 145ms/);
+  assert.match(polish, /top 145ms/);
+});
+
+test("premium maze art distinguishes connected walls, artifacts, portal and threat distance", () => {
+  const source = read("src/components/lab/bug-maze-v2.tsx");
+  const polish = read("src/styles/bug-maze-polish.css");
+
+  assert.match(source, /data-join-top/);
+  assert.match(source, /data-maze-item/);
+  assert.match(source, /data-maze-goal/);
+  assert.match(source, /threatDistance/);
+  assert.match(polish, /\[data-maze-wall="true"\]\[data-join-top="true"\]/);
+  assert.match(polish, /\[data-maze-item\]\[data-kind="KEY"\]/);
+  assert.match(polish, /\[data-maze-goal\]\[data-ready="true"\]/);
+});
+
+test("mobile ranking remains subordinate to gameplay", () => {
+  const compact = read("src/styles/bug-maze-ranking-compact.css");
+
+  assert.match(compact, /grid-template-rows: auto auto/);
+  assert.match(compact, /max-height: 10\.4rem/);
+  assert.match(compact, /max-height: 6\.8rem/);
+  assert.match(compact, /li:nth-child\(n \+ 2\)/);
+});
