@@ -10,71 +10,70 @@ function read(path: string) {
   return readFileSync(resolve(root, path), "utf8");
 }
 
-test("Bug Maze no longer auto-starts from movement after a completed run", () => {
-  const source = read("src/components/lab/bug-maze-v2.tsx");
+test("Bug Maze public entry points to progressive v3", () => {
+  const entry = read("src/components/lab/bug-maze.tsx");
+  const source = read("src/components/lab/bug-maze-v3.tsx");
+
+  assert.match(entry, /BugMazeV3 as BugMaze/);
+  assert.match(source, /bug-maze-v3\.module\.css/);
+});
+
+test("progression rotates handcrafted maps and scales threats from one to five", () => {
+  const source = read("src/components/lab/bug-maze-v3.tsx");
+
+  assert.match(source, /const MAX_ACTIVE_VIRUSES = 5/);
+  assert.match(source, /const mazeDefinitions:[\s\S]*Pacote de deploy[\s\S]*Incidente em produção[\s\S]*Hotfix de gateway[\s\S]*Falha de autenticação[\s\S]*Rollback crítico/);
+  assert.match(source, /function virusCountForPhase/);
+  assert.match(source, /Math\.min\(MAX_ACTIVE_VIRUSES, Math\.max\(1, phaseNumber\)\)/);
+  assert.match(source, /phaseIndex % mazeDefinitions\.length/);
+});
+
+test("completed incidents accumulate one run score instead of resetting each phase", () => {
+  const source = read("src/components/lab/bug-maze-v3.tsx");
+
+  assert.match(source, /const \[runScore, setRunScore\] = useState\(0\)/);
+  assert.match(source, /const totalScore = runScore \+ phaseScore/);
+  assert.match(source, /setRunScore\(totalScore\)/);
+  assert.match(source, /preparePhase\(phaseIndex \+ 1\)/);
+  assert.match(source, /preparePhase\(0, \{ resetRun: true \}\)/);
+});
+
+test("ranking payload receives cumulative score and current incident metadata", () => {
+  const source = read("src/components/lab/bug-maze-v3.tsx");
+
+  assert.match(source, /deployStage: phaseNumber/);
+  assert.match(source, /virusesActive: virusCount/);
+  assert.match(source, /score: totalScore/);
+});
+
+test("Bug Maze keeps path-distance pursuit with phase-dependent reaction and cadence", () => {
+  const source = read("src/components/lab/bug-maze-v3.tsx");
+
+  assert.match(source, /function buildDistanceMap/);
+  assert.match(source, /function moveEnemies/);
+  assert.match(source, /function enemyMoveInterval/);
+  assert.match(source, /function wakeGraceForPhase/);
+  assert.match(source, /distances\.get/);
+});
+
+test("movement cannot restart a completed run", () => {
+  const source = read("src/components/lab/bug-maze-v3.tsx");
 
   assert.match(source, /if \(status !== "running"\) return;/);
   assert.doesNotMatch(source, /status === "won" \|\| status === "failed"[\s\S]{0,220}setStatus\("running"\)/);
 });
 
-test("Bug Maze uses path-distance pursuit instead of greedy Manhattan-only movement", () => {
-  const source = read("src/components/lab/bug-maze-v2.tsx");
-
-  assert.match(source, /function buildDistanceMap/);
-  assert.match(source, /function moveEnemies/);
-  assert.match(source, /distances\.get/);
-});
-
-test("virus activation includes a reaction window and progressive move interval", () => {
-  const source = read("src/components/lab/bug-maze-v2.tsx");
-
-  assert.match(source, /VIRUS_WAKE_GRACE_MOVES = 2/);
-  assert.match(source, /nextCollected\.size >= 3 \? 3 : 4/);
-});
-
-test("Bug Maze v2 owns its visual system without changing other arcade games", () => {
-  const entry = read("src/components/lab/bug-maze.tsx");
-  const source = read("src/components/lab/bug-maze-v2.tsx");
-  const styles = read("src/components/lab/bug-maze-v2.module.css");
-
-  assert.match(entry, /BugMazeV2 as BugMaze/);
-  assert.match(source, /bug-maze-v2\.module\.css/);
-  assert.match(styles, /\.board/);
-  assert.match(styles, /@media \(max-width: 620px\)/);
-});
-
-test("player and viruses move through one bounded actor layer", () => {
-  const source = read("src/components/lab/bug-maze-v2.tsx");
-  const styles = read("src/components/lab/bug-maze-v2.module.css");
+test("player, viruses, connected walls and artifacts remain bounded game assets", () => {
+  const source = read("src/components/lab/bug-maze-v3.tsx");
+  const styles = read("src/components/lab/bug-maze-v3.module.css");
 
   assert.match(source, /function actorStyle/);
-  assert.match(source, /data-maze-actors/);
+  assert.match(source, /className=\{styles\.actors\}/);
   assert.match(source, /data-role="player"/);
   assert.match(source, /data-role="virus"/);
-  assert.match(styles, /\.board \[data-maze-actor\][\s\S]*transition:/);
-  assert.match(styles, /left 145ms/);
-  assert.match(styles, /top 145ms/);
-});
-
-test("maze art distinguishes connected walls, artifacts, portal and threat state without viewport overlays", () => {
-  const source = read("src/components/lab/bug-maze-v2.tsx");
-  const styles = read("src/components/lab/bug-maze-v2.module.css");
-
   assert.match(source, /data-join-top/);
-  assert.match(source, /data-maze-item/);
-  assert.match(source, /data-maze-goal/);
-  assert.match(source, /threatDistance/);
-  assert.match(styles, /\.wall\[data-join-top="true"\]/);
+  assert.match(styles, /\.actor\s*\{[\s\S]*transition: left 135ms[\s\S]*top 135ms/);
+  assert.match(styles, /\.player,[\s\S]*\.virus\s*\{[\s\S]*max-width: 78%[\s\S]*max-height: 78%/);
   assert.match(styles, /\.artifact\[data-kind="KEY"\]/);
-  assert.match(styles, /\.goalLocked \.goalMark/);
-  assert.match(styles, /\.board\[data-threat="critical"\]/);
-});
-
-test("mobile ranking remains subordinate to gameplay", () => {
-  const modal = read("src/styles/bug-maze-modal.css");
-
-  assert.match(modal, /grid-template-rows: auto auto !important/);
-  assert.match(modal, /max-height: 9\.2rem/);
-  assert.match(modal, /max-height: 6\.6rem/);
-  assert.match(modal, /li:nth-child\(n \+ 2\)/);
+  assert.match(styles, /\.portal\[data-ready="true"\]/);
 });
