@@ -93,6 +93,15 @@ const itemTokens: Record<string, ItemKind> = {
   T: "TEST",
 };
 
+const itemGlyphs: Record<ItemKind, string> = {
+  API: "↔",
+  FIX: "</>",
+  KEY: "◆",
+  PATCH: "+",
+  TEST: "✓",
+  TOKEN: "●",
+};
+
 const copy = {
   pt: {
     eyebrow: "Bug Maze / Debug Route",
@@ -108,37 +117,45 @@ const copy = {
     tokens: "artefatos",
     lives: "integridade",
     threat: "ameaça",
+    distance: "distância",
     deploy: "deploy",
     dormant: "dormente",
-    active: "ativa",
+    active: "rastreando",
     locked: "bloqueado",
     ready: "liberado",
     mission: "Missão",
     missionText: "Colete todos os artefatos antes de entrar no Safe Deploy.",
     controls: "Controles",
     keyboard: "Setas / WASD",
-    mobile: "Swipe ou direcional",
+    mobile: "Swipe no tabuleiro",
     chase: "O processo infectado acorda após o primeiro artefato e recalcula a rota até você.",
+    incident: "Incidente",
+    collectBrief: "Colete todos os artefatos de debug",
+    avoidBrief: "Evite o processo infectado",
+    deployBrief: "Entre no Safe Deploy quando liberar",
+    integrityBrief: "3 pontos de integridade",
+    threatBrief: "1 processo infectado",
     status: {
       idle: "aguardando execução",
       running: "debug em andamento",
       won: "deploy seguro",
       failed: "execução interrompida",
     },
-    idleTitle: "Mapeie a rota antes de executar.",
-    idleText: "Colete os seis artefatos. O vírus só acorda depois da primeira coleta e recebe uma pequena janela de reação.",
+    idleTitle: "Saneie a rota de produção.",
+    idleText: "Leia o mapa, capture os artefatos e mantenha distância da ameaça. O vírus só acorda depois da primeira coleta.",
     wonTitle: "Safe Deploy liberado.",
     wonText: "A rota foi saneada e o resultado entrou no ranking.",
     failedTitle: "Integridade esgotada.",
-    failedText: "O processo infectado encontrou seu node. Inicie uma nova execução para tentar outra rota.",
+    failedText: "O processo infectado encontrou seu node. Uma nova execução só começa pelo botão abaixo.",
     blocked: "rota bloqueada",
     item: "artefato coletado",
     hit: "integridade -1",
     win: "deploy liberado",
     fail: "processo infectado",
     lockedFeedback: "deploy ainda bloqueado",
-    virus: "ameaça ativada",
+    virus: "ameaça detectada",
     remaining: (count: number) => `${count} restantes`,
+    steps: (count: number) => `${count} passos`,
     directions: { up: "Mover para cima", down: "Mover para baixo", left: "Mover para esquerda", right: "Mover para direita" },
   },
   en: {
@@ -155,37 +172,45 @@ const copy = {
     tokens: "artifacts",
     lives: "integrity",
     threat: "threat",
+    distance: "distance",
     deploy: "deploy",
     dormant: "dormant",
-    active: "active",
+    active: "tracking",
     locked: "locked",
     ready: "ready",
     mission: "Mission",
     missionText: "Collect every artifact before entering Safe Deploy.",
     controls: "Controls",
     keyboard: "Arrows / WASD",
-    mobile: "Swipe or d-pad",
+    mobile: "Swipe on the board",
     chase: "The infected process wakes after the first artifact and recalculates its route toward you.",
+    incident: "Incident",
+    collectBrief: "Collect every debug artifact",
+    avoidBrief: "Avoid the infected process",
+    deployBrief: "Enter Safe Deploy once unlocked",
+    integrityBrief: "3 integrity points",
+    threatBrief: "1 infected process",
     status: {
       idle: "awaiting execution",
       running: "debug running",
       won: "safe deploy",
       failed: "execution interrupted",
     },
-    idleTitle: "Map the route before execution.",
-    idleText: "Collect all six artifacts. The virus wakes after the first pickup and gives you a short reaction window.",
+    idleTitle: "Sanitize the production route.",
+    idleText: "Read the map, capture the artifacts, and keep your distance from the threat. The virus only wakes after the first pickup.",
     wonTitle: "Safe Deploy cleared.",
     wonText: "The route was sanitized and the result entered the ranking.",
     failedTitle: "Integrity depleted.",
-    failedText: "The infected process reached your node. Start a new run to try another route.",
+    failedText: "The infected process reached your node. A new run only starts from the button below.",
     blocked: "route blocked",
     item: "artifact collected",
     hit: "integrity -1",
     win: "deploy cleared",
     fail: "infected process",
     lockedFeedback: "deploy still locked",
-    virus: "threat activated",
+    virus: "threat detected",
     remaining: (count: number) => `${count} remaining`,
+    steps: (count: number) => `${count} steps`,
     directions: { up: "Move up", down: "Move down", left: "Move left", right: "Move right" },
   },
 } as const;
@@ -235,6 +260,10 @@ function getCell(maze: ParsedMaze, position: Position) {
 function isWalkable(maze: ParsedMaze, position: Position) {
   const cell = getCell(maze, position);
   return Boolean(cell && cell.kind !== "wall");
+}
+
+function isWall(maze: ParsedMaze, position: Position) {
+  return getCell(maze, position)?.kind === "wall";
 }
 
 function buildDistanceMap(maze: ParsedMaze, target: Position) {
@@ -313,12 +342,22 @@ function nextSwipeDirection(start: Position, end: Position): Direction | null {
   return dy > 0 ? "down" : "up";
 }
 
+function actorStyle(position: Position, maze: ParsedMaze): CSSProperties {
+  return {
+    height: `${100 / maze.rows}%`,
+    left: `${(position.x / maze.columns) * 100}%`,
+    top: `${(position.y / maze.rows) * 100}%`,
+    width: `${100 / maze.columns}%`,
+  };
+}
+
 export function BugMazeV2({ locale, onComplete }: BugMazeProps) {
   const t = copy[locale];
   const [layoutIndex, setLayoutIndex] = useState(0);
   const maze = useMemo(() => parseMaze(mazeDefinitions[layoutIndex]), [layoutIndex]);
   const [status, setStatus] = useState<MazeStatus>("idle");
   const [position, setPosition] = useState<Position>(() => parseMaze(mazeDefinitions[0]).start);
+  const [playerDirection, setPlayerDirection] = useState<Direction>("right");
   const [trail, setTrail] = useState<string[]>([]);
   const [collectedItems, setCollectedItems] = useState<Set<string>>(() => new Set());
   const [moves, setMoves] = useState(0);
@@ -354,7 +393,14 @@ export function BugMazeV2({ locale, onComplete }: BugMazeProps) {
   const threatActive = threatStartedAtMove !== null;
   const currentScore = useMemo(() => finalScore ?? (status === "idle" ? 0 : calculateMazeScore({ elapsed, itemCount: collectedItems.size, lives, moves, totalItems: maze.items.length, won: status === "won" })), [collectedItems.size, elapsed, finalScore, lives, maze.items.length, moves, status]);
   const itemsByCell = useMemo(() => new Map(maze.items.map((item) => [item.id, item])), [maze.items]);
-  const enemiesByCell = useMemo(() => new Map(enemies.map((enemy) => [cellKey(enemy.position), enemy])), [enemies]);
+  const threatDistance = useMemo(() => {
+    if (!threatActive || enemies.length === 0) return null;
+    const distances = buildDistanceMap(maze, position);
+    const values = enemies.map((enemy) => distances.get(cellKey(enemy.position)) ?? Number.POSITIVE_INFINITY);
+    const minimum = Math.min(...values);
+    return Number.isFinite(minimum) ? minimum : null;
+  }, [enemies, maze, position, threatActive]);
+  const threatLevel = threatDistance === null ? "dormant" : threatDistance <= 2 ? "critical" : threatDistance <= 4 ? "near" : "tracking";
 
   const triggerFeedback = useCallback((kind: FeedbackKind, count?: number) => {
     setFeedback({ id: Date.now(), kind, count });
@@ -364,6 +410,7 @@ export function BugMazeV2({ locale, onComplete }: BugMazeProps) {
     const nextMaze = parseMaze(mazeDefinitions[nextLayout]);
     setLayoutIndex(nextLayout);
     setPosition(nextMaze.start);
+    setPlayerDirection("right");
     setTrail([]);
     setCollectedItems(new Set());
     setMoves(0);
@@ -423,6 +470,7 @@ export function BugMazeV2({ locale, onComplete }: BugMazeProps) {
 
     triggerFeedback("hit");
     setPosition(maze.start);
+    setPlayerDirection("right");
     setTrail([]);
     setEnemies(resetEnemies(maze));
   }, [elapsed, finishGame, invulnerableUntil, lives, maze, triggerFeedback]);
@@ -433,6 +481,7 @@ export function BugMazeV2({ locale, onComplete }: BugMazeProps) {
     const delta = directionDelta[direction];
     const nextPosition = { x: position.x + delta.x, y: position.y + delta.y };
     const nextCell = getCell(maze, nextPosition);
+    setPlayerDirection(direction);
 
     if (!nextCell || nextCell.kind === "wall") {
       triggerFeedback("blocked");
@@ -532,6 +581,7 @@ export function BugMazeV2({ locale, onComplete }: BugMazeProps) {
     : "";
   const statusTitle = status === "won" ? t.wonTitle : status === "failed" ? t.failedTitle : t.idleTitle;
   const statusText = status === "won" ? t.wonText : status === "failed" ? t.failedText : t.idleText;
+  const resultScore = finalScore ?? currentScore;
 
   return (
     <section aria-labelledby="bug-maze-title" className={styles.root} ref={rootRef}>
@@ -543,20 +593,21 @@ export function BugMazeV2({ locale, onComplete }: BugMazeProps) {
         <p className={labStyles.trainingNote}>{t.subtitle}</p>
       </div>
 
-      <div className={styles.layout}>
-        <div className={styles.stage} data-status={status} data-threat={threatActive ? "active" : "dormant"}>
-          <div className={styles.telemetry}>
+      <div className={styles.layout} data-maze-layout>
+        <div className={styles.stage} data-maze-stage data-status={status} data-threat={threatLevel}>
+          <div className={styles.telemetry} data-maze-telemetry>
             <div><span>{t.score}</span><strong>{currentScore}</strong></div>
             <div><span>{t.best}</span><strong>{Math.max(bestScore, currentScore)}</strong></div>
             <div><span>{t.moves}</span><strong>{moves}</strong></div>
             <div><span>{t.time}</span><strong>{elapsed}s</strong></div>
           </div>
 
-          <div className={styles.runline}>
-            <span className={styles.mapName}>{mazeDefinitions[layoutIndex].name[locale]}</span>
+          <div className={styles.runline} data-maze-runline>
+            <span className={styles.mapName}>{t.incident} {String(layoutIndex + 1).padStart(2, "0")} · {mazeDefinitions[layoutIndex].name[locale]}</span>
             <span>{t.tokens} <strong>{collectedItems.size}/{maze.items.length}</strong></span>
-            <span>{t.lives} <strong>{lives}/{MAX_LIVES}</strong></span>
+            <span>{t.lives} <strong>{"●".repeat(lives)}{"○".repeat(MAX_LIVES - lives)}</strong></span>
             <span data-tone={threatActive ? "danger" : "quiet"}>{t.threat} <strong>{threatActive ? t.active : t.dormant}</strong></span>
+            <span data-maze-distance data-tone={threatDistance !== null && threatDistance <= 2 ? "danger" : "quiet"}>{t.distance} <strong>{threatDistance === null ? "—" : t.steps(threatDistance)}</strong></span>
             <span data-tone={allItemsCollected ? "good" : "warning"}>{t.deploy} <strong>{allItemsCollected ? t.ready : t.locked}</strong></span>
           </div>
 
@@ -564,6 +615,8 @@ export function BugMazeV2({ locale, onComplete }: BugMazeProps) {
             aria-label={`${t.eyebrow}: ${mazeDefinitions[layoutIndex].name[locale]}`}
             className={styles.board}
             data-maze-board
+            data-status={status}
+            data-threat={threatLevel}
             onKeyDown={handleBoardKeyDown}
             onTouchEnd={handleTouchEnd}
             onTouchStart={handleTouchStart}
@@ -571,14 +624,17 @@ export function BugMazeV2({ locale, onComplete }: BugMazeProps) {
             style={{ "--maze-columns": maze.columns, "--maze-rows": maze.rows } as StyleVars}
             tabIndex={0}
           >
-            <div aria-hidden="true" className={styles.grid}>
+            <div aria-hidden="true" className={styles.grid} data-maze-grid>
               {maze.cells.map((cell) => {
                 const key = cellKey(cell);
                 const item = itemsByCell.get(key);
                 const itemCollected = Boolean(item && collectedItems.has(key));
-                const enemy = enemiesByCell.get(key);
                 const hasPlayer = samePosition(position, cell);
                 const isTrail = trail.includes(key) && !hasPlayer;
+                const wallTop = cell.kind === "wall" && isWall(maze, { x: cell.x, y: cell.y - 1 });
+                const wallRight = cell.kind === "wall" && isWall(maze, { x: cell.x + 1, y: cell.y });
+                const wallBottom = cell.kind === "wall" && isWall(maze, { x: cell.x, y: cell.y + 1 });
+                const wallLeft = cell.kind === "wall" && isWall(maze, { x: cell.x - 1, y: cell.y });
 
                 return (
                   <span
@@ -590,28 +646,84 @@ export function BugMazeV2({ locale, onComplete }: BugMazeProps) {
                       cell.kind === "goal" && !allItemsCollected ? styles.goalLocked : "",
                       item && !itemCollected ? styles.itemCell : "",
                       itemCollected ? styles.itemCollected : "",
-                      enemy ? styles.enemyCell : "",
                       isTrail ? styles.trail : "",
                     ].join(" ")}
+                    data-join-bottom={wallBottom ? "true" : undefined}
+                    data-join-left={wallLeft ? "true" : undefined}
+                    data-join-right={wallRight ? "true" : undefined}
+                    data-join-top={wallTop ? "true" : undefined}
+                    data-maze-wall={cell.kind === "wall" ? "true" : undefined}
                     key={key}
                   >
-                    {cell.kind === "goal" ? <span className={styles.goalMark}>{allItemsCollected ? "DEPLOY" : "LOCK"}</span> : null}
-                    {item && !itemCollected ? <span className={styles.artifact}>{item.kind}</span> : null}
-                    {enemy ? <span className={styles.virus} aria-label="virus"><i>!</i></span> : null}
-                    {hasPlayer ? <span className={[styles.player, invulnerableUntil > 0 ? styles.playerInvulnerable : ""].join(" ")}><b>&gt;_</b></span> : null}
+                    {cell.kind === "goal" ? (
+                      <span className={styles.goalMark} data-maze-goal data-ready={allItemsCollected ? "true" : "false"}>
+                        <i />
+                        <b>{allItemsCollected ? "DEPLOY" : "LOCK"}</b>
+                        <em />
+                      </span>
+                    ) : null}
+                    {item && !itemCollected ? (
+                      <span className={styles.artifact} data-kind={item.kind} data-maze-item>
+                        <i>{itemGlyphs[item.kind]}</i>
+                        <b>{item.kind}</b>
+                        <em />
+                      </span>
+                    ) : null}
                   </span>
                 );
               })}
             </div>
 
+            <div aria-hidden="true" data-maze-actors>
+              {enemies.map((enemy) => (
+                <span data-maze-actor data-role="virus" key={enemy.id} style={actorStyle(enemy.position, maze)}>
+                  <i className={styles.virus} data-active={threatActive ? "true" : "false"}>
+                    <span />
+                    <b>!</b>
+                    <em />
+                  </i>
+                </span>
+              ))}
+              <span data-direction={playerDirection} data-maze-actor data-role="player" style={actorStyle(position, maze)}>
+                <i className={[styles.player, invulnerableUntil > 0 ? styles.playerInvulnerable : ""].join(" ")}>
+                  <span><b>&gt;_</b></span>
+                  <em />
+                  <u />
+                </i>
+              </span>
+            </div>
+
             {feedback ? <div aria-live="polite" className={styles.feedback} data-kind={feedback.kind} key={feedback.id}>{feedbackLabel}</div> : null}
 
             {status !== "running" ? (
-              <div className={styles.overlay}>
+              <div className={styles.overlay} data-maze-overlay>
                 <div className={styles.overlayPanel}>
-                  <span>{t.status[status]}</span>
+                  <span>{t.incident} {String(layoutIndex + 1).padStart(2, "0")} · {t.status[status]}</span>
                   <h3>{statusTitle}</h3>
                   <p>{statusText}</p>
+
+                  {status === "idle" ? (
+                    <div data-maze-brief>
+                      <span><i>01</i>{t.collectBrief}</span>
+                      <span><i>02</i>{t.avoidBrief}</span>
+                      <span><i>03</i>{t.deployBrief}</span>
+                      <span><i>HP</i>{t.integrityBrief}</span>
+                      <span><i>AI</i>{t.threatBrief}</span>
+                    </div>
+                  ) : (
+                    <div data-maze-result>
+                      <div><span>{t.score}</span><strong>{resultScore}</strong></div>
+                      <div><span>{t.time}</span><strong>{elapsed}s</strong></div>
+                      <div><span>{t.tokens}</span><strong>{collectedItems.size}/{maze.items.length}</strong></div>
+                      <div><span>{t.lives}</span><strong>{lives}/{MAX_LIVES}</strong></div>
+                    </div>
+                  )}
+
+                  <div data-maze-controls>
+                    <span><kbd>WASD</kbd><b>{t.keyboard}</b></span>
+                    <span><kbd>↕↔</kbd><b>{t.mobile}</b></span>
+                  </div>
+
                   <div className={styles.overlayActions}>
                     <button className={styles.primaryButton} onClick={() => startGame()} type="button">{status === "idle" ? t.start : t.restart}</button>
                     <button className={styles.secondaryButton} onClick={() => startGame((layoutIndex + 1) % mazeDefinitions.length)} type="button">{t.switchMap}</button>
@@ -622,7 +734,7 @@ export function BugMazeV2({ locale, onComplete }: BugMazeProps) {
           </div>
         </div>
 
-        <aside className={styles.side}>
+        <aside className={styles.side} data-maze-side>
           <div className={styles.panel}>
             <span className={styles.panelEyebrow}>{t.mission}</span>
             <strong>{t.status[status]}</strong>
