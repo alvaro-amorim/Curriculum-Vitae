@@ -1,0 +1,247 @@
+/* Bug Maze modal integration.
+ * The game itself is fully styled by its CSS Module. This file only adapts the
+ * outer Arcade modal and the real leaderboard, which live outside the game.
+ */
+
+@media (max-width: 1480px), (max-height: 850px) {
+  body[data-arcade-modal-open="true"]
+    section[role="dialog"]:has(section[aria-labelledby="bug-maze-title"]) {
+    grid-template-rows: auto minmax(0, 1fr) !important;
+  }
+
+  body[data-arcade-modal-open="true"]
+    section[role="dialog"]:has(section[aria-labelledby="bug-maze-title"])
+    > header {
+    min-height: 0 !important;
+    padding: 0.48rem 0.68rem !important;
+  }
+
+  body[data-arcade-modal-open="true"]
+    section[role="dialog"]:has(section[aria-labelledby="bug-maze-title"])
+    > header p,
+  body[data-arcade-modal-open="true"]
+    section[role="dialog"]:has(section[aria-labelledby="bug-maze-title"])
+    > header span:first-child {
+    display: none !important;
+  }
+
+  body[data-arcade-modal-open="true"]
+    section[role="dialog"]:has(section[aria-labelledby="bug-maze-title"])
+    > header h2 {
+    font-size: 1rem !important;
+  }
+
+  body[data-arcade-modal-open="true"]
+    section[role="dialog"]:has(section[aria-labelledby="bug-maze-title"])
+    > nav {
+    display: none !important;
+  }
+
+  body[data-arcade-modal-open="true"]
+    section[role="dialog"]:has(section[aria-labelledby="bug-maze-title"])
+    > div:last-child,
+  body[data-arcade-modal-open="true"]
+    section[role="dialog"]:has(section[aria-labelledby="bug-maze-title"])
+    > div:last-child
+    > div:first-child {
+    min-height: 0 !important;
+  }
+
+  body[data-arcade-modal-open="true"]
+    section[role="dialog"]:has(section[aria-labelledby="bug-maze-title"])
+    > div:last-child
+    > div:first-child {
+    padding: 0.34rem !important;
+  }
+}
+
+@media (max-width: 620px) {
+  body[data-arcade-modal-open="true"]
+    section[role="dialog"]:has(section[aria-labelledby="bug-maze-title"]) {
+    overflow: hidden !important;
+  }
+
+  body[data-arcade-modal-open="true"]
+    section[role="dialog"]:has(section[aria-labelledby="bug-maze-title"])
+    > nav {
+    display: none !important;
+  }
+
+  body[data-arcade-modal-open="true"]
+    section[role="dialog"]:has(section[aria-labelledby="bug-maze-title"])
+    > div:last-child {
+    display: grid !important;
+    min-height: 0 !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-rows: auto auto !important;
+    align-content: start !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain;
+  }
+
+  body[data-arcade-modal-open="true"]
+    section[role="dialog"]:has(section[aria-labelledby="bug-maze-title"])
+    > div:last-child
+    > div:first-child {
+    display: block !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+    padding: 0.24rem 0.24rem 0 !important;
+  }
+
+  body[data-arcade-modal-open="true"]
+    section[role="dialog"]:has(section[aria-labelledby="bug-maze-title"])
+    [data-lab-game-arena="true"] {
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+    border-radius: 0.55rem !important;
+  }
+
+  body[data-arcade-modal-open="true"]
+    section[role="dialog"]:has(section[aria-labelledby="bug-maze-title"])
+    > div:last-child
+    > div:first-child
+    > [data-tone="synced"] {
+    display: none !important;
+  }
+
+  body[data-arcade-modal-open="true"]
+    section[role="dialog"]:has(section[aria-labelledby="bug-maze-title"])
+    > div:last-child
+    > aside {
+    display: grid !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    max-height: 9.2rem !important;
+    grid-template-rows: auto auto auto !important;
+    align-content: start !important;
+    overflow: hidden !important;
+    border-top: 1px solid color-mix(in srgb, var(--game-accent) 18%, var(--game-border)) !important;
+    border-left: 0 !important;
+    padding: 0.34rem 0.42rem 0.32rem !important;
+    background: color-mix(in srgb, var(--game-surface) 82%, var(--game-bg)) !important;
+  }
+
+  body[data-arcade-modal-open="true"]
+    section[role="dialog"]:has(section[aria-labelledby="bug-maze-title"])
+    > div:last-child
+    > aside
+    > div:first-child {
+    display: flex !important;
+    gap: 0.4rem !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+  }
+
+  body[data-arcade-modal-open="true"]
+    section[role="dialog"]:has(section[aria-labelledby="bug-maze-title"])
+    > div:last-child
+    > aside
+    > div:first-child h3 {
+    margin: 0 !important;
+    font-size: 0.68rem !important;
+  }
+
+  body[data-arcade-modal-open="true"]
+    section[role="dialog"]:has(section[aria-labelledby="bug-maze-title"])
+    > div:last-child
+    > aside
+    > ol {
+    display: grid !important;
+    gap: 0.15rem !important;
+    margin: 0.22rem 0 0 !important;
+    padding: 0 !important;
+  }
+
+  body[data-arcade-modal-open="true"]
+    section[role="dialog"]:has(section[aria-labelledby="bug-maze-title"])
+    > div:last-child
+    > aside
+    > ol
+    > li {
+    display: grid !important;
+    min-width: 0 !important;
+    min-height: 1.35rem !important;
+    grid-template-columns: 1.15rem 1.35rem minmax(0, 1fr) auto !important;
+    gap: 0.24rem !important;
+    align-items: center !important;
+    border-radius: 0.38rem !important;
+    padding: 0.13rem 0.26rem !important;
+    background: color-mix(in srgb, var(--game-surface) 58%, transparent) !important;
+    box-shadow: none !important;
+  }
+
+  body[data-arcade-modal-open="true"]
+    section[role="dialog"]:has(section[aria-labelledby="bug-maze-title"])
+    > div:last-child
+    > aside
+    > ol
+    > li
+    > span:nth-child(2) {
+    display: grid !important;
+    width: 1.25rem !important;
+    height: 1.25rem !important;
+    place-items: center;
+    border-radius: 0.32rem !important;
+    font-size: 0.37rem !important;
+  }
+
+  body[data-arcade-modal-open="true"]
+    section[role="dialog"]:has(section[aria-labelledby="bug-maze-title"])
+    > div:last-child
+    > aside
+    > ol
+    > li
+    strong,
+  body[data-arcade-modal-open="true"]
+    section[role="dialog"]:has(section[aria-labelledby="bug-maze-title"])
+    > div:last-child
+    > aside
+    > ol
+    > li
+    b {
+    font-size: 0.5rem !important;
+  }
+
+  body[data-arcade-modal-open="true"]
+    section[role="dialog"]:has(section[aria-labelledby="bug-maze-title"])
+    > div:last-child
+    > aside
+    > div:last-child {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto auto !important;
+    gap: 0.36rem !important;
+    align-items: center !important;
+    margin-top: 0.18rem !important;
+    border-top: 1px solid color-mix(in srgb, var(--game-accent) 14%, var(--game-border)) !important;
+    padding-top: 0.2rem !important;
+  }
+}
+
+@media (max-width: 620px) and (max-height: 760px) {
+  body[data-arcade-modal-open="true"]
+    section[role="dialog"]:has(section[aria-labelledby="bug-maze-title"])
+    > div:last-child
+    > aside {
+    max-height: 6.6rem !important;
+  }
+
+  body[data-arcade-modal-open="true"]
+    section[role="dialog"]:has(section[aria-labelledby="bug-maze-title"])
+    > div:last-child
+    > aside
+    > ol
+    > li:nth-child(n + 2) {
+    display: none !important;
+  }
+
+  body[data-arcade-modal-open="true"]
+    section[role="dialog"]:has(section[aria-labelledby="bug-maze-title"])
+    > div:last-child
+    > aside
+    > div:first-child h3 {
+    display: none !important;
+  }
+}
