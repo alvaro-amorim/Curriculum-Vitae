@@ -1,15 +1,19 @@
 /*
- * Scroll visibility is authoritative for the global topbar.
- *
- * The component stylesheet intentionally exposes hover/focus affordances, but
- * those pseudo states must never resurrect a topbar that the smart-scroll hook
- * has already hidden. Keyboard focus keeps the hook disabled and therefore
- * produces data-hidden="false" before this rule is relevant.
+ * The smart-scroll state is the single source of truth for navbar visibility.
+ * CSS Modules may be injected after global styles, so the old :hover and
+ * :focus-within rules can otherwise resurrect a navbar that React already
+ * marked as hidden. These declarations intentionally win that cascade.
  */
-[data-topbar="global"][data-hidden="true"],
-[data-topbar="global"][data-hidden="true"]:hover,
-[data-topbar="global"][data-hidden="true"]:focus-within {
-  opacity: 0;
-  transform: translate(-50%, -145%);
-  pointer-events: none;
+html [data-topbar="global"][data-hidden="true"],
+html [data-topbar="global"][data-hidden="true"]:hover,
+html [data-topbar="global"][data-hidden="true"]:focus-within {
+  opacity: 0 !important;
+  transform: translate(-50%, -145%) !important;
+  pointer-events: none !important;
+}
+
+html [data-topbar="global"][data-menu-open="true"][data-hidden="false"] {
+  opacity: 1 !important;
+  transform: translateX(-50%) !important;
+  pointer-events: auto !important;
 }
