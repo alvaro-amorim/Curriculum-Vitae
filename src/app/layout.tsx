@@ -68,6 +68,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
   return (
     <html className={`${geistSans.variable} ${geistMono.variable}`} data-theme="dark" lang="pt-BR" suppressHydrationWarning>
       <body>
+        {/* Mounted outside AppShell so the loader can cover both the first paint and client-side route handoffs. */}
         <GlobalNavigationLoader />
         <AppShell>{children}</AppShell>
       </body>
