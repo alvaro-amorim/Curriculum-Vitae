@@ -10,50 +10,39 @@ function read(path: string) {
   return readFileSync(resolve(root, path), "utf8");
 }
 
-test("Bug Maze board is constrained by available modal height instead of fixed aspect ratio", () => {
-  const css = read("src/styles/bug-maze-responsive.css");
+test("Bug Maze owns its responsive board sizing inside the CSS Module", () => {
+  const css = read("src/components/lab/bug-maze-v2.module.css");
 
-  assert.match(css, /section\[aria-labelledby="bug-maze-title"\] \[data-maze-board\]/);
-  assert.match(css, /height: 100% !important/);
-  assert.match(css, /aspect-ratio: auto !important/);
-  assert.match(css, /contain: layout paint/);
+  assert.match(css, /\.stage\s*\{[\s\S]*grid-template-rows: auto auto minmax\(0, 1fr\)/);
+  assert.match(css, /\.board\s*\{[\s\S]*height: 100%/);
+  assert.doesNotMatch(css, /aspect-ratio:\s*15\s*\/\s*11/);
 });
 
-test("compact desktop collapses arcade chrome before shrinking gameplay", () => {
-  const css = read("src/styles/bug-maze-responsive.css");
+test("Bug Maze actors are bounded by their grid cell instead of viewport-sized effects", () => {
+  const css = read("src/components/lab/bug-maze-v2.module.css");
 
-  assert.match(css, /@media \(max-width: 1480px\), \(max-height: 850px\)/);
-  assert.match(css, /> nav \{\s*display: none !important/);
-  assert.match(css, /section\[aria-labelledby="bug-maze-title"\] > div:first-child \{\s*display: none !important/);
+  assert.match(css, /\.player\s*\{[\s\S]*width: 68%[\s\S]*height: 68%/);
+  assert.match(css, /\.virus\s*\{[\s\S]*width: 58%[\s\S]*height: 58%/);
+  assert.match(css, /\.virus::before\s*\{[\s\S]*inset: -24%/);
+  assert.doesNotMatch(css, /width:\s*min\([^\n]*50vw/);
 });
 
-test("mobile keeps the maze primary and moves auxiliary UI out of the arena", () => {
-  const responsive = read("src/styles/bug-maze-responsive.css");
-  const dock = read("src/styles/bug-maze-ranking-dock.css");
-
-  assert.match(responsive, /@media \(max-width: 620px\)/);
-  assert.match(responsive, /height: clamp\(27rem, 67dvh, 34rem\)/);
-  assert.match(responsive, /content: "SWIPE"/);
-  assert.match(dock, /real leaderboard/i);
-  assert.match(dock, /section\[role="dialog"\]:has\(section\[aria-labelledby="bug-maze-title"\]\)/);
-});
-
-test("very short phones preserve gameplay and reduce leaderboard density", () => {
-  const css = read("src/styles/bug-maze-ranking-dock.css");
-
-  assert.match(css, /@media \(max-width: 620px\) and \(max-height: 570px\)/);
-  assert.match(css, /> li:nth-child\(n \+ 2\)/);
-  assert.match(css, /display: none !important/);
-});
-
-test("global stylesheet loads Bug Maze responsive layers after Runtime Runner layers", () => {
+test("global CSS imports only one Bug Maze modal integration layer", () => {
   const globals = read("src/app/globals.css");
 
-  const runtimeIndex = globals.indexOf("runtime-runner-ranking-dock.css");
-  const mazeResponsiveIndex = globals.indexOf("bug-maze-responsive.css");
-  const mazeDockIndex = globals.indexOf("bug-maze-ranking-dock.css");
+  assert.match(globals, /bug-maze-modal\.css/);
+  assert.doesNotMatch(globals, /bug-maze-responsive\.css/);
+  assert.doesNotMatch(globals, /bug-maze-polish\.css/);
+  assert.doesNotMatch(globals, /bug-maze-ranking-dock\.css/);
+  assert.doesNotMatch(globals, /bug-maze-ranking-compact\.css/);
+});
 
-  assert.ok(runtimeIndex >= 0);
-  assert.ok(mazeResponsiveIndex > runtimeIndex);
-  assert.ok(mazeDockIndex > mazeResponsiveIndex);
+test("mobile keeps the real ranking compact and below gameplay", () => {
+  const css = read("src/styles/bug-maze-modal.css");
+
+  assert.match(css, /@media \(max-width: 620px\)/);
+  assert.match(css, /grid-template-rows: auto auto !important/);
+  assert.match(css, /max-height: 9\.2rem !important/);
+  assert.match(css, /@media \(max-width: 620px\) and \(max-height: 760px\)/);
+  assert.match(css, /> li:nth-child\(n \+ 2\)/);
 });
