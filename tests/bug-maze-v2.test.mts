@@ -40,40 +40,41 @@ test("Bug Maze v2 owns its visual system without changing other arcade games", (
   assert.match(entry, /BugMazeV2 as BugMaze/);
   assert.match(source, /bug-maze-v2\.module\.css/);
   assert.match(styles, /\.board/);
-  assert.match(styles, /@media \(max-width: 720px\)/);
+  assert.match(styles, /@media \(max-width: 620px\)/);
 });
 
-test("player and viruses render in an animated actor layer instead of teleporting inside grid cells", () => {
+test("player and viruses move through one bounded actor layer", () => {
   const source = read("src/components/lab/bug-maze-v2.tsx");
-  const polish = read("src/styles/bug-maze-polish.css");
+  const styles = read("src/components/lab/bug-maze-v2.module.css");
 
   assert.match(source, /function actorStyle/);
   assert.match(source, /data-maze-actors/);
   assert.match(source, /data-role="player"/);
   assert.match(source, /data-role="virus"/);
-  assert.match(polish, /\[data-maze-actor\][\s\S]*transition:/);
-  assert.match(polish, /left 145ms/);
-  assert.match(polish, /top 145ms/);
+  assert.match(styles, /\.board \[data-maze-actor\][\s\S]*transition:/);
+  assert.match(styles, /left 145ms/);
+  assert.match(styles, /top 145ms/);
 });
 
-test("premium maze art distinguishes connected walls, artifacts, portal and threat distance", () => {
+test("maze art distinguishes connected walls, artifacts, portal and threat state without viewport overlays", () => {
   const source = read("src/components/lab/bug-maze-v2.tsx");
-  const polish = read("src/styles/bug-maze-polish.css");
+  const styles = read("src/components/lab/bug-maze-v2.module.css");
 
   assert.match(source, /data-join-top/);
   assert.match(source, /data-maze-item/);
   assert.match(source, /data-maze-goal/);
   assert.match(source, /threatDistance/);
-  assert.match(polish, /\[data-maze-wall="true"\]\[data-join-top="true"\]/);
-  assert.match(polish, /\[data-maze-item\]\[data-kind="KEY"\]/);
-  assert.match(polish, /\[data-maze-goal\]\[data-ready="true"\]/);
+  assert.match(styles, /\.wall\[data-join-top="true"\]/);
+  assert.match(styles, /\.artifact\[data-kind="KEY"\]/);
+  assert.match(styles, /\.goalLocked \.goalMark/);
+  assert.match(styles, /\.board\[data-threat="critical"\]/);
 });
 
 test("mobile ranking remains subordinate to gameplay", () => {
-  const compact = read("src/styles/bug-maze-ranking-compact.css");
+  const modal = read("src/styles/bug-maze-modal.css");
 
-  assert.match(compact, /grid-template-rows: auto auto/);
-  assert.match(compact, /max-height: 10\.4rem/);
-  assert.match(compact, /max-height: 6\.8rem/);
-  assert.match(compact, /li:nth-child\(n \+ 2\)/);
+  assert.match(modal, /grid-template-rows: auto auto !important/);
+  assert.match(modal, /max-height: 9\.2rem/);
+  assert.match(modal, /max-height: 6\.6rem/);
+  assert.match(modal, /li:nth-child\(n \+ 2\)/);
 });
