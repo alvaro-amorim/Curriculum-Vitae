@@ -196,6 +196,8 @@ export function GlobalNavigationLoader() {
     const elapsed = performance.now() - routeStartedAtRef.current;
     const remaining = Math.max(0, ROUTE_MIN_MS - elapsed);
 
+    // Pathname changes only after the App Router has accepted the new route.
+    // Two frames let the destination paint before the loader fades out.
     releaseTimerRef.current = window.setTimeout(() => {
       window.requestAnimationFrame(() => {
         window.requestAnimationFrame(() => {
