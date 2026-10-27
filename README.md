@@ -4,27 +4,14 @@ Portfólio profissional de Álvaro Amorim construído em Next.js. O produto reú
 
 Este README descreve o estado versionado do repositório. Histórico de decisões, planos e infraestrutura externa não devem ser confundidos com funcionalidade concluída ou validação reproduzível.
 
-## Snapshot da auditoria
+## Como avaliar
 
-Baseline usado na auditoria estrutural iniciada em 12/07/2026:
+- [Aplicação publicada](https://curriculum-vitae-babr.vercel.app/).
+- Catálogo canônico em `src/content/project-catalog.ts`, com conteúdo em `src/content/projects.ts` e `src/content/additional-projects.ts`.
+- APIs, sessões e administração são server-side; a infraestrutura publicada deve ser validada separadamente.
+- Os scripts de lint, typecheck, testes e build estão descritos abaixo.
 
-```txt
-branch: main
-commit: b72236baf3e90c0dbdb1fdb04d115e6ba8c624e6
-message: style: update custom cursor assets
-```
-
-A Fase 1 foi executada na branch:
-
-```txt
-refactor/foundation-stabilization
-```
-
-Pull Request:
-
-```txt
-#1 refactor: stabilize portfolio foundation
-```
+Os cadernos de estudo não fazem parte do runtime web. A remoção recente do notebook da raiz foi preservada nesta revisão.
 
 ## Estado confirmado no código
 
@@ -32,7 +19,7 @@ Pull Request:
 - Rotas públicas principais: `/`, `/projetos`, `/projetos/[slug]`, `/lab` e `/curriculo`.
 - A Home possui carrossel de projetos, stack, processo, chamada para o Arcade, seção Sobre e CTA final.
 - O Developer Arcade possui Runtime Runner, Bug Maze, Code Snake e Stack Tetris.
-- `/api/score` valida o Score Contract v2 e persiste scores em `arcade_scores` por Route Handler server-side.
+- `/api/score` valida o Score Contract v3 e persiste scores em `arcade_scores` por Route Handler server-side.
 - `/api/player-session` mantém uma sessão anônima em cookie `httpOnly` e persiste somente um hash HMAC em `arcade_sessions`.
 - `/api/leaderboard` usa MongoDB para retornar o melhor score de cada jogador por jogo e período.
 - `/api/leaderboard/me` retorna a posição do jogador atual sem expor `session_hash` ou ids internos.
@@ -78,20 +65,15 @@ https://curriculum-vitae-babr.vercel.app
 - aliases são validados e não podem conter e-mail, URL, telefone ou caracteres de controle;
 - respostas públicas não expõem hash da sessão, cookie bruto, ids internos ou chaves.
 
-### Pendente
+### Escopo da validação
 
-- criação de sessão totalmente atômica para requisições simultâneas;
-- endpoint agregado de bootstrap do Arcade;
-- redução de escritas desnecessárias em `last_seen_at`;
-- rate limit funcional;
-- identificador de partida, nonce e proteção contra replay;
-- validação mais forte contra scores fabricados pelo cliente;
-- retenção ou limpeza planejada do histórico;
-- testes automatizados dos contratos e fluxos críticos do Arcade.
+O código atual contém bootstrap agregado, rate limit e testes de contratos de sessão, ranking e payloads. A presença dessas implementações não comprova o estado do deploy nem proteção completa contra scores fabricados pelo cliente.
+
+Antes de afirmar estabilidade operacional, valide concorrência, limites, comportamento do histórico e integrações no ambiente pretendido. As verificações não devem usar dados ou credenciais de produção.
 
 ## Conteúdo e projetos
 
-A página `/projetos` usa `src/content/projects.ts` como catálogo principal. A Home usa estruturas extraídas para copy, ícones e apresentação dos projetos em:
+A página `/projetos` usa `src/content/project-catalog.ts` como catálogo canônico, composto pelo conteúdo de `projects.ts` e `additional-projects.ts`. A Home usa estruturas extraídas para copy, ícones e apresentação dos projetos em:
 
 ```txt
 src/content/home-copy.ts
@@ -127,7 +109,7 @@ Screenshots, métricas ou resultados não devem ser inventados.
 /api/analytics            Analytics local/mock
 /api/terminal             Comandos permitidos do terminal
 /api/player-session       Sessão anônima do Arcade
-/api/score                Persistência de Score Contract v2
+/api/score                Persistência de Score Contract v3
 /api/leaderboard          Ranking por melhor score de jogador único
 /api/leaderboard/me       Posição do jogador atual
 
@@ -247,67 +229,19 @@ Relatório detalhado:
 docs/foundation-stabilization-audit.md
 ```
 
-## Próximas fases aprovadas
+## Manutenção e evolução
 
-### Fase 2 — estabilidade do Arcade e banco
+O histórico de fases não deve ser interpretado como uma lista atual de funcionalidades ausentes. Administração autenticada, gestão de mídias, bootstrap e rate limit já possuem implementação versionada.
 
-```txt
-fix/arcade-data-stability
-```
+Prioridades de manutenção:
 
-- sessão atômica;
-- bootstrap agregado;
-- menos requisições e escritas;
-- tratamento parcial de falhas;
-- rate limit inicial;
-- proteção contra replay;
-- contratos de coleções MongoDB cobertos por testes.
+- manter catálogo, links e informações profissionais coerentes com os repositórios públicos;
+- ampliar validação dos contratos e dos fluxos administrativos;
+- acompanhar sessões, histórico e retenção conforme o ambiente de publicação;
+- verificar experiência móvel, acessibilidade e desempenho;
+- preservar o caráter privado dos códigos comerciais e materiais reutilizáveis.
 
-### Fase 3 — repaginação do Lab
-
-```txt
-feat/lab-redesign
-```
-
-Refatoração e redesign mantendo inicialmente as regras dos quatro jogos.
-
-### Fase 4 — Sobre e contatos
-
-```txt
-feat/about-contact
-```
-
-Ampliação da seção Sobre com apresentação, trajetória, disponibilidade, contatos e links diretos.
-
-### Fase 5 — testes e CI ampliados
-
-```txt
-test/project-foundation
-```
-
-A CI inicial já existe. Essa fase amplia cobertura para Arcade, APIs e autorização futura.
-
-### Fase 6 — Admin MVP
-
-```txt
-feat/admin-mvp
-```
-
-A área administrativa será iniciada somente depois que conteúdo, contratos e dados estiverem centralizados e testáveis.
-
-## Roadmap posterior
-
-- autenticação e autorização administrativa;
-- audit log e estados de publicação;
-- armazenamento privado para imagens;
-- editor e preview PT/EN;
-- histórico de versões e rollback;
-- GitHub App com leitura de menor privilégio;
-- análise seletiva de repositórios por IA;
-- credenciais criptografadas para provedores externos;
-- analytics persistente;
-- imagens reais dos projetos;
-- SEO indexável por idioma.
+Consulte os documentos de auditoria e o histórico Git para decisões anteriores.
 
 ## Coordenação de trabalho
 

@@ -96,20 +96,20 @@ export const additionalProjects: Project[] = [
       en: "LAYERART STORE",
     },
     subtitle: {
-      pt: "Plataforma comercial para impressão 3D",
-      en: "Commercial platform for 3D printing",
+      pt: "Catálogo, atendimento e administração",
+      en: "Catalog, customer service, and administration",
     },
     shortDescription: {
       pt: "Loja online e sistema de pré-atendimento para produtos personalizados, com catálogo, orçamento contextual, painel administrativo e analytics próprio.",
       en: "Online store and pre-sales system for custom products, with catalog, contextual quoting, admin panel, and first-party analytics.",
     },
     fullDescription: {
-      pt: "Plataforma comercial criada para apresentar produtos personalizados em impressão 3D, captar pedidos de orçamento, organizar leads e permitir que o administrador gerencie catálogo, conteúdo, mídias e indicadores.",
-      en: "Commercial platform built to showcase custom 3D-printed products, capture quote requests, organize leads, and let administrators manage catalog content, media, and indicators.",
+      pt: "Plataforma desenvolvida para apresentar produtos personalizados em impressão 3D, captar pedidos de orçamento e permitir a gestão de catálogo, conteúdo, mídias e indicadores. Possui demonstração publicada; não chegou a ter adoção comercial. O código permanece privado para reaproveitamento futuro.",
+      en: "Platform developed to showcase custom 3D-printed products, capture quote requests, and manage catalog content, media, and indicators. A demo is published; it was not commercially adopted. The source remains private for future reuse.",
     },
     status: {
-      pt: "Publicado e em evolução",
-      en: "Published and evolving",
+      pt: "Demonstração publicada",
+      en: "Published demo",
     },
     category: ["E-commerce", "CMS", "Atendimento", "IA"],
     stack: ["Next.js 16", "React 19", "TypeScript", "Tailwind CSS", "Supabase", "PostgreSQL", "RLS", "Cloudinary", "Zod", "OpenAI", "Gemini", "Cohere"],
@@ -328,7 +328,7 @@ export const additionalProjects: Project[] = [
     },
     links: {
       website: "",
-      repository: "https://github.com/alvaro-amorim/femhealth-ml-triage",
+      repository: "https://github.com/alvaro-amorim/femhealth-clinical-ai",
     },
     visuals: {
       thumbnail: null,

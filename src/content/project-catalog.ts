@@ -17,7 +17,6 @@ export const primaryProjectSlugs = [
 
 export const labProjectSlugs = [
   "femhealth-ml-triage",
-  "typographic-story-engine",
   "gdash-dashboard",
   "checktask-explorer",
   "rivals-ai",
@@ -25,7 +24,7 @@ export const labProjectSlugs = [
 
 export const secondaryProjectSlugs = ["comerc-ias"] as const;
 
-const excludedProjectSlugs = new Set(["robet"]);
+const excludedProjectSlugs = new Set(["robet", "typographic-story-engine"]);
 
 const projectCollectionBySlug = new Map<string, ProjectCollectionId>([
   ...primaryProjectSlugs.map((slug) => [slug, "primary"] as const),

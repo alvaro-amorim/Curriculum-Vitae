@@ -16,8 +16,8 @@ export const projects: Project[] = [
       en: "Web platform focused on ingredient management, technical sheets, recipe pricing, and nutritional labeling for food businesses.",
     },
     fullDescription: {
-      pt: "Projeto voltado à operação de negócios de alimentação, organizando fluxos de ingredientes, receitas, precificação, billing e módulo nutricional em uma experiência web estruturada.",
-      en: "Project focused on food business operations, organizing ingredient, recipe, pricing, billing, and nutritional flows in a structured web experience.",
+      pt: "Projeto voltado à operação de negócios de alimentação, organizando fluxos de ingredientes, receitas, precificação, billing e módulo nutricional em uma experiência web estruturada. O autor informou 83 usuários em 27/10/2026.",
+      en: "Project focused on food business operations, organizing ingredient, recipe, pricing, billing, and nutritional flows in a structured web experience. The author reported 83 users as of October 27, 2026.",
     },
     status: {
       pt: "Em produção",

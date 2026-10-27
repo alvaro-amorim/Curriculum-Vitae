@@ -5,6 +5,7 @@ import {
   groupProjectsByCollection,
   labProjectSlugs,
   primaryProjectSlugs,
+  projectLinks,
   projects,
   secondaryProjectSlugs,
 } from "../src/content/project-catalog.ts";
@@ -15,11 +16,18 @@ const expectedSlugs = [
   ...secondaryProjectSlugs,
 ];
 
-test("project curation keeps six primary projects and five technical labs", () => {
+test("project curation keeps six primary projects and four technical labs", () => {
   assert.equal(primaryProjectSlugs.length, 6);
-  assert.equal(labProjectSlugs.length, 5);
+  assert.equal(labProjectSlugs.length, 4);
   assert.equal(new Set(expectedSlugs).size, expectedSlugs.length);
   assert.equal(projects.some((project) => project.slug === "robet"), false);
+});
+
+test("private projects without a public demo stay outside the public catalog", () => {
+  for (const slug of ["robet", "typographic-story-engine"]) {
+    assert.equal(projects.some((project) => project.slug === slug), false);
+    assert.equal(projectLinks.some((link) => link.kind === "repo" && link.href.endsWith(`/${slug}`)), false);
+  }
 });
 
 test("every curated slug resolves to a complete project", () => {
