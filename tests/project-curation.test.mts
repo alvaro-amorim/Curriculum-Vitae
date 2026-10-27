@@ -23,7 +23,7 @@ test("project curation keeps six primary projects and four technical labs", () =
   assert.equal(projects.some((project) => project.slug === "robet"), false);
 });
 
-test("private projects without a public demo stay outside the public catalog", () => {
+test("private projects without a public demo stay outside the versioned import catalog", () => {
   for (const slug of ["robet", "typographic-story-engine"]) {
     assert.equal(projects.some((project) => project.slug === slug), false);
     assert.equal(projectLinks.some((link) => link.kind === "repo" && link.href.endsWith(`/${slug}`)), false);

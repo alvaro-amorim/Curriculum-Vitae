@@ -7,7 +7,8 @@ Este README descreve o estado versionado do repositório. Histórico de decisõe
 ## Como avaliar
 
 - [Aplicação publicada](https://curriculum-vitae-babr.vercel.app/).
-- Catálogo canônico em `src/content/project-catalog.ts`, com conteúdo em `src/content/projects.ts` e `src/content/additional-projects.ts`.
+- O site lê os projetos publicados no MongoDB, gerenciados pelo painel administrativo.
+- `src/content/project-catalog.ts`, `src/content/projects.ts` e `src/content/additional-projects.ts` mantêm a base versionada de curadoria e importação.
 - APIs, sessões e administração são server-side; a infraestrutura publicada deve ser validada separadamente.
 - Os scripts de lint, typecheck, testes e build estão descritos abaixo.
 
@@ -73,7 +74,9 @@ Antes de afirmar estabilidade operacional, valide concorrência, limites, compor
 
 ## Conteúdo e projetos
 
-A página `/projetos` usa `src/content/project-catalog.ts` como catálogo canônico, composto pelo conteúdo de `projects.ts` e `additional-projects.ts`. A Home usa estruturas extraídas para copy, ícones e apresentação dos projetos em:
+A página `/projetos`, os detalhes, a Home e o sitemap consultam os projetos publicados no MongoDB por `src/lib/projects/repository.ts`. Alterações nos arquivos de conteúdo não atualizam automaticamente os registros já publicados; esses registros devem ser revisados pelo painel administrativo, preservando seu histórico.
+
+`src/content/project-catalog.ts` reúne a base versionada de curadoria, composta pelo conteúdo de `projects.ts` e `additional-projects.ts`, usada na importação e nos testes dessa base. A Home usa estruturas extraídas para copy, ícones e apresentação dos projetos em:
 
 ```txt
 src/content/home-copy.ts
